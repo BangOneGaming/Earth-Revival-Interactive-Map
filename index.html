@@ -19,7 +19,8 @@
         .filter-container {
             position: absolute;
             top: 10px;
-            left: 170px;
+            left: 10px;
+            /* 将 left 设为 10px，确保在所有设备上都位于屏幕左上角 */
             z-index: 1000;
             display: flex;
             flex-direction: column;
@@ -102,8 +103,10 @@
     </div>
 
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap"
+        async defer></script>
     <script src="updated_output.js"></script>
+    <script src="minimap_config.js"></script>
     <script>
         let activeFilters = [];
         let markers = [];
@@ -115,19 +118,19 @@
             var center_postion = init_position.split(",");
             // Initialize the map
             map = new google.maps.Map(document.getElementById('map'), {
-            center: {
-                 //lat:59.5,
-                lat: center_postion[0]*1,
-               // lng:-78.8
-                lng: center_postion[1]*1
-            },
-            zoom:6,
-             //zoom: that.deviceType != 'isPc'?6:4,
-            streetViewControl: false,
-            mapTypeControl: false,
-            disableDefaultUI: true,
-            noClear:true,
-            backgroundColor: '#1E2026'
+                center: {
+                    //lat:59.5,
+                    lat: center_postion[0] * 1,
+                    // lng:-78.8
+                    lng: center_postion[1] * 1
+                },
+                zoom: 6,
+                //zoom: that.deviceType != 'isPc'?6:4,
+                streetViewControl: false,
+                mapTypeControl: false,
+                disableDefaultUI: true,
+                noClear: true,
+                backgroundColor: '#1E2026'
             });
 
             // Custom map type (if needed, replace with actual logic or remove if not used)
@@ -164,7 +167,7 @@
                 tileSize: new google.maps.Size(256, 256),
                 maxZoom: 9,
                 minZoom: 6,
-                 radius: 1738000,
+                radius: 1738000,
                 name: 'Default'
             });
             map.mapTypes.set('default', myMap);
@@ -233,7 +236,7 @@
                             icon = 'icons/icon_fishing.png';
                             break;
                         default:
-                            icon = 'https://maps.google.com/mapfiles/ms/icons/red-dot.png'; // Default icon
+                            icon = 'icon_scenery.png';
                             break;
                     }
                     const marker = new google.maps.Marker({
@@ -252,7 +255,6 @@
         <div style="padding: 12px; font-family: Arial, sans-serif; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #f9f9f9;">
             <h3 style="margin-top: 0; margin-bottom: 8px; color: #007bff; font-size: 18px;">${location.en_name}</h3>
             <p style="margin-bottom: 8px; color: #555; font-size: 14px; line-height: 1.5;">${location.desc}</p>
-            <p style="margin-top: 5px; color: #333; font-size: 12px;">Coordinates: <strong>${coord.x}</strong>, <strong>${coord.y}</strong></p>
         </div>
     `;
                         infoWindow.setContent(contentString);
@@ -286,12 +288,20 @@
         function updateActiveFilters(filter) {
             if (filter === 'all') {
                 // If "All" is selected, clear other filters
-                activeFilters = ['all'];
-                document.querySelectorAll('.filter-btn').forEach(btn => {
-                    if (btn.getAttribute('data-filter') !== 'all') {
+                if (activeFilters.includes('all')) {
+                    activeFilters = [];
+                    document.querySelectorAll('.filter-btn').forEach(btn => {
                         btn.classList.remove('active');
-                    }
-                });
+                    });
+                } else {
+                    activeFilters = ['all'];
+                    document.querySelectorAll('.filter-btn').forEach(btn => {
+                        if (btn.getAttribute('data-filter') !== 'all') {
+                            btn.classList.remove('active');
+                        }
+                    });
+                }
+
             } else {
                 if (activeFilters.includes('all')) {
                     activeFilters = [];
@@ -369,65 +379,42 @@
         }
 
         function initMiniMap() {
-            let mini_map_type = {
-             "djhg": {
-                    "key": "djhg", "name":
-                        "\u675c\u52a0\u6cb3\u8c37", "loc_position": "62.61279396708508,-80.03557752209741", "map_position":
-                        ["60.94940501746118,-79.61915334601848", "63.10546651877847,-75.13906657529837"], "type": {
-                            "djhgmax": {
-                                "key":
-                                    "djhgmax", "name": "\u67e5\u770b\u675c\u52a0\u6cb3\u8c37", "map_url":
-                                    "minimap\/dj.png", "list_url":
-                                    "\/\/img.71acg.net\/sykb~bbs\/default\/20220926\/153230255335"
-                            }, "default": {
-                                "key": "default", "name":
-                                    "\u79bb\u5f00\u675c\u52a0\u6cb3\u8c37", "map_url": "minimap\/dj.png",
-                                "list_url": "\/\/img.71acg.net\/sykb~bbs\/default\/20220926\/1532307116136"
-                            }
-                        }
-                }
-            }
+
             var that = this;
             var changeWindow = null;
             var mapKey = "";
             var mapurl = "";
             this.mini_map_marker = {};
             function openChangeWindow(marker) {
-                if (changeWindow) {
-                    changeWindow.close()
-                }
                 console.log("mini map = " + mapKey + " " + mapurl);
                 var url = mapurl;
-                that.mini_map_marker[mapKey].historicalOverlay.set("url", url);
-                that.mini_map_marker[mapKey].historicalOverlay.setMap(that.map);
+                var overlay = that.mini_map_marker[mapKey].historicalOverlay;
+
+                // 检查 historicalOverlay 是否已经显示
+                if (overlay.getMap()) {
+                    // 如果已经显示，则隐藏
+                    overlay.setMap(null);
+                } else {
+                    // 否则，更新 url 并显示
+                    overlay.set("url", url);
+                    overlay.setMap(that.map);
+                }
+
                 var contentStr = [];
                 var info = marker.info;
-                // contentStr.push('<div class="change-box">');
-                // contentStr.push('<div class="ch-tit">' + info['name'] + '</div>');
-                // contentStr.push('<ul class="ch-list" id="mini_map_type_list" data-key="' + marker['info']['key'] + '">');
-                // for (var i in info['type']) {
-                //     console.log("mini map = "+ info['type']);
-                //     console.log("mini map = "+info['type'])
-                //     var index = info['mapKey'] + "_" + i;
-                //     if (marker.li_active == index) {
-                //         contentStr.push('<li data-index="' + index + '" data-mapurl="' + info['type'][i]['map_url'] + '" class="mini_map_type_list_li on">');
-                //     } else {
-                //         contentStr.push('<li data-index="' + index + '" data-mapurl="' + info['type'][i]['map_url'] + '" class="mini_map_type_list_li">');
-                //     }
-                //     // contentStr.push('<img src="' + info['type'][i]['list_url'] + '">');
-                //     // contentStr.push('<span>' + info['type'][i]['name'] + '</span>');
-                //     contentStr.push('</li>');
-                // }
-                // contentStr.push('</ul>');
-                // contentStr.push('</div>');
-                // changeWindow = new google.maps.InfoWindow({ content: contentStr.join(""), });
-                // changeWindow.open(this.map, marker);
-
             }
             for (var key in mini_map_type) {
-                var info = mini_map_type[key];
-                console.log("mini map = " + key);
-
+                const key_cur = key;
+                var info = mini_map_type[key_cur];
+                var li_active = key_cur + '_default'
+                var temp = li_active.split("_");
+                if (typeof info['type'][temp[1]] == 'undefined') {
+                    li_active = key_cur + '_default';
+                    temp = li_active.split("_");
+                }
+                const url_cur = info['type'][temp[1]]['map_url'];
+                console.log("mini map = " + key_cur);
+                console.log(url_cur);
                 var loc_position = info.loc_position.split(",");
                 //显示标点
                 var marker = new google.maps.Marker({
@@ -436,20 +423,19 @@
                         lng: loc_position[1] * 1,
                     },
                     map: this.map,
-                    icon: "icons/here.png"
+                    icon: {
+                        url: "icons/here.png",
+                        scaledSize: new google.maps.Size(50, 50) // 将图标放大为 50x50 像素
+                    }
                 });
                 marker.addListener('click', function () {
-                    mapKey = key;
-                    mapurl = info['type'][temp[1]]['map_url'];
+                    console.log(key_cur);
+                    mapKey = key_cur;
+                    mapurl = url_cur;
                     openChangeWindow(this)
                 });
 
-                var li_active = key + '_default'
-                var temp = li_active.split("_");
-                if (typeof info['type'][temp[1]] == 'undefined') {
-                    li_active = key + '_default';
-                    temp = li_active.split("_");
-                }
+
 
                 //覆盖小地图显示
                 var lg1 = info['map_position'][0].split(",");
@@ -459,16 +445,13 @@
                     new google.maps.LatLng(lg2[0] * 1, lg2[1] * 1)
                 );
 
-                var historicalOverlay = new google.maps.GroundOverlay(info['type'][temp[1]]['map_url'], imageBounds);
+                var historicalOverlay = new google.maps.GroundOverlay(url_cur, imageBounds);
                 //historicalOverlay.setMap(this.map);
-                historicalOverlay.addListener("click", that.map_listener);
-
-
                 marker.li_active = li_active;
                 marker.info = info;
                 marker.historicalOverlay = historicalOverlay;
                 marker.setMap(this.map);
-                this.mini_map_marker[key] = marker;
+                this.mini_map_marker[key_cur] = marker;
             }
 
         }
