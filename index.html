@@ -237,7 +237,7 @@
                             icon = 'icons/icon_fishing.png';
                             break;
                         default:
-                            icon = 'icon_scenery.png';
+                            icon = 'icon/icon_scenery.png';
                             break;
                     }
                     const marker = new google.maps.Marker({
@@ -267,7 +267,11 @@
                     markers.push(marker);
                 }
             }
-
+            // Hide all markers on initial load
+            markers.forEach(marker => {
+            marker.setMap(null);
+            });
+            
             // Add event listeners to the filter buttons
             document.querySelectorAll('.filter-btn').forEach(button => {
                 button.addEventListener('click', () => {
@@ -454,9 +458,11 @@
                 marker.setMap(this.map);
                 this.mini_map_marker[key_cur] = marker;
             }
+            
 
         }
     </script>
+    
 </body>
 
 </html>
