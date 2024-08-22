@@ -46,7 +46,7 @@
             display: flex;
             align-items: center;
             padding: 10px 15px;
-            background-color: #fff;
+            background-image: url(statics/background.jpeg);
             border: 1px solid #ccc;
             border-radius: 5px;
             cursor: pointer;
@@ -77,14 +77,23 @@
                 top: auto;
                 bottom: 10px;
                 width: 100%;
-                justify-content: space-around;
+                justify-content: flex-end;
+                flex-wrap: wrap; 
             }
 
             .filter-btn {
-                flex: 1;
-                margin: 0 5px;
-                font-size: 14px;
-                padding: 10px;
+                flex: 0 0 20%; /* Mengatur lebar tombol menjadi 40% dari kontainer */
+                margin: 3px; /* Mengurangi jarak antar tombol */
+                font-size: 10px; /* Mengurangi ukuran font */
+                padding: 8px; /* Mengurangi padding untuk mengecilkan tombol */
+            }
+
+            .filter-btn:nth-child(4) {
+                order: 1; /* Menempatkan tombol ke-4 (zone) di urutan pertama pada baris kedua */
+            }
+
+            .filter-btn:nth-child(5) {
+                order: 2; /* Menempatkan tombol ke-5 (fishing) di urutan kedua pada baris kedua */
             }
         }
     </style>
