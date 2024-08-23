@@ -4,9 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:image" content="statics/tittle.png" />
+    <meta property="og:image" content="https://drive.google.com/file/d/1Rwq5o6KxlLcJg5f8rVW78gHrpSE0JhBO/view?usp=drivesdk" />
     <title>Earth Revival Interactive Maps</title>
     <style>
+        #toggle-filter-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            cursor: pointer;
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .active img {
+            box-shadow: 0 0 40px #ffd000fd; /* Ganti warna dan intensitas sesuai kebutuhan */
+        }
+        
         /* Style for the map container */
         #map {
             height: 100vh;
@@ -14,23 +27,13 @@
             position: absolute;
             top: 0;
             left: 0;
-        }
 
-        /* Container for filter buttons */
-        .filter-container {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            /* 将 left 设为 10px，确保在所有设备上都位于屏幕左上角 */
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            background: white;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            
         }
+        /* Tambahkan efek glowing saat hover */
+        #toggle-filter-btn:hover {
+            box-shadow: 0 0 20px rgb(246, 255, 115), 0 0 30px rgb(255, 225, 53); /* Sesuaikan warna dan intensitas glowing */
+    }
         /* Logo styles */
         #logo {
             position: absolute;
@@ -40,12 +43,29 @@
             width: 300px;
             height: auto;
             display: block; /* Menampilkan logo */
-}
+        }
+
+        /* Container for filter buttons */
+        .filter-container {
+            position: absolute;
+            top: 10px;
+            left: 70px;
+            /* 将 left 设为 10px，确保在所有设备上都位于屏幕左上角 */
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            background: white;
+            padding: 5px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
         /* Style for the filter buttons */
         .filter-btn {
             display: flex;
             align-items: center;
-            padding: 10px 15px;
+            padding: 5px 10px;
             background-image: url(statics/background.jpeg);
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -53,7 +73,7 @@
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
             transition: background-color 0.3s ease;
             text-align: center;
-            font-size: 16px;
+            font-size: 10px;
         }
 
         .filter-btn:hover {
@@ -66,17 +86,69 @@
         }
 
         .filter-btn img {
-            margin-right: 10px;
-            width: 20px;
-            height: 20px;
+            margin-right: 5px;
+            width: 16px;
+            height: 16px;
         }
 
+        .filter-container-loc_type {
+            position: absolute; /* Pastikan posisinya absolute */
+            top: 200px; /* Jarak dari atas */
+            left: 60px; /* Jarak dari kiri */
+            margin: 20px; /* Tambahkan margin jika diperlukan */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            z-index: 1000; /* Pastikan di atas elemen lain */
+        }
+
+        .filter-button-loc_type {
+            display: block;
+            margin: 5px 0;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        /*Hover for loc_type*/
+        .filter-button:hover {
+            background-color: #0056b3;
+        }
+
+        @keyframes slideIn {
+            0% {
+                transform: translateX(-100%); /* Mulai dari luar layar di sebelah kiri */
+                opacity: 0; /* Tidak terlihat */
+        }
+        100% {
+            transform: translateX(0); /* Muncul di posisi asli */
+            opacity: 1; /* Sepenuhnya terlihat */
+        }
+    }
+
+        .filter-container {
+        animation: slideIn 0.5s ease forwards; /* Menerapkan animasi saat muncul */
+    }
         @media (max-width: 600px) {
+            #toggle-filter-btn {
+                bottom: 110px; /* Jarak dari bawah */
+                left: 10px; /* Jarak dari kiri */
+                top: auto; /* Menghilangkan posisi atas */
+            }
+
+            .filter-container {
+                animation: slideIn 0.5s ease-out; /* Menambahkan animasi */
+            }
+        
             .filter-container {
                 flex-direction: row;
                 top: auto;
                 bottom: 10px;
-                width: 100%;
+                left: 10px;
+                width: 90%;
                 justify-content: flex-end;
                 flex-wrap: wrap; 
             }
@@ -102,8 +174,21 @@
 <body>
     <div id="map"></div>
 
-    <!-- Logo -->
+    <!--filter container button-->
+    <div id="toggle-filter-btn">
+        <img src="statics/toggle_icon.png" alt="Toggle Filter">
+    </div>
+
+        <!-- Logo -->
     <img src="statics/tittle_er.png" alt="Logo" id="logo" />
+    
+    <!--Filter container loc_type-->
+    <div id="loc-type-filter-container" class="filter-container">
+        <h3>Filter Loc Type</h3>
+        <button id="filter-loc-type" class="filter-button">Filter Loc Type</button>
+        <!-- Tambahkan filter buttons lainnya di sini -->
+    </div>
+
     <!-- Filter buttons -->
     <div class="filter-container">
         <div class="filter-btn active" data-filter="all">
@@ -129,7 +214,30 @@
     <script src="updated_output.js"></script>
     <script src="minimap_config.js"></script>
     <script>
-        let activeFilters = [];
+
+        // javascript for loc_type toggle container button
+        document.getElementById("filter-loc-type").addEventListener("click", function() {
+            // Logika untuk memfilter berdasarkan loc_type
+            console.log("Filter Loc Type clicked");
+            // Tambahkan logika pemfilteran di sini
+        });
+
+        // Javascript for toggle container filter
+        document.getElementById('toggle-filter-btn').addEventListener('click', function () {
+            const filterContainer = document.querySelector('.filter-container');
+            const toggleButton = document.getElementById('toggle-filter-btn');
+
+            if (filterContainer.style.display === '' || filterContainer.style.display === 'flex') {
+                filterContainer.style.animation = 'none';
+                filterContainer.style.display = 'none';
+                toggleButton.classList.remove('active'); // Hapus kelas aktif
+            } else {
+                filterContainer.style.animation = 'slideIn 0.5s ease forwards';
+                filterContainer.style.display = 'flex';
+                toggleButton.classList.add('active'); // Tambahkan kelas aktif
+            }
+        }); 
+            let activeFilters = [];
         let markers = [];
         function initMap() {
             var init_position = window.init_position;
