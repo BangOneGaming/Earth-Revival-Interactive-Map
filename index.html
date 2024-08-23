@@ -7,61 +7,20 @@
     <meta property="og:image" content="statics/tittle.png" />
     <title>Earth Revival Interactive Maps</title>
     <style>
-<<<<<<< HEAD
-        /*Filter container for loc_type*/
-        .loc-type-filter-container {
-            position: absolute; 
-            top: 200px; 
-            left: 60px; 
-            margin: 20px; 
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            z-index: 1000;
-            display: none;
-            width: 150px;
-            height: auto;
-        }
-
-        .loc-type-image {
-            cursor: pointer;
-            width: 150px; 
-            height: auto; 
-            margin: 5px; 
-        }
-
-        /* CSS untuk filter container category_id */
-        .category-filter-container {
-            position: absolute; 
-            top: 10px; 
-            left: 60px; 
-            margin: 20px; 
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            z-index: 1000; 
-            display: flex; 
-            flex-direction: column;
-            gap: 5px;
-        }        
-        
-        #toggle-filter-btn {
+        .new-filter-container {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 10px; /* Atur posisi sesuai kebutuhan */
+            right: 10px; /* Atur posisi sesuai kebutuhan */
             z-index: 1000;
-            cursor: pointer;
-            transition: box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column; /* Atur layout vertikal */
+            gap: 10px; /* Jarak antar tombol */
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
-        
-        .active img {
-            box-shadow: 0 0 40px #ffd000fd; /* Ganti warna dan intensitas sesuai kebutuhan */
-        }
-        
-=======
->>>>>>> parent of fa26a4d (upgrade UI)
+
         /* Style for the map container */
         #map {
             height: 100vh;
@@ -70,13 +29,6 @@
             top: 0;
             left: 0;
         }
-<<<<<<< HEAD
-        /* Tambahkan efek glowing saat hover */
-        #toggle-filter-btn:hover {
-            box-shadow: 0 0 20px rgb(246, 255, 115), 0 0 30px rgb(255, 225, 53); /* Sesuaikan warna dan intensitas glowing */
-        }
-
-=======
 
         /* Container for filter buttons */
         .filter-container {
@@ -93,7 +45,6 @@
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
->>>>>>> parent of fa26a4d (upgrade UI)
         /* Logo styles */
         #logo {
             position: absolute;
@@ -134,24 +85,6 @@
             height: 20px;
         }
 
-<<<<<<< HEAD
-        /*animation button*/
-        @keyframes slideIn {
-            0% {
-                transform: translateX(-100%); /* Mulai dari luar layar di sebelah kiri */
-                opacity: 0; /* Tidak terlihat */
-        }
-        100% {
-            transform: translateX(0); /* Muncul di posisi asli */
-            opacity: 1; /* Sepenuhnya terlihat */
-        }
-    }
-
-        .filter-container {
-        animation: slideIn 0.5s ease forwards; /* Menerapkan animasi saat muncul */
-    }
-=======
->>>>>>> parent of fa26a4d (upgrade UI)
         @media (max-width: 600px) {
             .filter-container {
                 flex-direction: row;
@@ -178,54 +111,40 @@
             }
         }
     </style>
-
 </head>
 
 <body>
     <div id="map"></div>
-<<<<<<< HEAD
-    
-    <!--loc type filter-->
-    <!-- Filter container for loc_type -->
-    <div id="loc-type-filter-container" class="loc-type-filter-container">
-        <h3>Filter Loc Type</h3>
-        <button id="filter-loc-type" class="filter-button">Filter Loc Type</button>
-        <div class="filter-container-loc_type">
-            <img src="icons/sundale.png" alt="Loc Type 2" class="loc-type-image" data-loc-type="2">
-            <img src="icons/kepler.png" alt="Loc Type 6" class="loc-type-image" data-loc-type="6">
-            <img src="icons/howling.png" alt="Loc Type 5" class="loc-type-image" data-loc-type="5">
-            <img src="icons/eden.png" alt="Loc Type 4" class="loc-type-image" data-loc-type="4">
-            <img src="icons/ragon.png" alt="Loc Type 3" class="loc-type-image" data-loc-type="3">
-        </div>
+    <!-- Filter buttons -->
+<div class="filter-container">
+    <div class="filter-btn active" data-filter="all">
+        <img src="icons/icon_teleport.png" alt="All"> All
     </div>
-        <!-- Filter container for category_id -->
-        <div class="category-filter-container">
-            <h3>Filter Category</h3>
-            <div class="filter-btn" data-filter="all">
-                <img src="icons/icon_teleport.png" alt="All"> All
-            </div>
-            <div class="filter-btn" data-filter="tresure">
-                <img src="icons/icon_tresure.png" alt="Treasure"> Treasure
-            </div>
-            <div class="filter-btn" data-filter="teleport">
-                <img src="icons/icon_teleport.png" alt="Teleport"> Teleport
-            </div>
-            <div class="filter-btn" data-filter="fishing">
-                <img src="icons/icon_fishing.png" alt="Fishing"> Fishing
-            </div>
-            <div class="filter-btn" data-filter="zone">
-                <img src="icons/icon_zone.png" alt="Zone"> Zone
-            </div>
-        </div>
-    <!--filter container toggle button-->
-    <div id="toggle-filter-btn">
-        <img src="statics/toggle_icon.png" alt="Toggle Filter">
+    <div class="filter-btn" data-filter="tresure">
+        <img src="icons/icon_tresure.png" alt="Treasure"> Treasure
     </div>
+    <div class="filter-btn" data-filter="teleport">
+        <img src="icons/icon_teleport.png" alt="Teleport"> Teleport
+    </div>
+    <div class="filter-btn" data-filter="fishing">
+        <img src="icons/icon_fishing.png" alt="Fishing"> Fishing
+    </div>
+    <div class="filter-btn" data-filter="zone">
+        <img src="icons/icon_zone.png" alt="Zone"> Zone
+    </div>
+</div>
 
-        <!-- Logo -->
-    <img src="statics/tittle_er.png" alt="Logo" id="logo" />
-    
-=======
+<!-- Kontainer baru untuk filter button yang terpisah -->
+<div class="new-filter-container">
+    <div class="filter-btn" data-filter="new_filter_1">
+        <img src="icons/sundale.png" alt="New Filter 1"> New Filter 1
+    </div>
+    <div class="filter-btn" data-filter="new_filter_2">
+        <img src="icons/howling.png" alt="New Filter 2"> New Filter 2
+    </div>
+    <!-- Tambahkan filter button baru sesuai kebutuhan -->
+</div>
+
 
     <!-- Logo -->
     <img src="statics/tittle_er.png" alt="Logo" id="logo" />
@@ -247,7 +166,6 @@
             <img src="icons/icon_zone.png" alt="Zone"> Zone
         </div>
     </div>
->>>>>>> parent of fa26a4d (upgrade UI)
 
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap"
@@ -255,45 +173,7 @@
     <script src="updated_output.js"></script>
     <script src="minimap_config.js"></script>
     <script>
-<<<<<<< HEAD
-
-        function toggleLocTypeFilter(locType) {
-            const index = activeFilters.indexOf(`locType${locType}`);
-            if (index > -1) {
-                activeFilters.splice(index, 1); // Hapus filter jika sudah ada
-            } else {
-                activeFilters.push(`locType${locType}`); // Tambahkan filter jika belum ada
-            }
-            filterMarkers(); // Panggil fungsi untuk memfilter marker berdasarkan filter yang aktif
-        }
-
-        // Fungsi untuk memfilter marker
-        function filterMarkers() {
-            // Implementasi filter marker
-            // ...
-        }
-
-        // Javascript for toggle container filter
-        document.getElementById('toggle-filter-btn').addEventListener('click', function () {
-            const locTypeContainer = document.getElementById('loc-type-filter-container');
-            if (locTypeContainer.style.display === '' || locTypeContainer.style.display === 'block') {
-                locTypeContainer.style.display = 'none';
-            } else {
-                locTypeContainer.style.display = 'block';
-            }
-        });
-         // Menambahkan event listener untuk gambar loc_type
-         document.querySelectorAll('.loc-type-image').forEach(image => {
-            image.addEventListener('click', function() {
-                const locType = this.getAttribute('data-loc-type');
-                // Panggil fungsi untuk menerapkan filter loc_type
-                toggleLocTypeFilter(locType);
-            });
-        });
-            let activeFilters = [];
-=======
         let activeFilters = [];
->>>>>>> parent of fa26a4d (upgrade UI)
         let markers = [];
         function initMap() {
             var init_position = window.init_position;
@@ -429,7 +309,6 @@
                         map: map,
                         icon: icon,
                         category: location.category_id,
-                        locType: location.loc_type, 
                         draggable: false
                     });
 
@@ -452,33 +331,11 @@
                     markers.push(marker);
                 }
             }
-            // Functions to show marker locType
-            function filterMarkersByLocType(locType) {
-            markers.forEach(marker => {
-                if (marker.locType === locType) {
-                    marker.setMap(map); // Tampilkan marker
-                } else {
-                    marker.setMap(null); // Sembunyikan marker
-                }
-            });
-            if (!anyMarkerShown) {
-                console.log("Tidak ada marker yang ditemukan untuk locType:", locType); // Log jika tidak ada marker
-            }
-        }
             // Hide all markers on initial load
             markers.forEach(marker => {
             marker.setMap(null);
             });
-            // Tambahkan event listener untuk gambar loc_type
-            document.querySelectorAll('.loc-type-image').forEach(image => {
-                image.addEventListener('click', function() {
-                    const locType = this.getAttribute('data-loc-type');
-                    // Di sini Anda bisa memanggil fungsi untuk menerapkan filter loc_type
-                    toggleLocTypeFilter(locType);
-                });
-            });
-
-
+            
             // Add event listeners to the filter buttons
             document.querySelectorAll('.filter-btn').forEach(button => {
                 button.addEventListener('click', () => {
@@ -492,7 +349,15 @@
                     filterMarkers();
                 });
             });
-
+            // Tambahkan event listeners untuk filter button baru
+            document.querySelectorAll('.new-filter-container .filter-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                // Logika untuk filter button baru
+                button.classList.toggle('active');
+                const filter = button.getAttribute('data-filter');
+                // Tambahkan logika filtering sesuai kebutuhan
+            });
+        });
 
             this.initMiniMap();
         }
@@ -546,20 +411,10 @@
                     marker.setMap(map);
                 } else if (activeFilters.includes('zone') && marker.category === '3') {
                     marker.setMap(map);
-                } else if (activeFilters.includes('locType2') && marker.locType === '2') {
-                    marker.setMap(map);
-                } else if (activeFilters.includes('locType6') && marker.locType === '6') {
-                    marker.setMap(map);
-                } else if (activeFilters.includes('locType5') && marker.locType === '5') {
-                    marker.setMap(map);
-                } else if (activeFilters.includes('locType4') && marker.locType === '4') {
-                    marker.setMap(map);
-                } else if (activeFilters.includes('locType3') && marker.locType === '3') {
-                    marker.setMap(map);
                 } else {
-                marker.setMap(null);
-        }
-    });
+                    marker.setMap(null);
+                }
+            });
         }
 
         // Helper function to normalize tile coordinates for custom map (if needed)
