@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:image" content="https://drive.google.com/file/d/1Rwq5o6KxlLcJg5f8rVW78gHrpSE0JhBO/view?usp=drivesdk" />
+    <meta property="og:image" content="statics/tittle.png" />
     <title>Earth Revival Interactive Maps</title>
     <style>
+<<<<<<< HEAD
         /*Filter container for loc_type*/
         .loc-type-filter-container {
             position: absolute; 
@@ -59,6 +60,8 @@
             box-shadow: 0 0 40px #ffd000fd; /* Ganti warna dan intensitas sesuai kebutuhan */
         }
         
+=======
+>>>>>>> parent of fa26a4d (upgrade UI)
         /* Style for the map container */
         #map {
             height: 100vh;
@@ -66,14 +69,31 @@
             position: absolute;
             top: 0;
             left: 0;
-
-            
         }
+<<<<<<< HEAD
         /* Tambahkan efek glowing saat hover */
         #toggle-filter-btn:hover {
             box-shadow: 0 0 20px rgb(246, 255, 115), 0 0 30px rgb(255, 225, 53); /* Sesuaikan warna dan intensitas glowing */
         }
 
+=======
+
+        /* Container for filter buttons */
+        .filter-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            /* 将 left 设为 10px，确保在所有设备上都位于屏幕左上角 */
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+>>>>>>> parent of fa26a4d (upgrade UI)
         /* Logo styles */
         #logo {
             position: absolute;
@@ -83,29 +103,12 @@
             width: 300px;
             height: auto;
             display: block; /* Menampilkan logo */
-        }
-
-        /* Container for filter buttons */
-        .filter-container {
-            position: absolute;
-            top: 10px;
-            left: 70px;
-            /* 将 left 设为 10px，确保在所有设备上都位于屏幕左上角 */
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            background: white;
-            padding: 5px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
+}
         /* Style for the filter buttons */
         .filter-btn {
             display: flex;
             align-items: center;
-            padding: 5px 10px;
+            padding: 10px 15px;
             background-image: url(statics/background.jpeg);
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -113,7 +116,7 @@
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
             transition: background-color 0.3s ease;
             text-align: center;
-            font-size: 10px;
+            font-size: 16px;
         }
 
         .filter-btn:hover {
@@ -126,11 +129,12 @@
         }
 
         .filter-btn img {
-            margin-right: 5px;
-            width: 16px;
-            height: 16px;
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
         }
 
+<<<<<<< HEAD
         /*animation button*/
         @keyframes slideIn {
             0% {
@@ -146,23 +150,14 @@
         .filter-container {
         animation: slideIn 0.5s ease forwards; /* Menerapkan animasi saat muncul */
     }
+=======
+>>>>>>> parent of fa26a4d (upgrade UI)
         @media (max-width: 600px) {
-            #toggle-filter-btn {
-                bottom: 110px; /* Jarak dari bawah */
-                left: 10px; /* Jarak dari kiri */
-                top: auto; /* Menghilangkan posisi atas */
-            }
-
-            .filter-container {
-                animation: slideIn 0.5s ease-out; /* Menambahkan animasi */
-            }
-        
             .filter-container {
                 flex-direction: row;
                 top: auto;
                 bottom: 10px;
-                left: 10px;
-                width: 90%;
+                width: 100%;
                 justify-content: flex-end;
                 flex-wrap: wrap; 
             }
@@ -188,6 +183,7 @@
 
 <body>
     <div id="map"></div>
+<<<<<<< HEAD
     
     <!--loc type filter-->
     <!-- Filter container for loc_type -->
@@ -229,6 +225,29 @@
         <!-- Logo -->
     <img src="statics/tittle_er.png" alt="Logo" id="logo" />
     
+=======
+
+    <!-- Logo -->
+    <img src="statics/tittle_er.png" alt="Logo" id="logo" />
+    <!-- Filter buttons -->
+    <div class="filter-container">
+        <div class="filter-btn active" data-filter="all">
+            <img src="icons/icon_teleport.png" alt="All"> All
+        </div>
+        <div class="filter-btn" data-filter="tresure">
+            <img src="icons/icon_tresure.png" alt="Treasure"> Treasure
+        </div>
+        <div class="filter-btn" data-filter="teleport">
+            <img src="icons/icon_teleport.png" alt="Teleport"> Teleport
+        </div>
+        <div class="filter-btn" data-filter="fishing">
+            <img src="icons/icon_fishing.png" alt="Fishing"> Fishing
+        </div>
+        <div class="filter-btn" data-filter="zone">
+            <img src="icons/icon_zone.png" alt="Zone"> Zone
+        </div>
+    </div>
+>>>>>>> parent of fa26a4d (upgrade UI)
 
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap"
@@ -236,6 +255,7 @@
     <script src="updated_output.js"></script>
     <script src="minimap_config.js"></script>
     <script>
+<<<<<<< HEAD
 
         function toggleLocTypeFilter(locType) {
             const index = activeFilters.indexOf(`locType${locType}`);
@@ -271,6 +291,9 @@
             });
         });
             let activeFilters = [];
+=======
+        let activeFilters = [];
+>>>>>>> parent of fa26a4d (upgrade UI)
         let markers = [];
         function initMap() {
             var init_position = window.init_position;
