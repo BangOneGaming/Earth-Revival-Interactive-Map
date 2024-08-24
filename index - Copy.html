@@ -15,9 +15,6 @@
             top: 0;
             left: 0;
         }
-        .hidden {
-            display: none;
-        }
         /* Style for the new filter container */
         .new-filter-container {
             position: absolute;
@@ -49,66 +46,28 @@
             color: #fff; /* Pastikan teks terlihat di atas gambar */
             position: relative;
         }
-        
-        /* Specific background images for each button */
-        .new-filter-container .btn-sundale-valley {
-            background-image: url('icons/sundale.png'); /* Replace with actual path */
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
-            background-image: url('icons/sundale.png');
-            background-size: cover;
-            border: none; /* Hapus border jika ada */
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-            transition: opacity 0.3s ease;
-            text-align: center;
-            font-size: 16px;
-            color: #fff; /* Pastikan teks terlihat di atas gambar */
+        .new-filter-container .filter-btn:hover {
+            opacity: 0.9; /* Efek hover */
+        }
+
+        .new-filter-container .filter-btn.active {
+            opacity: 1; /* Menghilangkan efek aktif jika diperlukan */
+        }
+
+        .new-filter-container .filter-btn img {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
             position: relative;
+            z-index: 2;
         }
-
-        .new-filter-container .btn-sundale-valley {
-            background-image: url('icons/sundale.png');
-            background-size: cover;
-        }
-
-        .new-filter-container .btn-howling-gobi {
-            background-image: url('icons/howling.png');
-            background-size: cover;
-        }
-
-        .new-filter-container .btn-edengate {
-            background-image: url('icons/eden.png');
-            background-size: cover;
-        }
-
-        .new-filter-container .btn-ragon-snowy-peak {
-            background-image: url('icons/ragon.png');
-            background-size: cover;
-        }
-
-        .new-filter-container .btn-kepler-harbour {
-            background-image: url('icons/kepler.png');
-            background-size: cover;
-        }
-
-
-        .new-filter-container .filter-btn {
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
-            border: none; 
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-            transition: opacity 0.3s ease;
-            text-align: center;
-            font-size: 16px;
-            color: #fff; 
+        .new-filter-container .filter-btn img {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
             position: relative;
-                }
+            z-index: 2;
+        }
 
         /* Container for filter buttons */
         .filter-container {
@@ -196,35 +155,8 @@
 
 <body>
     <div id="map"></div>
-    <div class="filter-container">
-       <div class="filter-container">
-    <!-- Existing filter buttons... -->
-    
-    <!-- New button to show/hide .new-filter-btn elements -->
     <div class="filter-btn toggle-new-filters" data-toggle="new-filters">
-        <img src="icons/toggle_btn.png" alt="Toggle Filters"> Toggle New Filters
-    </div>
-</div>
-    <div class="new-filter-container">
-        <div class="filter-btn new-filter-btn" data-filter="loc_type2">
-            Sundale Valley
-        </div>
-        <div class="filter-btn new-filter-btn" data-filter="loc_type3">
-            Howling Gobi
-        </div>
-        <div class="filter-btn new-filter-btn" data-filter="loc_type5">
-            Edengate
-        </div>    
-        <div class="filter-btn new-filter-btn" data-filter="loc_type4">
-            Ragon Snowy Peak
-        </div>
-        <div class="filter-btn new-filter-btn" data-filter="loc_type6">
-            Kepler Harbour
-        </div>
-    </div>
-        <!-- New button to show/hide .new-filter-btn elements -->
-        <div class="filter-btn toggle-new-filters" data-toggle="new-filters">
-            <img src="icons/icon_toggle.png" alt="Toggle Filters"> Toggle New Filters
+            <img src="icons/toggle_btn.png" alt="Toggle Filters">
         </div>
     </div>
     <!-- New filter container for mark -->
@@ -245,7 +177,7 @@
             kepler harbour
         </div>
     </div>
-
+    </div>
     <!-- Logo -->
     <img src="statics/tittle_er.png" alt="Logo" id="logo" />
     <!-- Filter buttons -->
@@ -431,6 +363,11 @@
                     markers.push(marker);
                 }
             }
+                document.querySelector('.toggle-new-filters').addEventListener('click', function () {
+                document.querySelectorAll('.new-filter-btn').forEach(function (btn) {
+                    btn.classList.toggle('hidden');
+        });
+    });
             // Hide all markers on initial load
             markers.forEach(marker => {
             marker.setMap(null);
