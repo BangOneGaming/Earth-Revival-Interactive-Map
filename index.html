@@ -15,9 +15,6 @@
             top: 0;
             left: 0;
         }
-        .hidden {
-            display: none;
-        }
         /* Style for the new filter container */
         .new-filter-container {
             position: absolute;
@@ -32,6 +29,27 @@
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
+            /* Gaya untuk tombol di dalam container new-filter-container dengan gambar yang berbeda */
+            .new-filter-container .filter-btn:nth-child(1) {
+                background-image: url('icons/sundale.png');
+            }
+
+            .new-filter-container .filter-btn:nth-child(2) {
+                background-image: url('icons/howling.png');
+            }
+
+            .new-filter-container .filter-btn:nth-child(3) {
+                background-image: url('icons/eden.png');
+            }
+
+            .new-filter-container .filter-btn:nth-child(4) {
+                background-image: url('icons/ragon.png');
+            }
+
+            .new-filter-container .filter-btn:nth-child(5) {
+                background-image: url('icons/kepler.png');
+            }
+
         /* Style for buttons inside the new filter container */
         .new-filter-container .filter-btn {
             display: flex;
@@ -39,66 +57,6 @@
             padding: 10px 15px;
             background-image: url('icons/sundale.png');
             background-size: cover;
-            border: none; /* Hapus border jika ada */
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-            transition: opacity 0.3s ease;
-            text-align: center;
-            font-size: 16px;
-            color: #fff; /* Pastikan teks terlihat di atas gambar */
-            position: relative;
-        }
-        
-        /* Specific background images for each button */
-        .new-filter-container .btn-sundale-valley {
-            background-image: url('icons/sundale.png'); /* Replace with actual path */
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
-            background-image: url('icons/sundale.png');
-            background-size: cover;
-            border: none; /* Hapus border jika ada */
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-            transition: opacity 0.3s ease;
-            text-align: center;
-            font-size: 16px;
-            color: #fff; /* Pastikan teks terlihat di atas gambar */
-            position: relative;
-        }
-
-        .new-filter-container .btn-sundale-valley {
-            background-image: url('icons/sundale.png');
-            background-size: cover;
-        }
-
-        .new-filter-container .btn-howling-gobi {
-            background-image: url('icons/howling.png');
-            background-size: cover;
-        }
-
-        .new-filter-container .btn-edengate {
-            background-image: url('icons/eden.png');
-            background-size: cover;
-        }
-
-        .new-filter-container .btn-ragon-snowy-peak {
-            background-image: url('icons/ragon.png');
-            background-size: cover;
-        }
-
-        .new-filter-container .btn-kepler-harbour {
-            background-image: url('icons/kepler.png');
-            background-size: cover;
-        }
-
-
-        .new-filter-container .filter-btn {
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
             border: none; 
             border-radius: 5px;
             cursor: pointer;
@@ -106,16 +64,38 @@
             transition: opacity 0.3s ease;
             text-align: center;
             font-size: 16px;
-            color: #fff; 
+            color: #fff;
             position: relative;
-                }
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
+        }
+        .new-filter-container .filter-btn:hover {
+            opacity: 0.9; /* Efek hover */
+        }
 
-        /* Container for filter buttons */
+        .new-filter-container .filter-btn.active {
+            opacity: 1;
+        }
+
+        .new-filter-container .filter-btn img {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        .new-filter-container .filter-btn img {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Style for the filter container */
         .filter-container {
             position: absolute;
             top: 10px;
             left: 10px;
-            /* 将 left 设为 10px，确保在所有设备上都位于屏幕左上角 */
             z-index: 1000;
             display: flex;
             flex-direction: column;
@@ -129,14 +109,26 @@
         /* Logo styles */
         #logo {
             position: absolute;
-            top: 10px; /* Jarak dari atas */
-            right: 10px; /* Ganti left menjadi right untuk memindahkan logo ke kanan */
+            top: 10px; 
+            right: 10px;
             z-index: 1500;
             width: 300px;
             height: auto;
-            display: block; /* Menampilkan logo */
+            display: block;
         }
-        /* Style for the filter buttons */
+        /* Style for the filter checkboxes */
+        .filter-container label {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease;
+            text-align: center;
+            font-size: 16px;
+        }
         .filter-btn {
             display: flex;
             align-items: center;
@@ -166,29 +158,62 @@
             height: 20px;
         }
 
+        .filter-container input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .filter-container label:hover {
+            background-color: #f0f0f0;
+        }
+
+        .filter-container label.active {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+
         @media (max-width: 600px) {
+            .new-filter-container {
+                top: auto; /* Atur ulang posisi top */
+                left: 120px; /* Atur ulang posisi left */
+                right: 10px; /* Sesuaikan jarak dari kanan */
+                bottom: 30px; /* Sesuaikan jarak dari bawah */
+                width: 30%; /* Ubah lebar agar lebih sesuai dengan layar kecil */
+                margin: 0 auto; /* Pusatkan kontainer */
+                padding: 10px; /* Kurangi padding untuk tampilan mobile */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Kurangi bayangan untuk tampilan mobile */
+            }
+
+            .new-filter-container .filter-btn {
+                flex: 1 1 auto; /* Buat tombol menyesuaikan lebar penuh */
+                margin: 5px 0; /* Atur margin vertikal untuk spasi antar tombol */
+                font-size: 12px; /* Sesuaikan ukuran font */
+                padding: 8px; /* Sesuaikan padding untuk kenyamanan penggunaan */
+            }
+
             .filter-container {
-                flex-direction: row;
+                flex-direction: column;
                 top: auto;
                 bottom: 10px;
-                width: 100%;
-                justify-content: flex-end;
-                flex-wrap: wrap; 
+                width: 35%; /* Atur lebar sesuai dengan kebutuhan */
+                padding: 10px; /* Sesuaikan padding jika diperlukan */
+                justify-content: center;
+                margin: 0 auto; /* Agar posisi container berada di tengah */
             }
 
             .filter-btn {
-                flex: 0 0 20%; /* Mengatur lebar tombol menjadi 40% dari kontainer */
-                margin: 3px; /* Mengurangi jarak antar tombol */
-                font-size: 10px; /* Mengurangi ukuran font */
-                padding: 8px; /* Mengurangi padding untuk mengecilkan tombol */
+                flex: 0 0 20%; 
+                margin: 3px; 
+                font-size: 10px; 
+                padding: 8px; 
             }
 
             .filter-btn:nth-child(4) {
-                order: 1; /* Menempatkan tombol ke-4 (zone) di urutan pertama pada baris kedua */
+                order: 1; 
             }
 
             .filter-btn:nth-child(5) {
-                order: 2; /* Menempatkan tombol ke-5 (fishing) di urutan kedua pada baris kedua */
+                order: 2; 
             }
         }
     </style>
@@ -196,35 +221,8 @@
 
 <body>
     <div id="map"></div>
-    <div class="filter-container">
-       <div class="filter-container">
-    <!-- Existing filter buttons... -->
-    
-    <!-- New button to show/hide .new-filter-btn elements -->
     <div class="filter-btn toggle-new-filters" data-toggle="new-filters">
-        <img src="icons/toggle_btn.png" alt="Toggle Filters"> Toggle New Filters
-    </div>
-</div>
-    <div class="new-filter-container">
-        <div class="filter-btn new-filter-btn" data-filter="loc_type2">
-            Sundale Valley
-        </div>
-        <div class="filter-btn new-filter-btn" data-filter="loc_type3">
-            Howling Gobi
-        </div>
-        <div class="filter-btn new-filter-btn" data-filter="loc_type5">
-            Edengate
-        </div>    
-        <div class="filter-btn new-filter-btn" data-filter="loc_type4">
-            Ragon Snowy Peak
-        </div>
-        <div class="filter-btn new-filter-btn" data-filter="loc_type6">
-            Kepler Harbour
-        </div>
-    </div>
-        <!-- New button to show/hide .new-filter-btn elements -->
-        <div class="filter-btn toggle-new-filters" data-toggle="new-filters">
-            <img src="icons/icon_toggle.png" alt="Toggle Filters"> Toggle New Filters
+            <img src="icons/toggle_btn.png" alt="Toggle Filters">
         </div>
     </div>
     <!-- New filter container for mark -->
@@ -232,17 +230,17 @@
         <div class="filter-btn" data-filter="loc_type2">
             Sundale Valley
         </div>
-        <div class="filter-btn" data-filter="loc_type3">
+        <div class="filter-btn" data-filter="loc_type5">
             Howling Gobi
         </div>
-        <div class="filter-btn" data-filter="loc_type5">
+        <div class="filter-btn" data-filter="loc_type4">
             Edengate
         </div>    
-        <div class="filter-btn" data-filter="loc_type4">
-            ragon snowy peak
+        <div class="filter-btn" data-filter="loc_type3">
+            Ragon Snowy peak
         </div>
         <div class="filter-btn" data-filter="loc_type6">
-            kepler harbour
+            Kepler Harbour
         </div>
     </div>
 
@@ -251,20 +249,24 @@
     <!-- Filter buttons -->
     <div class="filter-container">
         <div class="filter-btn active" data-filter="all">
-            <img src="icons/icon_teleport.png" alt="All"> All
+            <img src="icons/icon_teleport.png" alt="All"> clear all mark
         </div>
-        <div class="filter-btn" data-filter="tresure">
+        <label class="filter-checkbox-btn">
+            <input type="checkbox" class="filter-checkbox" data-filter="tresure">
             <img src="icons/icon_tresure.png" alt="Treasure"> Treasure
-        </div>
-        <div class="filter-btn" data-filter="teleport">
+        </label>
+        <label class="filter-checkbox-btn">
+            <input type="checkbox" class="filter-checkbox" data-filter="teleport">
             <img src="icons/icon_teleport.png" alt="Teleport"> Teleport
-        </div>
-        <div class="filter-btn" data-filter="fishing">
+        </label>
+        <label class="filter-checkbox-btn">
+            <input type="checkbox" class="filter-checkbox" data-filter="fishing">
             <img src="icons/icon_fishing.png" alt="Fishing"> Fishing
-        </div>
-        <div class="filter-btn" data-filter="zone">
+        </label>
+        <label class="filter-checkbox-btn">
+            <input type="checkbox" class="filter-checkbox" data-filter="zone">
             <img src="icons/icon_zone.png" alt="Zone"> Zone
-        </div>
+        </label>
     </div>
 
 
@@ -274,6 +276,7 @@
     <script src="minimap_config.js"></script>
     <script>
         let activeFilters = [];
+        let activeLocTypes = [];
         let markers = [];
         function initMap() {
             var init_position = window.init_position;
@@ -409,6 +412,7 @@
                         map: map,
                         icon: icon,
                         category: location.category_id,
+                        loc_type: location.loc_type,
                         draggable: false
                     });
 
@@ -427,56 +431,56 @@
                     });
                     // Store the marker for filtering
                     markers.push(marker);
-                    // Store the marker for filtering
-                    markers.push(marker);
                 }
             }
+            //event listener for loc type filter
+            document.querySelectorAll('.new-filter-container .filter-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    button.classList.toggle('active');
+                    updateActiveFilters(button.getAttribute('data-filter'));
+                    filterMarkers();
+                    //toggle for loc type
+            document.querySelector('.toggle-new-filters').addEventListener('click', () => {
+                const filterContainer = document.querySelector('.new-filter-container');
+                filterContainer.style.display = filterContainer.style.display === 'none' ? 'flex' : 'none';
+            });
+                
+        });
+    });
             // Hide all markers on initial load
             markers.forEach(marker => {
             marker.setMap(null);
             });
             
             // Add event listeners to the filter buttons
-            document.querySelectorAll('.filter-btn').forEach(button => {
-                button.addEventListener('click', () => {
-                    // Toggle the active state
-                    button.classList.toggle('active');
-
-                    // Update the active filters
-                    updateActiveFilters(button.getAttribute('data-filter'));
-
-                    // Filter markers
-                    filterMarkers();
+            document.querySelectorAll('.filter-container input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    updateActiveFilters(checkbox.getAttribute('data-filter'), checkbox.checked);
                 });
-            });
+            })
 
 
             this.initMiniMap();
         }
 
         function updateActiveFilters(filter) {
-            if (filter === 'all') {
-                // If "All" is selected, clear other filters
-                if (activeFilters.includes('all')) {
-                    activeFilters = [];
-                    document.querySelectorAll('.filter-btn').forEach(btn => {
-                        btn.classList.remove('active');
-                    });
+            if (filter.startsWith('loc_type')) {
+                // Tangani filter loc_type
+                const index = activeLocTypes.indexOf(filter);
+                if (index > -1) {
+                    activeLocTypes.splice(index, 1);
                 } else {
-                    activeFilters = ['all'];
-                    document.querySelectorAll('.filter-btn').forEach(btn => {
-                        if (btn.getAttribute('data-filter') !== 'all') {
-                            btn.classList.remove('active');
-                        }
-                    });
+                    activeLocTypes.push(filter);
                 }
-
             } else {
-                if (activeFilters.includes('all')) {
+                if (filter === 'all') {
+                    // Clear all markers
+                    markers.forEach(marker => marker.setMap(null));
                     activeFilters = [];
-                    document.querySelector('.filter-btn[data-filter="all"]').classList.remove('active');
+                    activeLocTypes = [];
+                    document.querySelectorAll('.filter-container .filter-btn').forEach(button => button.classList.remove('active'));
+                    return;
                 }
-
                 const index = activeFilters.indexOf(filter);
                 if (index > -1) {
                     activeFilters.splice(index, 1);
@@ -489,19 +493,20 @@
                     document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
                 }
             }
+
         }
 
         function filterMarkers() {
             markers.forEach(marker => {
-                if (activeFilters.includes('all')) {
-                    marker.setMap(map);
-                } else if (activeFilters.includes('tresure') && marker.category === '2') {
-                    marker.setMap(map);
-                } else if (activeFilters.includes('teleport') && marker.category === '1') {
-                    marker.setMap(map);
-                } else if (activeFilters.includes('fishing') && ['9', '10', '11', '12', '13', '14'].includes(marker.category)) {
-                    marker.setMap(map);
-                } else if (activeFilters.includes('zone') && marker.category === '3') {
+                const categoryMatch = activeFilters.includes('all') ||
+                    (activeFilters.includes('tresure') && marker.category === '2') ||
+                    (activeFilters.includes('teleport') && marker.category === '1') ||
+                    (activeFilters.includes('fishing') && ['9', '10', '11', '12', '13', '14'].includes(marker.category)) ||
+                    (activeFilters.includes('zone') && marker.category === '3');
+
+                const locTypeMatch = activeLocTypes.length === 0 || activeLocTypes.includes(`loc_type${marker.loc_type}`);
+
+                if (categoryMatch && locTypeMatch) {
                     marker.setMap(map);
                 } else {
                     marker.setMap(null);
