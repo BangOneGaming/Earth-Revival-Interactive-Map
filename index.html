@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:image" content="https://www.facebook.com/share/p/SQQJgCLWzjDQo5yU/?mibextid=oFDknk" />
+    <meta property="og:image" url="https://www.facebook.com/share/p/SQQJgCLWzjDQo5yU/?mibextid=oFDknk" />
     <title>Earth Revival Interactive Maps</title>
     <style>
         /* Style for the map container */
@@ -292,11 +292,11 @@
             #logo {
             position: absolute;
             top: 10px; 
-            right: 10px;
+            right: 50px;
             z-index: 1500;
             width: 300px;
             height: auto;
-            display: block;
+            display: flex;
             }
 
             .filter-btn:nth-child(4) {
@@ -328,11 +328,11 @@
 
 <body>
     <div id="map"></div>
-    <div class="toggle-legend-container">
+    <div id="toggle-legend" class="toggle-legend-container">
         <img src="icons/toggle_btn.png" alt="Toggle Legend">
     </div>
-    <div class="toggle-new-filters-container">
-            <img src="icons/toggle_btn.png" alt="Toggle Filters">
+    <div id="toggle-filters" class="toggle-new-filters-container">
+        <img src="icons/toggle_btn.png" alt="Toggle Filters">
         </div>
     <!-- New filter container for mark -->
     <div class="new-filter-container">
@@ -546,6 +546,8 @@
                     markers.push(marker);
                 }
             }
+            
+
             // Toggle filter container
             document.querySelector('.toggle-new-filters-container').addEventListener('click', () => {
             const newFilterContainer = document.querySelector('.new-filter-container');
@@ -783,6 +785,40 @@
                 marker.historicalOverlay = historicalOverlay;
                 marker.setMap(this.map);
                 this.mini_map_marker[key_cur] = marker;
+            
+                //toggle button for legend and checkbox
+                document.getElementById('toggle-legend').addEventListener('click', function () {
+                    const filterContainer = document.querySelector('.filter-container');
+                    filterContainer.style.display = filterContainer.style.display === 'none' ? 'flex' : 'none';
+                });
+
+                document.getElementById('toggle-filters').addEventListener('click', function () {
+                    const newFilterContainer = document.querySelector('.new-filter-container');
+                    newFilterContainer.style.display = newFilterContainer.style.display === 'none' ? 'flex' : 'none';
+                });
+                document.getElementById("toggle-legend").addEventListener("click", function() {
+                    let filterContainer = document.querySelector(".filter-container");
+
+                    if (filterContainer.style.display === "none" || !filterContainer.style.display) {
+                        filterContainer.style.display = "block";
+                    } else {
+                        filterContainer.style.display = "none";
+                    }
+                });
+
+                document.getElementById("toggle-filters").addEventListener("click", function() {
+                    let newFilterContainer = document.querySelector(".new-filter-container");
+
+                if (newFilterContainer.style.display === "none" || !newFilterContainer.style.display) {
+                    newFilterContainer.style.display = "block";
+                } else {
+                    newFilterContainer.style.display = "none";
+                }
+            });
+
+                // Initial setup: hide both containers
+                document.querySelector('.filter-container').style.display = 'none';
+                document.querySelector('.new-filter-container').style.display = 'none';
             }
             
 
