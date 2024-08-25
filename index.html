@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:image" content="statics/tittle.png" />
+    <meta property="og:image" content="https://www.facebook.com/share/p/SQQJgCLWzjDQo5yU/?mibextid=oFDknk" />
     <title>Earth Revival Interactive Maps</title>
     <style>
         /* Style for the map container */
@@ -15,45 +15,84 @@
             top: 0;
             left: 0;
         }
+        .toggle-legend-container {
+            position: absolute;
+            top: 80%; /* Sesuaikan dengan kebutuhan */
+            left: 10px; /* Sesuaikan dengan kebutuhan */
+            z-index: 1500; /* Pastikan ini lebih tinggi dari z-index peta */
+            background: rgba(27, 122, 255, 0.8); /* Opsional: Pastikan terlihat */
+            border-radius: 5px;
+            padding: 5px;
+            cursor: pointer;
+            transition: box-shadow 0.3s ease; /* Transisi halus untuk efek glowing */
+        }
+
+        .toggle-legend-container:active {
+            box-shadow: 0 0 10px 5px rgb(251, 255, 22);
+        }
+        .toggle-new-filters-container {
+            position: absolute;
+            top: 70%; /* Adjust as needed */
+            left: 10px; /* Adjust as needed */
+            z-index: 1500; /* Ensure this is higher than the map's z-index */
+            background: rgba(27, 122, 255, 0.8); /* Optional: Make sure it's visible */
+            border-radius: 5px;
+            padding: 5px;
+            transition: box-shadow 0.3s ease; /* Transisi halus untuk efek glowing */
+        }
+
+        .toggle-new-filters-container:active {
+            box-shadow: 0 0 10px 5px rgb(251, 255, 22);
+        }
+
         /* Style for the new filter container */
         .new-filter-container {
             position: absolute;
-            top: 300px; /* Adjust top position as needed */
-            left: 40px; /* Adjust left position as needed */
+            top: 10px; /* Adjust top position as needed */
+            left: 200px; /* Adjust left position as needed */
             z-index: 1000;
             display: flex;
             flex-direction: column;
             gap: 10px;
+            height: 300px;
             background: white;
             padding: 10px;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            
         }
-            /* Gaya untuk tombol di dalam container new-filter-container dengan gambar yang berbeda */
-            .new-filter-container .filter-btn:nth-child(1) {
+        .new-filter-container.show {
+            transform: translateX(300px); /* Geser ke kiri untuk terlihat */
+            right: 10px; /* Atur posisi akhir setelah geser */
+        }
+        /* Gaya untuk tombol di dalam container new-filter-container dengan gambar yang berbeda */
+        .new-filter-container .filter-btn:nth-child(1) {
                 background-image: url('icons/sundale.png');
             }
 
-            .new-filter-container .filter-btn:nth-child(2) {
+        .new-filter-container .filter-btn:nth-child(2) {
                 background-image: url('icons/howling.png');
             }
 
-            .new-filter-container .filter-btn:nth-child(3) {
+        .new-filter-container .filter-btn:nth-child(3) {
                 background-image: url('icons/eden.png');
             }
 
-            .new-filter-container .filter-btn:nth-child(4) {
+        .new-filter-container .filter-btn:nth-child(4) {
                 background-image: url('icons/ragon.png');
             }
 
-            .new-filter-container .filter-btn:nth-child(5) {
+        .new-filter-container .filter-btn:nth-child(5) {
                 background-image: url('icons/kepler.png');
             }
 
         /* Style for buttons inside the new filter container */
         .new-filter-container .filter-btn {
+            height: 40px;
+            width: 80%;
             display: flex;
             align-items: center;
+            justify-content: center;
             padding: 10px 15px;
             background-image: url('icons/sundale.png');
             background-size: cover;
@@ -97,7 +136,7 @@
             top: 10px;
             left: 10px;
             z-index: 1000;
-            display: flex;
+            display: none;
             flex-direction: column;
             gap: 10px;
             background: white;
@@ -141,7 +180,16 @@
             transition: background-color 0.3s ease;
             text-align: center;
             font-size: 16px;
+            font-weight: bold;
         }
+
+    /* Gaya untuk tombol filter yang aktif */
+    .filter-btn.active {
+        background-color: #007bff; /* Warna latar belakang aktif */
+        color: #fff;               /* Warna teks aktif */
+        border-color: #007bff;    /* Warna border aktif */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Bayangan untuk efek aktif */
+    }
 
         .filter-btn:hover {
             background-color: #f0f0f0;
@@ -159,6 +207,9 @@
         }
 
         .filter-container input[type="checkbox"] {
+            width: 20px; /* Atur lebar checkbox */
+            height: 20px; /* Atur tinggi checkbox */
+            transform: scale(1.5); /* Mengubah ukuran keseluruhan checkbox */
             margin-right: 10px;
         }
 
@@ -173,12 +224,41 @@
 
 
         @media (max-width: 600px) {
+            .toggle-legend-container {
+                position: absolute;
+                width: 50px;
+                top: 90px; /* Adjust as needed */
+                right: 10px; /* Adjust as needed */
+                z-index: 1500; /* Ensure this is higher than the map's z-index */
+                background: transparent; /* Menghilangkan latar belakang putih */
+                border: none;
+                transition: box-shadow 0.3s ease;
+                padding: 1px;
+            }
+            .toggle-legend-container:active {
+                box-shadow: 0 0 10px 5px rgb(255, 217, 0); /* Efek glowing saat ditekan */
+            }
+            .toggle-new-filters-container {
+                position: absolute;
+                width: 50px;
+                top: 150px; /* Adjust as needed */
+                right: 10px; /* Adjust as needed */
+                z-index: 1500; /* Ensure this is higher than the map's z-index */
+                background: transparent; /* Menghilangkan latar belakang putih */
+                border: none;
+                transition: box-shadow 0.3s ease;
+                padding: 1px;
+            }
+            .toggle-new-filters-container:active {
+                box-shadow: 0 0 10px 5px rgb(255, 217, 0); /* Efek glowing saat ditekan */
+            }
             .new-filter-container {
                 top: auto; /* Atur ulang posisi top */
                 left: 120px; /* Atur ulang posisi left */
                 right: 10px; /* Sesuaikan jarak dari kanan */
-                bottom: 30px; /* Sesuaikan jarak dari bawah */
+                bottom: 10px; /* Sesuaikan jarak dari bawah */
                 width: 30%; /* Ubah lebar agar lebih sesuai dengan layar kecil */
+                height: 38%;
                 margin: 0 auto; /* Pusatkan kontainer */
                 padding: 10px; /* Kurangi padding untuk tampilan mobile */
                 box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Kurangi bayangan untuk tampilan mobile */
@@ -186,12 +266,13 @@
 
             .new-filter-container .filter-btn {
                 flex: 1 1 auto; /* Buat tombol menyesuaikan lebar penuh */
-                margin: 5px 0; /* Atur margin vertikal untuk spasi antar tombol */
+                margin: 3px 0; /* Atur margin vertikal untuk spasi antar tombol */
                 font-size: 12px; /* Sesuaikan ukuran font */
                 padding: 8px; /* Sesuaikan padding untuk kenyamanan penggunaan */
             }
 
             .filter-container {
+                position: absolute;
                 flex-direction: column;
                 top: auto;
                 bottom: 10px;
@@ -199,13 +280,23 @@
                 padding: 10px; /* Sesuaikan padding jika diperlukan */
                 justify-content: center;
                 margin: 0 auto; /* Agar posisi container berada di tengah */
+                height: 350px;
             }
 
             .filter-btn {
-                flex: 0 0 20%; 
+                flex: 1 1 auto; 
                 margin: 3px; 
                 font-size: 10px; 
                 padding: 8px; 
+            }
+            #logo {
+            position: absolute;
+            top: 10px; 
+            right: 10px;
+            z-index: 1500;
+            width: 300px;
+            height: auto;
+            display: block;
             }
 
             .filter-btn:nth-child(4) {
@@ -216,15 +307,33 @@
                 order: 2; 
             }
         }
+        /* Style for the filter checkboxes */
+        .filter-container label {
+            display: flex; 
+            flex: 0 0 5px; /* Atur lebar dasar menjadi 100px */
+            margin: 3px;
+            font-size: 10px;
+            padding: 2px;
+            align-items: center;
+            height: 300px;
+        }    
+        .filter-container input[type="checkbox"] {
+            width: 10px; /* Atur lebar checkbox */
+            height: 10px; /* Atur tinggi checkbox */
+            transform: scale(1.5); /* Mengubah ukuran keseluruhan checkbox */
+            margin-right: 10px;
+        }
     </style>
 </head>
 
 <body>
     <div id="map"></div>
-    <div class="filter-btn toggle-new-filters" data-toggle="new-filters">
+    <div class="toggle-legend-container">
+        <img src="icons/toggle_btn.png" alt="Toggle Legend">
+    </div>
+    <div class="toggle-new-filters-container">
             <img src="icons/toggle_btn.png" alt="Toggle Filters">
         </div>
-    </div>
     <!-- New filter container for mark -->
     <div class="new-filter-container">
         <div class="filter-btn" data-filter="loc_type2">
@@ -266,6 +375,10 @@
         <label class="filter-checkbox-btn">
             <input type="checkbox" class="filter-checkbox" data-filter="zone">
             <img src="icons/icon_zone.png" alt="Zone"> Zone
+        </label>
+        <label class="filter-checkbox-btn">
+            <input type="checkbox" class="filter-checkbox" data-filter="training">
+            <img src="icons/icon_train.png" alt="Training"> Training
         </label>
     </div>
 
@@ -433,20 +546,53 @@
                     markers.push(marker);
                 }
             }
-            //event listener for loc type filter
+            // Toggle filter container
+            document.querySelector('.toggle-new-filters-container').addEventListener('click', () => {
+            const newFilterContainer = document.querySelector('.new-filter-container');
+            newFilterContainer.style.display = newFilterContainer.style.display === 'none' || newFilterContainer.style.display === '' ? 'flex' : 'none';
+        });
+
+            //fix toggle button 
+            document.addEventListener('DOMContentLoaded', () => {
+            const toggleButton = document.querySelector('.toggle-new-filters-container');
+            const newFilterContainer = document.querySelector('.new-filter-container');
+
+            toggleButton.addEventListener('click', () => {
+                if (newFilterContainer.style.display === 'none' || newFilterContainer.style.display === '') {
+                    newFilterContainer.style.display = 'flex';
+                } else {
+                    newFilterContainer.style.display = 'none';
+                }
+            });
+        });
+            //toggle legend
+            document.addEventListener('DOMContentLoaded', () => {
+            const toggleLegendButton = document.querySelector('.toggle-legend-container');
+            const filterContainer = document.querySelector('.filter-container');
+
+            toggleLegendButton.addEventListener('click', () => {
+                filterContainer.style.display = filterContainer.style.display === 'none' || filterContainer.style.display === '' ? 'flex' : 'none';
+            });
+        });
+            // Event listener untuk tombol filter baru
             document.querySelectorAll('.new-filter-container .filter-btn').forEach(button => {
                 button.addEventListener('click', () => {
                     button.classList.toggle('active');
-                    updateActiveFilters(button.getAttribute('data-filter'));
-                    filterMarkers();
-                    //toggle for loc type
-            document.querySelector('.toggle-new-filters').addEventListener('click', () => {
-                const filterContainer = document.querySelector('.new-filter-container');
-                filterContainer.style.display = filterContainer.style.display === 'none' ? 'flex' : 'none';
-            });
+                    updateMarkers();
+                });
                 
         });
-    });
+        var toggleButton = document.querySelector('.toggle-new-filters-container');
+        var newFilterContainer = document.querySelector('.new-filter-container');
+        toggleButton.addEventListener('click', function () {
+            if (newFilterContainer.style.display === 'none' || newFilterContainer.style.display === '') {
+                newFilterContainer.style.display = 'flex';
+            } else {
+                newFilterContainer.style.display = 'none';
+            }
+            });
+
+        
             // Hide all markers on initial load
             markers.forEach(marker => {
             marker.setMap(null);
@@ -502,8 +648,8 @@
                     (activeFilters.includes('tresure') && marker.category === '2') ||
                     (activeFilters.includes('teleport') && marker.category === '1') ||
                     (activeFilters.includes('fishing') && ['9', '10', '11', '12', '13', '14'].includes(marker.category)) ||
-                    (activeFilters.includes('zone') && marker.category === '3');
-
+                    (activeFilters.includes('zone') && marker.category === '3') ||
+                    (activeFilters.includes('training') && marker.category === '7');
                 const locTypeMatch = activeLocTypes.length === 0 || activeLocTypes.includes(`loc_type${marker.loc_type}`);
 
                 if (categoryMatch && locTypeMatch) {
@@ -529,6 +675,17 @@
             }
 
             return { x: x, y: y };
+        }
+
+        function updateMarkers() {
+            // Mendapatkan filter aktif
+            activeLocTypes = Array.from(document.querySelectorAll('.new-filter-container .filter-btn.active')).map(btn => btn.getAttribute('data-filter'));
+            
+            // Menyembunyikan semua marker dan kemudian menampilkan yang sesuai dengan filter
+            markers.forEach(marker => {
+                const locTypeMatch = activeLocTypes.length === 0 || activeLocTypes.includes(`loc_type${marker.loc_type}`);
+                marker.setMap(locTypeMatch ? map : null);
+            });
         }
 
         function convertToRealCoordinates(lat, lng) {
