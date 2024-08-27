@@ -1,0 +1,847 @@
+import React, { useState, useEffect } from 'react';
+import { Box, Button, Checkbox, FormControlLabel } from '@mui/material';
+import './App.css';
+
+function App() {
+  const [map, setMap] = useState(null);
+  const [activeFilters, setActiveFilters] = useState([]);
+  const [activeLocTypes, setActiveLocTypes] = useState([]);
+  const [markers, setMarkers] = useState([]);
+  const [showFilterContainer, setShowFilterContainer] = useState(false);
+  const [showNewFilterContainer, setShowNewFilterContainer] = useState(false);
+
+  useEffect(() => {
+    initMap();
+  }, []);
+
+  const initMap = () => {
+    const initPosition = "56.871009248911655,-72.62568359375001";
+    const [lat, lng] = initPosition.split(',').map(Number);
+
+    const mapInstance = new google.maps.Map(document.getElementById('map'), {
+      center: { lat, lng },
+      zoom: 6,
+      streetViewControl: false,
+      mapTypeControl: false,
+      disableDefaultUI: true,
+      backgroundColor: '#1E2026',
+    });
+
+    setMap(mapInstance);
+
+    // Assume markers data is available as an array of objects with properties like `lat`, `lng`, `category_id`, etc.
+    // Example:
+    const markersData = [
+      { lat: 56.871, lng: -72.626, category_id: '1', loc_type: '2' },
+      // More marker data...
+    ];
+
+    const initialMarkers = markersData.map((data) => {
+      const marker = new google.maps.Marker({
+        position: { lat: data.lat, lng: data.lng },
+        map: mapInstance,
+        category: data.category_id,
+        loc_type: data.loc_type,
+      });
+      return marker;
+    });
+
+    setMarkers(initialMarkers);
+  };
+
+  const updateActiveFilters = (filter, isLocType = false) => {
+    if (isLocType) {
+      // Handle loc_type filters
+      setActiveLocTypes((prevLocTypes) => {
+        if (prevLocTypes.includes(filter)) {
+          return prevLocTypes.filter((type) => type !== filter);
+        } else {
+          return [...prevLocTypes, filter];
+        }
+      });
+    } else {
+      // Handle category filters
+      setActiveFilters((prevFilters) => {
+        if (filter === 'all') {
+          return [];
+        }
+        if (prevFilters.includes(filter)) {
+          return prevFilters.filter((f) => f !== filter);
+        } else {
+          return [...prevFilters, filter];
+        }
+      });
+    }
+
+<<<<<<< HEAD
+    filterMarkers();
+  };
+
+  const filterMarkers = () => {
+    markers.forEach((marker) => {
+      const categoryMatch =
+        activeFilters.length === 0 ||
+        activeFilters.includes(marker.category);
+
+      const locTypeMatch =
+        activeLocTypes.length === 0 ||
+        activeLocTypes.includes(marker.loc_type);
+
+      if (categoryMatch && locTypeMatch) {
+        marker.setMap(map);
+      } else {
+        marker.setMap(null);
+      }
+    });
+  };
+
+  const toggleFilterContainer = () => {
+    setShowFilterContainer(!showFilterContainer);
+  };
+
+  const toggleNewFilterContainer = () => {
+    setShowNewFilterContainer(!showNewFilterContainer);
+  };
+
+  return (
+    <Box className="App">
+      <Box id="map"></Box>
+      <ToggleButton onClick={toggleFilterContainer} position="80%" icon="icons/toggle_btn.png" />
+      <ToggleButton onClick={toggleNewFilterContainer} position="70%" icon="icons/toggle_btn.png" />
+
+      {showFilterContainer && (
+        <FilterContainer
+          activeFilters={activeFilters}
+          updateActiveFilters={(filter) => updateActiveFilters(filter, false)}
+        />
+      )}
+
+      {showNewFilterContainer && (
+        <NewFilterContainer
+          activeLocTypes={activeLocTypes}
+          updateActiveFilters={(filter) => updateActiveFilters(filter, true)}
+        />
+      )}
+
+      <img src="statics/tittle_er.png" alt="Logo" id="logo" />
+    </Box>
+  );
+}
+
+function ToggleButton({ onClick, position, icon }) {
+  return (
+    <Button
+      style={{ position: 'absolute', top: position, left: 10 }}
+      variant="contained"
+      onClick={onClick}
+    >
+      <img src={icon} alt="Toggle" />
+    </Button>
+  );
+}
+
+function FilterContainer({ activeFilters, updateActiveFilters }) {
+  const filterOptions = [
+    { filter: 'tresure', icon: 'icons/icon_tresure.png', label: 'Treasure' },
+    { filter: 'teleport', icon: 'icons/icon_teleport.png', label: 'Teleport' },
+    { filter: 'fishing', icon: 'icons/icon_fishing.png', label: 'Fishing' },
+    { filter: 'zone', icon: 'icons/icon_zone.png', label: 'Zone' },
+    { filter: 'training', icon: 'icons/icon_train.png', label: 'Training' },
+  ];
+
+  return (
+    <Box className="filter-container">
+      <Button
+        className="filter-btn"
+        data-filter="all"
+        variant="contained"
+        color="primary"
+        onClick={() => updateActiveFilters('all')}
+      >
+        <img src="icons/icon_teleport.png" alt="All" /> Clear all marks
+      </Button>
+      {filterOptions.map((option) => (
+        <FormControlLabel
+          key={option.filter}
+          control={
+            <Checkbox
+              onChange={() => updateActiveFilters(option.filter)}
+              checked={activeFilters.includes(option.filter)}
+            />
+          }
+          label={<img src={option.icon} alt={option.label} />}
+        />
+      ))}
+    </Box>
+  );
+}
+
+function NewFilterContainer({ activeLocTypes, updateActiveFilters }) {
+  const filterButtons = [
+    { filter: 'loc_type2', label: 'Sundale Valley' },
+    { filter: 'loc_type5', label: 'Howling Gobi' },
+    { filter: 'loc_type4', label: 'Edengate' },
+    { filter: 'loc_type3', label: 'Ragon Snowy Peak' },
+    { filter: 'loc_type6', label: 'Kepler Harbour' },
+  ];
+
+  return (
+    <Box className="new-filter-container">
+      {filterButtons.map((btn) => (
+        <Button
+          key={btn.filter}
+          className={`filter-btn ${activeLocTypes.includes(btn.filter) ? 'active' : ''}`}
+          variant="contained"
+          color="primary"
+          onClick={() => updateActiveFilters(btn.filter)}
+        >
+          {btn.label}
+        </Button>
+      ))}
+    </Box>
+  );
+}
+
+export default App;
+=======
+        .filter-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .filter-btn.active {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .filter-btn img {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .filter-container input[type="checkbox"] {
+            width: 20px; /* Atur lebar checkbox */
+            height: 20px; /* Atur tinggi checkbox */
+            transform: scale(1.5); /* Mengubah ukuran keseluruhan checkbox */
+            margin-right: 10px;
+        }
+
+        .filter-container label:hover {
+            background-color: #f0f0f0;
+        }
+
+        .filter-container label.active {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+
+        @media (max-width: 600px) {
+            .toggle-legend-container {
+                position: absolute;
+                width: 50px;
+                top: 90px; /* Adjust as needed */
+                right: 10px; /* Adjust as needed */
+                z-index: 1500; /* Ensure this is higher than the map's z-index */
+                background: transparent; /* Menghilangkan latar belakang putih */
+                border: none;
+                transition: box-shadow 0.3s ease;
+                padding: 1px;
+            }
+            .toggle-legend-container:active {
+                box-shadow: 0 0 10px 5px rgb(255, 217, 0); /* Efek glowing saat ditekan */
+            }
+            .toggle-new-filters-container {
+                position: absolute;
+                width: 50px;
+                top: 150px; /* Adjust as needed */
+                right: 10px; /* Adjust as needed */
+                z-index: 1500; /* Ensure this is higher than the map's z-index */
+                background: transparent; /* Menghilangkan latar belakang putih */
+                border: none;
+                transition: box-shadow 0.3s ease;
+                padding: 1px;
+            }
+            .toggle-new-filters-container:active {
+                box-shadow: 0 0 10px 5px rgb(255, 217, 0); /* Efek glowing saat ditekan */
+            }
+            .new-filter-container {
+                top: auto; /* Atur ulang posisi top */
+                left: 120px; /* Atur ulang posisi left */
+                right: 10px; /* Sesuaikan jarak dari kanan */
+                bottom: 10px; /* Sesuaikan jarak dari bawah */
+                width: 30%; /* Ubah lebar agar lebih sesuai dengan layar kecil */
+                height: 38%;
+                margin: 0 auto; /* Pusatkan kontainer */
+                padding: 10px; /* Kurangi padding untuk tampilan mobile */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Kurangi bayangan untuk tampilan mobile */
+            }
+
+            .new-filter-container .filter-btn {
+                flex: 1 1 auto; /* Buat tombol menyesuaikan lebar penuh */
+                margin: 3px 0; /* Atur margin vertikal untuk spasi antar tombol */
+                font-size: 12px; /* Sesuaikan ukuran font */
+                padding: 8px; /* Sesuaikan padding untuk kenyamanan penggunaan */
+            }
+
+            .filter-container {
+                position: absolute;
+                flex-direction: column;
+                top: auto;
+                bottom: 10px;
+                width: 35%; /* Atur lebar sesuai dengan kebutuhan */
+                padding: 10px; /* Sesuaikan padding jika diperlukan */
+                justify-content: center;
+                margin: 0 auto; /* Agar posisi container berada di tengah */
+                height: 350px;
+            }
+
+            .filter-btn {
+                flex: 1 1 auto; 
+                margin: 3px; 
+                font-size: 10px; 
+                padding: 8px; 
+            }
+            #logo {
+            position: absolute;
+            top: 10px; 
+            right: 50px;
+            z-index: 1500;
+            width: 300px;
+            height: auto;
+            display: flex;
+            }
+
+            .filter-btn:nth-child(4) {
+                order: 1; 
+            }
+
+            .filter-btn:nth-child(5) {
+                order: 2; 
+            }
+        }
+        /* Style for the filter checkboxes */
+        .filter-container label {
+            display: flex; 
+            flex: 0 0 5px; /* Atur lebar dasar menjadi 100px */
+            margin: 3px;
+            font-size: 10px;
+            padding: 2px;
+            align-items: center;
+            height: 300px;
+        }    
+        .filter-container input[type="checkbox"] {
+            width: 10px; /* Atur lebar checkbox */
+            height: 10px; /* Atur tinggi checkbox */
+            transform: scale(1.5); /* Mengubah ukuran keseluruhan checkbox */
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <div id="toggle-legend" class="toggle-legend-container">
+        <img src="icons/toggle_btn.png" alt="Toggle Legend">
+    </div>
+    <div id="toggle-filters" class="toggle-new-filters-container">
+        <img src="icons/toggle_btn.png" alt="Toggle Filters">
+        </div>
+    <!-- New filter container for mark -->
+    <div class="new-filter-container">
+        <div class="filter-btn" data-filter="loc_type2">
+            Sundale Valley
+        </div>
+        <div class="filter-btn" data-filter="loc_type5">
+            Howling Gobi
+        </div>
+        <div class="filter-btn" data-filter="loc_type4">
+            Edengate
+        </div>    
+        <div class="filter-btn" data-filter="loc_type3">
+            Ragon Snowy peak
+        </div>
+        <div class="filter-btn" data-filter="loc_type6">
+            Kepler Harbour
+        </div>
+    </div>
+
+    <!-- Logo -->
+    <img src="statics/tittle_er.png" alt="Logo" id="logo" />
+    <!-- Filter buttons -->
+    <div class="filter-container">
+        <div class="filter-btn active" data-filter="all">
+            <img src="icons/icon_teleport.png" alt="All"> clear all mark
+        </div>
+        <label class="filter-checkbox-btn">
+            <input type="checkbox" class="filter-checkbox" data-filter="tresure">
+            <img src="icons/icon_tresure.png" alt="Treasure"> Treasure
+        </label>
+        <label class="filter-checkbox-btn">
+            <input type="checkbox" class="filter-checkbox" data-filter="teleport">
+            <img src="icons/icon_teleport.png" alt="Teleport"> Teleport
+        </label>
+        <label class="filter-checkbox-btn">
+            <input type="checkbox" class="filter-checkbox" data-filter="fishing">
+            <img src="icons/icon_fishing.png" alt="Fishing"> Fishing
+        </label>
+        <label class="filter-checkbox-btn">
+            <input type="checkbox" class="filter-checkbox" data-filter="zone">
+            <img src="icons/icon_zone.png" alt="Zone"> Zone
+        </label>
+        <label class="filter-checkbox-btn">
+            <input type="checkbox" class="filter-checkbox" data-filter="training">
+            <img src="icons/icon_train.png" alt="Training"> Training
+        </label>
+    </div>
+
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap"
+        async defer></script>
+    <script src="updated_output.js"></script>
+    <script src="minimap_config.js"></script>
+    <script>
+        let activeFilters = [];
+        let activeLocTypes = [];
+        let markers = [];
+        function initMap() {
+            var init_position = window.init_position;
+            if (typeof init_position == 'undefined') {
+                init_position = "56.871009248911655,-72.62568359375001";
+            }
+            var center_postion = init_position.split(",");
+            // Initialize the map
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: {
+                    //lat:59.5,
+                    lat: center_postion[0] * 1,
+                    // lng:-78.8
+                    lng: center_postion[1] * 1
+                },
+                zoom: 6,
+                //zoom: that.deviceType != 'isPc'?6:4,
+                streetViewControl: false,
+                mapTypeControl: false,
+                disableDefaultUI: true,
+                noClear: true,
+                backgroundColor: '#1E2026'
+            });
+
+            // Custom map type (if needed, replace with actual logic or remove if not used)
+            var myMap = new google.maps.ImageMapType({
+                getTileUrl: function (coord, zoom) {
+                    var normalizedCoord = getNormalizedCoord(coord, zoom);
+                    if (!normalizedCoord) {
+                        return null;
+                    }
+
+                    var xy_deny = {
+                        "zoom_4": [4, 4],
+                        "zoom_5": [8, 9],
+                        "zoom_6": [16, 19],
+                        "zoom_7": [32, 39],
+                        "zoom_8": [64, 79],
+                        "zoom_9": [128, 159],
+                        "zoom_10": [256, 219],
+                        "zoom_11": [512, 639],
+                        "zoom_12": [1024, 1279],
+                        "zoom_13": [2048, 2559]
+                    };
+                    if (zoom < 4 || zoom > 9) {
+                        return null;
+                    }
+                    var temp = xy_deny["zoom_" + zoom];
+                    if ((temp[0] <= normalizedCoord.x && normalizedCoord.x <= temp[1]) &&
+                        (temp[0] <= normalizedCoord.y && normalizedCoord.y <= temp[1])) {
+                        return `statics/yuan_${zoom}_${normalizedCoord.x}_${normalizedCoord.y}.png`;
+                    } else {
+                        return null;
+                    }
+                },
+                tileSize: new google.maps.Size(256, 256),
+                maxZoom: 9,
+                minZoom: 6,
+                radius: 1738000,
+                name: 'Default'
+            });
+            map.mapTypes.set('default', myMap);
+            map.setMapTypeId('default');
+
+            google.maps.event.addListener(map, 'zoom_changed', function () {
+                if (map.zoom < 6) {
+                    map.zoom = 6;
+                }
+            });
+
+            var strictBounds = new google.maps.LatLngBounds(
+                new google.maps.LatLng(66, -89.4),
+                new google.maps.LatLng(57, -67.40522460937501)
+            );
+
+            google.maps.event.addListener(map, 'dragend', function () {
+                if (strictBounds.contains(map.getCenter())) return;
+
+                var c = map.getCenter(),
+                    x = c.lng(),
+                    y = c.lat(),
+                    maxX = strictBounds.getNorthEast().lng(),
+                    maxY = strictBounds.getSouthWest().lat(),
+                    minX = strictBounds.getSouthWest().lng(),
+                    minY = strictBounds.getNorthEast().lat();
+
+                if (x < minX) x = minX;
+                if (x > maxX) x = maxX;
+                if (y < minY) y = minY;
+                if (y > maxY) y = maxY;
+
+                map.setCenter(new google.maps.LatLng(y, x));
+            });
+
+            const infoWindow = new google.maps.InfoWindow();
+
+            // Assume jsonData is defined elsewhere in your script
+            for (const key in jsonData) {
+                if (jsonData.hasOwnProperty(key)) {
+                    const location = jsonData[key];
+                    const latLng = {
+                        lat: parseFloat(location.lat),
+                        lng: parseFloat(location.lng)
+                    };
+                    let icon;
+                    switch (location.category_id) {
+                        case '7':
+                            icon = 'icons/icon_train.png';
+                            break;
+                        case '2':
+                            icon = 'icons/icon_tresure.png';
+                            break;
+                        case '1':
+                            icon = 'icons/icon_teleport.png';
+                            break;
+                        case '3':
+                            icon = 'icons/icon_zone.png';
+                            break;
+                        case '9':
+                        case '10':
+                        case '11':
+                        case '12':
+                        case '13':
+                        case '14':
+                            icon = 'icons/icon_fishing.png';
+                            break;
+                        default:
+                            icon = 'icon/icon_scenery.png';
+                            break;
+                    }
+                    const marker = new google.maps.Marker({
+                        position: latLng,
+                        map: map,
+                        icon: icon,
+                        category: location.category_id,
+                        loc_type: location.loc_type,
+                        draggable: false
+                    });
+
+                    marker.addListener('click', () => {
+                        const latInt = Math.round(location.lat);
+                        const lngInt = -Math.round(location.lng);
+                        const coord = convertToRealCoordinates(latInt, lngInt);
+                        const contentString = `
+        <div style="padding: 12px; font-family: Arial, sans-serif; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #f9f9f9;">
+            <h3 style="margin-top: 0; margin-bottom: 8px; color: #007bff; font-size: 18px;">${location.en_name}</h3>
+            <p style="margin-bottom: 8px; color: #555; font-size: 14px; line-height: 1.5;">${location.desc}</p>
+        </div>
+    `;
+                        infoWindow.setContent(contentString);
+                        infoWindow.open(map, marker);
+                    });
+                    // Store the marker for filtering
+                    markers.push(marker);
+                }
+            }
+            
+
+            // Toggle filter container
+            document.querySelector('.toggle-new-filters-container').addEventListener('click', () => {
+            const newFilterContainer = document.querySelector('.new-filter-container');
+            newFilterContainer.style.display = newFilterContainer.style.display === 'none' || newFilterContainer.style.display === '' ? 'flex' : 'none';
+        });
+
+            //fix toggle button 
+            document.addEventListener('DOMContentLoaded', () => {
+            const toggleButton = document.querySelector('.toggle-new-filters-container');
+            const newFilterContainer = document.querySelector('.new-filter-container');
+
+            toggleButton.addEventListener('click', () => {
+                if (newFilterContainer.style.display === 'none' || newFilterContainer.style.display === '') {
+                    newFilterContainer.style.display = 'flex';
+                } else {
+                    newFilterContainer.style.display = 'none';
+                }
+            });
+        });
+            //toggle legend
+            document.addEventListener('DOMContentLoaded', () => {
+            const toggleLegendButton = document.querySelector('.toggle-legend-container');
+            const filterContainer = document.querySelector('.filter-container');
+
+            toggleLegendButton.addEventListener('click', () => {
+                filterContainer.style.display = filterContainer.style.display === 'none' || filterContainer.style.display === '' ? 'flex' : 'none';
+            });
+        });
+            // Event listener untuk tombol filter baru
+            document.querySelectorAll('.new-filter-container .filter-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    button.classList.toggle('active');
+                    updateMarkers();
+                });
+                
+        });
+        var toggleButton = document.querySelector('.toggle-new-filters-container');
+        var newFilterContainer = document.querySelector('.new-filter-container');
+        toggleButton.addEventListener('click', function () {
+            if (newFilterContainer.style.display === 'none' || newFilterContainer.style.display === '') {
+                newFilterContainer.style.display = 'flex';
+            } else {
+                newFilterContainer.style.display = 'none';
+            }
+            });
+
+        
+            // Hide all markers on initial load
+            markers.forEach(marker => {
+            marker.setMap(null);
+            });
+            
+            // Add event listeners to the filter buttons
+            document.querySelectorAll('.filter-container input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    updateActiveFilters(checkbox.getAttribute('data-filter'), checkbox.checked);
+                });
+            })
+
+
+            this.initMiniMap();
+        }
+
+        function updateActiveFilters(filter) {
+            if (filter.startsWith('loc_type')) {
+                // Tangani filter loc_type
+                const index = activeLocTypes.indexOf(filter);
+                if (index > -1) {
+                    activeLocTypes.splice(index, 1);
+                } else {
+                    activeLocTypes.push(filter);
+                }
+            } else {
+                if (filter === 'all') {
+                    // Clear all markers
+                    markers.forEach(marker => marker.setMap(null));
+                    activeFilters = [];
+                    activeLocTypes = [];
+                    document.querySelectorAll('.filter-container .filter-btn').forEach(button => button.classList.remove('active'));
+                    return;
+                }
+                const index = activeFilters.indexOf(filter);
+                if (index > -1) {
+                    activeFilters.splice(index, 1);
+                } else {
+                    activeFilters.push(filter);
+                }
+
+                if (activeFilters.length === 0) {
+                    activeFilters.push('all');
+                    document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
+                }
+            }
+
+        }
+
+        function filterMarkers() {
+            markers.forEach(marker => {
+                const categoryMatch = activeFilters.includes('all') ||
+                    (activeFilters.includes('tresure') && marker.category === '2') ||
+                    (activeFilters.includes('teleport') && marker.category === '1') ||
+                    (activeFilters.includes('fishing') && ['9', '10', '11', '12', '13', '14'].includes(marker.category)) ||
+                    (activeFilters.includes('zone') && marker.category === '3') ||
+                    (activeFilters.includes('training') && marker.category === '7');
+                const locTypeMatch = activeLocTypes.length === 0 || activeLocTypes.includes(`loc_type${marker.loc_type}`);
+
+                if (categoryMatch && locTypeMatch) {
+                    marker.setMap(map);
+                } else {
+                    marker.setMap(null);
+                }
+            });
+        }
+
+        // Helper function to normalize tile coordinates for custom map (if needed)
+        function getNormalizedCoord(coord, zoom) {
+            var y = coord.y;
+            var x = coord.x;
+
+            var tileRange = 1 << zoom;
+
+            if (y < 0 || y >= tileRange) {
+                return null;
+            }
+            if (x < 0 || x >= tileRange) {
+                return null;
+            }
+
+            return { x: x, y: y };
+        }
+
+        function updateMarkers() {
+            // Mendapatkan filter aktif
+            activeLocTypes = Array.from(document.querySelectorAll('.new-filter-container .filter-btn.active')).map(btn => btn.getAttribute('data-filter'));
+            
+            // Menyembunyikan semua marker dan kemudian menampilkan yang sesuai dengan filter
+            markers.forEach(marker => {
+                const locTypeMatch = activeLocTypes.length === 0 || activeLocTypes.includes(`loc_type${marker.loc_type}`);
+                marker.setMap(locTypeMatch ? map : null);
+            });
+        }
+
+        function convertToRealCoordinates(lat, lng) {
+            // 已知的两个点及其真实坐标
+            const pointA = { lat: 63.171168582509964, lng: -81.67373672492919, x: 565, y: 994 };
+            const pointB = { lat: 63.64373403289217, lng: -80.2736367391884, x: 319, y: 1156 };
+
+            // 解构已知点的坐标和真实坐标
+            const { lat: lat1, lng: lng1, x: x1, y: y1 } = pointA;
+            const { lat: lat2, lng: lng2, x: x2, y: y2 } = pointB;
+
+            // 计算纬度和经度的比例
+            const latScale = (x2 - x1) / (lat2 - lat1);
+            const lngScale = (y2 - y1) / (lng2 - lng1);
+
+            // 计算新的真实坐标
+            const x = x1 + (lat - lat1) * latScale;
+            const y = y1 + (lng - lng1) * lngScale;
+
+            // 返回计算出的真实坐标，四舍五入到最近的整数
+            return { x: Math.round(x), y: Math.round(y) };
+        }
+
+        function initMiniMap() {
+
+            var that = this;
+            var changeWindow = null;
+            var mapKey = "";
+            var mapurl = "";
+            this.mini_map_marker = {};
+            function openChangeWindow(marker) {
+                console.log("mini map = " + mapKey + " " + mapurl);
+                var url = mapurl;
+                var overlay = that.mini_map_marker[mapKey].historicalOverlay;
+
+                // 检查 historicalOverlay 是否已经显示
+                if (overlay.getMap()) {
+                    // 如果已经显示，则隐藏
+                    overlay.setMap(null);
+                } else {
+                    // 否则，更新 url 并显示
+                    overlay.set("url", url);
+                    overlay.setMap(that.map);
+                }
+
+                var contentStr = [];
+                var info = marker.info;
+            }
+            for (var key in mini_map_type) {
+                const key_cur = key;
+                var info = mini_map_type[key_cur];
+                var li_active = key_cur + '_default'
+                var temp = li_active.split("_");
+                if (typeof info['type'][temp[1]] == 'undefined') {
+                    li_active = key_cur + '_default';
+                    temp = li_active.split("_");
+                }
+                const url_cur = info['type'][temp[1]]['map_url'];
+                console.log("mini map = " + key_cur);
+                console.log(url_cur);
+                var loc_position = info.loc_position.split(",");
+                //显示标点
+                var marker = new google.maps.Marker({
+                    position: {
+                        lat: loc_position[0] * 1,
+                        lng: loc_position[1] * 1,
+                    },
+                    map: this.map,
+                    icon: {
+                        url: "icons/here.png",
+                        scaledSize: new google.maps.Size(50, 50) // 将图标放大为 50x50 像素
+                    }
+                });
+                marker.addListener('click', function () {
+                    console.log(key_cur);
+                    mapKey = key_cur;
+                    mapurl = url_cur;
+                    openChangeWindow(this)
+                });
+
+
+
+                //覆盖小地图显示
+                var lg1 = info['map_position'][0].split(",");
+                var lg2 = info['map_position'][1].split(",");
+                var imageBounds = new google.maps.LatLngBounds(
+                    new google.maps.LatLng(lg1[0] * 1, lg1[1] * 1),
+                    new google.maps.LatLng(lg2[0] * 1, lg2[1] * 1)
+                );
+
+                var historicalOverlay = new google.maps.GroundOverlay(url_cur, imageBounds);
+                //historicalOverlay.setMap(this.map);
+                marker.li_active = li_active;
+                marker.info = info;
+                marker.historicalOverlay = historicalOverlay;
+                marker.setMap(this.map);
+                this.mini_map_marker[key_cur] = marker;
+            
+                //toggle button for legend and checkbox
+                document.getElementById('toggle-legend').addEventListener('click', function () {
+                    const filterContainer = document.querySelector('.filter-container');
+                    filterContainer.style.display = filterContainer.style.display === 'none' ? 'flex' : 'none';
+                });
+
+                document.getElementById('toggle-filters').addEventListener('click', function () {
+                    const newFilterContainer = document.querySelector('.new-filter-container');
+                    newFilterContainer.style.display = newFilterContainer.style.display === 'none' ? 'flex' : 'none';
+                });
+                document.getElementById("toggle-legend").addEventListener("click", function() {
+                    let filterContainer = document.querySelector(".filter-container");
+
+                    if (filterContainer.style.display === "none" || !filterContainer.style.display) {
+                        filterContainer.style.display = "block";
+                    } else {
+                        filterContainer.style.display = "none";
+                    }
+                });
+
+                document.getElementById("toggle-filters").addEventListener("click", function() {
+                    let newFilterContainer = document.querySelector(".new-filter-container");
+
+                if (newFilterContainer.style.display === "none" || !newFilterContainer.style.display) {
+                    newFilterContainer.style.display = "block";
+                } else {
+                    newFilterContainer.style.display = "none";
+                }
+            });
+            // Initial setup: hide both containers
+                document.querySelector('.filter-container').style.display = 'none';
+                document.querySelector('.new-filter-container').style.display = 'flex';
+
+            
+            }
+            
+
+        }
+
+    </script>
+    
+</body>
+
+</html>
+        
+>>>>>>> d961d98c415cab29f84d62a772f3449cb01887b3
