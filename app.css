@@ -1,0 +1,182 @@
+/* App.css */
+body,
+html,
+#root,
+.App {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Map container */
+#map {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+
+.toggle-legend-container, .toggle-new-filters-container {
+  position: absolute;
+  z-index: 1500;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+  top: 10px; /* Position 10px from the bottom */
+  left: 10px;   /* Position 10px from the left */
+}
+
+.toggle-legend-container + .toggle-new-filters-container {
+  top: 70px; /* Stack the second button 50px above the first one */
+}
+
+.toggle-legend-container:active,
+.toggle-new-filters-container:active {
+  box-shadow: 0 0 15px 5px rgb(255, 224, 25);
+}
+
+.toggle-legend-container img,
+.toggle-new-filters-container img {
+  width: 50px;
+  height: 50px;
+}
+
+/* Filter Container */
+.filter-container,
+.new-filter-container {
+  display: flex;
+  position: absolute;
+  z-index: 1000;
+  flex-direction: column;
+  gap: 10px;
+  background: rgba(19, 39, 96, 0.613);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+  width: auto;
+  height: 380px;
+}
+
+.filter-container {
+  top: 10px;
+  left: 60px;
+  max-width: 250px;
+}
+
+.new-filter-container {
+  bottom: 10px;
+  left: 60px;
+  max-width: 250px;
+}
+
+.filter-container .filter-btn,
+.new-filter-container .filter-btn {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  background-color:rgb(10, 18, 44);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0px 2px 6px rgb(255, 255, 255);
+  color: rgb(255, 255, 255);
+  font-size: 16px;
+  text-transform: capitalize;
+  transition: background-color 0.3s ease;
+  flex-grow: 1;
+  text-align: center;
+  text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.856);
+}
+
+.filter-container .filter-btn:hover,
+.new-filter-container .filter-btn:hover {
+  background-color: #00796B;
+}
+
+.filter-container .filter-btn.active,
+.new-filter-container .filter-btn.active {
+  background-color: #004D40;
+}
+
+.filter-container .filter-checkbox-btn,
+.new-filter-container .filter-checkbox-btn {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background-color: rgba(10, 28, 61, 0.883);
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0px 2px 4px rgba(4, 26, 224, 0.15);
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.filter-container .filter-checkbox-btn:hover,
+.new-filter-container .filter-checkbox-btn:hover {
+  background-color:rgba(0, 76, 255, 0.455);
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.576);
+}
+
+/* Logo */
+#logo {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 150px;
+  z-index: 1500;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+
+  .filter-container {
+    width: 35%;
+    left: 50%;    /* Center horizontally by setting left to 5% */
+    top: auto;   /* Position at the top of the page */
+    bottom: 10px;  /* Reset bottom positioning */
+    animation: expand 0.5s ease-out;
+  }
+
+  .new-filter-container {
+    width: 35%;  /* Set width to 90% for better alignment */
+    left: 5%;    /* Center horizontally by setting left to 5% */
+    top: auto;   /* Reset top positioning */
+    bottom: 10px; /* Position above filter-container */
+    animation: expand 0.5s ease-out;
+  }
+
+  .toggle-legend-container+.toggle-new-filters-container {
+    top: 70px;
+    /* Adjust stacking for mobile screen */
+  }
+
+  .toggle-legend-container img,
+  .toggle-new-filters-container img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .filter-container .filter-btn,
+  .new-filter-container .filter-btn {
+    width: 80%;
+    font-size: 12px;
+    padding: 6px 10px; 
+    height: auto; 
+  }
+  
+
+  @keyframes expand {
+    from {
+      transform: scale(0);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+}
