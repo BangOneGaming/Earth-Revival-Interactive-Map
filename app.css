@@ -133,15 +133,17 @@ html,
 @media (max-width: 600px) {
 
   .filter-container {
-    width: 35%;
-    left: 50%;    /* Center horizontally by setting left to 5% */
+    width: 30%;
+    left: 40%;    /* Center horizontally by setting left to 5% */
     top: auto;   /* Position at the top of the page */
     bottom: 10px;  /* Reset bottom positioning */
+    height: auto;
     animation: expand 0.5s ease-out;
   }
 
   .new-filter-container {
-    width: 35%;  /* Set width to 90% for better alignment */
+    width: 20%;
+    height: auto;  /* Set width to 90% for better alignment */
     left: 5%;    /* Center horizontally by setting left to 5% */
     top: auto;   /* Reset top positioning */
     bottom: 10px; /* Position above filter-container */
@@ -150,21 +152,39 @@ html,
 
   .toggle-legend-container+.toggle-new-filters-container {
     top: 70px;
-    /* Adjust stacking for mobile screen */
+
   }
 
   .toggle-legend-container img,
   .toggle-new-filters-container img {
     width: 50px;
     height: 50px;
+    bottom: 10px;
+    left: 10px
   }
 
   .filter-container .filter-btn,
   .new-filter-container .filter-btn {
     width: 80%;
-    font-size: 12px;
+    font-size: 8px;
     padding: 6px 10px; 
     height: auto; 
+  }
+  .filter-container .filter-checkbox-btn,
+  .new-filter-container .filter-checkbox-btn {
+    font-size: 8px; /* Ukuran font lebih kecil */
+    padding: 2px 4px; /* Padding lebih kecil */
+    line-height: 1.2
+  }
+  .filter-container .filter-checkbox-btn input[type="checkbox"],
+  .new-filter-container .filter-checkbox-btn input[type="checkbox"] {
+  width: 8px; /* Ukuran checkbox lebih kecil */
+  height: 8px; /* Ukuran checkbox lebih kecil */
+  }
+  .filter-container .filter-checkbox-btn img,
+  .new-filter-container .filter-checkbox-btn img {
+  width: 12px; /* Menyusutkan ukuran gambar ikon */
+  height: 12px; /* Menyusutkan ukuran gambar ikon */
   }
   
 
