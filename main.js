@@ -127,13 +127,12 @@ function initMap() {
             });
 
             marker.addListener('click', () => {
-                console.log(`Marker clicked: ${location.desc}`);
                 const contentString = `
-                    <div style="padding: 12px; font-family: Arial, sans-serif; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #f9f9f9;">
-                        <h3 style="margin-top: 0; margin-bottom: 8px; color: #007bff; font-size: 18px;">${location.en_name}</h3>
-                        <p style="margin-bottom: 8px; color: #555; font-size: 14px; line-height: 1.5;">${location.desc || 'No description available'}</p>
-                    </div>
-                `;
+                            <div style="padding: 12px; font-family: Arial, sans-serif; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #f9f9f9;">
+                                <h3 style="margin-top: 0; margin-bottom: 8px; color: #007bff; font-size: 18px;">${location.en_name}</h3>
+                                <p style="margin-bottom: 8px; color: #555; font-size: 14px; line-height: 1.5;">${location.desc}</p>
+                            </div>
+                        `;
                 infoWindow.setContent(contentString);
                 infoWindow.open(map, marker);
             });
@@ -166,6 +165,13 @@ function initMap() {
             updateActiveFilters(button.getAttribute('data-filter'));
             updateMarkers();
         });
+    });
+    // Container Hidden When Preload
+    window.addEventListener('load', function() {
+        document.querySelector('.filter-container').style.display = 'flex';
+        document.querySelector('.new-filter-container').style.display = 'flex';
+        document.querySelector('.toggle-filter').style.display = 'flex'; // Jika elemen ini menggunakan flexbox
+        document.getElementById('logo').style.display = 'block';
     });
     
 
@@ -211,9 +217,9 @@ function initMap() {
                 setTimeout(() => {
                     loadingMessage.style.opacity = 0;
                     mapElement.style.display = 'block';
-                }, 1000);
+                }, 500);
             }
-        }, 300);
+        }, 2000);
     }
 }
 
