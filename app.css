@@ -230,6 +230,7 @@ html,
         background-repeat: no-repeat; /* No repeat */
     }
   .filter-container {
+    display: none;
     flex-wrap: wrap;
     width: 40%;
     max-width: 60%;
@@ -246,6 +247,7 @@ html,
   }
 
   .new-filter-container {
+    display: none;
     width: 40%;
     max-width: 60%;
     height: auto;  /* Set width to 90% for better alignment */
