@@ -127,10 +127,12 @@ function initMap() {
             });
 
             marker.addListener('click', () => {
+                console.log("Link info:", location.links_info); // Check the URL
+
                 const contentString = `
                             <div style="padding: 12px; font-family: Arial, sans-serif; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #f9f9f9;">
                                 <h3 style="margin-top: 0; margin-bottom: 8px; color: #007bff; font-size: 18px;">${location.en_name}</h3>
-                                <p style="margin-bottom: 8px; color: #555; font-size: 14px; line-height: 1.5;">${location.desc}</p>
+                                ${location.links_info ? `<a href="${location.links_info}" target="_blank" style="display: inline-block; padding: 8px 12px; margin-top: 8px; font-size: 14px; color: #fff; background-color: #007bff; border-radius: 4px; text-decoration: none;">Visit Link</a>` : ''}
                             </div>
                         `;
                 infoWindow.setContent(contentString);
@@ -341,3 +343,20 @@ function initMiniMap() {
         }
     }
 }
+document.getElementById('zoomBtn').addEventListener('click', function() {
+    var fullscreenImage = document.getElementById('fullscreen-image');
+    fullscreenImage.style.display = 'flex';
+    
+    // Menampilkan gambar fullscreen
+    fullscreenImage.innerHTML = '<img src="icons/space.png" alt="Space Image" />';
+    
+    // Memulai animasi zoom out dan geser ke kanan
+    setTimeout(function() {
+        fullscreenImage.querySelector('img').style.transform = 'scale(1) translateX(-25%)'; // Gambar berakhir 20% ke kanan
+    }, 10); // Sedikit delay agar transisi berjalan
+    
+    // Setelah 2 detik, redirect ke link
+    setTimeout(function() {
+        window.location.href = 'https://bangonegaming.com/pegasus/index.html';
+    }, 2000); // Redirect setelah 2 detik
+});
