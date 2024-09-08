@@ -163,6 +163,37 @@ html,
   left: 60px;
   max-width: 250px;
 }
+#fullscreen-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    overflow: hidden; /* Membatasi tampilan agar tidak ada bagian yang keluar */
+}
+
+#fullscreen-image img {
+    width: auto; /* Membiarkan gambar melebihi lebar layar jika perlu */
+    height: 100vh; /* Mengisi tinggi viewport */
+    object-fit: contain; /* Menjaga proporsi gambar */
+    transform: scale(3) translateX(0%)/* Mulai dengan zoom dan geser ke kanan */
+    transform-origin: center right; /* Zoom berasal dari tengah ke arah kanan */
+    transition: transform 2s ease; /* Transisi zoom dan geser */
+}
+
+@keyframes zoomOut {
+    from {
+        transform: scale(3);
+    }
+    to {
+        transform: scale(1);
+    }
+}
 
 .filter-container .filter-btn,
 .new-filter-container .filter-btn {
@@ -262,6 +293,13 @@ html,
     animation: slide-right 0.5s ease-out;
 
   }
+    #fullscreen-image img {
+        width: 400vw; /* Mengisi lebar viewport pada perangkat mobile */
+        height: auto; /* Menyesuaikan tinggi secara proporsional */
+        transform: scale(2) translateX(20%); /* Zoom awal dan geser ke kanan 20% */
+        transform-origin: center right; /* Zoom berasal dari tengah ke arah kanan */
+    }
+
   .new-filter-container .filter-btn,
   .new-filter-container .filter-checkbox-btn,
   .filter-container .filter-btn,
