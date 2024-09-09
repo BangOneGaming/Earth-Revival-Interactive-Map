@@ -163,14 +163,112 @@ infoWindow.open(map, marker);
     });
 
 
-    // Filter buttons logic
-    document.querySelectorAll('.new-filter-container .filter-btn').forEach(button => {
-        button.addEventListener('click', () => {
-            button.classList.toggle('active');
-            updateActiveFilters(button.getAttribute('data-filter'));
-            updateMarkers();
-        });
+// Array to keep track of active overlays
+let activeOverlays = [];
+
+// Fungsi untuk menghilangkan semua checkbox (uncheck)
+function clearAllMarks() {
+    // Uncheck semua filter checkbox
+    document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
+        checkbox.checked = false;
     });
+
+    // Hapus semua marker yang ada
+    activeLocTypes = []; // Kosongkan array activeLocTypes
+    updateMarkers(); // Perbarui peta untuk menghilangkan semua marker
+}
+
+// Event listener untuk tombol filter
+document.querySelectorAll('.new-filter-container .filter-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        const filterKey = button.getAttribute('data-filter');
+
+        // Hapus semua marker dan uncheck semua checkbox
+        clearAllMarks();
+
+        // Tambahkan filter baru ke activeLocTypes
+        activeLocTypes.push(filterKey);
+        
+        // Update markers berdasarkan filter yang baru
+        updateMarkers();
+
+        // Tentukan miniMapKey berdasarkan filterKey
+        let miniMapKey;
+        switch (filterKey) {
+            case 'loc_type2': miniMapKey = 'djhg'; break;
+            case 'loc_type5': miniMapKey = 'jjgb'; break;
+            case 'loc_type4': miniMapKey = 'ydc'; break;
+            case 'loc_type3': miniMapKey = 'lgxs'; break;
+            case 'loc_type6': miniMapKey = 'kplg'; break;
+            default: miniMapKey = null;
+        }
+
+        if (miniMapKey && mini_map_type.hasOwnProperty(miniMapKey)) {
+            // Hapus semua overlay aktif
+            activeOverlays.forEach(overlay => {
+                if (overlay.getMap()) {
+                    overlay.setMap(null);
+                }
+            });
+            activeOverlays = []; // Bersihkan array
+
+            // Buat dan tampilkan overlay baru
+            const info = mini_map_type[miniMapKey];
+            const imageBounds = new google.maps.LatLngBounds(
+                new google.maps.LatLng(parseFloat(info['map_position'][0].split(",")[0]), parseFloat(info['map_position'][0].split(",")[1])),
+                new google.maps.LatLng(parseFloat(info['map_position'][1].split(",")[0]), parseFloat(info['map_position'][1].split(",")[1]))
+            );
+
+            const historicalOverlay = new google.maps.GroundOverlay(info['type']['default']['map_url'], imageBounds);
+            historicalOverlay.setMap(map);
+
+            // Tambahkan overlay baru ke daftar aktif
+            activeOverlays.push(historicalOverlay);
+
+            // Hitung pusat untuk zooming
+            const mapPosition = info.map_position;
+            const position1 = mapPosition[0].split(",");
+            const position2 = mapPosition[1].split(",");
+
+            // Hitung titik tengah dari dua koordinat
+            const midLat = (parseFloat(position1[0]) + parseFloat(position2[0])) / 2;
+            const midLng = (parseFloat(position1[1]) + parseFloat(position2[1])) / 2;
+
+            // Opsi: Geser pusat ke kanan
+            const offsetLng = 0.01; // Sesuaikan nilai ini
+            const newCenter = {
+                lat: midLat,
+                lng: midLng - offsetLng // Geser ke kanan
+            };
+
+            // Lakukan zoom out lalu zoom in ke pusat baru
+            function smoothZoomOutAndIn() {
+                const currentZoom = map.getZoom();
+                let zoomOut = currentZoom;
+                const zoomOutInterval = setInterval(() => {
+                    if (zoomOut > 4) {
+                        zoomOut -= 1;
+                        map.setZoom(zoomOut);
+                    } else {
+                        clearInterval(zoomOutInterval);
+                        // Setelah zoom out, pan ke pusat baru
+                        map.panTo(newCenter);
+                        setTimeout(() => {
+                            // Zoom in ke level akhir
+                            map.setZoom(7); // Sesuaikan level zoom ini
+                        }, 500); // Sesuaikan durasi timeout jika diperlukan
+                    }
+                }, 100); // Sesuaikan interval
+            }
+
+            smoothZoomOutAndIn(); // Panggil fungsi zoom
+        }
+
+        // Sembunyikan container filter setelah memilih filter
+        document.querySelector('.new-filter-container').style.display = 'none';
+    });
+});
+
     // Container Hidden When Preload
     window.addEventListener('load', function() {
         document.querySelector('.filter-container').style.display = 'flex';
@@ -237,9 +335,9 @@ function updateActiveFilters(filter) {
             activeLocTypes.push(filter);
         }
     } else {
-        console.log(filter)
-        updateCatagoryFilters(filter)
+        updateCatagoryFilters(filter);
     }
+    updateMarkers(); // Update markers after filter change
 }
 
 function updateCatagoryFilters(filter) {
@@ -290,11 +388,14 @@ function updateMarkers() {
             (activeFilters.includes('fishing') && ['9', '10', '11', '12', '13', '14'].includes(marker.category)) ||
             (activeFilters.includes('zone') && marker.category === '3') ||
             (activeFilters.includes('training') && marker.category === '7');
+
         const locTypeMatch = activeLocTypes.length === 0 || activeLocTypes.includes(`loc_type${marker.loc_type}`);
 
         marker.setMap(categoryMatch && locTypeMatch ? map : null);
     });
 }
+
+
 
 function getNormalizedCoord(coord, zoom) {
     var y = coord.y;
