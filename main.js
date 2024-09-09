@@ -259,17 +259,17 @@ function initMap() {
                 console.log("Link info:", location.links_info); // Check the URL
 
 
-                const contentString = `
-                const contentString = `
-                      <div style="padding: 12px; font-family: Arial, sans-serif; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #f9f9f9;">
-                      <h3 style="margin-top: 0; margin-bottom: 8px; color: #007bff; font-size: 18px;">${location.en_name}</h3>
-                      <p style="font-size: 14px; color: #333; margin-bottom: 8px;">${location.desc || 'No description available.'}</p>
-                      ${(location.links_info && location.links_info !== '[]' && location.links_info.trim() !== '') ? `<a href="${location.links_info}" target="_blank" style="display: inline-block; padding: 8px 12px; margin-top: 8px; font-size: 14px; color: #fff; background-color: #007bff; border-radius: 4px; text-decoration: none;">Visit Link</a>` : ''}
-                      </div>
-                      `;
+const contentString = `
+    <div style="padding: 12px; font-family: Arial, sans-serif; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #f9f9f9;">
+        <h3 style="margin-top: 0; margin-bottom: 8px; color: #007bff; font-size: 18px;">${location.en_name}</h3>
+        <p style="font-size: 14px; color: #333; margin-bottom: 8px;">${location.desc || 'No description available.'}</p>
+        ${(location.links_info && location.links_info !== '[]' && location.links_info.trim() !== '') ? `<a href="${location.links_info}" target="_blank" style="display: inline-block; padding: 8px 12px; margin-top: 8px; font-size: 14px; color: #fff; background-color: #007bff; border-radius: 4px; text-decoration: none;">Visit Link</a>` : ''}
+    </div>
+`;
 
-           infoWindow.setContent(contentString);
-           infoWindow.open(map, marker);
+infoWindow.setContent(contentString);
+infoWindow.open(map, marker);
+
 
             });
 
