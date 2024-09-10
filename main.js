@@ -264,11 +264,10 @@ const contentString = `
         <h3 style="margin-top: 0; margin-bottom: 8px; color: #ffffff; font-size: 18px;">${location.en_name}</h3>
         <p style="font-size: 14px; color: #ffffff; margin-bottom: 8px;">${location.desc || 'No description available.'}</p>
         <p style="font-size: 14px; color: #ffffff; margin-top: 8px;">
-            Link Info: ${location.links_info && location.links_info.startsWith('http') ? location.links_info : 'null'}
+            Link Info: ${(location.links_info && location.links_info !== '[]') ? location.links_info : 'null'}
         </p>
     </div>
 `;
-
 
 infoWindow.setContent(contentString);
 infoWindow.open(map, marker);
