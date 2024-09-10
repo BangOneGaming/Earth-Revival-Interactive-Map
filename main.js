@@ -855,6 +855,24 @@ container.addEventListener('scroll', () => {
         }
     });
 });
+// Contoh JavaScript untuk menambahkan kelas animasi saat elemen muncul atau menghilang
+function handleScroll() {
+    const container = document.querySelector('.new-filter-container');
+    const rect = container.getBoundingClientRect();
+    
+    if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
+        container.classList.add('slide-in');
+        container.classList.remove('slide-out');
+    } else {
+        container.classList.add('slide-out');
+        container.classList.remove('slide-in');
+    }
+}
+
+// Tambahkan event listener untuk scroll
+window.addEventListener('scroll', handleScroll);
+// Jalankan fungsi saat halaman dimuat
+handleScroll();
 
 
 
@@ -875,3 +893,4 @@ document.getElementById('zoomBtn').addEventListener('click', function() {
         window.location.href = 'https://bangonegaming.com/pegasus/index.html';
     }, 2000); // Redirect setelah 2 detik
 });
+ 
