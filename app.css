@@ -16,7 +16,7 @@ html,
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('icons/background_lanscape');
+    background-image: url('icons/background_lanscape.png');
     background-size: cover;
     background-position: center;
     background-color: #fff;
@@ -81,6 +81,67 @@ html,
   position: relative;
   z-index: 1;
 }
+/* Pop-up background */
+.popup {
+    display: none; /* Initially hidden */
+    position: fixed;
+    z-index: 1500; /* Ensure it's above all other content */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Pop-up content */
+.popup-content {
+    background-color: rgb(10, 18, 44);
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    max-width: 90%; /* Make sure it doesn't go beyond 90% of the screen on smaller devices */
+    box-shadow: 0px 2px 6px rgb(255, 255, 255);
+    color: rgb(255, 255, 255);
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Close button */
+.popup .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.popup .close:hover,
+.popup .close:focus {
+    color: black;
+}
+/* Donation button */
+.popup .donate-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #02a0c5; /* Blue background */
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.popup .donate-btn:hover {
+    background-color: #00cc00; /* Neon green on hover */
+    box-shadow: 0 0 20px rgba(0, 255, 0, 1), 0 0 30px rgba(0, 255, 0, 0.8); /* Neon glow effect */
+    transform: scale(1.05); /* Zoom effect on hover */
+}
 
 /* CSS untuk menyembunyikan logo Google Maps */
 .gm-style-cc {
@@ -141,27 +202,32 @@ html,
   display: none;
   position: absolute;
   z-index: 1000;
-  flex-direction: column;
   gap: 10px;
   background: rgba(19, 39, 96, 0.613);
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
   transition: all 0.3s ease;
-  width: auto;
-  height: 380px;
+  
 }
 
 .filter-container {
   top: 10px;
   left: 60px;
-  max-width: 250px;
+  width: auto;
+  height: 20px;
+  flex-direction: row;
+  flex:1
 }
 
 .new-filter-container {
-  bottom: 10px;
-  left: 60px;
-  max-width: 250px;
+  top: 80px;
+  left: 70px;
+  height: 120px;
+  width: 90%;
+  flex: 1;
+  flex-direction: row;
+  object-fit: cover;
 }
 #fullscreen-image {
     position: fixed;
@@ -202,7 +268,7 @@ html,
   padding: 10px 15px;
   background-color:rgb(10, 18, 44);
   border: none;
-  border-radius: 4px;
+  border-radius: 20px;
   cursor: pointer;
   box-shadow: 0px 2px 6px rgb(255, 255, 255);
   color: rgb(255, 255, 255);
@@ -252,107 +318,173 @@ html,
   z-index: 1500;
 }
 
-/* Responsive Adjustments */
 @media (max-width: 600px) {
     #preloader {
         background-image: url('icons/background_preload.png');
-        background-size: contain; /* Adjust the size to fit the container */
-        background-position: center; /* Center the image */
-        background-repeat: no-repeat; /* No repeat */
-    }
-  .filter-container {
-    display: none;
-    flex-wrap: wrap;
-    width: 40%;
-    max-width: 60%;
-    left: 62px;    /* Center horizontally by setting left to 5% */
-    top: 11px;   /* Position at the top of the page */
-    bottom: auto;  /* Reset bottom positioning */
-    height: auto;
-    padding: 2px;
-    flex-direction: row;
-    box-sizing: border-box;
-    gap: 2px;
-    border: 2px solid #889dcb;
-    animation: slide-right 0.5s ease-out;
-  }
-
-  .new-filter-container {
-    display: none;
-    width: 40%;
-    max-width: 60%;
-    height: auto;  /* Set width to 90% for better alignment */
-    left: 62px;    /* Center horizontally by setting left to 5% */
-    top: 70px;   /* Reset top positioning */
-    flex-direction: column;
-    bottom: auto; /* Position above filter-container */
-    padding:10px;
-    gap: 10px;
-    box-sizing: border-box;
-    border: 2px solid #889dcb;
-    animation: slide-right 0.5s ease-out;
-
-  }
-    #fullscreen-image img {
-        width: 400vw; /* Mengisi lebar viewport pada perangkat mobile */
-        height: auto; /* Menyesuaikan tinggi secara proporsional */
-        transform: scale(2) translateX(20%); /* Zoom awal dan geser ke kanan 20% */
-        transform-origin: center right; /* Zoom berasal dari tengah ke arah kanan */
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
     }
 
-  .new-filter-container .filter-btn,
-  .new-filter-container .filter-checkbox-btn,
-  .filter-container .filter-btn,
-  .filter-container .filter-checkbox-btn {
-    flex-grow: 1; /* Tombol mengisi ruang yang tersedia */
-    flex-basis: 20%;
-    margin: 0 5px;
+    .filter-container {
+        display: flex;
+        flex-wrap: wrap;
+        width: 40%;
+        max-width: 90%;
+        left: 70px;
+        top: 10px;
+        height: 80px;
+        padding: 0px;
+        flex-direction: row;
+        box-sizing: border-box;
+        gap: 1px;
+        border: 2px solid #889dcb;
+        animation: slide-right 0.5s ease-out;
+        overflow: hidden;
+    }
+
+    .filter-container .filter-checkbox-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: calc(50% - 1px);
+        padding: 0px;
+        font-size: 0px; /* Hide text */
+        height: 24px;
+        box-sizing: border-box;
+        margin: 0px;
+        flex-shrink: 1;
+        flex-grow: 0;
+    }
+
+    .filter-container .filter-checkbox-btn input[type="checkbox"] {
+        width: 14px;
+        height: 14px;
+    }
+
+    .filter-container .filter-checkbox-btn img {
+        width: 14px;
+        height: 14px;
+    }
+
+/* Keyframes untuk animasi slide */
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translateX(-100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) translateX(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translateX(100%);
+    }
+}
+
+/* CSS untuk container dengan animasi slide */
+.new-filter-container {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100vw; /* Lebar viewport */
+    height: 450px; /* Tinggi container yang lebih besar untuk menampung tombol yang lebih besar */
+    padding: 90px 20px; /* Tambahkan padding kiri dan kanan untuk ruang ekstra */
+    justify-content: flex-start; /* Posisikan tombol dari kiri */
+    align-items: center; /* Pusatkan tombol secara vertikal */
+    gap: 60px; /* Jarak antar tombol */
+    border: none;
+    background: none;
+    overflow-x: auto; /* Aktifkan scroll horizontal */
+    overflow-y: hidden; /* Sembunyikan scroll vertikal */
+    scroll-snap-type: x mandatory; /* Aktifkan scroll snapping */
     box-sizing: border-box;
-  }
+    position: fixed; /* Posisikan container relatif terhadap viewport */
+    top: 50%; /* Pusatkan container secara vertikal */
+    left: 50%; /* Pusatkan container secara horizontal */
+    transform: translate(-50%, -50%); /* Pusatkan container dengan benar */
+    z-index: 1000; /* Pastikan container berada di atas elemen lain */
+    opacity: 0; /* Mulai dengan opacity 0 */
+    transition: opacity 0.5s ease; /* Efek transisi untuk opacity */
+}
 
-  .toggle-legend-container img,
-  .toggle-new-filters-container img {
-    width: 50px;
-    height: 50px;
-    bottom: 10px;
-    right: 10px;
-  }
+/* Animasi muncul dari kanan */
+.new-filter-container.slide-in {
+    animation: slideIn 0.5s ease-out forwards; /* Animasi muncul */
+}
 
-  .filter-container .filter-btn,
-  .new-filter-container .filter-btn {
-    width: auto;
-    font-size: 10px;
-    padding-bottom: 10px; 
-    height: 30%;
-    background-position: bottom center;
+/* Animasi hilang ke kiri */
+.new-filter-container.slide-out {
+    animation: slideOut 0.5s ease-in forwards; /* Animasi menghilang */
+}
+
+/* CSS untuk tombol */
+.new-filter-container .filter-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    box-sizing: border-box;
+    font-size: 16px; /* Ukuran font */
+    color: White;
+    text-align: center;
+    width: 200px; /* Ukuran tombol */
+    height: 200px; /* Tinggi tombol */
     background-size: cover;
-  }
-  .filter-container .filter-checkbox-btn,
-  .new-filter-container .filter-checkbox-btn {
-    width: 50%;
-    height: auto;
-    font-size: 0px;
-    padding: 2px; /* Padding lebih kecil */
-  }
-  .filter-container .filter-checkbox-btn input[type="checkbox"],
-  .new-filter-container .filter-checkbox-btn input[type="checkbox"] {
-  width: 10px; /* Ukuran checkbox lebih kecil */
-  height: 10px; /* Ukuran checkbox lebih kecil */
-  }
-  .filter-container .filter-checkbox-btn img,
-  .new-filter-container .filter-checkbox-btn img {
-  width: 17px; /* Menyusutkan ukuran gambar ikon */
-  height: 17px; /* Menyusutkan ukuran gambar ikon */
-  }
-  
+    background-position: center;
+    flex-shrink: 0; /* Mencegah tombol menyusut */
+    scroll-snap-align: center; /* Pusatkan tombol di viewport */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Efek transisi untuk transformasi dan box-shadow */
+}
+   .new-filter-container .filter-btn:first-child {
+        margin-left: 200px; /* Margin kiri pada tombol pertama */
+        margin-right: 2px;
+   }
+    .new-filter-container .filter-btn.hover {
+        transform: scale(1.5); /* Perbesar tombol saat hover */
+        box-shadow: 0 0 10px rgba(255, 165, 0, 0.8); /* Efek box-shadow saat hover */
+    }
 
-  @keyframes slide-right {
-    from {
-      transform: translateX(-60%); /* Memulai di luar layar sebelah kiri */
-      opacity: 0;
+    .new-filter-container .filter-btn:hover {
+        transform: scale(1.5); /* Perbesar tombol saat hover */
+        box-shadow: 0 0 10px rgba(255, 165, 0, 0.8); /* Efek box-shadow saat hover */
     }
-    to {
-      transform: translateX(0); /* Bergerak ke posisi semula */
-      opacity: 1;
-    }
-  }
+
+.new-filter-container .filter-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: none; /* Nonaktifkan efek transisi gambar */
+}
+
+.new-filter-container .filter-btn .button-text {
+    display: block;
+    opacity: 1;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.9); /* Latar belakang semi-transparan untuk teks */
+    color: #fff;
+    padding: 2px 0; /* Padding untuk teks */
+    font-size: 16px; /* Ukuran font teks */
+    transition: opacity 0.3s ease; /* Efek transisi untuk opacity */
+}
+
+.new-filter-container .filter-btn:hover .button-text {
+    opacity: 0; /* Menghilangkan teks saat hover */
+}
+
+.new-filter-container::-webkit-scrollbar {
+    display: none; /* Sembunyikan scrollbar */
+}
