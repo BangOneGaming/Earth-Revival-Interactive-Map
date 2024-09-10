@@ -263,11 +263,12 @@ const contentString = `
     <div style="padding: 15px; font-family: Arial, sans-serif; border-radius: 8px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25); background-color: rgba(19, 39, 96, 0.613);">
         <h3 style="margin-top: 0; margin-bottom: 8px; color: #ffffff; font-size: 18px;">${location.en_name}</h3>
         <p style="font-size: 14px; color: #ffffff; margin-bottom: 8px;">${location.desc || 'No description available.'}</p>
-        ${(location.links_info && location.links_info.startsWith('http')) 
-            ? `<a href="${location.links_info}" target="_blank" style="display: inline-block; padding: 8px 12px; margin-top: 8px; font-size: 14px; color: #ffffff; background-color: #007bff; border-radius: 4px; text-decoration: none;">Visit Link</a>` 
-            : ''}
+        <p style="font-size: 14px; color: #ffffff; margin-top: 8px;">
+            Link Info: ${location.links_info && location.links_info.startsWith('http') ? location.links_info : 'null'}
+        </p>
     </div>
 `;
+
 
 infoWindow.setContent(contentString);
 infoWindow.open(map, marker);
