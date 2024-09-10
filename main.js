@@ -892,3 +892,6 @@ document.getElementById('zoomBtn').addEventListener('click', function() {
         window.location.href = 'https://bangonegaming.com/pegasus/index.html';
     }, 2000); // Redirect setelah 2 detik
 });
+document.getElementById("hildeBtn").onclick = function () {
+    window.location.href = "https://bangonegaming.com/hilde/index.html";
+  };
