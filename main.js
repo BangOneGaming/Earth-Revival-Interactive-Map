@@ -123,7 +123,6 @@ function initMap() {
                 icon: icon,
                 category: location.category_id,
                 loc_type: location.loc_type,
-                draggable: false
                 opacity: 1.0 // Set initial opacity
         });
 
@@ -158,7 +157,6 @@ function initMap() {
         markers.push(marker);
     }
 }
-
 
     // Hide all markers on initial load
     markers.forEach(marker => {
