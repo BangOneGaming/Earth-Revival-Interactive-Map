@@ -124,26 +124,41 @@ function initMap() {
                 category: location.category_id,
                 loc_type: location.loc_type,
                 draggable: false
-            });
+                opacity: 1.0 // Set initial opacity
+        });
 
-            marker.addListener('click', () => {
-                console.log("Link info:", location.links_info); // Check the URL
-
-const contentString = `
-    <div style="padding: 15px; font-family: Arial, sans-serif; border-radius: 8px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25); background-color: rgba(19, 39, 96, 0.613);">
-        <h3 style="margin-top: 0; margin-bottom: 8px; color: #ffffff; font-size: 18px;">${location.en_name}</h3>
-        <p style="font-size: 14px; color: #ffffff; margin-bottom: 8px;">${(location.desc || 'No description available.').replace(/\n/g, '<br>').replace(/<b>/g, '<b>').replace(/<\/b>/g, '</b>')}</p>
-        ${(location.links_info && location.links_info !== '[]') ? `<a href="${location.links_info}" target="_blank" style="display: inline-block; padding: 8px 12px; margin-top: 8px; font-size: 14px; color: #ffffff; background-color: #007bff; border-radius: 4px; text-decoration: none;">Watch Video</a>` : ''}
-    </div>
-`;
-
-infoWindow.setContent(contentString);
-infoWindow.open(map, marker);
-
-            });
-            markers.push(marker);
+        // Load opacity from localStorage if exists
+        const savedOpacity = localStorage.getItem(`marker-opacity-${location.en_name}`);
+        if (savedOpacity) {
+            marker.setOpacity(parseFloat(savedOpacity));
         }
+
+        // Toggle opacity on double-click and save to localStorage
+        marker.addListener('dblclick', () => {
+            const currentOpacity = marker.getOpacity();
+            const newOpacity = currentOpacity === 1.0 ? 0.5 : 1.0;
+            marker.setOpacity(newOpacity);
+            localStorage.setItem(`marker-opacity-${location.en_name}`, newOpacity); // Save opacity to localStorage
+        });
+
+        // Optionally add an info window as before
+        marker.addListener('click', () => {
+            const contentString = `
+                <div style="padding: 15px; font-family: Arial, sans-serif; border-radius: 8px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25); background-color: rgba(19, 39, 96, 0.613);">
+                    <h3 style="margin-top: 0; margin-bottom: 8px; color: #ffffff; font-size: 18px;">${location.en_name}</h3>
+                    <p style="font-size: 14px; color: #ffffff; margin-bottom: 8px;">${(location.desc || 'No description available.').replace(/\n/g, '<br>').replace(/<b>/g, '<b>').replace(/<\/b>/g, '</b>')}</p>
+                    ${(location.links_info && location.links_info !== '[]') ? `<a href="${location.links_info}" target="_blank" style="display: inline-block; padding: 8px 12px; margin-top: 8px; font-size: 14px; color: #ffffff; background-color: #007bff; border-radius: 4px; text-decoration: none;">Watch Video</a>` : ''}
+                </div>
+            `;
+
+            infoWindow.setContent(contentString);
+            infoWindow.open(map, marker);
+        });
+
+        markers.push(marker);
     }
+}
+
 
     // Hide all markers on initial load
     markers.forEach(marker => {
