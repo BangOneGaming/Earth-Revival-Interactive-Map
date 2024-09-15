@@ -171,7 +171,50 @@ html,
     box-shadow: 0 0 20px rgba(0, 255, 0, 1), 0 0 30px rgba(0, 255, 0, 0.8); /* Efek neon lebih terang saat hover */
     transform: scale(1.05); /* Efek zoom saat hover */
 }
+.trakteer-overlay {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 125px;
+  height: 165px;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease-in-out; /* Animasi geser */
+}
+.trakteer-frame {
+  width: 290%;
+  height: 290%;
+  transform: scale(0.4);
+  transform-origin: 0 0;
+  border: none;
+  display: block;
+}
 
+.close-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 20px;
+  height: 20px;
+  background: #ff5b5b;
+  border: none;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 1700;
+}
+
+.close-btn:hover {
+  background: #ff1e1e;
+}
+
+.close-btn:hover {
+  background: #ff1e1e;
+}
 .toggle-legend-container, .toggle-new-filters-container {
   position: absolute;
   z-index: 1500;
