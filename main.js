@@ -607,3 +607,11 @@ document.getElementById('zoomBtn').addEventListener('click', function() {
 document.getElementById("hildeBtn").onclick = function () {
     window.location.href = "https://bangonegaming.com/hilde/index.html";
   };
+const closeBtn = document.getElementById('closeOverlayBtn');
+  const overlay = document.getElementById('trakteerOverlay');
+
+  // Menambahkan event listener untuk tombol close
+  closeBtn.addEventListener('click', function() {
+    // Sembunyikan overlay ketika tombol close diklik
+    overlay.style.display = 'none';
+  });
