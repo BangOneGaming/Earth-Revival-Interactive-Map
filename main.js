@@ -1,6 +1,9 @@
 let activeFilters = [];
 let activeLocTypes = [];
 let markers = [];
+let jsonData = {}; // Tempat menyimpan data JSON
+let markerVisibility = {}; // Deklarasikan variabel ini jika belum ada
+let holdTimeout; // Variabel untuk menyimpan timer hold
 
 function initMap() {
     var init_position = window.init_position || "60.871009248911655,-76.62568359375001";
@@ -84,86 +87,239 @@ function initMap() {
 
     const infoWindow = new google.maps.InfoWindow();
 
-    for (const key in jsonData) {
-        if (jsonData.hasOwnProperty(key)) {
-            const location = jsonData[key];
-            const latLng = {
-                lat: parseFloat(location.lat),
-                lng: parseFloat(location.lng)
-            };
-            let icon;
-            switch (location.category_id) {
-                case '7':
-                    icon = 'icons/icon_train.png';
-                    break;
-                case '2':
-                    icon = 'icons/icon_treasure.png';
-                    break;
-                case '1':
-                    icon = 'icons/icon_teleport.png';
-                    break;
-                case '3':
-                    icon = 'icons/icon_zone.png';
-                    break;
-                case '9':
-                case '10':
-                case '11':
-                case '12':
-                case '13':
-                case '14':
-                    icon = 'icons/icon_fishing.png';
-                    break;
-                default:
-                    icon = 'icons/icon_scenery.png';
-                    break;
-            }
-            const marker = new google.maps.Marker({
-                position: latLng,
-                map: map,
-                icon: icon,
-                category: location.category_id,
-                loc_type: location.loc_type,
-                opacity: 1.0 // Set initial opacity
-        });
+fetch('https://autumn-dream-8c07.square-spon.workers.dev/earthrevivalinteractivemaps')
+    .then(response => response.json())
+    .then(data => {
+        jsonData = data; // Simpan data JSON
 
-        // Load opacity from localStorage if exists
-        const savedOpacity = localStorage.getItem(`marker-opacity-${location.en_name}`);
-        if (savedOpacity) {
-            marker.setOpacity(parseFloat(savedOpacity));
-        }
-
-        // Toggle opacity on double-click and save to localStorage
-        marker.addListener('dblclick', () => {
-            const currentOpacity = marker.getOpacity();
-            const newOpacity = currentOpacity === 1.0 ? 0.5 : 1.0;
-            marker.setOpacity(newOpacity);
-            localStorage.setItem(`marker-opacity-${location.en_name}`, newOpacity); // Save opacity to localStorage
-        });
-
-        // Optionally add an info window as before
-        marker.addListener('click', () => {
-            const contentString = `
-                <div style="padding: 15px; font-family: Arial, sans-serif; border-radius: 8px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25); background-color: rgba(19, 39, 96, 0.613);">
-                    <h3 style="margin-top: 0; margin-bottom: 8px; color: #ffffff; font-size: 18px;">${location.en_name}</h3>
-                    <p style="font-size: 14px; color: #ffffff; margin-bottom: 8px;">${(location.desc || 'No description available.').replace(/\n/g, '<br>').replace(/<b>/g, '<b>').replace(/<\/b>/g, '</b>')}</p>
-                    ${(location.links_info && location.links_info !== '[]') ? `<a href="${location.links_info}" target="_blank" style="display: inline-block; padding: 8px 12px; margin-top: 8px; font-size: 14px; color: #ffffff; background-color: #007bff; border-radius: 4px; text-decoration: none;">Watch Video</a>` : ''}
-                </div>
-            `;
-
-            infoWindow.setContent(contentString);
-            infoWindow.open(map, marker);
-        });
-
-        markers.push(marker);
-    }
+        // Proses marker dari data JSON
+        for (const key in jsonData) {
+            if (jsonData.hasOwnProperty(key)) {
+                const location = jsonData[key];
+                const latLng = {
+                    lat: parseFloat(location.lat),
+                    lng: parseFloat(location.lng)
+                };
+                let icon;
+switch (location.category_id) {
+    case '7':
+        icon = 'icons/icon_train.png';
+        break;
+    case '2':
+        icon = 'icons/icon_treasure.png';
+        break;
+    case '1':
+        icon = 'icons/icon_teleport.png';
+        break;
+    case '3':
+        icon = 'icons/icon_zone.png';
+        break;
+    case '8': // Tambahkan kategori 8 dengan ikonnya sendiri
+        icon = 'icons/icon_scenery.png'; // Sesuaikan dengan ikon yang relevan
+        break;
+    case '9':
+    case '10':
+    case '11':
+    case '12':
+    case '13':
+    case '14':
+        icon = 'icons/icon_fishing.png';
+        break;
+    default:
+        icon = 'icons/icon_scenery.png';
+        break;
 }
 
-    // Hide all markers on initial load
-    markers.forEach(marker => {
-        marker.setMap(null);
+                // Tambahkan status opacity ke marker
+const marker = new google.maps.Marker({
+    position: latLng,
+    map: map,
+    icon: icon,
+    category: location.category_id,
+    loc_type: location.loc_type,
+    id: key, // Pastikan ID ditambahkan di sini
+    draggable: false,
+    opacity: loadMarkerOpacity(key) // Muat opacity dari local storage
+});
+
+
+marker.addListener('click', () => {
+    console.log('Marker clicked with ID:', marker.id); // Log ID marker saat klik
+    const contentString = `
+        <div style="position: relative; padding: 15px; font-family: Arial, sans-serif; border-radius: 8px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25); background-color: rgba(19, 39, 96, 0.613);">
+            <h3 style="margin-top: 0; margin-bottom: 8px; color: #ffffff; font-size: 18px;">${location.en_name}</h3>
+            <p style="font-size: 14px; color: #ffffff; margin-bottom: 8px;">${(location.desc || 'No description available.').replace(/\n/g, '<br>').replace(/<b>/g, '<b>').replace(/<\/b>/g, '</b>')}</p>
+            ${(location.links_info && location.links_info !== '[]') ? `<a href="${location.links_info}" target="_blank" style="display: inline-block; padding: 8px 12px; margin-top: 8px; font-size: 14px; color: #ffffff; background-color: #007bff; border-radius: 4px; text-decoration: none;">Watch Video</a>` : ''}
+            <button class="reportButton" data-id="${key}" style="position: absolute; bottom: 10px; right: 10px; background: none; border: none; color: red; font-size: 12px; cursor: pointer; z-index: 1300;">Report</button>
+        </div>
+    `;
+    infoWindow.setContent(contentString);
+    infoWindow.open(map, marker);
+});
+
+                marker.addListener('mousedown', () => {
+                    holdTimeout = setTimeout(() => {
+                        // Toggle opacity saat di-hold
+                        marker.opacity = marker.opacity === 1 ? 0.5 : 1;
+                        marker.setOpacity(marker.opacity);
+                        saveMarkerOpacity(key, marker.opacity); // Simpan opacity ke local storage
+                        updateCategoryCounts(); // Update counts setelah opacity berubah
+                    }, 500); // Delay 500 ms untuk hold
+                });
+
+                marker.addListener('mouseup', () => {
+                    clearTimeout(holdTimeout); // Hentikan timer jika mouse dilepas
+                });
+
+                marker.addListener('mouseout', () => {
+                    clearTimeout(holdTimeout); // Hentikan timer jika kursor keluar dari marker
+                });
+
+                markerVisibility[marker] = true; // Menandai marker sebagai terlihat
+                markers.push(marker);
+            }
+        }
+
+        // Hide all markers on initial load
+        markers.forEach(marker => {
+            marker.setMap(null);
+        });
+
+        initMiniMap(); // Inisialisasi mini peta
+        applyFilters(); // Terapkan filter setelah data dimuat
+    })
+    .catch(error => {
+        console.error('Error fetching JSON data:', error);
     });
 
-    initMiniMap();
+}
+
+function saveMarkerOpacity(id, opacity) {
+    const markerOpacities = JSON.parse(localStorage.getItem('markerOpacities')) || {};
+    markerOpacities[id] = opacity;
+    localStorage.setItem('markerOpacities', JSON.stringify(markerOpacities));
+}
+
+function loadMarkerOpacity(id) {
+    const markerOpacities = JSON.parse(localStorage.getItem('markerOpacities')) || {};
+    return markerOpacities[id] || 1; // Default opacity 1 jika tidak ada data
+}
+
+function applyFilters() {
+    markers.forEach(marker => marker.setMap(null));
+
+    markers.forEach(marker => {
+        if (activeFilters.includes(marker.category)) {
+            marker.setMap(map);
+        }
+    });
+
+    updateCategoryCounts();
+}
+
+function updateCategoryCounts() {
+    const counts = {
+        '1': { visible: 0, opacityHalf: 0 },
+        '2': { visible: 0, opacityHalf: 0 },
+        '3': { visible: 0, opacityHalf: 0 },
+        '7': { visible: 0, opacityHalf: 0 },
+        '8': { visible: 0, opacityHalf: 0 },
+        '9': { visible: 0, opacityHalf: 0 },
+        '10': { visible: 0, opacityHalf: 0 },
+        '11': { visible: 0, opacityHalf: 0 },
+        '12': { visible: 0, opacityHalf: 0 },
+        '13': { visible: 0, opacityHalf: 0 },
+        '14': { visible: 0, opacityHalf: 0 }
+    };
+
+    markers.forEach(marker => {
+        if (markerVisibility[marker]) {
+            const category = marker.category;
+            if (counts[category]) {
+                counts[category].visible++;
+                if (marker.opacity === 0.5) {
+                    counts[category].opacityHalf++;
+                }
+            } else {
+                console.warn(`Category ${category} not found in counts.`);
+            }
+        }
+    });
+
+    const totalCounts = {
+        '2': jsonData ? Object.values(jsonData).filter(loc => loc.category_id === '2').length : 0,
+        '7': jsonData ? Object.values(jsonData).filter(loc => loc.category_id === '7').length : 0,
+        '3': jsonData ? Object.values(jsonData).filter(loc => loc.category_id === '3').length : 0,
+        '8': jsonData ? Object.values(jsonData).filter(loc => loc.category_id === '8').length : 0,
+        '9': jsonData ? Object.values(jsonData).filter(loc => loc.category_id === '9').length + 
+                       Object.values(jsonData).filter(loc => loc.category_id === '10').length +
+                       Object.values(jsonData).filter(loc => loc.category_id === '11').length +
+                       Object.values(jsonData).filter(loc => loc.category_id === '12').length +
+                       Object.values(jsonData).filter(loc => loc.category_id === '13').length +
+                       Object.values(jsonData).filter(loc => loc.category_id === '14').length : 0
+    };
+
+    // Update HTML dengan format count terbaru
+    const treasureCount = document.getElementById('count-treasure');
+    const trainingCount = document.getElementById('count-training');
+    const zoneCount = document.getElementById('count-zone');
+    const fishingCount = document.getElementById('count-fishing');
+    const sceneryCount = document.getElementById('count-scenery');
+
+    if (treasureCount) {
+        treasureCount.innerHTML = `<img src="icons/icon_treasure.png" alt="Treasure Icon" class="count-icon"><span class="count-text">${counts['2'] ? counts['2'].opacityHalf : 0}/${totalCounts['2']}</span>`;
+    } else {
+        console.error('Element with ID "count-treasure" not found.');
+    }
+
+    if (trainingCount) {
+        trainingCount.innerHTML = `<img src="icons/icon_train.png" alt="Training Icon" class="count-icon"><span class="count-text">${counts['7'] ? counts['7'].opacityHalf : 0}/${totalCounts['7']}</span>`;
+    } else {
+        console.error('Element with ID "count-training" not found.');
+    }
+
+    if (zoneCount) {
+        zoneCount.innerHTML = `<img src="icons/icon_zone.png" alt="Zone Icon" class="count-icon"><span class="count-text">${counts['3'] ? counts['3'].opacityHalf : 0}/${totalCounts['3']}</span>`;
+    } else {
+        console.error('Element with ID "count-zone" not found.');
+    }
+
+    if (fishingCount) {
+        fishingCount.innerHTML = `<img src="icons/icon_fishing.png" alt="Fishing Icon" class="count-icon"><span class="count-text">${counts['9'] ? counts['9'].opacityHalf : 0}/${totalCounts['9']}</span>`;
+    } else {
+        console.error('Element with ID "count-fishing" not found.');
+    }
+    if (sceneryCount) {
+        sceneryCount.innerHTML = `<img src="icons/icon_scenery.png" alt="Scenery Icon" class="count-icon"><span class="count-text">${counts['8'] ? counts['8'].opacityHalf : 0}/${totalCounts['8']}</span>`;
+    } else {
+        console.error('Element with ID "count-scenery" not found.');
+    }
+
+// Panggil fungsi untuk menghitung total counts ketika data JSON dimuat
+fetch('https://autumn-dream-8c07.square-spon.workers.dev/earthrevivalinteractivemaps')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        jsonData = data;
+        calculateTotalCounts(); // Hitung total marker berdasarkan data JSON
+        initMap(); // Lanjutkan dengan inisialisasi peta
+    })
+    .catch(error => {
+        console.error('Error fetching JSON data:', error);
+    });
+
+// Fungsi untuk menghapus filter
+function removeFilter(category) {
+    const index = activeFilters.indexOf(category);
+    if (index > -1) {
+        activeFilters.splice(index, 1);
+        applyFilters();
+    }
+}
 
     // Toggle buttons for legend and filters
     document.getElementById('toggle-legend').addEventListener('click', () => {
@@ -174,6 +330,128 @@ function initMap() {
     document.getElementById('toggle-filters').addEventListener('click', () => {
         toggleVisibility('.new-filter-container'); // Ensure correct ID selector
     });
+// Fungsi untuk mereset opacity marker menjadi 1.0 dan memperbarui count
+function resetOpacity() {
+    markers.forEach(marker => {
+        if (marker.opacity === 0.5) {
+            marker.opacity = 1.0; // Set opacity menjadi 1.0
+            marker.setOpacity(1.0); // Pastikan untuk memperbarui tampilan marker di peta
+        }
+    });
+
+    updateCategoryCounts(); // Perbarui count setelah mereset opacity
+}
+
+// Tambahkan event listener pada tombol reset
+document.getElementById('reset-opacity').addEventListener('click', resetOpacity);
+
+// Fungsi untuk menampilkan form laporan kesalahan
+function showReportForm(marker) {
+    var markerId = marker.id;
+    var formHtml = `
+        <div id="reportFormContainer">
+            <h3>Report Error</h3>
+            <form id="reportForm">
+                <label for="reportId">ID MARK:</label>
+                <input type="text" id="reportId" name="reportId" value="${markerId}" readonly style="width: 15%;"><br><br>
+
+                <label for="num1">Correct Coordinate:</label>
+                <input type="number" id="num1" name="num1" min="0" step="1" required style="width: 20%; margin-right: 10px;"> 
+                <input type="number" id="num2" name="num2" min="0" step="1" required style="width: 20%;"><br><br>
+
+                <label for="errorDescription">Error Description (Name Map):</label>
+                <textarea id="errorDescription" name="errorDescription" rows="4" placeholder="UID/NAMEGAME/NAME MAP"></textarea><br><br>
+
+                <button type="button" id="submitReportBtn">Submit Report</button>
+                <button type="button" class="cancel" id="cancelReportBtn">Cancel</button>
+            </form>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', formHtml);
+    console.log('Form shown for marker ID:', markerId);
+
+    // Add event listeners for the buttons
+    document.getElementById('submitReportBtn').addEventListener('click', () => submitReport(markerId, marker.getPosition().lat(), marker.getPosition().lng()));
+    document.getElementById('cancelReportBtn').addEventListener('click', closeReportForm);
+}
+
+
+// Fungsi untuk menutup form laporan
+function closeReportForm() {
+    console.log('Closing form...');
+    var formContainer = document.getElementById('reportFormContainer');
+    if (formContainer) {
+        formContainer.remove();
+        console.log('Form removed from DOM');
+    } else {
+        console.log('Form not found');
+    }
+}
+
+// Fungsi untuk mengirim laporan
+function submitReport(markerId, lat, lng) {
+    var num1 = document.getElementById('num1').value;
+    var num2 = document.getElementById('num2').value;
+    var errorDescription = document.getElementById('errorDescription').value;
+
+    if (!num1 || !num2) {
+        alert('Please fill in the number fields');
+        return;
+    }
+
+    const jsonData = {
+        ID: markerId,
+        latitude: lat,
+        longitude: lng,
+        "X-coordinate": num1,
+        "Y-coordinate": num2,
+        description: errorDescription
+    };
+
+    fetch('https://autumn-dream-8c07.square-spon.workers.dev/Report', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(jsonData),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.text();
+    })
+    .then(data => {
+        console.log('Response Text:', data);
+        if (data === "JSON stored successfully") {
+            closeReportForm(); // Tutup form jika sukses
+        } else {
+            console.error('Unexpected response:', data);
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+// Tambahkan event listener untuk tombol report
+document.addEventListener('click', function(event) {
+    if (event.target && event.target.classList.contains('reportButton')) {
+        var markerId = event.target.getAttribute('data-id');
+        if (!markerId) {
+            console.error('Marker ID not found on report button');
+            return;
+        }
+        // Temukan marker berdasarkan ID
+        var marker = markers.find(m => m.id === markerId); // Pastikan 'id' sesuai dengan yang ditetapkan
+        if (marker) {
+            showReportForm(marker);
+        } else {
+            console.log('Marker not found for ID:', markerId);
+        }
+    }
+});
+
 
 
 // Array to keep track of active overlays
@@ -217,6 +495,7 @@ document.querySelectorAll('.new-filter-container .filter-btn').forEach(button =>
                 case 'loc_type6': miniMapKey = 'kplg'; break;
                 default: miniMapKey = null;
             }
+            
 
             if (miniMapKey && mini_map_type.hasOwnProperty(miniMapKey)) {
                 // Hapus semua overlay aktif
@@ -284,6 +563,124 @@ document.querySelectorAll('.new-filter-container .filter-btn').forEach(button =>
         }, 1000); // Delay 1 detik
     });
 });
+function updateCategoryCounts() {
+    // Reset counts for all categories
+    const counts = {
+        '1': { visible: 0, opacityHalf: 0 },
+        '2': { visible: 0, opacityHalf: 0 },
+        '3': { visible: 0, opacityHalf: 0 },
+        '7': { visible: 0, opacityHalf: 0 },
+        '8': { visible: 0, opacityHalf: 0 },
+        '9': { visible: 0, opacityHalf: 0 },
+        '10': { visible: 0, opacityHalf: 0 },
+        '11': { visible: 0, opacityHalf: 0 },
+        '12': { visible: 0, opacityHalf: 0 },
+        '13': { visible: 0, opacityHalf: 0 },
+        '14': { visible: 0, opacityHalf: 0 }
+    };
+
+    // Get the active mini-map type
+    const activeLocType = activeLocTypes[activeLocTypes.length - 1]; // The most recent active loc_type
+
+    if (!activeLocType) {
+        // If no mini-map is active, hide the counts
+        hideCategoryCounts();
+        return;
+    }
+
+    // Filter and count only markers that match the active mini-map
+    markers.forEach(marker => {
+        if (markerVisibility[marker] && marker.loc_type === activeLocType) {
+            const category = marker.category;
+            if (counts[category]) {
+                counts[category].visible++;
+                if (marker.opacity === 0.5) {
+                    counts[category].opacityHalf++;
+                }
+            }
+        }
+    });
+
+    // Calculate the total number of markers for each category in the active mini-map
+    const totalCounts = {
+        '2': jsonData ? Object.values(jsonData).filter(loc => loc.category_id === '2' && loc.loc_type === activeLocType).length : 0,
+        '7': jsonData ? Object.values(jsonData).filter(loc => loc.category_id === '7' && loc.loc_type === activeLocType).length : 0,
+        '3': jsonData ? Object.values(jsonData).filter(loc => loc.category_id === '3' && loc.loc_type === activeLocType).length : 0,
+        '8': jsonData ? Object.values(jsonData).filter(loc => loc.category_id === '8' && loc.loc_type === activeLocType).length : 0,
+        '9': jsonData ? Object.values(jsonData).filter(loc => ['9', '10', '11', '12', '13', '14'].includes(loc.category_id) && loc.loc_type === activeLocType).length : 0
+    };
+
+    // Update the category counts in the UI
+    updateCategoryCountUI(counts, totalCounts);
+}
+
+// Function to update the UI for category counts
+function updateCategoryCountUI(counts, totalCounts) {
+    const treasureCount = document.getElementById('count-treasure');
+    const trainingCount = document.getElementById('count-training');
+    const zoneCount = document.getElementById('count-zone');
+    const fishingCount = document.getElementById('count-fishing');
+    const sceneryCount = document.getElementById('count-scenery');
+
+    if (treasureCount) {
+        treasureCount.innerHTML = `<img src="icons/icon_treasure.png" alt="Treasure Icon" class="count-icon"><span class="count-text">${counts['2'] ? counts['2'].opacityHalf : 0}/${totalCounts['2']}</span>`;
+    }
+
+    if (trainingCount) {
+        trainingCount.innerHTML = `<img src="icons/icon_train.png" alt="Training Icon" class="count-icon"><span class="count-text">${counts['7'] ? counts['7'].opacityHalf : 0}/${totalCounts['7']}</span>`;
+    }
+
+    if (zoneCount) {
+        zoneCount.innerHTML = `<img src="icons/icon_zone.png" alt="Zone Icon" class="count-icon"><span class="count-text">${counts['3'] ? counts['3'].opacityHalf : 0}/${totalCounts['3']}</span>`;
+    }
+
+    if (fishingCount) {
+        fishingCount.innerHTML = `<img src="icons/icon_fishing.png" alt="Fishing Icon" class="count-icon"><span class="count-text">${counts['9'] ? counts['9'].opacityHalf : 0}/${totalCounts['9']}</span>`;
+    }
+        if (sceneryCount) {
+        sceneryCount.innerHTML = `<img src="icons/icon_scenery.png" alt="Scenery Icon" class="count-icon"><span class="count-text">${counts['8'] ? counts['8'].opacityHalf : 0}/${totalCounts['8']}</span>`;
+    }
+}
+
+// Hide category counts if no mini-map is active
+function hideCategoryCounts() {
+    const categoryCountElements = [
+        document.getElementById('count-treasure'),
+        document.getElementById('count-training'),
+        document.getElementById('count-zone'),
+        document.getElementById('count-fishing'),
+        document.getElementById('count-scenery')
+    ];
+
+    categoryCountElements.forEach(el => {
+        if (el) {
+            el.style.display = 'none';
+        }
+    });
+}
+
+// Show category counts when a mini-map is active
+function showCategoryCounts() {
+    const categoryCountElements = [
+        document.getElementById('count-treasure'),
+        document.getElementById('count-training'),
+        document.getElementById('count-zone'),
+        document.getElementById('count-fishing'), 
+        document.getElementById('count-scenery')
+    ];
+
+    categoryCountElements.forEach(el => {
+        if (el) {
+            el.style.display = 'block';
+        }
+    });
+}
+
+// Call this when a new mini-map is activated
+function onMiniMapActivated() {
+    showCategoryCounts(); // Ensure counts are visible
+    updateCategoryCounts(); // Update counts based on the active mini-map
+}
 
 
     // Container Hidden When Preload
@@ -405,6 +802,7 @@ function updateMarkers() {
             (activeFilters.includes('fishing') && ['9', '10', '11', '12', '13', '14'].includes(marker.category)) ||
             (activeFilters.includes('zone') && marker.category === '3') ||
             (activeFilters.includes('training') && marker.category === '7');
+  
 
         const locTypeMatch = activeLocTypes.length === 0 || activeLocTypes.includes(`loc_type${marker.loc_type}`);
 
@@ -586,7 +984,6 @@ window.addEventListener('scroll', handleScroll);
 // Jalankan fungsi saat halaman dimuat
 handleScroll();
 
-
 document.getElementById('zoomBtn').addEventListener('click', function() {
     var fullscreenImage = document.getElementById('fullscreen-image');
     fullscreenImage.style.display = 'flex';
@@ -615,3 +1012,4 @@ const closeBtn = document.getElementById('closeOverlayBtn');
     // Sembunyikan overlay ketika tombol close diklik
     overlay.style.display = 'none';
   });
+  

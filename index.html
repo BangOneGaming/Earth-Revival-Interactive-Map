@@ -13,7 +13,7 @@
     <link rel="icon" href="/icons/favicon-32x32.png" sizes="32x32" type="image/png">
     <link rel="icon" href="/icons/favicon-48x48.png" sizes="48x48" type="image/png">
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180">
-    <link href="app.css?=v1.2" rel="stylesheet" type="text/css">
+    <link href="app.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
@@ -21,16 +21,16 @@
     <div class="popup-content">
         <span class="close">&times;</span>
         <h2>Patch Update</h2>
-        <p>Version 2.3 - September 2024</p>
+        <p>Version 3.0- September 2024</p>
         <ul>
             <li>Fixed various bugs</li>
-            <li>New map location: Pegasus & Hilde</li>
-            <li>Zoom to Map Location</li>
-            <li>Video link Zone Commission</li>
-            <li>Get Better UI for Maps </li>
-            <Li>Double Click to Marker to Make it Transparan</Li>
-            </ul>
-        <a href="https://trakteer.id/BangOneGaming/tip" target="_blank" class="donate-btn">Support Us <b>Donate</a>
+            <li>Now <b>HOLD</b> can Change Opacity Mark</li>
+            <li>Calculated Marker UI</li>
+            <li><b>REPORT</b> form Available Now</li>
+            <li>Get Better UI for Maps</li>
+        </ul>
+        <p><b>Please Donate If You Like The Feature</b></p>
+        <a href="https://trakteer.id/BangOneGaming/tip" target="_blank" class="donate-btn">Support Us <br>Donate</br></a>
     </div>
 </div>
 
@@ -44,10 +44,12 @@
              data-ad-format="auto"
              data-full-width-responsive="true"></ins>
     </div>
-      <div class="trakteer-overlay" id="trakteerOverlay">
+  <div class="trakteer-overlay" id="trakteerOverlay">
   <button class="close-btn" id="closeOverlayBtn">&times;</button> <!-- Tombol close dengan simbol "×" -->
-  <iframe class="trakteer-frame" src="https://stream.trakteer.id/top-supporter-transitional.html?ts_font=default&ts_theme=transitional&ts_3_clr1=rgba%2813%2C+20%2C+57%2C+0.92%29&ts_3_clr2=rgba%280%2C+188%2C+212%2C+1%29&ts_3_clr4=rgba%28255%2C+255%2C+255%2C+1%29&ts_3_clr5=rgba%28255%2C+255%2C+255%2C+1%29&ts_3_clr6=rgba%280%2C+176%2C+255%2C+1%29&ts_3_clr7=rgba%2838%2C+85%2C+136%2C+1%29&ts_sortby=nominal&ts_customtitle=Donatur&ts_customsubtitle=Terimakasih+Sudah+Mendukung&key=trstream-bm2DcuTwpuXomRzGOBqD&timestamp=1726397519"></iframe>
+  <iframe class="trakteer-frame" src="https://stream.trakteer.id/top-supporter-transitional.html?ts_font=default&ts_theme=transitional&ts_sortby=nominal&ts_customsubtitle=Donatur&key=trstream-bm2DcuTwpuXomRzGOBqD&timestamp=1726331187"></iframe>
 </div>
+
+
         <!-- Donate Container -->
         <div class="donate-container">
         <a href="https://trakteer.id/BangOneGaming/tip" target="_blank" class="donate-btn">Donate Here</a>
@@ -63,7 +65,10 @@
     <div id="toggle-filters" class="toggle-new-filters-container">
         <img src="icons/new_filter-btn.png" alt="Toggle Filters">
     </div>
-    
+<button id="reset-opacity" title="Reset Opacity">
+    <img src="icons/reset.png" alt="Reset Icon">
+</button>
+  </div>
     <!-- New filter container for mark -->
 <div class="new-filter-container">
     <div class="filter-btn" data-filter="loc_type2" style="background-image: url('icons/sundale.png');">Sundale Valley</div>
@@ -71,49 +76,68 @@
     <div class="filter-btn" data-filter="loc_type4" style="background-image: url('icons/eden.png');">Edengate</div>
     <div class="filter-btn" data-filter="loc_type3" style="background-image: url('icons/ragon.png');">Ragon Snowy Peak</div>
     <div class="filter-btn" data-filter="loc_type6" style="background-image: url('icons/kepler.png');">Kepler Harbour</div>
-    <div class="filter-btn" id="zoomBtn" style="background-image: url('icons/space.png');">Pegasus <b>(Go to Space)</b></div>
-    <div class="filter-btn" style="background-image: url('icons/hilde.png');" id="hildeBtn">Hilde <b>(Under Development)</b></div>
+    <div class="filter-btn" id="zoomBtn" style="background-image: url('icons/space.png');">Pegasus<br><b>(Go to Space)</b></div>
+    <div class="filter-btn" style="background-image: url('icons/hilde.png');" id="hildeBtn">Hilde</div>
+    
+</div>
+<div class="count-container">
+<div id="count-treasure" class="count-item">Treasure: 0</div>
+<div id="count-training" class="count-item">Training: 0</div>
+<div id="count-zone" class="count-item">Zone: 0</div>
+<div id="count-fishing" class="count-item">Fishing: 0</div>
+<div id="count-scenery" class="count-item">Scenery: 0</div>
+
+    </div>
 </div>
 
 <!-- Container untuk gambar fullscreen -->
 <div id="fullscreen-image"></div>
 
-    <!-- Logo -->
-    <img src="statics/tittle_er.png" alt="Logo" id="logo" />
+<!-- Logo -->
+<img src="statics/tittle_er.png" alt="Logo" id="logo" />
 
-    <!-- Filter buttons -->
-    <div class="filter-container">
+<!-- Filter buttons -->
+<div class="filter-container">
+    <label class="filter-checkbox-btn">
+        <input type="checkbox" class="filter-checkbox" data-filter="all">
+        <img src="icons/here.png" alt="all"> all
+    </label>
+    <label class="filter-checkbox-btn">
+        <input type="checkbox" class="filter-checkbox" data-filter="treasure">
+        <img src="icons/icon_treasure.png" alt="Treasure"> Treasure
+    </label>
+    <label class="filter-checkbox-btn">
+        <input type="checkbox" class="filter-checkbox" data-filter="teleport">
+        <img src="icons/icon_teleport.png" alt="Teleport"> Teleport
+    </label>
+    <label class="filter-checkbox-btn">
+        <input type="checkbox" class="filter-checkbox" data-filter="fishing">
+        <img src="icons/icon_fishing.png" alt="Fishing"> Fishing
+    </label>
+    <label class="filter-checkbox-btn">
+        <input type="checkbox" class="filter-checkbox" data-filter="zone">
+        <img src="icons/icon_zone.png" alt="Zone"> Zone
+    </label>
+    <label class="filter-checkbox-btn">
+        <input type="checkbox" class="filter-checkbox" data-filter="training">
+        <img src="icons/icon_train.png" alt="Training"> Training
+    </label>
         <label class="filter-checkbox-btn">
-            <input type="checkbox" class="filter-checkbox" data-filter="all">
-            <img src="icons/icon_teleport.png" alt="all"> All
-        </label>
-        <label class="filter-checkbox-btn">
-            <input type="checkbox" class="filter-checkbox" data-filter="treasure">
-            <img src="icons/icon_treasure.png" alt="Treasure"> Treasure
-        </label>
-        <label class="filter-checkbox-btn">
-            <input type="checkbox" class="filter-checkbox" data-filter="teleport">
-            <img src="icons/icon_teleport.png" alt="Teleport"> Teleport
-        </label>
-        <label class="filter-checkbox-btn">
-            <input type="checkbox" class="filter-checkbox" data-filter="fishing">
-            <img src="icons/icon_fishing.png" alt="Fishing"> Fishing
-        </label>
-        <label class="filter-checkbox-btn">
-            <input type="checkbox" class="filter-checkbox" data-filter="zone">
-            <img src="icons/icon_zone.png" alt="Zone"> Zone
-        </label>
-        <label class="filter-checkbox-btn">
-            <input type="checkbox" class="filter-checkbox" data-filter="training">
-            <img src="icons/icon_train.png" alt="Training"> Training
-        </label>
-    </div>
+        <input type="checkbox" class="filter-checkbox" data-filter="scenery">
+        <img src="icons/icon_scenery.png" alt="Scenery"> Scenery
+    </label>
+</div>
+
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap"
         async defer></script>
-    <script src="updated_output.js?v=1.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>
+  eruda.init();
+</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="minimap_config.js"></script>
-    <script src="main.js?t=<?=time()?>"></script>
+    <script src="main.js"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467" crossorigin="anonymous"></script>
     <script>
         (adsbygoogle = window.adsbygoogle || []).push({

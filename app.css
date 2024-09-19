@@ -16,7 +16,7 @@ html,
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('icons/background_lanscape.png');
+    background-image: url('icons/background_landscape.png');
     background-size: cover;
     background-position: center;
     background-color: #fff;
@@ -81,6 +81,115 @@ html,
   position: relative;
   z-index: 1;
 }
+/* Styles for the report form container */
+#reportFormContainer {
+    width: 50%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 54, 95, 0.8);
+    padding: 20px;
+    border: 2px solid #889dcb;
+    z-index: 1000;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* Styles for form labels */
+#reportForm label {
+    display: block;
+    margin-bottom: 5px;
+    color: #ffffff; /* White text color */
+}
+
+/* Styles for form inputs */
+#reportForm input[type="text"],
+#reportForm input[type="number"],
+#reportForm textarea {
+    width: calc(100% - 22px); /* Adjust width to fit within container */
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #ffffff;
+}
+
+
+#reportForm button.cancel {
+    background-color: #ccc;
+    color: #000000; /* Black text color for cancel button */
+}
+
+#reportForm button:hover {
+    opacity: 0.8;
+}
+
+.count-container {
+    position: absolute;
+    top: 200px;
+    left: 10px;
+    background: rgba(19, 39, 96, 0.613);
+    color: white;
+    border-radius: 10px;
+    border: 2px solid #889dcb;
+    padding: 7px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 1290;
+    font-family: Arial, sans-serif;
+}
+
+.count-item {
+    display: flex;
+    align-items: center;
+    background-color: rgba(10, 28, 61, 0.883);
+    color: #fff;
+    border-radius: 8px;
+    padding: 1px 1px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.count-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+}
+
+.count-text {
+    display: inline-block;
+}
+#reset-opacity {
+    position: absolute; /* Posisi absolut */
+    top: 125px; /* Jarak dari atas */
+    left: 5px; /* Jarak dari kanan */
+    background: none; /* Tanpa latar belakang */
+    border: none; /* Tanpa border */
+    cursor: pointer; /* Tunjukkan kursor pointer saat hover */
+    padding: 5px; /* Padding untuk memberi ruang di sekitar gambar */
+    outline: none; /* Hapus outline default */
+    transition: transform 0.2s; /* Tambahkan transisi untuk efek hover */
+    z-index: 1300; /* Pastikan tombol berada di atas elemen lain */
+}
+
+#reset-opacity img {
+    width: 50px; /* Sesuaikan ukuran gambar sesuai kebutuhan */
+    height: 50px;
+    display: block; /* Hapus spasi di bawah gambar */
+}
+
+#reset-opacity:hover {
+    transform: scale(1.1); /* Efek zoom saat hover */
+}
+
+#reset-opacity:focus {
+    outline: 2px solid #000; /* Outline saat tombol memiliki fokus */
+}
+
+
 /* Pop-up background */
 .popup {
     display: none; /* Initially hidden */
@@ -173,20 +282,22 @@ html,
 }
 .trakteer-overlay {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 125px;
-  height: 165px;
-  z-index: 9999;
+  bottom: 120px;
+  right: 120px;
+  width: 225px;
+  height: 265px;
+  z-index: 1550;
   background: rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   overflow: hidden;
   transition: transform 0.3s ease-in-out; /* Animasi geser */
 }
+
+
 .trakteer-frame {
   width: 290%;
   height: 290%;
-  transform: scale(0.4);
+  transform: scale(0.6);
   transform-origin: 0 0;
   border: none;
   display: block;
@@ -215,6 +326,7 @@ html,
 .close-btn:hover {
   background: #ff1e1e;
 }
+
 .toggle-legend-container, .toggle-new-filters-container {
   position: absolute;
   z-index: 1500;
@@ -530,4 +642,56 @@ html,
 
 .new-filter-container::-webkit-scrollbar {
     display: none; /* Sembunyikan scrollbar */
+}
+#reset-opacity {
+    position: absolute; /* Posisi absolut */
+    top: 125px; /* Jarak dari atas */
+    left: 5px; /* Jarak dari kanan */
+    background: none; /* Tanpa latar belakang */
+    border: none; /* Tanpa border */
+    cursor: pointer; /* Tunjukkan kursor pointer saat hover */
+    padding: 5px; /* Padding untuk memberi ruang di sekitar gambar */
+    outline: none; /* Hapus outline default */
+    transition: transform 0.2s; /* Tambahkan transisi untuk efek hover */
+    z-index: 900; /* Pastikan tombol berada di atas elemen lain */
+}
+.count-container {
+        position: absolute;
+        top: auto;  /* Menghilangkan properti top dari versi global */
+        left: 5px;  /* Posisi di sebelah kiri */
+        right: auto; /* Menghindari masalah dengan right jika ada */
+        bottom: 5px; /* Posisi di bawah */
+        background: rgba(19, 39, 96, 0.613);
+        color: white;
+        border-radius: 10px;
+        border: 2px solid #889dcb;
+        padding: 7px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+        display: flex;
+        flex-direction: row;
+        gap: 4px;
+        z-index: 1290;
+        font-family: Arial, sans-serif;
+        flex-wrap: nowrap;  /* Mencegah item berbaris ke bawah */
+        overflow-x: auto;   /* Menambahkan scroll horizontal jika item terlalu banyak */
+    }
+.trakteer-overlay {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 125px;
+  height: 165px;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease-in-out; /* Animasi geser */
+}
+.trakteer-frame {
+  width: 290%;
+  height: 290%;
+  transform: scale(0.4);
+  transform-origin: 0 0;
+  border: none;
+  display: block;
 }
