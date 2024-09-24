@@ -7,6 +7,8 @@
     <meta property="og:image" content="https://raw.githubusercontent.com/BangOneGaming/Earth-Revival-Interactive-Map/main/tittle.png" />
     <meta name="google-adsense-account" content="ca-pub-8582564022805467">
     <meta name="google-site-verification" content="Ix3dO38-z_FWaZ-DWBk7kaoGb7I9MaAzrtqd-LvZLqw" />
+    <meta name="description" content="A complete interactive map for exploration in Earth Revival. Includes Treasure Hunt, Limited Time Training, Scenery, and Fishing Spots in various locations such as Sundale Valley, Howling Gobi, Edengate, Ragon Snowy Peak, Kepler Harbour, Pegasus, and Hilde. Discover your adventure today!">
+    <meta name="keywords" content="Earth Revival, interactive maps,map Earth Revival, treasure locations, training zones, fishing spots, zone markers, old world treasure, earth revival guide, map features, gaming guide">
     <title>Earth Revival Interactive Maps</title>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/icons/favicon-16x16.png" sizes="16x16" type="image/png">
@@ -16,17 +18,18 @@
     <link href="app.css" rel="stylesheet" type="text/css">
 </head>
 
+
 <body>
  <div id="patch-popup" class="popup">
     <div class="popup-content">
         <span class="close">&times;</span>
         <h2>Patch Update</h2>
-        <p>Version 3.0- September 2024</p>
+        <p>Version 3.1- September 2024</p>
         <ul>
             <li>Fixed various bugs</li>
             <li>Now <b>HOLD</b> can Change Opacity Mark</li>
             <li>Calculated Marker UI</li>
-            <li><b>REPORT</b> form Available Now</li>
+            <li> Fixed<b>REPORT</b> form</li>
             <li>Get Better UI for Maps</li>
         </ul>
         <p><b>Please Donate If You Like The Feature</b></p>
@@ -131,15 +134,9 @@
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap"
         async defer></script>
-</script>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XV19ZR4EBT"></script>
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-XV19ZR4EBT');
+  eruda.init();
 </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="minimap_config.js"></script>

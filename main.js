@@ -5,6 +5,7 @@ let jsonData = {}; // Tempat menyimpan data JSON
 let markerVisibility = {}; // Deklarasikan variabel ini jika belum ada
 let holdTimeout; // Variabel untuk menyimpan timer hold
 
+
 function initMap() {
     var init_position = window.init_position || "60.871009248911655,-76.62568359375001";
     var center_postion = init_position.split(",");
@@ -130,17 +131,22 @@ switch (location.category_id) {
         break;
 }
 
-                // Tambahkan status opacity ke marker
+const initialOpacity = loadMarkerOpacity(key);
+console.log(`Marker ${key} initial opacity: ${initialOpacity}`);
+
 const marker = new google.maps.Marker({
     position: latLng,
     map: map,
     icon: icon,
     category: location.category_id,
     loc_type: location.loc_type,
-    id: key, // Pastikan ID ditambahkan di sini
+    id: key,
+    en_name: location.en_name,
     draggable: false,
-    opacity: loadMarkerOpacity(key) // Muat opacity dari local storage
+    opacity: initialOpacity // Load opacity from local storage
 });
+
+
 
 
 marker.addListener('click', () => {
@@ -215,6 +221,21 @@ function applyFilters() {
     });
 
     updateCategoryCounts();
+}
+document.getElementById('reset-opacity').addEventListener('click', resetOpacity);
+
+// Reset opacity function
+function resetOpacity() {
+    markers.forEach(marker => {
+        if (marker.opacity === 0.5) {
+            marker.opacity = 1.0;
+            marker.setOpacity(1.0);
+            console.log(`Marker ${marker.id} opacity reset to 1.0`);
+        }
+    });
+
+    updateCategoryCounts(); // Update counts after opacity change
+    applyFilters(); // Refresh filters after resetting
 }
 
 function updateCategoryCounts() {
@@ -330,24 +351,28 @@ function removeFilter(category) {
     document.getElementById('toggle-filters').addEventListener('click', () => {
         toggleVisibility('.new-filter-container'); // Ensure correct ID selector
     });
-// Fungsi untuk mereset opacity marker menjadi 1.0 dan memperbarui count
-function resetOpacity() {
-    markers.forEach(marker => {
-        if (marker.opacity === 0.5) {
-            marker.opacity = 1.0; // Set opacity menjadi 1.0
-            marker.setOpacity(1.0); // Pastikan untuk memperbarui tampilan marker di peta
-        }
-    });
 
-    updateCategoryCounts(); // Perbarui count setelah mereset opacity
+
+// Function to close the report form
+function closeReportForm() {
+    console.log('Closing form...');
+    var formContainer = document.getElementById('reportFormContainer');
+    if (formContainer) {
+        formContainer.remove();
+        console.log('Form removed from DOM');
+    } else {
+        console.log('Form not found');
+    }
 }
 
-// Tambahkan event listener pada tombol reset
-document.getElementById('reset-opacity').addEventListener('click', resetOpacity);
-
-// Fungsi untuk menampilkan form laporan kesalahan
 function showReportForm(marker) {
     var markerId = marker.id;
+    var categoryId = marker.category || 'Unknown'; // Ambil category_id dari marker
+    var nameEn = marker.en_name || 'Unknown'; // Ambil en_name dari marker
+    var locType = marker.loc_type || 'Unknown'; // Ambil loc_type dari marker
+   
+    console.log("Marker Info:", { markerId, categoryId, nameEn, locType }); // Debugging
+
     var formHtml = `
         <div id="reportFormContainer">
             <h3>Report Error</h3>
@@ -367,32 +392,49 @@ function showReportForm(marker) {
             </form>
         </div>
     `;
-    document.body.insertAdjacentHTML('beforeend', formHtml);
-    console.log('Form shown for marker ID:', markerId);
 
-    // Add event listeners for the buttons
-    document.getElementById('submitReportBtn').addEventListener('click', () => submitReport(markerId, marker.getPosition().lat(), marker.getPosition().lng()));
+    document.body.insertAdjacentHTML('beforeend', formHtml);
+
+    document.getElementById('submitReportBtn').addEventListener('click', () => {
+        const lat = marker.getPosition().lat();
+        const lng = marker.getPosition().lng();
+        console.log("Submitting Report:", { markerId, lat, lng, categoryId, nameEn, locType });
+        submitReport(markerId, lat, lng, categoryId, nameEn, locType);
+    });
+
     document.getElementById('cancelReportBtn').addEventListener('click', closeReportForm);
 }
 
-
-// Fungsi untuk menutup form laporan
-function closeReportForm() {
-    console.log('Closing form...');
-    var formContainer = document.getElementById('reportFormContainer');
-    if (formContainer) {
-        formContainer.remove();
-        console.log('Form removed from DOM');
-    } else {
-        console.log('Form not found');
-    }
-}
-
-// Fungsi untuk mengirim laporan
-function submitReport(markerId, lat, lng) {
+function submitReport(markerId, lat, lng, categoryId, nameEn, locType) {
     var num1 = document.getElementById('num1').value;
     var num2 = document.getElementById('num2').value;
     var errorDescription = document.getElementById('errorDescription').value;
+
+    // Objek pemeta untuk loc_type dan category_id
+    const locTypeMap = {
+        "2": "Sundale Valley",
+        "3": "Ragon Snowy Peak",
+        "4": "Edengate",
+        "5": "Howling Gobi",
+        "6": "Kepler Harbour"
+    };
+
+    const categoryMap = {
+        "1": "Teleport",
+        "2": "Treasure",
+        "3": "Zone",
+        "7": "Training",
+        "9": "Fishing",
+        "10": "Fishing",
+        "11": "Fishing",
+        "12": "Fishing",
+        "13": "Fishing",
+        "14": "Fishing"
+    };
+
+    // Mengganti ID dengan nama menggunakan pemeta
+    const categoryName = categoryMap[categoryId] || 'Unknown';
+    const locTypeName = locTypeMap[locType] || 'Unknown';
 
     if (!num1 || !num2) {
         alert('Please fill in the number fields');
@@ -400,20 +442,27 @@ function submitReport(markerId, lat, lng) {
     }
 
     const jsonData = {
+        Name: nameEn || 'Unknown',  // Jika undefined, beri nilai default
         ID: markerId,
         latitude: lat,
         longitude: lng,
+        category_id: categoryName,  // Kirim nama kategori
+        loc_type: locTypeName,      // Kirim nama loc_type
         "X-coordinate": num1,
         "Y-coordinate": num2,
         description: errorDescription
     };
+
+    // Memformat JSON menjadi string dengan indentasi
+    const formattedJson = JSON.stringify(jsonData, null, 4);
+    console.log('Submitting report with the following data:', formattedJson);
 
     fetch('https://autumn-dream-8c07.square-spon.workers.dev/Report', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(jsonData),
+        body: formattedJson,
     })
     .then(response => {
         if (!response.ok) {
@@ -424,7 +473,7 @@ function submitReport(markerId, lat, lng) {
     .then(data => {
         console.log('Response Text:', data);
         if (data === "JSON stored successfully") {
-            closeReportForm(); // Tutup form jika sukses
+            closeReportForm(); // Close form if successful
         } else {
             console.error('Unexpected response:', data);
         }
@@ -434,7 +483,7 @@ function submitReport(markerId, lat, lng) {
     });
 }
 
-// Tambahkan event listener untuk tombol report
+// Add event listener for the report button
 document.addEventListener('click', function(event) {
     if (event.target && event.target.classList.contains('reportButton')) {
         var markerId = event.target.getAttribute('data-id');
@@ -442,8 +491,8 @@ document.addEventListener('click', function(event) {
             console.error('Marker ID not found on report button');
             return;
         }
-        // Temukan marker berdasarkan ID
-        var marker = markers.find(m => m.id === markerId); // Pastikan 'id' sesuai dengan yang ditetapkan
+        // Find marker by ID
+        var marker = markers.find(m => m.id === markerId); // Ensure 'id' matches the one set
         if (marker) {
             showReportForm(marker);
         } else {
@@ -451,7 +500,6 @@ document.addEventListener('click', function(event) {
         }
     }
 });
-
 
 
 // Array to keep track of active overlays
@@ -563,125 +611,6 @@ document.querySelectorAll('.new-filter-container .filter-btn').forEach(button =>
         }, 1000); // Delay 1 detik
     });
 });
-function updateCategoryCounts() {
-    // Reset counts for all categories
-    const counts = {
-        '1': { visible: 0, opacityHalf: 0 },
-        '2': { visible: 0, opacityHalf: 0 },
-        '3': { visible: 0, opacityHalf: 0 },
-        '7': { visible: 0, opacityHalf: 0 },
-        '8': { visible: 0, opacityHalf: 0 },
-        '9': { visible: 0, opacityHalf: 0 },
-        '10': { visible: 0, opacityHalf: 0 },
-        '11': { visible: 0, opacityHalf: 0 },
-        '12': { visible: 0, opacityHalf: 0 },
-        '13': { visible: 0, opacityHalf: 0 },
-        '14': { visible: 0, opacityHalf: 0 }
-    };
-
-    // Get the active mini-map type
-    const activeLocType = activeLocTypes[activeLocTypes.length - 1]; // The most recent active loc_type
-
-    if (!activeLocType) {
-        // If no mini-map is active, hide the counts
-        hideCategoryCounts();
-        return;
-    }
-
-    // Filter and count only markers that match the active mini-map
-    markers.forEach(marker => {
-        if (markerVisibility[marker] && marker.loc_type === activeLocType) {
-            const category = marker.category;
-            if (counts[category]) {
-                counts[category].visible++;
-                if (marker.opacity === 0.5) {
-                    counts[category].opacityHalf++;
-                }
-            }
-        }
-    });
-
-    // Calculate the total number of markers for each category in the active mini-map
-    const totalCounts = {
-        '2': jsonData ? Object.values(jsonData).filter(loc => loc.category_id === '2' && loc.loc_type === activeLocType).length : 0,
-        '7': jsonData ? Object.values(jsonData).filter(loc => loc.category_id === '7' && loc.loc_type === activeLocType).length : 0,
-        '3': jsonData ? Object.values(jsonData).filter(loc => loc.category_id === '3' && loc.loc_type === activeLocType).length : 0,
-        '8': jsonData ? Object.values(jsonData).filter(loc => loc.category_id === '8' && loc.loc_type === activeLocType).length : 0,
-        '9': jsonData ? Object.values(jsonData).filter(loc => ['9', '10', '11', '12', '13', '14'].includes(loc.category_id) && loc.loc_type === activeLocType).length : 0
-    };
-
-    // Update the category counts in the UI
-    updateCategoryCountUI(counts, totalCounts);
-}
-
-// Function to update the UI for category counts
-function updateCategoryCountUI(counts, totalCounts) {
-    const treasureCount = document.getElementById('count-treasure');
-    const trainingCount = document.getElementById('count-training');
-    const zoneCount = document.getElementById('count-zone');
-    const fishingCount = document.getElementById('count-fishing');
-    const sceneryCount = document.getElementById('count-scenery');
-
-    if (treasureCount) {
-        treasureCount.innerHTML = `<img src="icons/icon_treasure.png" alt="Treasure Icon" class="count-icon"><span class="count-text">${counts['2'] ? counts['2'].opacityHalf : 0}/${totalCounts['2']}</span>`;
-    }
-
-    if (trainingCount) {
-        trainingCount.innerHTML = `<img src="icons/icon_train.png" alt="Training Icon" class="count-icon"><span class="count-text">${counts['7'] ? counts['7'].opacityHalf : 0}/${totalCounts['7']}</span>`;
-    }
-
-    if (zoneCount) {
-        zoneCount.innerHTML = `<img src="icons/icon_zone.png" alt="Zone Icon" class="count-icon"><span class="count-text">${counts['3'] ? counts['3'].opacityHalf : 0}/${totalCounts['3']}</span>`;
-    }
-
-    if (fishingCount) {
-        fishingCount.innerHTML = `<img src="icons/icon_fishing.png" alt="Fishing Icon" class="count-icon"><span class="count-text">${counts['9'] ? counts['9'].opacityHalf : 0}/${totalCounts['9']}</span>`;
-    }
-        if (sceneryCount) {
-        sceneryCount.innerHTML = `<img src="icons/icon_scenery.png" alt="Scenery Icon" class="count-icon"><span class="count-text">${counts['8'] ? counts['8'].opacityHalf : 0}/${totalCounts['8']}</span>`;
-    }
-}
-
-// Hide category counts if no mini-map is active
-function hideCategoryCounts() {
-    const categoryCountElements = [
-        document.getElementById('count-treasure'),
-        document.getElementById('count-training'),
-        document.getElementById('count-zone'),
-        document.getElementById('count-fishing'),
-        document.getElementById('count-scenery')
-    ];
-
-    categoryCountElements.forEach(el => {
-        if (el) {
-            el.style.display = 'none';
-        }
-    });
-}
-
-// Show category counts when a mini-map is active
-function showCategoryCounts() {
-    const categoryCountElements = [
-        document.getElementById('count-treasure'),
-        document.getElementById('count-training'),
-        document.getElementById('count-zone'),
-        document.getElementById('count-fishing'), 
-        document.getElementById('count-scenery')
-    ];
-
-    categoryCountElements.forEach(el => {
-        if (el) {
-            el.style.display = 'block';
-        }
-    });
-}
-
-// Call this when a new mini-map is activated
-function onMiniMapActivated() {
-    showCategoryCounts(); // Ensure counts are visible
-    updateCategoryCounts(); // Update counts based on the active mini-map
-}
-
 
     // Container Hidden When Preload
     window.addEventListener('load', function() {
