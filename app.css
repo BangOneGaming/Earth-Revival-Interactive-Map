@@ -9,7 +9,46 @@ html,
   width: 100%;
   font-family: 'Roboto', sans-serif;
 }
-/* Style for preloader */
+/* Loading bar container */
+#loading-bar-container {
+    width: 80%;
+    background-color: #ddd;
+    border-radius: 25px;
+    border: 2px solid #889dcb;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+/* Loading bar itself */
+#loading-bar {
+    width: 0%;
+    height: 30px;
+    background-color: #00aaff;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif;
+    transition: width 0.5s ease; /* Smooth transition for loading bar */
+}
+
+/* Text inside the loading bar */
+#loading-text {
+    font-size: 16px;
+    color: white; /* Text color inside the bar */
+}
+
+/* Adjust existing #loading for positioning */
+#loading {
+    font-size: 16px;
+    color: #fff; /* Adjust color to white for better contrast */
+    margin-top: 10px;
+    font-family: 'Roboto', sans-serif;
+}
+
+
 #preloader {
     position: fixed;
     top: 0;
@@ -191,6 +230,7 @@ html,
 
 
 /* Pop-up background */
+/* Pop-up background */
 .popup {
     display: none; /* Initially hidden */
     position: fixed;
@@ -210,7 +250,7 @@ html,
     background-color: rgb(10, 18, 44);
     padding: 20px;
     border-radius: 10px;
-    width: 300px;
+    width: 500px;
     max-width: 90%; /* Make sure it doesn't go beyond 90% of the screen on smaller devices */
     box-shadow: 0px 2px 6px rgb(255, 255, 255);
     color: rgb(255, 255, 255);
@@ -231,6 +271,15 @@ html,
 .popup .close:focus {
     color: black;
 }
+
+/* Icon above the title */
+.popup-content img {
+    width: 180px; /* Adjust the size as needed */
+    height: auto; 
+    display: block; 
+    margin: 0 auto 10px; /* Center the icon and add margin below */
+}
+
 /* Donation button */
 .popup .donate-btn {
     display: inline-block;
@@ -251,6 +300,24 @@ html,
     box-shadow: 0 0 20px rgba(0, 255, 0, 1), 0 0 30px rgba(0, 255, 0, 0.8); /* Neon glow effect */
     transform: scale(1.05); /* Zoom effect on hover */
 }
+
+/* PayPal button */
+.popup-content .paypal-button {
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    margin-top: 10px; 
+    text-decoration: none; 
+    color: #fff; /* White text */
+}
+
+/* PayPal icon */
+.popup-content .paypal-button img {
+    width: auto; 
+    height: 40px; 
+    margin-right: 5px; 
+}
+
 
 /* CSS untuk menyembunyikan logo Google Maps */
 .gm-style-cc {
@@ -286,7 +353,7 @@ html,
   right: 120px;
   width: 225px;
   height: 265px;
-  z-index: 1550;
+  z-index: 20;
   background: rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   overflow: hidden;
@@ -316,7 +383,7 @@ html,
   font-weight: bold;
   border-radius: 50%;
   cursor: pointer;
-  z-index: 1700;
+  z-index: 30;
 }
 
 .close-btn:hover {
@@ -384,6 +451,7 @@ html,
   flex-direction: row;
   object-fit: cover;
 }
+
 #fullscreen-image {
     position: fixed;
     top: 0;
@@ -618,7 +686,7 @@ html,
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: none; /* Nonaktifkan efek transisi gambar */
+    transition: transform 0.3s ease; /* Tambahkan transisi pada transform */
 }
 
 .new-filter-container .filter-btn .button-text {
@@ -635,7 +703,9 @@ html,
     font-size: 16px; /* Ukuran font teks */
     transition: opacity 0.3s ease; /* Efek transisi untuk opacity */
 }
-
+.new-filter-container .filter-btn:hover img {
+    transform: scale(1.2); /* Membesarkan gambar saat tombol dihover */
+}
 .new-filter-container .filter-btn:hover .button-text {
     opacity: 0; /* Menghilangkan teks saat hover */
 }

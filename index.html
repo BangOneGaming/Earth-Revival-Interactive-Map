@@ -1,15 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:image" content="https://raw.githubusercontent.com/BangOneGaming/Earth-Revival-Interactive-Map/main/tittle.png" />
-    <meta name="google-adsense-account" content="ca-pub-8582564022805467">
-    <meta name="google-site-verification" content="Ix3dO38-z_FWaZ-DWBk7kaoGb7I9MaAzrtqd-LvZLqw" />
-    <meta name="description" content="A complete interactive map for exploration in Earth Revival. Includes Treasure Hunt, Limited Time Training, Scenery, and Fishing Spots in various locations such as Sundale Valley, Howling Gobi, Edengate, Ragon Snowy Peak, Kepler Harbour, Pegasus, and Hilde. Discover your adventure today!">
-    <meta name="keywords" content="Earth Revival, interactive maps,map Earth Revival, treasure locations, training zones, fishing spots, zone markers, old world treasure, earth revival guide, map features, gaming guide">
-    <title>Earth Revival Interactive Maps</title>
+    <title>Leaflet Map with Custom Tiles and Filters</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/icons/favicon-16x16.png" sizes="16x16" type="image/png">
     <link rel="icon" href="/icons/favicon-32x32.png" sizes="32x32" type="image/png">
@@ -17,25 +13,38 @@
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180">
     <link href="app.css" rel="stylesheet" type="text/css">
 </head>
-
-
 <body>
- <div id="patch-popup" class="popup">
+<div id="patch-popup" class="popup">
     <div class="popup-content">
         <span class="close">&times;</span>
-        <h2>Patch Update</h2>
-        <p>Version 3.1- September 2024</p>
+        
+        <!-- Menambahkan gambar ikon di sini -->
+
+
+        <h2>MAJOR UPDATE</h2>
+        <p>VERSION 4.0 - OCTOBER 2024</p>
         <ul>
+            <li><b>NOW UNLIMITED LOADING</b> of maps has been fixed.</li>
             <li>Fixed various bugs</li>
-            <li>Now <b>HOLD</b> can Change Opacity Mark</li>
-            <li>Calculated Marker UI</li>
-            <li> Fixed<b>REPORT</b> form</li>
-            <li>Get Better UI for Maps</li>
+            <li>Fixed <b>REPORT</b> form</li>
+            <li>English Text Maps</li>
         </ul>
+        <img src="icons/Sad.png" alt="Icon">
         <p><b>Please Donate If You Like The Feature</b></p>
-        <a href="https://trakteer.id/BangOneGaming/tip" target="_blank" class="donate-btn">Support Us <br>Donate</br></a>
+        
+        <!-- Tombol Trakteer -->
+        <a href="https://trakteer.id/BangOneGaming/tip" target="_blank" class="donate-btn">TRAKTEER <br>Donate</br></a>
+        <p>👇 Press For Paypal 👇</p>
+        <!-- Menambahkan tombol PayPal di sini -->
+        <div class="paypal-button">
+            <a href="https://www.paypal.me/IrvanNazmudin" target="_blank">
+                <img src="icons/paypal.png" alt="PayPal">
+            </a>
+        </div>
     </div>
 </div>
+
+
 
 
     <div id="map"></div>
@@ -51,17 +60,23 @@
   <button class="close-btn" id="closeOverlayBtn">&times;</button> <!-- Tombol close dengan simbol "×" -->
   <iframe class="trakteer-frame" src="https://stream.trakteer.id/top-supporter-transitional.html?ts_font=default&ts_theme=transitional&ts_sortby=nominal&ts_customsubtitle=Donatur&key=trstream-bm2DcuTwpuXomRzGOBqD&timestamp=1726331187"></iframe>
 </div>
+<div id="preloader">
+    <img src="icons/bangone.png" alt="Loading...">
+    <div id="loading-bar-container">
+        <div id="loading-bar">
+            <div id="loading-text">Loading... 0%</div>
+        </div>
+    </div>
+    <p class="preloader-text" id="preloader-text">Loading markers, tiles, and UI components...</p>
+</div>
+
 
 
         <!-- Donate Container -->
         <div class="donate-container">
         <a href="https://trakteer.id/BangOneGaming/tip" target="_blank" class="donate-btn">Donate Here</a>
     </div>
-    <div id="preloader">
-        <img src="icons/bangone.png" alt="Loading...">
-        <div id="loading"></div>
-        <p class="preloader-text">Refresh Screen or Open in another Browser</p>
-    </div>
+
     <div id="toggle-legend" class="toggle-legend-container">
         <img src="icons/toggle_btn.png" alt="Toggle Legend">
     </div>
@@ -131,20 +146,13 @@
     </label>
 </div>
 
-
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap"
-        async defer></script>
+<div id="map"></div>
+<script src="minimap_config.js"></script>
+<script>
+  eruda.init();
 </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script src="minimap_config.js"></script>
-    <script src="main.js"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467" crossorigin="anonymous"></script>
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({
-            google_ad_client: "ca-pub-8582564022805467",
-            enable_page_level_ads: true
-        });
-    </script>
+<script src="app.js"></script>
+
 </body>
 
 </html>
