@@ -420,7 +420,7 @@ html,
 
 .filter-container,
 .new-filter-container {
-  display: block; /* Ubah dari 'none' ke 'block' */
+  display: block; /* Tampilkan saat halaman dimuat */
   position: absolute;
   z-index: 1000;
   gap: 10px;
@@ -431,24 +431,25 @@ html,
   transition: all 0.3s ease;
 }
 
-
 .filter-container {
-  top: 10px;
-  left: 60px;
-  width: auto;
-  height: 20px;
-  flex-direction: row;
-  flex:1
+  top: 10px; /* Posisi dari atas */
+  left: 60px; /* Posisi dari kiri */
+  width: auto; /* Lebar otomatis */
+  height: 20px; /* Tinggi */
+  display: flex; /* Menggunakan flexbox */
+  flex-direction: row; /* Konten dalam baris */
+  flex: 1; /* Membolehkan pertumbuhan */
 }
 
 .new-filter-container {
-  top: 80px;
-  left: 70px;
-  height: 120px;
-  width: 90%;
-  flex: 1;
-  flex-direction: row;
-  object-fit: cover;
+  top: 80px; /* Posisi dari atas */
+  left: 70px; /* Posisi dari kiri */
+  height: 120px; /* Tinggi */
+  width: 90%; /* Lebar 90% dari elemen induk */
+  display: flex; /* Menggunakan flexbox */
+  flex-direction: row; /* Konten dalam baris */
+  flex: 1; /* Membolehkan pertumbuhan */
+  object-fit: cover; /* Mengatur gambar agar terpotong dengan baik (jika ada gambar) */
 }
 
 #fullscreen-image {
