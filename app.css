@@ -418,10 +418,9 @@ html,
   height: 50px;
 }
 
-/* Filter Container */
 .filter-container,
 .new-filter-container {
-  display: none;
+  display: block; /* Ubah dari 'none' ke 'block' */
   position: absolute;
   z-index: 1000;
   gap: 10px;
@@ -430,8 +429,8 @@ html,
   border-radius: 8px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
   transition: all 0.3s ease;
-  
 }
+
 
 .filter-container {
   top: 10px;
