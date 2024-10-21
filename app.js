@@ -280,13 +280,15 @@ const categoryIcons = {
     "fishing": "icons/icon_fishing.png",     // Ikon untuk "Fishing"
     "zone": "icons/icon_zone.png",           // Ikon untuk "Zone"
     "training": "icons/icon_train.png",      // Ikon untuk "Training"
-    "scenery": "icons/icon_scenery.png"      // Ikon untuk "Scenery"
+    "scenery": "icons/icon_scenery.png",     // Ikon untuk "Scenery"
+    "resource": "icons/icon_resource.png"
 };
 
 
 const categoryCounts = {
     "2": {  // Loc_type 2 (Sundale Valley)
         "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
+        "resource": { max: 0, current: 0, icon: categoryIcons.resource },
         "training": { max: 0, current: 0, icon: categoryIcons.training },
         "zone": { max: 0, current: 0, icon: categoryIcons.zone },
         "fishing": { max: 0, current: 0, icon: categoryIcons.fishing },
@@ -294,6 +296,7 @@ const categoryCounts = {
     },
     "3": {  // Loc_type 3 (Ragon Snowy Peak)
         "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
+        "resource": { max: 0, current: 0, icon: categoryIcons.resource },
         "training": { max: 0, current: 0, icon: categoryIcons.training },
         "zone": { max: 0, current: 0, icon: categoryIcons.zone },
         "fishing": { max: 0, current: 0, icon: categoryIcons.fishing },
@@ -301,6 +304,7 @@ const categoryCounts = {
     },
     "4": {  // Loc_type 4 (Edengate)
         "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
+        "resource": { max: 0, current: 0, icon: categoryIcons.resource },
         "training": { max: 0, current: 0, icon: categoryIcons.training },
         "zone": { max: 0, current: 0, icon: categoryIcons.zone },
         "fishing": { max: 0, current: 0, icon: categoryIcons.fishing },
@@ -308,6 +312,7 @@ const categoryCounts = {
     },
     "5": {  // Loc_type 5 (Howling Gobi)
         "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
+        "resource": { max: 0, current: 0, icon: categoryIcons.resource },
         "training": { max: 0, current: 0, icon: categoryIcons.training },
         "zone": { max: 0, current: 0, icon: categoryIcons.zone },
         "fishing": { max: 0, current: 0, icon: categoryIcons.fishing },
@@ -315,6 +320,7 @@ const categoryCounts = {
     },
     "6": {  // Loc_type 6 (Kepler Harbour)
         "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
+        "resource": { max: 0, current: 0, icon: categoryIcons.resource },
         "training": { max: 0, current: 0, icon: categoryIcons.training },
         "zone": { max: 0, current: 0, icon: categoryIcons.zone },
         "fishing": { max: 0, current: 0, icon: categoryIcons.fishing },
@@ -395,7 +401,7 @@ function showMarkers() {
 
 function getCategoryName(categoryId) {
     switch (categoryId) {
-        case "1": return "unknown"; // Atur nama kategori untuk ID 1
+        case "1": return "teleport"; // Atur nama kategori untuk ID 1
         case "2": return "treasure";
         case "3": return "zone";
         case "7": return "training";
@@ -405,6 +411,7 @@ function getCategoryName(categoryId) {
         case "11": return "fishing"; // Jika ID 11 juga berhubungan dengan kategori fishing
         case "13": return "fishing"; // Jika ID 13 juga berhubungan dengan kategori fishing
         case "14": return "fishing"; // Tambah ID 14 ke kategori fishing
+        case "18": return "resource";
         default:
             if (fishingCategories.includes(parseInt(categoryId))) return "fishing"; // Jika ID ada dalam fishingCategories
             console.log(`Unrecognized categoryId: ${categoryId}`);
@@ -636,7 +643,8 @@ function submitReport(markerId, lat, lng, categoryId, nameEn, locType) {
         "11": "Fishing",
         "12": "Fishing",
         "13": "Fishing",
-        "14": "Fishing"
+        "14": "Fishing", 
+        "18": "resource"
     };
 
     // Mengganti ID dengan nama menggunakan pemeta
@@ -775,6 +783,7 @@ function getCategoryFromMarker(marker) {
     if (iconUrl.includes('icon_zone.png')) return 'zone';
     if (iconUrl.includes('icon_train.png')) return 'training';
     if (iconUrl.includes('icon_scenery.png')) return 'scenery';
+    if (iconUrl.includes('icon_resource.png')) return 'resource';
     
     return null; // Category not found
 }
@@ -787,12 +796,13 @@ function getIconUrl(categoryId) {
         case "3": return "icons/icon_zone.png"; // Zone
         case "7": return "icons/icon_train.png"; // Training
         case "8": return "icons/icon_scenery.png"; // Scenery
-        case "9": // Fishing category group
+        case "9": return "icons/icon_fishing.png"; // Fishing
         case "10":
         case "11":
         case "12":
         case "13":
-        case "14": return "icons/icon_fishing.png"; // Fishing
+        case "14": return "icons/rare_fishing.png"; // Fishing
+        case "18": return "icons/icon_resource.png";
         default: return "icons/default_icon.png"; // Default icon if no match
     }
 }
@@ -1254,7 +1264,8 @@ function isCategoryMatch(marker) {
            (activeFilters.includes('fishing') && ['9', '10', '11', '12', '13', '14'].includes(category)) ||
            (activeFilters.includes('zone') && category === '3') ||
            (activeFilters.includes('training') && category === '7') ||
-           (activeFilters.includes('scenery') && category === '8');
+           (activeFilters.includes('scenery') && category === '8') ||
+           (activeFilters.includes('resource') && category === '18');
 }
 document.addEventListener('DOMContentLoaded', () => {
     const buttons = document.querySelectorAll('.new-filter-container .filter-btn');

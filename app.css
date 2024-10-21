@@ -533,7 +533,7 @@ html,
   border-radius: 4px;
   cursor: pointer;
   box-shadow: 0px 2px 4px rgba(4, 26, 224, 0.15);
-  font-size: 16px;
+  font-size: 0px;
   transition: background-color 0.3s ease;
 }
 
@@ -560,22 +560,23 @@ html,
         background-repeat: no-repeat;
     }
 
-    .filter-container {
-        display: flex;
-        flex-wrap: wrap;
-        width: 40%;
-        max-width: 90%;
-        left: 70px;
-        top: 10px;
-        height: 80px;
-        padding: 0px;
-        flex-direction: row;
-        box-sizing: border-box;
-        gap: 1px;
-        border: 2px solid #889dcb;
-        animation: slide-right 0.5s ease-out;
-        overflow: hidden;
-    }
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 40%;
+    max-width: 90%;
+    left: 70px;
+    top: 10px;
+    height: 80px;
+    padding: 0px;
+    flex-direction: row;
+    box-sizing: border-box;
+    gap: 1px;
+    border: 2px solid #889dcb;
+    animation: slide-right 0.5s ease-out;
+    overflow-x: auto; /* Allow horizontal scrolling */
+}
+
 
     .filter-container .filter-checkbox-btn {
         display: flex;

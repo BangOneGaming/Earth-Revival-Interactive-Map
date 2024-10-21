@@ -29,7 +29,7 @@
     <link rel="icon" href="/icons/favicon-32x32.png" sizes="32x32" type="image/png">
     <link rel="icon" href="/icons/favicon-48x48.png" sizes="48x48" type="image/png">
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180">
-    <link href="app.css?v=2.4" rel="stylesheet" type="text/css">
+    <link href="app.css?v=2.5" rel="stylesheet" type="text/css">
 
     <!-- Leaflet for maps -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -49,17 +49,22 @@
 <div id="patch-popup" class="popup">
     <div class="popup-content">
         <span class="close">&times;</span>
-        
-        <!-- Menambahkan gambar ikon di sini -->
-
 
         <h2>NOTE UPDATE</h2>
-        <p>VERSION 4.3 - OCTOBER 2024</p>
+        <p>VERSION 4.7 - OCTOBER 2024</p>
         <ul>
             <li><b>NOW UNLIMITED LOADING</b> of maps has been fixed.</li>
             <li>Fix Calculate Opacity</li>
-            <li>Update <b>Howling Gobi</b> Coordinate</li>
+            <li>Update <b>HOWLING GOBI</b> Coordinate</li>
             <li>Add Videos to Zone Commsion Howling Gobi</li>
+            <li>
+                New Mark <b>RESOURCE CHEST</b> 👉
+                <img src="icons/icon_resource.png" alt="Icon Resource" style="width: 20px; vertical-align: middle; display: inline-block;"> 
+            </li>
+            <li>
+                Change <b>TREASURE HUNT ICON</b> 👉
+                <img src="icons/icon_treasure.png" alt="Icon Treasure" style="width: 20px; vertical-align: middle; display: inline-block;">
+            </li>
         </ul>
         <img src="icons/Sad.png" alt="Icon">
         <p><b>Please Donate If You Like The Feature</b></p>
@@ -75,6 +80,7 @@
         </div>
     </div>
 </div>
+
 
 
 
@@ -155,6 +161,10 @@
             <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
             <span class="count-text">0/0</span>
         </div>
+        <div id="count-resource-loc2" class="count-item">
+            <img src="icons/icon_resource.png" alt="Resource" class="count-icon">
+            <span class="count-text" id="resource-count-2">0/0</span>
+        </div>               
     </div>
 
     <!-- Loc_type 5 (Howling Gobi) -->
@@ -180,6 +190,10 @@
             <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
             <span class="count-text">0/0</span>
         </div>
+        <div id="count-resource-loc5" class="count-item">
+            <img src="icons/icon_resource.png" alt="Resource" class="count-icon">
+            <span class="count-text" id="resource-count-5">0/0</span>
+        </div>               
         </div>
    <!-- Loc_type 3 (Ragon Snowy Peak) -->
     <div id="loc-type-3">
@@ -204,6 +218,10 @@
             <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
             <span class="count-text" id="scenery-count-3">0/0</span>
         </div>
+        <div id="count-resource-loc3" class="count-item">
+            <img src="icons/icon_resource.png" alt="Resource" class="count-icon">
+            <span class="count-text" id="resource-count-3">0/0</span>
+        </div>               
     </div>
 
     <!-- Loc_type 4 (Edengate) -->
@@ -229,6 +247,10 @@
             <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
             <span class="count-text" id="scenery-count-4">0/0</span>
         </div>
+        <div id="count-resource-loc4" class="count-item">
+            <img src="icons/icon_resource.png" alt="Resource" class="count-icon">
+            <span class="count-text" id="resource-count-4">0/0</span>
+        </div>        
     </div>
 
     <!-- Loc_type 6 (Kepler Harbour) -->
@@ -254,6 +276,10 @@
             <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
             <span class="count-text" id="scenery-count-6">0/0</span>
         </div>
+        <div id="count-resource-loc6" class="count-item">
+            <img src="icons/icon_resource.png" alt="Resource" class="count-icon">
+            <span class="count-text" id="resource-count-6">0/0</span>
+        </div>
     </div>
 
 </div>
@@ -277,10 +303,6 @@
         <img src="icons/icon_treasure.png" alt="Treasure"> Treasure
     </label>
     <label class="filter-checkbox-btn">
-        <input type="checkbox" class="filter-checkbox" data-filter="teleport">
-        <img src="icons/icon_teleport.png" alt="Teleport"> Teleport
-    </label>
-    <label class="filter-checkbox-btn">
         <input type="checkbox" class="filter-checkbox" data-filter="fishing">
         <img src="icons/icon_fishing.png" alt="Fishing"> Fishing
     </label>
@@ -296,13 +318,17 @@
         <input type="checkbox" class="filter-checkbox" data-filter="scenery">
         <img src="icons/icon_scenery.png" alt="Scenery"> Scenery
     </label>
+        </label>
+        <label class="filter-checkbox-btn">
+        <input type="checkbox" class="filter-checkbox" data-filter="resource">
+        <img src="icons/icon_resource.png" alt="Resource"> Resource
+    </label>
 </div>
 
 <div id="map"></div>
 <script src="minimap_config.js"></script>
 
-</script>
-<script src="app.js?v=2.4"></script>
+    <script src="app.js?t=<?=time()?>"></script>
 
 </body>
 
