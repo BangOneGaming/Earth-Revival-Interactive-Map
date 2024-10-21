@@ -156,70 +156,102 @@ function initMiniMap() {
 initMap(); // Initialize your main map first
 initMiniMap(); // Then initialize the mini-map markers and overlays
 
-function addMarkersToMap() {
-    resetCategoryCounts(); // Reset category counts
-    markers = []; // Reset markers array
 
-    // Iterate through jsonData
+function addMarkersToMap() {
+    markers = []; // Reset markers array setiap kali fungsi dipanggil
+
+    // Iterasi melalui jsonData
     for (const key in jsonData) {
         if (jsonData.hasOwnProperty(key)) {
             const location = jsonData[key];
 
-            // Validate lat and lng
+            // Validasi latitude dan longitude
             if (!location.lat || !location.lng) {
                 console.error(`Location ${key} is missing lat/lng.`);
                 continue;
             }
 
-            // Convert lat/lng to float and prepare coordinates
+            // Konversi lat/lng ke float dan siapkan koordinat
             const latLng = [parseFloat(location.lat), parseFloat(location.lng)];
 
-            // Get icon URL based on the category_id
+            // Dapatkan URL ikon berdasarkan category_id
             const iconUrl = getIconUrl(location.category_id);
 
-            // Load marker opacity (if previously saved)
-            const initialOpacity = loadMarkerOpacity(key);
+            // Load opacity marker (jika sebelumnya disimpan)
+            const initialOpacity = loadMarkerOpacity(key) || 1.0; // Default opacity 1.0 jika tidak ditemukan
 
-            // Assign loc_type, category, name, and marker ID with fallback values
+            // Assign properti tambahan ke marker (dengan fallback value)
             const locType = location.loc_type || 'Unknown'; 
             const categoryId = location.category_id || 'Unknown'; 
             const nameEn = location.en_name || 'Unknown'; 
-            const markerId = location.id || key; // Ensure you are using the actual ID from your data
+            const markerId = location.id || key; // Gunakan ID dari data atau fallback ke key
 
-            // Log marker details for debugging
-            console.log(`Adding marker with loc_type: ${locType}, categoryId: ${categoryId}, nameEn: ${nameEn}, markerId: ${markerId}`);
-
-            // Create the Leaflet marker with the specified icon and opacity
+            // Buat marker Leaflet dengan ikon dan opacity yang ditentukan
             const marker = L.marker(latLng, {
                 icon: L.icon({
                     iconUrl: iconUrl,
                     iconSize: [32, 32],
                     iconAnchor: [16, 32],
                 }),
-                opacity: initialOpacity || 1.0, // Set opacity (default to 1.0)
+                opacity: initialOpacity, // Atur opacity (default 1.0)
             });
 
-            // Attach additional properties to marker options for use in the report form
+            // Tambahkan properti tambahan ke marker options
             marker.options.loc_type = locType;
             marker.options.category = categoryId;
-            marker.options.id = markerId; // Use 'id' instead of 'markerId' for consistency
-            marker.options.en_name = nameEn; // Marker name in English
+            marker.options.id = markerId;
+            marker.options.en_name = nameEn;
 
-            // Save marker to the markers array for future reference
+            // Simpan marker ke array markers untuk referensi di masa depan
             markers.push(marker);
 
-            // Set up marker interactions, including the report button
+            // Setup interaksi marker, termasuk tombol laporan
             setupMarkerInteractions(marker, location, markerId);
 
-            // Update the category counts based on the marker's category and opacity
-            updateCategoryCounts(categoryId, initialOpacity);
+            // Update jumlah kategori berdasarkan kategori marker dan opacity
+            updateCategoryCounts(locType, categoryId, initialOpacity);
         }
     }
 
-    // Hide markers initially and update the category display
+    // Hitung jumlah maksimum setelah semua marker ditambahkan
+    calculateMaxCounts();
+
+    // Sembunyikan marker awal dan update tampilan kategori
     hideMarkers();
-    updateCategoryDisplay();
+    updateCategoryDisplay(); // Pastikan tampilan kategori diupdate setelah menambahkan semua marker
 }
+
+
+
+
+function calculateMaxCounts() {
+    const seenMarkers = new Set(); // Gunakan set untuk melacak marker yang sudah dihitung
+
+    for (const key in jsonData) {
+        if (jsonData.hasOwnProperty(key)) {
+            const location = jsonData[key];
+            const locType = location.loc_type || 'Unknown';
+            const categoryId = location.category_id;
+            const categoryName = getCategoryName(categoryId);
+
+            // Pastikan kategori dikenali dan marker unik
+            if (categoryName && locType in categoryCounts && categoryCounts[locType][categoryName]) {
+                const markerKey = `${locType}-${categoryName}-${location.lat}-${location.lng}`; // Buat key unik berdasarkan lokasi
+                if (!seenMarkers.has(markerKey)) {
+                    categoryCounts[locType][categoryName].max++; // Tambah max untuk marker yang unik
+                    seenMarkers.add(markerKey); // Tandai marker ini sudah dihitung
+                }
+            } else {
+                console.log(`Marker with unrecognized category or locType: ${categoryId} in locType: ${locType}`); // Log jika tidak dikenali
+            }
+        }
+    }
+
+    // Log hasil akhir
+    console.log('Final max counts:', categoryCounts);
+}
+
+
 
 
 
@@ -241,14 +273,55 @@ function setupFilterListeners() {
         });
     });
 }
+const categoryIcons = {
+    "all": "icons/here.png",                // Ikon untuk "All"
+    "treasure": "icons/icon_treasure.png",  // Ikon untuk "Treasure"
+    "teleport": "icons/icon_teleport.png",  // Ikon untuk "Teleport"
+    "fishing": "icons/icon_fishing.png",     // Ikon untuk "Fishing"
+    "zone": "icons/icon_zone.png",           // Ikon untuk "Zone"
+    "training": "icons/icon_train.png",      // Ikon untuk "Training"
+    "scenery": "icons/icon_scenery.png"      // Ikon untuk "Scenery"
+};
+
 
 const categoryCounts = {
-    "2": { max: 0, current: 0 },  // Treasure
-    "7": { max: 0, current: 0 },  // Training
-    "3": { max: 0, current: 0 },  // Zone
-    "9": { max: 0, current: 0 },  // Fishing (Combined)
-    "8": { max: 0, current: 0 }    // Scenery
+    "2": {  // Loc_type 2 (Sundale Valley)
+        "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
+        "training": { max: 0, current: 0, icon: categoryIcons.training },
+        "zone": { max: 0, current: 0, icon: categoryIcons.zone },
+        "fishing": { max: 0, current: 0, icon: categoryIcons.fishing },
+        "scenery": { max: 0, current: 0, icon: categoryIcons.scenery }
+    },
+    "3": {  // Loc_type 3 (Ragon Snowy Peak)
+        "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
+        "training": { max: 0, current: 0, icon: categoryIcons.training },
+        "zone": { max: 0, current: 0, icon: categoryIcons.zone },
+        "fishing": { max: 0, current: 0, icon: categoryIcons.fishing },
+        "scenery": { max: 0, current: 0, icon: categoryIcons.scenery }
+    },
+    "4": {  // Loc_type 4 (Edengate)
+        "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
+        "training": { max: 0, current: 0, icon: categoryIcons.training },
+        "zone": { max: 0, current: 0, icon: categoryIcons.zone },
+        "fishing": { max: 0, current: 0, icon: categoryIcons.fishing },
+        "scenery": { max: 0, current: 0, icon: categoryIcons.scenery }
+    },
+    "5": {  // Loc_type 5 (Howling Gobi)
+        "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
+        "training": { max: 0, current: 0, icon: categoryIcons.training },
+        "zone": { max: 0, current: 0, icon: categoryIcons.zone },
+        "fishing": { max: 0, current: 0, icon: categoryIcons.fishing },
+        "scenery": { max: 0, current: 0, icon: categoryIcons.scenery }
+    },
+    "6": {  // Loc_type 6 (Kepler Harbour)
+        "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
+        "training": { max: 0, current: 0, icon: categoryIcons.training },
+        "zone": { max: 0, current: 0, icon: categoryIcons.zone },
+        "fishing": { max: 0, current: 0, icon: categoryIcons.fishing },
+        "scenery": { max: 0, current: 0, icon: categoryIcons.scenery }
+    }
 };
+
 const fishingCategories = [9, 10, 11, 12, 13, 14]; // Combine fishing categories
 
 function initMap() {
@@ -296,7 +369,6 @@ function initMap() {
         .then(data => {
             console.log(`Fetched Data: `, data);
             jsonData = data;
-            resetCategoryCounts(); // Initialize category counts
             addMarkersToMap(); // Add markers after fetching data
             setupFilterListeners(); // Ensure filter listeners are set up
         })
@@ -312,78 +384,177 @@ function showMarkers() {
         if (locTypeMatch && categoryMatch) {
             marker.addTo(map);
         } else {
-            map.removeLayer(marker); // Hapus marker jika tidak sesuai
+            map.removeLayer(marker);
         }
     });
+    updateCategoryDisplay(currentLocType); // Pastikan tampilan kategori diperbarui
 }
 
 
+// Function to map categoryId to category name
+
+function getCategoryName(categoryId) {
+    switch (categoryId) {
+        case "1": return "unknown"; // Atur nama kategori untuk ID 1
+        case "2": return "treasure";
+        case "3": return "zone";
+        case "7": return "training";
+        case "8": return "scenery";
+        case "9": return "fishing"; // Tambah ID 9 ke kategori fishing
+        case "10": return "fishing"; // Tambah ID 10 ke kategori fishing
+        case "11": return "fishing"; // Jika ID 11 juga berhubungan dengan kategori fishing
+        case "13": return "fishing"; // Jika ID 13 juga berhubungan dengan kategori fishing
+        case "14": return "fishing"; // Tambah ID 14 ke kategori fishing
+        default:
+            if (fishingCategories.includes(parseInt(categoryId))) return "fishing"; // Jika ID ada dalam fishingCategories
+            console.log(`Unrecognized categoryId: ${categoryId}`);
+            return null; // Return null if category is unrecognized
+    }
+}
+
+
+// Function to reset category counts
 function resetCategoryCounts() {
-    for (const category in categoryCounts) {
-        categoryCounts[category].current = 0; // Reset current count
-        categoryCounts[category].max = 0; // Reset max count
-    }
+    console.log('Resetting category counts');
 
-    for (const key in jsonData) {
-        if (jsonData.hasOwnProperty(key)) {
-            const location = jsonData[key];
-            let categoryId = location.category_id;
-
-            // Combine fishing categories into category 9
-            if (fishingCategories.includes(categoryId)) {
-                categoryId = 9;
-            }
-
-            if (categoryCounts[categoryId]) {
-                categoryCounts[categoryId].max++; // Increase max count for each category
-            }
+    // Reset current counts ke 0 untuk semua loc_types dan categories
+    for (const locType in categoryCounts) {
+        for (const category in categoryCounts[locType]) {
+            categoryCounts[locType][category].current = 0; // Reset current count
+            categoryCounts[locType][category].max = 0; // Reset max count
         }
     }
 
-    // Recalculate current counts based on opacity
+    // Hitung max counts setelah reset
+    calculateMaxCounts(); // Hanya dipanggil sekali saat reset
+}
+
+
+// Function to load current count from local storage
+function loadCurrentCount(locType, categoryName) {
+    const savedCounts = JSON.parse(localStorage.getItem('markerCounts')) || {};
+    return savedCounts[`${locType}-${categoryName}`] || 0; // Return 0 if not found
+}
+
+// Function to initialize markers
+function initializeMarkers() {
+    
+
+    // Load counts untuk Current dan Max di awal
+    for (const locType in categoryCounts) {
+        for (const category in categoryCounts[locType]) {
+            const currentCount = loadCurrentCount(locType, category) || 0; // Load current count dari localStorage
+            categoryCounts[locType][category].current = currentCount; // Set current count
+        }
+    }
+
+    // Load markers dari local storage dan update counts
     markers.forEach(marker => {
-        if (marker.options.opacity === 0.5) {
-            updateCategoryCounts(marker.category_id, 0.5); // Update counts for opacity 0.5
-        }
+        const savedOpacity = loadMarkerOpacity(marker.options.id); // Load opacity dari local storage
+        const opacity = savedOpacity !== null ? savedOpacity : marker.options.opacity || 1.0; // Set opacity berdasarkan nilai yang disimpan
+        marker.setOpacity(opacity); // Set opacity
+
+        // Update counts untuk marker yang dimuat
+        updateCategoryCounts(marker.options.loc_type, marker.options.category, opacity, opacity === 0.5); // Update counts berdasarkan opasitas saat ini
     });
+
+    updateCategoryDisplay(); // Refresh display setelah menginisialisasi marker
 }
 
-function updateCategoryCounts(categoryId, opacity) {
-    // Combine fishing categories into category 9
-    if (fishingCategories.includes(categoryId)) {
-        categoryId = 9;
-    }
 
-    if (categoryCounts[categoryId]) {
-        if (opacity === 0.5) {
-            categoryCounts[categoryId].current++; // Increase current count if opacity is 0.5
-        } else if (opacity === 1) {
-            categoryCounts[categoryId].current = Math.max(0, categoryCounts[categoryId].current - 1); // Decrease count, minimum 0
-        }
-    }
-}
-
+// Function to change marker opacity
 function changeMarkerOpacity(markerId, newOpacity) {
     const marker = findMarkerById(markerId);
 
     if (marker) {
-        marker.setOpacity(newOpacity); // Change marker opacity
-        updateCategoryCounts(marker.category_id, newOpacity); // Update category counts
-        updateCategoryDisplay(); // Refresh category display
+        const oldOpacity = marker.options.opacity; // Simpan opasitas lama
+        marker.setOpacity(newOpacity); // Ubah opasitas marker
+        saveMarkerOpacity(markerId, newOpacity); // Simpan opasitas baru
+
+        console.log(`Changing opacity from ${oldOpacity} to ${newOpacity} for marker ID: ${markerId}`); // Log perubahan opacity
+
+        // Update counts berdasarkan opasitas lama dan baru
+        if (oldOpacity === 0.5 && newOpacity === 1.0) {
+            // Ketika mengubah dari 0.5 ke 1.0, kurangi current count
+            updateCategoryCounts(marker.options.loc_type, marker.options.category, oldOpacity, false); // Kurangi current count
+            console.log(`Decreasing current count for ${marker.options.category} at locType ${marker.options.loc_type}`); // Log pengurangan
+        } else if (oldOpacity === 1.0 && newOpacity === 0.5) {
+            // Ketika mengubah dari 1.0 ke 0.5, tambah current count
+            updateCategoryCounts(marker.options.loc_type, marker.options.category, newOpacity, true); // Tambah current count
+            console.log(`Increasing current count for ${marker.options.category} at locType ${marker.options.loc_type}`); // Log penambahan
+        } else if (oldOpacity === 0.5 && newOpacity === 0.5) {
+            console.log(`Opacity remains 0.5 for marker ID: ${markerId}. No change to current count.`); // Log jika tidak ada perubahan
+        }
+
+        // Tambahkan log untuk melihat current count sebelum dan sesudah perubahan
+        console.log(`Before update: ${categoryCounts[marker.options.loc_type][marker.options.category].current}`);
+        updateCategoryDisplay(marker.options.loc_type); // Refresh tampilan
+        console.log(`After update: ${categoryCounts[marker.options.loc_type][marker.options.category].current}`);
+    } else {
+        console.log(`Marker with ID: ${markerId} not found.`); // Log jika marker tidak ditemukan
     }
 }
 
-function updateCategoryDisplay() {
-    for (const categoryId in categoryCounts) {
-        if (categoryCounts.hasOwnProperty(categoryId)) {
-            const element = document.getElementById(`count-${categoryId === "2" ? "treasure" : categoryId === "7" ? "training" : categoryId === "3" ? "zone" : categoryId === "9" ? "fishing" : "scenery"}`);
-            if (element) {
-                const { max, current } = categoryCounts[categoryId];
-                element.innerHTML = `${element.innerHTML.split(':')[0]}: ${current}/${max}`; // Format: Category: current/max
-            }
+
+
+// Function to update category counts based on marker opacity
+function updateCategoryCounts(locType, categoryId, opacity, increase = true) {
+    const categoryName = getCategoryName(categoryId);
+    
+    if (!categoryName) {
+        console.log(`Unrecognized categoryId: ${categoryId}`);
+        return; // Keluar jika categoryName tidak dikenali
+    }
+
+    // Pastikan categoryCounts ada untuk locType dan category yang relevan
+    if (categoryCounts[locType] && categoryCounts[locType][categoryName]) {
+        const currentCount = categoryCounts[locType][categoryName].current;
+
+        // Tambah current count untuk marker dengan opacity 0.5
+        if (opacity === 0.5 && increase) {
+            categoryCounts[locType][categoryName].current++; 
+            console.log(`Current count increased to ${categoryCounts[locType][categoryName].current} for ${categoryName}`); // Log penambahan
+        } 
+        // Kurangi current count saat opacity diubah menjadi 1.0
+        else if (opacity === 1.0 && !increase) {
+            categoryCounts[locType][categoryName].current = Math.max(0, currentCount - 1);
+            console.log(`Current count decreased to ${categoryCounts[locType][categoryName].current} for ${categoryName}`); // Log pengurangan
+        }
+    } else {
+        console.log(`Counts not found for locType: ${locType}, categoryName: ${categoryName}`); // Log jika tidak ada kategori
+    }
+}
+
+// Function to save current count to local storage
+function saveCurrentCount(locType, categoryName, currentCount) {
+    const savedCounts = JSON.parse(localStorage.getItem('markerCounts')) || {};
+    savedCounts[`${locType}-${categoryName}`] = currentCount; // Use a composite key
+    localStorage.setItem('markerCounts', JSON.stringify(savedCounts)); // Save back to local storage
+}
+
+// Function to update the display of category counts
+function updateCategoryDisplay(locType) {
+    if (!locType) return;
+
+    // Loop melalui kategori di locType yang aktif dan perbarui tampilan
+    for (const category in categoryCounts[locType]) {
+        const element = document.querySelector(`#count-${category}-loc${locType} .count-text`);
+        if (element) {
+            const { max, current } = categoryCounts[locType][category];
+            element.innerHTML = `${current}/${max}`; // Update hanya teks hitungan
+            console.log(`Displaying ${category.charAt(0).toUpperCase() + category.slice(1)}: ${current}/${max}`); // Log pembaruan tampilan
         }
     }
 }
+
+
+// Initialize the markers and counts when the application starts
+function main() {
+    initializeMarkers(); // Initialize markers and counts
+}
+
+main(); // Call the main function to run the application
+
 // Function to close the report form
 function closeReportForm() {
     console.log('Closing form...');
@@ -538,24 +709,39 @@ function setupMarkerInteractions(marker, location, key) {
     });
 
     // Handle marker click to open popup and set up report button
-    marker.on('click', () => {
-        marker.openPopup(); // Open the popup
-        setupReportButton(marker, key); // Set up report button
-    });
+marker.on('contextmenu', (e) => {
+    L.DomEvent.stopPropagation(e); // Stop event propagation
+    const currentOpacity = marker.options.opacity || 1.0; // Default opacity is 1.0
+    const newOpacity = currentOpacity === 1.0 ? 0.5 : 1.0; // Toggle opacity
 
-    // Right-click to toggle opacity
-    marker.on('contextmenu', (e) => {
-        L.DomEvent.stopPropagation(e); // Stop event propagation
-        const currentOpacity = marker.options.opacity || 1.0; // Default opacity is 1.0
-        const newOpacity = currentOpacity === 1.0 ? 0.5 : 1.0; // Toggle opacity
+    // Log for debugging
+    console.log(`Changing opacity for marker ${marker.options.id}: from ${currentOpacity} to ${newOpacity}`);
 
-        marker.setOpacity(newOpacity);
-        saveMarkerOpacity(key, newOpacity); // Save the new opacity
-        updateCategoryCounts(location.category_id, newOpacity); // Update category counts
-        updateCategoryDisplay(); // Refresh category display
-    });
+    // Update category counts based on the old opacity
+    if (currentOpacity === 0.5) {
+        // Jika marker sebelumnya transparan, kurangi current count
+        updateCategoryCounts(marker.options.loc_type, marker.options.category, currentOpacity, false); // Decrease count
+    } else if (currentOpacity === 1.0) {
+        // Jika marker sebelumnya tidak transparan, tidak perlu melakukan apa-apa
+    }
+
+    // Set the new opacity
+    marker.setOpacity(newOpacity); // Change marker opacity
+    saveMarkerOpacity(marker.options.id, newOpacity); // Save the new opacity
+
+    if (newOpacity === 0.5) {
+        // Jika marker baru saja menjadi transparan, tingkatkan current count
+        updateCategoryCounts(marker.options.loc_type, marker.options.category, newOpacity, true); // Increase count
+    } else if (newOpacity === 1.0) {
+        // Jika marker baru saja menjadi tidak transparan, kurangi current count
+        updateCategoryCounts(marker.options.loc_type, marker.options.category, newOpacity, false); // Decrease count
+    }
+
+    updateCategoryDisplay(marker.options.loc_type); // Refresh category display
+});
+
+
 }
-
 // Function to set up the report button functionality
 function setupReportButton(marker, key) {
     // Attach event listener to the Report button in the popup
@@ -621,8 +807,9 @@ function saveMarkerOpacity(id, opacity) {
 // Function to load marker opacity from local storage
 function loadMarkerOpacity(id) {
     const storedOpacities = JSON.parse(localStorage.getItem('markerOpacities')) || {};
-    return storedOpacities[id] || 1.0; // Default opacity is 1.0
+    return storedOpacities[id] || null; // Mengembalikan null jika tidak ditemukan, bukan 1.0
 }
+
 
 // Function to find marker by ID
 function findMarkerById(markerId) {
@@ -683,46 +870,71 @@ setupFilterListeners();
 function setupButtonInteractions() {
     // Handle Donate Button Click
     const donateBtn = document.querySelector('.donate-btn');
-    donateBtn.addEventListener('click', () => {
-        console.log('Donate button clicked');
-    });
+    if (donateBtn) {
+        donateBtn.addEventListener('click', () => {
+            console.log('Donate button clicked');
+        });
+    }
 
     // Toggle Legend Visibility
     const toggleLegend = document.getElementById('toggle-legend');
-    toggleLegend.addEventListener('click', () => {
-        const legend = document.getElementById('legend'); // Assuming you have a legend element
-        if (legend) {
-            legend.style.display = legend.style.display === 'none' ? 'block' : 'none';
-        }
-    });
+    if (toggleLegend) {
+        toggleLegend.addEventListener('click', () => {
+            const legend = document.getElementById('legend');
+            if (legend) {
+                legend.style.display = legend.style.display === 'none' ? 'block' : 'none';
+            }
+        });
+    }
 
     // Toggle Filters Visibility
     const toggleFilters = document.getElementById('toggle-filters');
-    toggleFilters.addEventListener('click', () => {
-        const filters = document.getElementById('filters'); // Assuming you have a filters element
-        if (filters) {
-            filters.style.display = filters.style.display === 'none' ? 'block' : 'none';
+    if (toggleFilters) {
+        toggleFilters.addEventListener('click', () => {
+            const filters = document.getElementById('filters');
+            if (filters) {
+                filters.style.display = filters.style.display === 'none' ? 'block' : 'none';
+            }
+        });
+    }
+
+// Function to reset the opacity of all markers
+function resetMarkerOpacity() {
+    console.log('Resetting marker opacity to default (1.0)'); // Check if function is invoked
+    
+    // Check if markers is an array and is populated
+    if (!Array.isArray(markers) || markers.length === 0) {
+        console.error('Markers array is empty or not defined.'); // Log if markers are not available
+        return; // Exit if markers are not available
+    }
+
+    // Loop through each marker and set opacity to 1.0
+    markers.forEach(marker => {
+        console.log(`Resetting opacity for marker with ID: ${marker.options.id}`); // Log which marker is being reset
+        marker.setOpacity(1.0); // Set opacity to default (1.0)
+
+        // Save the change if you have a function for it
+        if (typeof saveMarkerOpacity === 'function') {
+            saveMarkerOpacity(marker.options.id, 1.0);
         }
     });
+}
 
-    // Reset Opacity Functionality
+
+// Button setup to reset opacity
+document.addEventListener('DOMContentLoaded', () => {
     const resetOpacityBtn = document.getElementById('reset-opacity');
-    resetOpacityBtn.addEventListener('click', () => {
-        console.log('Reset opacity button clicked');
-        resetMarkerOpacity();
-    });
+    
+    if (resetOpacityBtn) {
+        resetOpacityBtn.addEventListener('click', () => {
+            console.log('Reset opacity button clicked'); // This log should appear when button is clicked
+            resetMarkerOpacity(); // Call the function when the button is clicked
+        });
+    } else {
+        console.error('Reset opacity button not found'); // Log if button isn't found
+    }
+});
 }
-
-// Function to reset marker opacity
-function resetMarkerOpacity() {
-    console.log('Marker opacity reset to default');
-    markers.forEach(marker => {
-        marker.setOpacity(1.0); // Set default opacity
-        saveMarkerOpacity(marker.options.icon.options.iconUrl, 1.0); // Save default opacity
-    });
-}
-
-
 
 const toggleNewFiltersContainer = document.querySelector('.toggle-new-filters-container');
 const newFilterContainer = document.querySelector('.new-filter-container');
@@ -800,20 +1012,26 @@ function addMarkersForMiniMap(miniMapKey) {
         return;
     }
 
-    relevantMarkers.forEach(markerData => {
+relevantMarkers.forEach(markerData => {
         const latLng = [parseFloat(markerData.lat), parseFloat(markerData.lng)];
         const marker = L.marker(latLng, {
             icon: L.icon({
                 iconUrl: 'icons/here.png',
                 iconSize: [50, 50]
-            })
+            }),
+            options: {
+                category: markerData.category_id, // Pastikan ini diisi dengan benar
+                loc_type: miniMapKey // Pastikan ini sesuai dengan loc_type
+            }
         });
 
-        marker.addTo(map); // Add marker to the map
-        activeMiniMapMarkers.push(marker); // Store the marker in the active mini-map markers array
+        marker.addTo(map);
+        activeMiniMapMarkers.push(marker);
+
+        // Update counts untuk marker yang ditambahkan
+        updateCategoryCounts(marker.options.loc_type, marker.options.category, 0.5); // Asumsikan opasitas awal adalah 0.5
     });
 }
-
 // Event listener for filter buttons
 document.querySelectorAll('.new-filter-container .filter-btn').forEach(button => {
     button.addEventListener('click', () => {
@@ -882,36 +1100,55 @@ function getImageBounds(mapPosition) {
         ]
     ];
 }
+let currentLocType = null; // Menyimpan loc_type saat ini
+
+document.querySelectorAll('.loc-type-button').forEach(button => {
+    button.addEventListener('click', (event) => {
+        const locTypeId = event.target.dataset.locType; // Ambil data locType
+        onLocTypeChange(locTypeId); // Panggil fungsi untuk memperbarui tampilan
+    });
+});
+
+
+// Event listener untuk filter tombol
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const locType = this.getAttribute('data-filter').replace('loc_type', ''); // Ambil nomor loc_type
+        console.log(`Filter selected for loc_type: ${locType}`);
+
+        // Update activeLocTypes dan tampilkan loc_type
+        activeLocTypes.push(this.getAttribute('data-filter')); // Tambahkan filter ke activeLocTypes
+        onLocTypeChange(locType); // Tampilkan loc_type yang baru
+
+        // Update tampilan kategori untuk loc_type yang dipilih
+        updateCategoryDisplay(locType); 
+    });
+});
+
+// Fungsi untuk menampilkan loc_type
+function showLocType(locType) {
+    // Sembunyikan semua loc-type
+    const locTypes = document.querySelectorAll('.count-container > div');
+    locTypes.forEach(loc => {
+        loc.style.display = 'none'; // Sembunyikan semua
+    });
+
+    // Tampilkan loc-type yang dipilih
+    const locTypeElement = document.getElementById(`loc-type-${locType}`);
+    if (locTypeElement) {
+        locTypeElement.style.display = 'block'; // Tampilkan yang sesuai
+        currentLocType = locType; // Simpan loc_type yang saat ini
+    }
+}
+
+// Panggil fungsi ini ketika loc_type diubah
+function onLocTypeChange(newLocType) {
+    showLocType(newLocType); // Tampilkan loc-type baru
+    updateCategoryDisplay(newLocType); // Update display setelah loc-type berubah
+}
 
 
 // New function to add markers for the active mini-map
-function addMarkersForMiniMap(miniMapKey) {
-    if (!mini_map_type[miniMapKey]) {
-        console.error(`No mini map type found for key: ${miniMapKey}`);
-        return;
-    }
-    
-    const relevantMarkers = mini_map_type[miniMapKey].markers || [];
-    
-    if (!Array.isArray(relevantMarkers)) {
-        console.error('Relevant markers is not an array:', relevantMarkers);
-        return;
-    }
-
-    relevantMarkers.forEach(markerData => {
-        const latLng = [parseFloat(markerData.lat), parseFloat(markerData.lng)];
-        const marker = L.marker(latLng, {
-            icon: L.icon({
-                iconUrl: 'icons/here.png',
-                iconSize: [50, 50]
-            })
-        });
-
-        marker.addTo(map);
-        markers.push(marker); // Store it in the markers array
-    });
-}
-
 
 // Function to center the map on the given bounds
 function centerMapOnBounds(imageBounds) {

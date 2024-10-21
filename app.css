@@ -192,15 +192,23 @@ html,
     font-weight: bold;
 }
 
-.count-icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 8px;
-}
+       .count-icon {
+            width: 24px; /* Icon size */
+            height: 24px;
+            margin-right: 8px; /* Space between icon and count */
+        }
 
 .count-text {
-    display: inline-block;
+    display: inline; /* Pastikan teks muncul */
+    font-size: 14px; /* Atur ukuran teks */
+    color: white;    /* Warna teks */
 }
+
+.count-container img {
+    display: inline-block; /* Pastikan gambar muncul */
+    vertical-align: middle; /* Agar sejalan dengan teks */
+}
+
 #reset-opacity {
     position: absolute; /* Posisi absolut */
     top: 125px; /* Jarak dari atas */
@@ -228,6 +236,9 @@ html,
     outline: 2px solid #000; /* Outline saat tombol memiliki fokus */
 }
 
+.count-container > div {
+    display: none; /* Sembunyikan semua loc-type pada awalnya */
+}
 
 /* Pop-up background */
 /* Pop-up background */

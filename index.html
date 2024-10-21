@@ -29,7 +29,7 @@
     <link rel="icon" href="/icons/favicon-32x32.png" sizes="32x32" type="image/png">
     <link rel="icon" href="/icons/favicon-48x48.png" sizes="48x48" type="image/png">
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180">
-    <link href="app.css" rel="stylesheet" type="text/css">
+    <link href="app.css?v=2.4" rel="stylesheet" type="text/css">
 
     <!-- Leaflet for maps -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -53,20 +53,20 @@
         <!-- Menambahkan gambar ikon di sini -->
 
 
-        <h2>MAJOR UPDATE</h2>
-        <p>VERSION 4.0 - OCTOBER 2024</p>
+        <h2>NOTE UPDATE</h2>
+        <p>VERSION 4.3 - OCTOBER 2024</p>
         <ul>
             <li><b>NOW UNLIMITED LOADING</b> of maps has been fixed.</li>
-            <li>Fixed various bugs</li>
-            <li>Fixed <b>REPORT</b> form</li>
-            <li>English Text Maps</li>
+            <li>Fix Calculate Opacity</li>
+            <li>Update <b>Howling Gobi</b> Coordinate</li>
+            <li>Add Videos to Zone Commsion Howling Gobi</li>
         </ul>
         <img src="icons/Sad.png" alt="Icon">
         <p><b>Please Donate If You Like The Feature</b></p>
         
         <!-- Tombol Trakteer -->
         <a href="https://trakteer.id/BangOneGaming/tip" target="_blank" class="donate-btn">TRAKTEER <br>Donate</br></a>
-        <p>👇 Press For Paypal 👇</p>
+        <p>👇 You Can Donate Via Paypal 👇</p>
         <!-- Menambahkan tombol PayPal di sini -->
         <div class="paypal-button">
             <a href="https://www.paypal.me/IrvanNazmudin" target="_blank">
@@ -131,14 +131,134 @@
     
 </div>
 <div class="count-container">
-<div id="count-treasure" class="count-item">Treasure: 0</div>
-<div id="count-training" class="count-item">Training: 0</div>
-<div id="count-zone" class="count-item">Zone: 0</div>
-<div id="count-fishing" class="count-item">Fishing: 0</div>
-<div id="count-scenery" class="count-item">Scenery: 0</div>
 
+    <!-- Loc_type 2 (Sundale Valley) -->
+    <div id="loc-type-2">
+        <h3>Sundale Valley</h3>
+        <div id="count-treasure-loc2" class="count-item">
+            <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
+            <span class="count-text">0/0</span> <!-- Only the count is displayed -->
+        </div>
+        <div id="count-training-loc2" class="count-item">
+            <img src="icons/icon_train.png" alt="Training" class="count-icon">
+            <span class="count-text">0/0</span>
+        </div>
+        <div id="count-zone-loc2" class="count-item">
+            <img src="icons/icon_zone.png" alt="Zone" class="count-icon">
+            <span class="count-text">0/0</span>
+        </div>
+        <div id="count-fishing-loc2" class="count-item">
+            <img src="icons/icon_fishing.png" alt="Fishing" class="count-icon">
+            <span class="count-text">0/0</span>
+        </div>
+        <div id="count-scenery-loc2" class="count-item">
+            <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
+            <span class="count-text">0/0</span>
+        </div>
     </div>
+
+    <!-- Loc_type 5 (Howling Gobi) -->
+    <div id="loc-type-5">
+        <h3>Howling Gobi</h3>
+        <div id="count-treasure-loc5" class="count-item">
+            <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
+            <span class="count-text">0/0</span>
+        </div>
+        <div id="count-training-loc5" class="count-item">
+            <img src="icons/icon_train.png" alt="Training" class="count-icon">
+            <span class="count-text">0/0</span>
+        </div>
+        <div id="count-zone-loc5" class="count-item">
+            <img src="icons/icon_zone.png" alt="Zone" class="count-icon">
+            <span class="count-text">0/0</span>
+        </div>
+        <div id="count-fishing-loc5" class="count-item">
+            <img src="icons/icon_fishing.png" alt="Fishing" class="count-icon">
+            <span class="count-text">0/0</span>
+        </div>
+        <div id="count-scenery-loc5" class="count-item">
+            <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
+            <span class="count-text">0/0</span>
+        </div>
+        </div>
+   <!-- Loc_type 3 (Ragon Snowy Peak) -->
+    <div id="loc-type-3">
+        <h3>Ragon Snowy Peak</h3>
+        <div id="count-treasure-loc3" class="count-item">
+            <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
+            <span class="count-text" id="treasure-count-3">0/0</span>
+        </div>
+        <div id="count-training-loc3" class="count-item">
+            <img src="icons/icon_train.png" alt="Training" class="count-icon">
+            <span class="count-text" id="training-count-3">0/0</span>
+        </div>
+        <div id="count-zone-loc3" class="count-item">
+            <img src="icons/icon_zone.png" alt="Zone" class="count-icon">
+            <span class="count-text" id="zone-count-3">0/0</span>
+        </div>
+        <div id="count-fishing-loc3" class="count-item">
+            <img src="icons/icon_fishing.png" alt="Fishing" class="count-icon">
+            <span class="count-text" id="fishing-count-3">0/0</span>
+        </div>
+        <div id="count-scenery-loc3" class="count-item">
+            <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
+            <span class="count-text" id="scenery-count-3">0/0</span>
+        </div>
+    </div>
+
+    <!-- Loc_type 4 (Edengate) -->
+    <div id="loc-type-4">
+        <h3>Edengate</h3>
+        <div id="count-treasure-loc4" class="count-item">
+            <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
+            <span class="count-text" id="treasure-count-4">0/0</span>
+        </div>
+        <div id="count-training-loc4" class="count-item">
+            <img src="icons/icon_train.png" alt="Training" class="count-icon">
+            <span class="count-text" id="training-count-4">0/0</span>
+        </div>
+        <div id="count-zone-loc4" class="count-item">
+            <img src="icons/icon_zone.png" alt="Zone" class="count-icon">
+            <span class="count-text" id="zone-count-4">0/0</span>
+        </div>
+        <div id="count-fishing-loc4" class="count-item">
+            <img src="icons/icon_fishing.png" alt="Fishing" class="count-icon">
+            <span class="count-text" id="fishing-count-4">0/0</span>
+        </div>
+        <div id="count-scenery-loc4" class="count-item">
+            <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
+            <span class="count-text" id="scenery-count-4">0/0</span>
+        </div>
+    </div>
+
+    <!-- Loc_type 6 (Kepler Harbour) -->
+    <div id="loc-type-6">
+        <h3>Kepler Harbour</h3>
+        <div id="count-treasure-loc6" class="count-item">
+            <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
+            <span class="count-text" id="treasure-count-6">0/0</span>
+        </div>
+        <div id="count-training-loc6" class="count-item">
+            <img src="icons/icon_train.png" alt="Training" class="count-icon">
+            <span class="count-text" id="training-count-6">0/0</span>
+        </div>
+        <div id="count-zone-loc6" class="count-item">
+            <img src="icons/icon_zone.png" alt="Zone" class="count-icon">
+            <span class="count-text" id="zone-count-6">0/0</span>
+        </div>
+        <div id="count-fishing-loc6" class="count-item">
+            <img src="icons/icon_fishing.png" alt="Fishing" class="count-icon">
+            <span class="count-text" id="fishing-count-6">0/0</span>
+        </div>
+        <div id="count-scenery-loc6" class="count-item">
+            <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
+            <span class="count-text" id="scenery-count-6">0/0</span>
+        </div>
+    </div>
+
 </div>
+
+
 
 <!-- Container untuk gambar fullscreen -->
 <div id="fullscreen-image"></div>
@@ -180,10 +300,11 @@
 
 <div id="map"></div>
 <script src="minimap_config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 <script>
   eruda.init();
 </script>
-<script src="app.js"></script>
+<script src="app.js?v=2.4"></script>
 
 </body>
 
