@@ -715,10 +715,13 @@ function setupMarkerInteractions(marker, location, key) {
     marker.bindPopup(contentString, {
         offset: L.point(0, -20) // Adjust the Y offset as needed
     });
+marker.on('popupopen', () => {
+    console.log('Popup opened for marker:', marker.options.id);
+    setupReportButton(marker, marker.options.id);
+});
 
     // Handle marker click to open popup and set up report button
 marker.on('contextmenu', (e) => {
-    L.DomEvent.stopPropagation(e); // Stop event propagation
     const currentOpacity = marker.options.opacity || 1.0; // Default opacity is 1.0
     const newOpacity = currentOpacity === 1.0 ? 0.5 : 1.0; // Toggle opacity
 
@@ -750,16 +753,25 @@ marker.on('contextmenu', (e) => {
 
 
 }
+
 // Function to set up the report button functionality
 function setupReportButton(marker, key) {
     // Attach event listener to the Report button in the popup
     const reportButton = document.querySelector('.reportButton[data-id="' + key + '"]');
+    console.log('Checking for Report Button with key:', key);  // Debugging
+    console.log('Report Button:', reportButton);  // Debugging untuk memastikan tombol ditemukan
+
     if (reportButton) {
         reportButton.addEventListener('click', () => {
-            showReportForm(marker); // Call the function to show the report form
+            console.log('Report button clicked'); // Untuk memastikan tombol diklik
+            showReportForm(marker);
         });
+    } else {
+        console.log('Report button not found');
     }
 }
+
+
 
 // Initialize the map and add markers (assuming this is called on DOMContentLoaded)
 document.addEventListener("DOMContentLoaded", () => {
