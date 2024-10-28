@@ -674,29 +674,38 @@ function submitReport(markerId, lat, lng, categoryId, nameEn, locType) {
 
     // Send the report using fetch
     fetch('https://autumn-dream-8c07.square-spon.workers.dev/Report', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: formattedJson,
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.text();
-    })
-    .then(data => {
-        console.log('Response Text:', data);
-        if (data === "JSON stored successfully") {
-            closeReportForm(); // Close form if submission is successful
-        } else {
-            console.error('Unexpected response:', data);
-        }
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
+    fetch('https://autumn-dream-8c07.square-spon.workers.dev/report')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(existingData => {
+            console.log('Loaded existing data:', existingData);
+
+            // Merge existing data with new data
+            const mergedData = { ...existingData, [markerId]: newReportData };
+            console.log('Merged data:', JSON.stringify(mergedData, null, 4));
+
+            return fetch('https://autumn-dream-8c07.square-spon.workers.dev/report', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(mergedData),
+            });
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            console.log('Data successfully submitted to the endpoint.');
+            closeReportForm();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }
 
 // Function to set up marker interactions (popup, report button, etc.)
