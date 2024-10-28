@@ -673,7 +673,7 @@ function submitReport(markerId, lat, lng, categoryId, nameEn, locType) {
     console.log('Submitting report with the following data:', formattedJson);
 
     // Send the report using fetch
-    fetch('https://autumn-dream-8c07.square-spon.workers.dev/report')
+    fetch('https://autumn-dream-8c07.square-spon.workers.dev/report_form')
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
