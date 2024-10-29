@@ -29,7 +29,11 @@
     <link rel="icon" href="/icons/favicon-32x32.png" sizes="32x32" type="image/png">
     <link rel="icon" href="/icons/favicon-48x48.png" sizes="48x48" type="image/png">
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180">
-    <link href="app.css?v=2.5" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100&display=swap" rel="stylesheet">
+    
+    <link href="app.css?v=2.8.2" rel="stylesheet" type="text/css">
 
     <!-- Leaflet for maps -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -46,27 +50,80 @@
 </head>
 
 <body>
+
 <div id="patch-popup" class="popup">
     <div class="popup-content">
         <span class="close">&times;</span>
 
-        <h2>NOTE UPDATE</h2>
-        <p>VERSION 4.7 - OCTOBER 2024</p>
+        <h4>BIG UPDATE</h4>
+        <p>VERSION 5.0- SEPTEMBER 2024</p>
         <ul>
-            <li><b>NOW UNLIMITED LOADING</b> of maps has been fixed.</li>
-            <li>Fix Calculate Opacity</li>
-            <li>Update <b>HOWLING GOBI</b> Coordinate</li>
-            <li>Add Videos to Zone Commsion Howling Gobi</li>
+            <li><b>NEW UI AND MORE DYNAMIC</b></li>
+            <li>Fix Reset Button</li>
+            <li>Update <b>POP UP VIDEOS</b></li>
+            <li>Now You Can <b>Submit Marker</b> for Feedback</li>
             <li>
-                New Mark <b>RESOURCE CHEST</b> 👉
-                <img src="icons/icon_resource.png" alt="Icon Resource" style="width: 20px; vertical-align: middle; display: inline-block;"> 
-            </li>
-            <li>
-                Change <b>TREASURE HUNT ICON</b> 👉
-                <img src="icons/icon_treasure.png" alt="Icon Treasure" style="width: 20px; vertical-align: middle; display: inline-block;">
-            </li>
+                We Add More Resource<br><b>NEW SOURCE LIST</b>:</li>
+                <span>
+                    <img src="icons/icon_resource.png" alt="Icon Resource" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="icons/icon_treasure.png" alt="Icon Treasure" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="icons/icon_wood.png" alt="Icon Wood" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="icons/icon_fiber.png" alt="Icon Fiber" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="icons/icon_rarewood.png" alt="Icon Rare Wood" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="icons/icon_rarestone.png" alt="Icon Rare Stone" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="icons/icon_rarewastes.png" alt="Icon Rare Wastes" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/cedar.png" alt="Icon Cedar" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/resin.png" alt="Icon Resin" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/ironore.png" alt="Icon Iron Ore" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/clay.png" alt="Icon Clay" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/flaxfiber.png" alt="Icon Flax Fiber" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/lens.png" alt="Icon Lens" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/screw.png" alt="Icon Screw" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/zipper.png" alt="Icon Zipper" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/bracken.png" alt="Icon Bracken" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/mushroom.png" alt="Icon Mushroom" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/neptunea.png" alt="Icon Neptunea" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/bellpepper.png" alt="Icon Bell Pepper" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/bamboomushroom.png" alt="Icon Bamboo Mushroom" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/mutantberry.png" alt="Icon Mutant Berry" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/poplar.png" alt="Icon Poplar" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/pyrolusite.png" alt="Icon Pyrolusite Ore" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/sisalfiber.png" alt="Icon Sisal Fiber" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/rubber.png" alt="Icon Rubber" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/machineparts.png" alt="Icon Machine Parts" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/spring.png" alt="Icon Spring" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/ediblecactus.png" alt="Icon Edible Cactus" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/wildbuckthorn.png" alt="Icon Wild Buckthorn" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/wildpineapple.png" alt="Icon Wild Pineapple" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/succulent.png" alt="Icon Succulent" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/antiradberry.png" alt="Icon Antirad Berry" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/crookedarracord.png" alt="Icon Crooked Arracord" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/redwood.png" alt="Icon Redwood" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/redochre.png" alt="Icon Red Ochre Ore" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/glowherbfiber.png" alt="Icon Glowherb Fiber" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/diode.png" alt="Icon Diode" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/precisionpart.png" alt="Icon Precision Part" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/electronicalcomponent.png" alt="Icon Electronical Component" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/hydratedlettuce.png" alt="Icon Hydrated Lettuce" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/tunasurimi.png" alt="Icon Tuna Surimi" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/strawberry.png" alt="Icon Strawberry" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/colourfulsporemushroom.png" alt="Icon Colourful Spore Mushroom" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/fir.png" alt="Icon Fir" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/amber.png" alt="Icon Amber" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/tungsten.png" alt="Icon Tungsten Ore" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/quartz.png" alt="Icon Quartz" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/snowhempfiber.png" alt="Icon Snow Hemp Fiber" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/industrialhinge.png" alt="Icon Industrial Hinge" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/magnetcoil.png" alt="Icon Magnet Coil" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/insulationcoating.png" alt="Icon Insulation Coating" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/blueberry.png" alt="Icon Blueberry" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/articbambooshoot.png" alt="Icon Arctic Bamboo Shoot" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="resource_img/reishimushroom.png" alt="Icon Reishi Mushroom" style="width: 20px; vertical-align: middle; display: inline-block;">
+
+            </span>
         </ul>
         <img src="icons/Sad.png" alt="Icon">
+        <h2>Thanks For Your Donate</h2>
         <p><b>Please Donate If You Like The Feature</b></p>
         
         <!-- Tombol Trakteer -->
@@ -114,18 +171,38 @@
         <div class="donate-container">
         <a href="https://trakteer.id/BangOneGaming/tip" target="_blank" class="donate-btn">Donate Here</a>
     </div>
+<!-- Collect Tooltip Setup -->
+<div class="collect-tip-container">
+    <div id="toggle-collect" class="collect-toggle">
+        <img src="icons/collect.png" alt="Toggle Collect" />
+    </div>
+    <div id="tip-for-collect" class="collect-tooltip">This Still<br>Under Development</div>
+</div>
 
-    <div id="toggle-legend" class="toggle-legend-container">
-        <img src="icons/toggle_btn.png" alt="Toggle Legend">
+
+
+<!-- Legend and filters toggle buttons -->
+<div id="toggle-legend" class="toggle-legend-container">
+    <img src="icons/toggle_btn.png" alt="Toggle Legend">
+</div>
+<div id="toggle-filters" class="toggle-new-filters-container">
+    <img src="icons/new_filter-btn.png" alt="Toggle Filters">
+</div>
+    <button id="reset-opacity" title="Reset Opacity">
+        <img src="icons/reset.png" alt="Reset Icon">
+    </button>
+    
+    <!-- Confirmation Reset Opacity -->
+    <div id="confirm-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <p>Are you sure you want to reset the opacity of all markers?</p>
+            <button id="confirm-yes" class="modal-button">Yes</button>
+            <button id="confirm-no" class="modal-button">No</button>
+        </div>
     </div>
-    <div id="toggle-filters" class="toggle-new-filters-container">
-        <img src="icons/new_filter-btn.png" alt="Toggle Filters">
-    </div>
-<button id="reset-opacity" title="Reset Opacity">
-    <img src="icons/reset.png" alt="Reset Icon">
-</button>
-  </div>
-    <!-- New filter container for mark -->
+</div>
+
+<!-- New filter container for mark -->
 <div class="new-filter-container">
     <div class="filter-btn" data-filter="loc_type2" style="background-image: url('icons/sundale.png');">Sundale Valley</div>
     <div class="filter-btn" data-filter="loc_type5" style="background-image: url('icons/howling.png');">Howling Gobi</div>
@@ -134,13 +211,13 @@
     <div class="filter-btn" data-filter="loc_type6" style="background-image: url('icons/kepler.png');">Kepler Harbour</div>
     <div class="filter-btn" id="zoomBtn" style="background-image: url('icons/space.png');">Pegasus<br><b>(Go to Space)</b></div>
     <div class="filter-btn" style="background-image: url('icons/hilde.png');" id="hildeBtn">Hilde</div>
-    
 </div>
+
 <div class="count-container">
 
     <!-- Loc_type 2 (Sundale Valley) -->
     <div id="loc-type-2">
-        <h3>Sundale Valley</h3>
+        <h4>Sundale Valley</h4>
         <div id="count-treasure-loc2" class="count-item">
             <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
             <span class="count-text">0/0</span> <!-- Only the count is displayed -->
@@ -169,7 +246,7 @@
 
     <!-- Loc_type 5 (Howling Gobi) -->
     <div id="loc-type-5">
-        <h3>Howling Gobi</h3>
+        <h4>Howling Gobi</h4>
         <div id="count-treasure-loc5" class="count-item">
             <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
             <span class="count-text">0/0</span>
@@ -197,7 +274,7 @@
         </div>
    <!-- Loc_type 3 (Ragon Snowy Peak) -->
     <div id="loc-type-3">
-        <h3>Ragon Snowy Peak</h3>
+        <h4>Ragon Snowy Peak</h4>
         <div id="count-treasure-loc3" class="count-item">
             <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
             <span class="count-text" id="treasure-count-3">0/0</span>
@@ -226,7 +303,7 @@
 
     <!-- Loc_type 4 (Edengate) -->
     <div id="loc-type-4">
-        <h3>Edengate</h3>
+        <h4>Edengate</h4>
         <div id="count-treasure-loc4" class="count-item">
             <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
             <span class="count-text" id="treasure-count-4">0/0</span>
@@ -255,7 +332,7 @@
 
     <!-- Loc_type 6 (Kepler Harbour) -->
     <div id="loc-type-6">
-        <h3>Kepler Harbour</h3>
+        <h4>Kepler Harbour</h4>
         <div id="count-treasure-loc6" class="count-item">
             <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
             <span class="count-text" id="treasure-count-6">0/0</span>
@@ -314,22 +391,205 @@
         <input type="checkbox" class="filter-checkbox" data-filter="training">
         <img src="icons/icon_train.png" alt="Training"> Training
     </label>
-        <label class="filter-checkbox-btn">
+    <label class="filter-checkbox-btn">
         <input type="checkbox" class="filter-checkbox" data-filter="scenery">
         <img src="icons/icon_scenery.png" alt="Scenery"> Scenery
     </label>
-        </label>
-        <label class="filter-checkbox-btn">
+    <label class="filter-checkbox-btn">
         <input type="checkbox" class="filter-checkbox" data-filter="resource">
         <img src="icons/icon_resource.png" alt="Resource"> Resource
     </label>
 </div>
 
+<div id="collect-container" class="collect-container">
+    <h1 id="main-title">Collectible Materials</h1> <!-- Main title -->
+    <h3>Collectible</h3> <!-- Subheading -->
+
+    <div class="collect-item">
+        <button id="toggle-ingredients">
+            <img src="icons/ingredients.png" alt="Ingredients Icon" class="icon"> Ingredients <span class="arrow"><</span>
+        </button>
+        </div>
+        <div class="checkbox-filters" id="ingredients-filters" style="display: none;">
+            <!-- Checkbox for ingredients will be added dynamically here -->
+        </div>
+   
+        <div class="collect-item">         
+            <div class="checkbox-filters" id="rare-filters" style="display: none;"> Special Resource
+                <!-- Checkbox for rare will be added dynamically here -->
+            </div>
+        </div>
+        
+    <div class="collect-item">
+        <button id="toggle-material">
+            <img src="icons/material.png" alt="Material Icon" class="icon"> Resource <span class="arrow"><</span>
+        </button>
+    </div>
+    
+    <div id="material-group" style="display: none;">
+        <div class="collect-item">
+            <button id="toggle-wood">
+                <img src="icons/wood.png" alt="Wood Icon" class="icon"> Tree <span class="arrow"><</span>
+            </button>
+            </div>
+            <div class="checkbox-filters" id="wood-filters" style="display: none;">
+                <!-- Checkbox for wood will be added dynamically here -->
+            </div>
+        
+        <div class="collect-item">
+            <button id="toggle-stone">
+                <img src="icons/stone.png" alt="Stone Icon" class="icon"> Stone <span class="arrow"><</span>
+            </button>
+            </div>
+            <div class="checkbox-filters" id="stone-filters" style="display: none;">
+                <!-- Checkbox for stone will be added dynamically here -->
+            </div>
+        
+        <div class="collect-item">
+            <button id="toggle-fiber">
+                <img src="icons/fiber.png" alt="Fiber Icon" class="icon"> Shrub <span class="arrow"><</span>
+            </button>
+            </div>
+            <div class="checkbox-filters" id="fiber-filters" style="display: none;">
+                <!-- Checkbox for fiber will be added dynamically here -->
+            </div>
+        
+        <div class="collect-item">
+            <button id="toggle-scrap">
+                <img src="icons/scrap.png" alt="Scrap Icon" class="icon"> Wastes <span class="arrow"><</span>
+            </button>
+            </div>
+            <div class="checkbox-filters" id="scrap-filters" style="display: none;">
+                <!-- Checkbox for scrap will be added dynamically here -->
+            </div>
+        
+</div>
+
+    <div class="collect-item">
+        <button id="toggle-oldworld">
+            Old World Treasure (On Going) <span class="arrow"><</span>
+        </button>
+        </div>
+        <div class="checkbox-filters" id="oldworld-filters" style="display: none;">
+            <!-- Checkbox for old world treasure will be added dynamically here -->
+        </div>
+    </div>
+    </div>
+<div id="statusMessage"></div>
+</div>
+<!-- Form HTML -->
+<div class="submit-marker-form" style="display: none;">
+    <h2>Submit Marker</h2>
+    <form id="markerForm">
+
+        <label for="locType">Which Map?:</label>
+        <select id="locType" name="locType" required>
+            <option value="">Select Loc Type</option>
+            <option value="2">Sundale Valley</option>
+            <option value="5">Howling Gobi</option>
+            <option value="4">Edengate</option>
+            <option value="3">Ragon Snowy Peak</option>
+            <option value="6">Kepler Harbour</option>
+        </select>
+        
+        <label for="category">Category:</label>
+        <select id="category" name="category" required>
+            <option value="">Select Category</option>
+            <option value="1">Teleport</option>
+            <option value="2">Treasure Hunt</option>
+            <option value="3">Zone Commission</option>
+            <option value="7">Limited Time Training</option>
+            <option value="8">Scenery</option>
+            <option value="9">Fishing 1</option>
+            <option value="10">Fishing 2</option>
+            <option value="11">Fishing 3</option>
+            <option value="12">Fishing 4</option>
+            <option value="13">Fishing 5</option>
+            <option value="14">Fishing 6</option>
+            <option value="15">Stone</option>
+            <option value="16">Wood</option>
+            <option value="17">Fiber</option>
+            <option value="18">Resource Chest</option>
+            <option value="6">Scrap</option>
+            <option value="19">Scrap 2</option>
+            <option value="20">Scrap 3</option>
+            <option value="21">Resin</option>
+            <option value="22">Clay</option>
+            <option value="23">Rare Wood 1</option>
+            <option value="24">Rare Stone</option>
+            <option value="25">Rare Wastes</option>
+            <option value="26">Rare Wood 2 Kepler Harbour</option>
+            <option value="27">Old World Treasure</option>
+            <option value="28">Ingredient</option>
+        </select>
+
+<form id="submitMarkerForm">
+    <label for="nameMark" class="hidden">Name Mark:</label>
+    <input type="text" id="nameMark" name="nameMark" class="hidden" required>
+
+    <label id="oldWorldTreasureLabel" class="hidden">Old World Treasure:</label>
+    <input id="oldWorldTreasureInput" class="hidden" type="text" />
+
+    <label id="ingredientsNameLabel" class="hidden">Ingredients Name:</label>
+    <input id="ingredientsNameInput" class="hidden" type="text" />
+
+    <label for="description">Explain or Give A Clue:</label>
+    <textarea id="description" name="description" rows="4" required></textarea>
+
+    <label for="yCoordinates">Y Coordinates:</label>
+    <input type="text" id="yCoordinates" name="yCoordinates" required>
+
+    <label for="zCoordinates">Z Coordinates:</label>
+    <input type="text" id="zCoordinates" name="zCoordinates" required>
+
+    <label for="imageUpload">Images Info (Optional, But Needed):</label>
+    <input type="file" id="imageUpload" name="imageUpload" accept="image/*">
+
+    <label for="ysId">Your In Game Names (For Show Your Name In Marker):</label>
+    <input type="text" id="ysId" name="ysId">
+
+    <button type="submit">Send to BangOne Gaming</button>
+</form>
+
+    <!-- Placeholder for the image preview -->
+    <div id="imagePreviewContainer"></div>
+</div>
+
+<div id="statusMessage" style="display: none; margin-top: 10px;"></div>
+<div id="submit-container">
+    <div id="tooltip">Here you can<br>Submit Your Own mark</div>
+    <button id="submit-marker-button">Submit Marker</button>
+</div>
+
+    <div id="reportFormContainer"style="display: none;">
+        <h3>Report Error</h3>
+        <form id="reportForm">
+            <label for="reportId">ID MARK:</label>
+            <input type="text" id="reportId" name="reportId" readonly style="width: 15%;"><br>
+
+            <label for="num1">Correct Coordinate:</label>
+            <input type="number" id="num1" name="num1" min="0" step="1" required style="width: 45%; margin-right: 10px;"> 
+            <input type="number" id="num2" name="num2" min="0" step="1" required style="width: 45%;"><br>
+
+            <label for="errorDescription">Error Description (Name Map):</label>
+            <textarea id="errorDescription" name="errorDescription" rows="4" placeholder="UID/YOUR NAME/DESCRIPTION"></textarea><br>
+
+            <button type="button" id="submitReportBtn">Submit Report</button>
+            <button type="button" class="cancel" id="cancelReportBtn">Cancel</button>
+        </form>
+    </div>
+
+
 <div id="map"></div>
+</div>
 <script src="minimap_config.js"></script>
-
-    <script src="app.js?t=<?=time()?>"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>
+  eruda.init();
+</script>
+<script src="category.js"></script>
+<script src="app.js?t=<?=time()?>"></script>
 </body>
+
 
 </html>

@@ -7,101 +7,7 @@ let holdTimeout;
 let map; // Declare map at a broader scope
 let markerVisibility = {};
 
-function initMap() {
-    const southWest = L.latLng(-90, -180);
-    const northEast = L.latLng(90, 180);
-    const mapBounds = L.latLngBounds(southWest, northEast);
-
-    map = L.map('map', {
-        maxBounds: mapBounds, // Batas maksimal peta
-        maxBoundsViscosity: 1.0, // Mencegah pengguna keluar dari batas
-    }).setView([parseFloat(center_position[0]), parseFloat(center_position[1])], 6);
-
-    // Tambahkan tile layer
-    L.tileLayer('statics/yuan_{z}_{x}_{y}.png', {
-        tileSize: 256,
-        minZoom: 6,
-        maxZoom: 9,
-        noWrap: false,
-        bounds: L.latLngBounds(
-            L.latLng(57, -67.40522460937501),
-            L.latLng(66, -89.4)
-        ),
-        errorTileUrl: 'statics/error-tile.png'
-    }).addTo(map).on('tileload', function(event) {
-        const tile = event.tile;
-        
-        // Cek jika tile adalah gambar kosong
-        if (tile.src.includes('data:image') || tile.naturalWidth === 0 || tile.naturalHeight === 0) {
-            // Jika tile kosong, ganti dengan errorTileUrl
-            tile.src = 'statics/error-tile.png';
-        }
-    });
-    
-    
-
-    const maxOffsetPx = 300; // Jarak maksimum dari batas peta (dalam pixel)
-
-    // Tambahkan event listener untuk memantau pergerakan peta
-    map.on('move', function () {
-        const bounds = map.getBounds();
-        const mapPane = map.getPanes().mapPane;
-        const mapSize = map.getSize();
-
-        // Hitung jarak dari batas dalam satuan pixel
-        const northEastPixel = map.latLngToContainerPoint(bounds.getNorthEast());
-        const southWestPixel = map.latLngToContainerPoint(bounds.getSouthWest());
-
-        const offsetTop = northEastPixel.y < maxOffsetPx ? maxOffsetPx - northEastPixel.y : 0;
-        const offsetBottom = southWestPixel.y > (mapSize.y - maxOffsetPx) ? southWestPixel.y - (mapSize.y - maxOffsetPx) : 0;
-        const offsetLeft = southWestPixel.x < maxOffsetPx ? maxOffsetPx - southWestPixel.x : 0;
-        const offsetRight = northEastPixel.x > (mapSize.x - maxOffsetPx) ? northEastPixel.x - (mapSize.x - maxOffsetPx) : 0;
-
-        // Jika pengguna mendekati atau melebihi batas, tahan mereka di batas tersebut
-        if (offsetTop || offsetBottom || offsetLeft || offsetRight) {
-            map.panBy([offsetLeft - offsetRight, offsetTop - offsetBottom], { animate: false });
-        }
-    });
-
-    // Fetch marker data dan tambahkan marker ke peta
-    fetch('https://autumn-dream-8c07.square-spon.workers.dev/earthrevivalinteractivemaps')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok: ' + response.statusText);
-            }
-            return response.json();
-        })
-        .then(data => {
-            jsonData = data;
-          // Tambahkan marker ke cluster
-            jsonData.forEach(data => {
-                const marker = L.marker([data.lat, data.lng], { icon: customIcon });
-                markers.addLayer(marker);
-            });
-
-            // Tambahkan cluster ke peta
-            map.addLayer(markers);
-
-            addMarkersToMap(); 
-            setupFilterListeners(); 
-
-            // Create custom icon for marker
-            const customIcon = L.icon({
-                iconUrl: imageUrl,
-                iconSize: [256, 256],
-                iconAnchor: [128, 128]
-            });
-
-            // Tambahkan marker dengan popup
-            L.marker(locPosition, { icon: customIcon }).addTo(map).bindPopup();
-
-            // Hitung pusat peta
-            const centerLatLng = map.getCenter();
-         })
-        .catch(error => console.error('Error fetching marker data:', error));
-}
-
-
+ 
 
 // Assuming mini_map_type is defined somewhere in your code
 let miniMapMarkers = {}; // To hold your markers and overlays
@@ -172,7 +78,8 @@ function addMarkersToMap() {
             }
 
             // Konversi lat/lng ke float dan siapkan koordinat
-            const latLng = [parseFloat(location.lat), parseFloat(location.lng)];
+            // Tambahkan 0.0200 ke latitude
+            const latLng = [parseFloat(location.lat) + 0.0200, parseFloat(location.lng)];
 
             // Dapatkan URL ikon berdasarkan category_id
             const iconUrl = getIconUrl(location.category_id);
@@ -220,8 +127,6 @@ function addMarkersToMap() {
     hideMarkers();
     updateCategoryDisplay(); // Pastikan tampilan kategori diupdate setelah menambahkan semua marker
 }
-
-
 
 
 function calculateMaxCounts() {
@@ -273,85 +178,30 @@ function setupFilterListeners() {
         });
     });
 }
-const categoryIcons = {
-    "all": "icons/here.png",                // Ikon untuk "All"
-    "treasure": "icons/icon_treasure.png",  // Ikon untuk "Treasure"
-    "teleport": "icons/icon_teleport.png",  // Ikon untuk "Teleport"
-    "fishing": "icons/icon_fishing.png",     // Ikon untuk "Fishing"
-    "zone": "icons/icon_zone.png",           // Ikon untuk "Zone"
-    "training": "icons/icon_train.png",      // Ikon untuk "Training"
-    "scenery": "icons/icon_scenery.png",     // Ikon untuk "Scenery"
-    "resource": "icons/icon_resource.png"
-};
-
-
-const categoryCounts = {
-    "2": {  // Loc_type 2 (Sundale Valley)
-        "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
-        "resource": { max: 0, current: 0, icon: categoryIcons.resource },
-        "training": { max: 0, current: 0, icon: categoryIcons.training },
-        "zone": { max: 0, current: 0, icon: categoryIcons.zone },
-        "fishing": { max: 0, current: 0, icon: categoryIcons.fishing },
-        "scenery": { max: 0, current: 0, icon: categoryIcons.scenery }
-    },
-    "3": {  // Loc_type 3 (Ragon Snowy Peak)
-        "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
-        "resource": { max: 0, current: 0, icon: categoryIcons.resource },
-        "training": { max: 0, current: 0, icon: categoryIcons.training },
-        "zone": { max: 0, current: 0, icon: categoryIcons.zone },
-        "fishing": { max: 0, current: 0, icon: categoryIcons.fishing },
-        "scenery": { max: 0, current: 0, icon: categoryIcons.scenery }
-    },
-    "4": {  // Loc_type 4 (Edengate)
-        "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
-        "resource": { max: 0, current: 0, icon: categoryIcons.resource },
-        "training": { max: 0, current: 0, icon: categoryIcons.training },
-        "zone": { max: 0, current: 0, icon: categoryIcons.zone },
-        "fishing": { max: 0, current: 0, icon: categoryIcons.fishing },
-        "scenery": { max: 0, current: 0, icon: categoryIcons.scenery }
-    },
-    "5": {  // Loc_type 5 (Howling Gobi)
-        "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
-        "resource": { max: 0, current: 0, icon: categoryIcons.resource },
-        "training": { max: 0, current: 0, icon: categoryIcons.training },
-        "zone": { max: 0, current: 0, icon: categoryIcons.zone },
-        "fishing": { max: 0, current: 0, icon: categoryIcons.fishing },
-        "scenery": { max: 0, current: 0, icon: categoryIcons.scenery }
-    },
-    "6": {  // Loc_type 6 (Kepler Harbour)
-        "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
-        "resource": { max: 0, current: 0, icon: categoryIcons.resource },
-        "training": { max: 0, current: 0, icon: categoryIcons.training },
-        "zone": { max: 0, current: 0, icon: categoryIcons.zone },
-        "fishing": { max: 0, current: 0, icon: categoryIcons.fishing },
-        "scenery": { max: 0, current: 0, icon: categoryIcons.scenery }
-    }
-};
-
-const fishingCategories = [9, 10, 11, 12, 13, 14]; // Combine fishing categories
 
 function initMap() {
     const init_position = window.init_position || "60.871009248911655,-76.62568359375001";
     const center_position = init_position.split(",");
 
-    const southWest = L.latLng(-90, -180);
-    const northEast = L.latLng(90, 180);
+    // Mengatur batas peta dengan latLng yang sesuai
+    const southWest = L.latLng(57, -89.4);
+    const northEast = L.latLng(66, -67.40522460937501);
     const mapBounds = L.latLngBounds(southWest, northEast);
 
     map = L.map('map', {
         maxBounds: mapBounds,
-        maxBoundsViscosity: 1.0,
+        maxBoundsViscosity: 1.0, // Mencegah pengguna keluar dari batas
+        zoomSnap: 0.1, // Atur langkah zoom ke 0.1
+        zoomDelta: 0.1, // Atur langkah zoom saat menggunakan kontrol zoom
     }).setView([parseFloat(center_position[0]), parseFloat(center_position[1])], 6);
 
-    L.tileLayer('statics/yuan_{z}_{x}_{y}.png', {
+    // Menambahkan tile layer
+    const tileLayer = L.tileLayer('statics/yuan_{z}_{x}_{y}.png', {
         tileSize: 256,
         minZoom: 6,
         maxZoom: 9,
         noWrap: true,
-        bounds: L.latLngBounds(
-            L.latLng(57, -67.40522460937501),
-            L.latLng(66, -89.4)
-        ),
+        bounds: mapBounds, // Set bounds untuk tile layer
         zoomFilter: function(coords, zoom) {
             if (zoom < 4 || zoom > 9) return false;
             const temp = xyDeny[`zoom_${zoom}`];
@@ -365,6 +215,16 @@ function initMap() {
         }
     }).addTo(map);
 
+    // Menambahkan listener untuk menangani pergeseran peta
+    map.on('dragend', function() {
+        const currentCenter = map.getCenter();
+        const tileBounds = L.latLngBounds(southWest, northEast); // Batas tile yang dimuat
+        if (!tileBounds.contains(currentCenter)) {
+            map.setView(tileBounds.getCenter()); // Menarik kembali ke pusat batas tile
+        }
+    });
+
+    // Pastikan untuk menambahkan layer dan pengaturan filter setelah memuat data
     fetch('https://autumn-dream-8c07.square-spon.workers.dev/earthrevivalinteractivemaps')
         .then(response => {
             if (!response.ok) {
@@ -375,11 +235,13 @@ function initMap() {
         .then(data => {
             console.log(`Fetched Data: `, data);
             jsonData = data;
-            addMarkersToMap(); // Add markers after fetching data
-            setupFilterListeners(); // Ensure filter listeners are set up
+            addMarkersToMap(); // Tambahkan marker setelah mengambil data
+            setupFilterListeners(); // Pastikan listener filter disiapkan
         })
         .catch(error => console.error('Error fetching marker data:', error));
 }
+
+
 // Fungsi utama untuk menampilkan atau menyembunyikan marker berdasarkan filter
 function showMarkers() {
     markers.forEach(marker => {
@@ -428,12 +290,18 @@ function resetCategoryCounts() {
     for (const locType in categoryCounts) {
         for (const category in categoryCounts[locType]) {
             categoryCounts[locType][category].current = 0; // Reset current count
-            categoryCounts[locType][category].max = 0; // Reset max count
+            categoryCounts[locType][category].max = 0; // Reset max count (optional, tergantung kebutuhan)
         }
     }
 
-    // Hitung max counts setelah reset
-    calculateMaxCounts(); // Hanya dipanggil sekali saat reset
+    // Hitung ulang max counts
+    calculateMaxCounts(); // Menghitung kembali max counts
+
+    // Perbarui tampilan untuk mencerminkan count yang telah direset
+    // Panggil updateCategoryDisplay untuk semua locType
+    for (const locType in categoryCounts) {
+        updateCategoryDisplay(locType); // Memperbarui tampilan untuk setiap locType
+    }
 }
 
 
@@ -562,69 +430,599 @@ function main() {
 
 main(); // Call the main function to run the application
 
+let savedLat = null;
+let savedLng = null;
+let draggableMarker = null; // Store reference to the marker
+let confirmationPopup = null; // Store reference to the popup
+let labelMarker = null;
+function addDraggableIcon() {
+    const icon = L.icon({
+        iconUrl: 'icons/icon_default.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+    });
+
+    draggableMarker = L.marker(map.getCenter(), {
+        draggable: true,
+        icon: icon,
+    }).addTo(map);
+
+    const labelIcon = L.divIcon({
+        className: 'drag-marker-label',
+        html: `
+            <div style="
+                background-color: rgba(255, 255, 255, 0.8); 
+                padding: 5px; 
+                border-radius: 3px; 
+                box-shadow: 0 2px 5px rgba(0,0,0,0.3); 
+                display: inline-block;
+                white-space: nowrap;
+            ">
+                Drag the marker!
+            </div>`,
+        iconAnchor: [48, 64]
+    });
+
+    const labelMarker = L.marker(draggableMarker.getLatLng(), { icon: labelIcon, interactive: false }).addTo(map);
+
+    // Set a timeout to remove the labelMarker after 3 seconds
+    setTimeout(() => {
+        if (labelMarker) {
+            map.removeLayer(labelMarker); // Remove label from the map
+            labelMarker = null; // Reset label reference
+        }
+    }, 3000); // 3000 milliseconds = 3 seconds
+
+    draggableMarker.on('drag', function(event) {
+        labelMarker.setLatLng(event.latlng);
+    });
+
+    draggableMarker.on('dragend', function (event) {
+        const position = event.target.getLatLng();
+        savedLat = position.lat;
+        savedLng = position.lng;
+
+        showConfirmationPopup();
+    });
+
+    draggableMarker.on('dragstart', function () {
+        hideConfirmationPopup();
+    });
+}
+
+
+
+// Function to hide the marker
+function hideMarkers() {
+    if (draggableMarker) {
+        draggableMarker.remove(); // Remove marker from map
+        draggableMarker = null; // Reset marker reference
+    }
+}
+
+// Function to disable all checklists on filters
+function disableAllChecklists() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]'); // Adjust selector as per your checklist elements
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false; // Disable all checkboxes
+    });
+}
+
+
+function showConfirmationPopup() {
+    confirmationPopup = document.createElement('div');
+    
+    confirmationPopup.style.position = 'absolute';
+    confirmationPopup.style.borderRadius = '5px';
+    confirmationPopup.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+    confirmationPopup.style.zIndex = '1000';
+    confirmationPopup.style.background = 'none';
+
+    function positionPopup() {
+        const markerPosition = map.latLngToContainerPoint(L.latLng(savedLat, savedLng));
+        confirmationPopup.style.left = `${markerPosition.x - 10}px`; 
+        confirmationPopup.style.top = `${markerPosition.y - 40}px`; 
+    }
+
+    positionPopup();
+    draggableMarker.on('drag', positionPopup);
+
+    confirmationPopup.innerHTML = `
+       <button id="confirmButton" style="background: none; border: none; cursor: pointer;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 90 90">
+                <circle cx="45" cy="45" r="45" style="fill: rgb(40,201,55);" />
+                <path d="M 38.478 64.5 c -0.01 0 -0.02 0 -0.029 0 c -1.3 -0.009 -2.533 -0.579 -3.381 -1.563 L 21.59 47.284 c -1.622 -1.883 -1.41 -4.725 0.474 -6.347 c 1.884 -1.621 4.725 -1.409 6.347 0.474 l 10.112 11.744 L 61.629 27.02 c 1.645 -1.862 4.489 -2.037 6.352 -0.391 c 1.862 1.646 2.037 4.49 0.391 6.352 l -26.521 30 C 40.995 63.947 39.767 64.5 38.478 64.5 z" style="fill: rgb(255,255,255);" />
+            </svg>
+        </button>
+    `;
+
+    document.body.appendChild(confirmationPopup);
+
+    // Hide confirmation on map move or external click
+    map.on('movestart', hideConfirmationPopup);
+    document.addEventListener('click', onOutsideClick);
+
+    // Event listener for confirm button
+    document.getElementById('confirmButton').addEventListener('click', function(event) {
+        event.stopPropagation(); // Prevent outside click event from triggering
+        if (labelMarker) {
+            map.removeLayer(labelMarker); // Hapus label dari map
+            labelMarker = null; // Reset referensi label
+        }
+        console.log("Using saved latitude:", savedLat);
+        console.log("Using saved longitude:", savedLng);
+        
+        const newEnergyCoordinates = { lat: savedLat, lng: savedLng };
+        console.log("New Energy Coordinates:", newEnergyCoordinates);
+
+        document.querySelector('.submit-marker-form').style.display = 'block';
+
+        hideMarkers();
+        hideConfirmationPopup();
+    });
+
+    // Helper function to hide popup when clicking outside of it
+    function onOutsideClick(event) {
+        if (!confirmationPopup.contains(event.target)) {
+            hideConfirmationPopup();
+        }
+    }
+}
+
+function hideConfirmationPopup() {
+    if (confirmationPopup) {
+        document.body.removeChild(confirmationPopup);
+        confirmationPopup = null;
+        map.off('movestart', hideConfirmationPopup); // Remove event listener for map move
+        document.removeEventListener('click', onOutsideClick); // Remove event listener for outside click
+    }
+}
+
+// Close the form if clicked outside
+document.addEventListener('click', function(event) {
+    const formContainer = document.querySelector('.submit-marker-form');
+
+    // Check if the form is open and the click is outside the form
+    if (formContainer.style.display === 'block' && !formContainer.contains(event.target)) {
+        formContainer.style.display = 'none';
+    }
+});
+// Tampilkan tooltip dan collect tooltip setelah 10 detik dan sembunyikan setelah 15 detik (total tampil 5 detik)
+document.addEventListener("DOMContentLoaded", function() {
+    const tooltip = document.getElementById("tooltip");
+    const collectTooltip = document.getElementById("tip-for-collect"); // Reference to the collect tooltip
+    const toggleCollectButton = document.getElementById("toggle-collect"); // Reference to the toggle button
+
+    // Show main tooltip
+    setTimeout(() => {
+        tooltip.style.opacity = 1; // Menampilkan tooltip
+
+        setTimeout(() => {
+            tooltip.style.opacity = 0; // Menyembunyikan tooltip setelah 5 detik
+        }, 15000);
+    }, 25000); // Delay 10 detik sebelum tooltip muncul
+
+    // Show collect tooltip
+    setTimeout(() => {
+        collectTooltip.style.opacity = 1; // Show collect tooltip
+
+        // Hide collect tooltip after an additional 15 seconds
+        setTimeout(() => {
+            collectTooltip.style.opacity = 0; // Hide collect tooltip after 15 seconds
+        }, 15000); // Keep it visible for 5 seconds
+
+    }, 10000); // Delay 10 detik sebelum collect tooltip muncul
+
+    // Optional: Show collect tooltip on hover over the toggle button
+    toggleCollectButton.addEventListener("mouseover", () => {
+        collectTooltip.style.opacity = 1; // Show collect tooltip on hover
+    });
+
+    // Hide collect tooltip when the mouse leaves the toggle button
+    toggleCollectButton.addEventListener("mouseout", () => {
+        collectTooltip.style.opacity = 0; // Hide collect tooltip when not hovering
+    });
+});
+
+
+
+// Event listener for the submit marker button
+document.getElementById("submit-marker-button").addEventListener("click", function() {
+    // Show the default marker icon
+    hideMarkers(); // Remove any existing markers before showing the new one
+    disableAllChecklists(); // Disable all checklists
+    addDraggableIcon();
+    clearAllMarks();
+    // Set the map zoom level to 9
+    map.setZoom(9);
+});
+
+// Form submission handling
+document.getElementById("markerForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const statusMessage = document.getElementById("statusMessage");
+    statusMessage.style.display = "block";
+    statusMessage.textContent = "Submitting marker...";
+
+    setTimeout(() => {
+        statusMessage.style.display = "none";
+    }, 7000);
+
+    // Capture form data
+    const nameMark = document.getElementById("nameMark").value;
+    const category = document.getElementById("category").value;
+    const locType = document.getElementById("locType").value;
+    const description = document.getElementById("description").value;
+    const ysId = document.getElementById("ysId").value;
+
+    const yCoord = document.getElementById("yCoordinates").value;
+    const zCoord = document.getElementById("zCoordinates").value;
+
+    // Capture additional inputs
+    const oldWorldTreasureInput = document.getElementById("oldWorldTreasureInput").value;
+    const ingredientsNameInput = document.getElementById("ingredientsNameInput").value;
+
+    // Combine into finalDescription
+    const finalDescription = `(${yCoord}, ${zCoord})\n${description.trim()}\n${oldWorldTreasureInput.trim()}\n${ingredientsNameInput.trim()}`;
+
+    const imageFile = document.getElementById("imageUpload").files[0];
+    let imageBase64 = "";
+    if (imageFile) {
+        imageBase64 = await convertToBase64(imageFile);
+    }
+
+    try {
+        const response = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/Feedback");
+        let existingData = {};
+        
+        if (response.ok) {
+            const responseData = await response.json();
+            existingData = responseData || {};
+        } else {
+            console.error("Failed to load existing data:", response.statusText);
+        }
+
+        // Generate new ID
+        const existingIds = Object.keys(existingData).map(Number);
+        const newId = (Math.max(...existingIds, 0) + 1).toString();
+
+        // Construct the new entry
+        const newEntry = {
+            [newId]: {
+                id: newId,
+                ys_id: ysId.trim() || "0",
+                name: nameMark.trim(),
+                en_name: nameMark.trim(),
+                category_id: category,
+                lat: yCoord.toString(), // Use the captured coordinates
+                lng: zCoord.toString(), // Use the captured coordinates
+                redirect_params: "0",
+                first_member_id: "0",
+                challenge_id: "0",
+                desc: finalDescription,
+                links_info: "[]",
+                bili_info: "[]",
+                loc_type: locType,
+                images_info: imageBase64 ? `[{"link": "${imageBase64}", "uid": "0", "username": "User"}]` : "[]",
+            }
+        };
+
+        console.log("Data to be sent to endpoint:", JSON.stringify(newEntry, null, 2));
+
+        const mergedData = { ...existingData, ...newEntry };
+
+        document.querySelector('.submit-marker-form').style.display = 'none';
+
+        statusMessage.textContent = "Thanks for submitting...";
+
+        const submitResponse = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/Feedback", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(mergedData),
+        });
+
+        if (!submitResponse.ok) {
+            throw new Error('Network response was not ok: ' + submitResponse.statusText);
+        }
+        
+        console.log('Marker submitted successfully.');
+
+        // Reset the form fields after successful submission
+        document.getElementById("markerForm").reset(); // Reset the form fields
+
+    } catch (error) {
+        console.error('Error during submission:', error);
+    }
+});
+
+
+// Function to update category options based on selected loc_type
+function updateCategoryOptions() {
+    const locType = document.getElementById("locType").value;
+    const categorySelect = document.getElementById("category");
+    const oldWorldTreasureLabel = document.getElementById("oldWorldTreasureLabel");
+    const oldWorldTreasureInput = document.getElementById("oldWorldTreasureInput");
+    const ingredientsNameLabel = document.getElementById("ingredientsNameLabel");
+    const ingredientsNameInput = document.getElementById("ingredientsNameInput");
+
+    // Clear existing options
+    categorySelect.innerHTML = '<option value="">Select Category</option>';
+
+    // Define category options based on loc_type
+    let categoryOptions = [];
+
+    switch (locType) {
+        case '2':
+            categoryOptions = [
+                { value: "1", text: "Teleport" },
+                { value: "2", text: "Treasure Hunt" },
+                { value: "3", text: "Zone Commission" },
+                { value: "7", text: "Limited Time Training" },
+                { value: "8", text: "Scenery" },
+                { value: "14", text: "Fishing" },
+                { value: "15", text: "Stone" },
+                { value: "16", text: "Wood" },
+                { value: "17", text: "Fiber" },
+                { value: "18", text: "Resource Chest" },
+                { value: "6", text: "Lens" },
+                { value: "19", text: "Screw" },
+                { value: "20", text: "Zipper" },
+                { value: "21", text: "Resin" },
+                { value: "22", text: "Clay" },
+                { value: "23", text: "Rare Wood Sundale Valley" },
+                { value: "27", text: "Old World Treasure" },
+                { value: "28", text: "Ingredients" },
+            ];
+            break;
+        case '5':
+            categoryOptions = [
+                { value: "1", text: "Teleport" },
+                { value: "2", text: "Treasure Hunt" },
+                { value: "3", text: "Zone Commission" },
+                { value: "7", text: "Limited Time Training" },
+                { value: "8", text: "Scenery" },
+                { value: "9", text: "Fishing" },
+                { value: "15", text: "Stone" },
+                { value: "16", text: "Wood" },
+                { value: "17", text: "Fiber" },
+                { value: "18", text: "Resource Chest" },
+                { value: "6", text: "Rubber" },
+                { value: "19", text: "Machine Part" },
+                { value: "20", text: "Spring" },
+                { value: "21", text: "Resin" },
+                { value: "22", text: "Clay" },
+                { value: "24", text: "Rare Stone" },
+                { value: "27", text: "Old World Treasure" },
+                { value: "28", text: "Ingredients" },
+            ];
+            break;
+        case '4':
+            categoryOptions = [
+                { value: "1", text: "Teleport" },
+                { value: "2", text: "Treasure Hunt" },
+                { value: "3", text: "Zone Commission" },
+                { value: "7", text: "Limited Time Training" },
+                { value: "8", text: "Scenery" },
+                { value: "9", text: "Fishing" },
+                { value: "15", text: "Stone" },
+                { value: "16", text: "Wood" },
+                { value: "17", text: "Fiber" },
+                { value: "18", text: "Resource Chest" },
+                { value: "6", text: "Diode" },
+                { value: "19", text: "Precision Part" },
+                { value: "20", text: "Electronical Component" },
+                { value: "21", text: "Resin" },
+                { value: "22", text: "Clay" },
+                { value: "25", text: "Rare Wastes" },
+                { value: "27", text: "Old World Treasure" },
+                { value: "28", text: "Ingredients" },
+            ];
+            break;
+        case '3':
+            categoryOptions = [
+                { value: "1", text: "Teleport" },
+                { value: "2", text: "Treasure Hunt" },
+                { value: "3", text: "Zone Commission" },
+                { value: "7", text: "Limited Time Training" },
+                { value: "8", text: "Scenery" },
+                { value: "9", text: "Fishing" },
+                { value: "15", text: "Stone" },
+                { value: "16", text: "Wood" },
+                { value: "17", text: "Fiber" },
+                { value: "18", text: "Resource Chest" },
+                { value: "6", text: "Industrial Hinge" },
+                { value: "19", text: "Magnet Coil" },
+                { value: "20", text: "Insulation Coating" },
+                { value: "21", text: "Amber" },
+                { value: "22", text: "Quartz" },
+                { value: "27", text: "Old World Treasure" },
+                { value: "28", text: "Ingredients" },
+            ];
+            break;
+        case '6':
+            categoryOptions = [
+                { value: "1", text: "Teleport" },
+                { value: "2", text: "Treasure Hunt" },
+                { value: "3", text: "Zone Commission" },
+                { value: "7", text: "Limited Time Training" },
+                { value: "8", text: "Scenery" },
+                { value: "9", text: "Fishing" },
+                { value: "15", text: "Stone" },
+                { value: "16", text: "Wood" },
+                { value: "17", text: "Fiber" },
+                { value: "18", text: "Resource Chest" },
+                { value: "6", text: "Artificial Leather" },
+                { value: "19", text: "Power Component" },
+                { value: "20", text: "Integrated Motor" },
+                { value: "21", text: "Amber" },
+                { value: "22", text: "Quartz" },
+                { value: "26", text: "Rare Wood 2 Keplre Harbour" },
+                { value: "27", text: "Old World Treasure" },
+                { value: "28", text: "Ingredients" },
+            ];
+            break;
+        default:
+            break;
+    }
+
+    // Add new options to the select element
+    categoryOptions.forEach(option => {
+        const opt = document.createElement('option');
+        opt.value = option.value;
+        opt.textContent = option.text;
+        categorySelect.appendChild(opt);
+    });
+
+    // Show or hide the category select based on loc_type selection
+    if (locType) {
+        categorySelect.classList.remove('hidden');
+    } else {
+        categorySelect.classList.add('hidden');
+        resetExtraInputs(); // Reset extra inputs if locType is not selected
+    }
+
+    // Reset extra inputs by default
+    resetExtraInputs();
+}
+
+// Function to reset extra input fields and labels
+function resetExtraInputs() {
+    const oldWorldTreasureLabel = document.getElementById("oldWorldTreasureLabel");
+    const oldWorldTreasureInput = document.getElementById("oldWorldTreasureInput");
+    const ingredientsNameLabel = document.getElementById("ingredientsNameLabel");
+    const ingredientsNameInput = document.getElementById("ingredientsNameInput");
+
+    // Mengatur display ke 'none' untuk menyembunyikan elemen
+    oldWorldTreasureLabel.style.display = 'none';
+    oldWorldTreasureInput.style.display = 'none';
+    ingredientsNameLabel.style.display = 'none';
+    ingredientsNameInput.style.display = 'none';
+}
+
+// Event listener untuk perubahan kategori
+document.getElementById("category").addEventListener("change", function() {
+    resetExtraInputs(); // Reset untuk menyembunyikan semua
+
+    if (this.value == "27") { // Other 1
+        // Tampilkan Old World Treasure
+        oldWorldTreasureLabel.style.display = 'block'; // Mengatur display ke 'block'
+        oldWorldTreasureInput.style.display = 'block'; // Mengatur display ke 'block'
+    } else if (this.value == "28") { // Other 2
+        // Tampilkan Ingredients Name
+        ingredientsNameLabel.style.display = 'block'; // Mengatur display ke 'block'
+        ingredientsNameInput.style.display = 'block'; // Mengatur display ke 'block'
+    }
+});
+
+
+
+// Add event listener to locType dropdown to update categories
+document.getElementById("locType").addEventListener("change", updateCategoryOptions);
+
+// Call to initially hide categories when the form loads
+updateCategoryOptions();
+
+// Function to update name mark and show it
+function updateNameMark() {
+    const category = document.getElementById("category").value;
+    const locType = document.getElementById("locType").value;
+
+    if (category && locType) {
+        const categoryName = categoryNames[category];
+        const locTypeName = locTypeNames[locType];
+        document.getElementById("nameMark").value = `${categoryName} - ${locTypeName}`;
+        document.getElementById("nameMark").style.display = "block"; // Show the name mark input
+    } else {
+        document.getElementById("nameMark").style.display = "none"; // Hide if not selected
+    }
+}
+
+// Add event listeners to update name mark on change
+document.getElementById("category").addEventListener("change", updateNameMark);
+document.getElementById("locType").addEventListener("change", updateNameMark);
+
+// Initially hide name mark input
+document.getElementById("nameMark").style.display = "none";
+
+// Function to convert file to Base64
+function convertToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+// Image preview functionality
+document.getElementById('imageUpload').addEventListener('change', function() {
+    const file = this.files[0];
+    const imagePreviewContainer = document.getElementById("imagePreviewContainer");
+    imagePreviewContainer.innerHTML = "";
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = document.createElement('img');
+            img.src = event.target.result;
+            img.width = 100;
+            imagePreviewContainer.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
 // Function to close the report form
 function closeReportForm() {
     console.log('Closing form...');
     var formContainer = document.getElementById('reportFormContainer');
     if (formContainer) {
-        formContainer.remove(); // Remove the form from the DOM
-        console.log('Form removed from DOM');
+        formContainer.style.display = 'none'; // Hide the form
+        console.log('Form hidden');
     } else {
         console.log('Form not found');
     }
 }
 
-// Function to show the report form
-function showReportForm(marker) {
-    // Access custom properties from the marker object
-    const markerId = marker.options.id;
-    const categoryId = marker.options.category || 'Unknown';
-    const nameEn = marker.options.en_name || 'Unknown';
-    const locType = marker.options.loc_type || 'Unknown';
 
-    console.log("Marker Info:", { markerId, categoryId, nameEn, locType }); // Debugging
+        // Function to show the report form
+        function showReportForm(marker) {
+            // Access custom properties from the marker object
+            const markerId = marker.options.id;
+            const categoryId = marker.options.category || 'Unknown';
+            const nameEn = marker.options.en_name || 'Unknown';
+            const locType = marker.options.loc_type || 'Unknown';
 
-    var formHtml = `
-        <div id="reportFormContainer">
-            <h3>Report Error</h3>
-            <form id="reportForm">
-                <label for="reportId">ID MARK:</label>
-                <input type="text" id="reportId" name="reportId" value="${markerId}" readonly style="width: 15%;"><br><br>
+            console.log("Marker Info:", { markerId, categoryId, nameEn, locType }); // Debugging
+    // Show the report form
+    var formContainer = document.getElementById('reportFormContainer');
+    if (formContainer) {
+        formContainer.style.display = 'block'; // Change display to block to make it visible
+        console.log('Form displayed');
+    } else {
+        console.log('Form container not found');
+    }
+            document.getElementById('reportId').value = markerId; // Set marker ID in the form
 
-                <label for="num1">Correct Coordinate:</label>
-                <input type="number" id="num1" name="num1" min="0" step="1" required style="width: 20%; margin-right: 10px;"> 
-                <input type="number" id="num2" name="num2" min="0" step="1" required style="width: 20%;"><br><br>
+            // Attach event listener for form submission
+            document.getElementById('submitReportBtn').addEventListener('click', () => {
+                const lat = marker.getLatLng().lat;  // Get the latitude from the marker
+                const lng = marker.getLatLng().lng;  // Get the longitude from the marker
+                console.log("Submitting Report:", { markerId, lat, lng, categoryId, nameEn, locType });
+                submitReport(markerId, lat, lng, categoryId, nameEn, locType); // Call submit report
+            });
 
-                <label for="errorDescription">Error Description (Name Map):</label>
-                <textarea id="errorDescription" name="errorDescription" rows="4" placeholder="UID/YOUR NAME/DESCRIPTION"></textarea><br><br>
-
-                <button type="button" id="submitReportBtn">Submit Report</button>
-                <button type="button" class="cancel" id="cancelReportBtn">Cancel</button>
-            </form>
-        </div>
-    `;
-
-    // Insert the form into the document body
-    document.body.insertAdjacentHTML('beforeend', formHtml);
-
-    // Attach event listener for form submission
-    document.getElementById('submitReportBtn').addEventListener('click', () => {
-        const lat = marker.getLatLng().lat;  // Get the latitude from the marker
-        const lng = marker.getLatLng().lng;  // Get the longitude from the marker
-        console.log("Submitting Report:", { markerId, lat, lng, categoryId, nameEn, locType });
-        submitReport(markerId, lat, lng, categoryId, nameEn, locType); // Call submit report
-    });
-
-    // Attach event listener for form cancellation
-    document.getElementById('cancelReportBtn').addEventListener('click', closeReportForm);
-}
+            // Attach event listener for form cancellation
+            document.getElementById('cancelReportBtn').addEventListener('click', closeReportForm);
+        }
 
 function submitReport(markerId, lat, lng, categoryId, nameEn, locType) {
-    var num1 = document.getElementById('num1').value;
-    var num2 = document.getElementById('num2').value;
-    var errorDescription = document.getElementById('errorDescription').value;
+    const num1 = document.getElementById('num1').value;
+    const num2 = document.getElementById('num2').value;
+    const errorDescription = document.getElementById('errorDescription').value;
 
-    // Objek pemeta untuk loc_type dan category_id
+    // Object mapping for loc_type and category_id
     const locTypeMap = {
         "2": "Sundale Valley",
         "3": "Ragon Snowy Peak",
@@ -637,17 +1035,30 @@ function submitReport(markerId, lat, lng, categoryId, nameEn, locType) {
         "1": "Teleport",
         "2": "Treasure",
         "3": "Zone",
+        "6": "Scrap",
         "7": "Training",
+        "8": "Scenery",
         "9": "Fishing",
         "10": "Fishing",
         "11": "Fishing",
         "12": "Fishing",
         "13": "Fishing",
-        "14": "Fishing", 
-        "18": "resource"
+        "14": "Fishing",
+        "15": "Stone",
+        "16": "Wood",
+        "17": "Fiber",
+        "18": "Resource",
+        "19": "Scrap2",
+        "20": "Scrap3",
+        "21": "Resin",
+        "22": "Clay",
+        "23": "Rare Wood 1",
+        "24": "Rare Stone",
+        "25": "Rare Wastes",
+        "26": "Rare Wood 2"
     };
 
-    // Mengganti ID dengan nama menggunakan pemeta
+    // Replace ID with name using mapping
     const categoryName = categoryMap[categoryId] || 'Unknown';
     const locTypeName = locTypeMap[locType] || 'Unknown';
 
@@ -657,14 +1068,14 @@ function submitReport(markerId, lat, lng, categoryId, nameEn, locType) {
     }
 
     const jsonData = {
-        Name: nameEn || 'Unknown',  // Jika undefined, beri nilai default
+        Name: nameEn || 'Unknown', // Default value if undefined
         ID: markerId,
         latitude: lat,
         longitude: lng,
-        category_id: categoryName,  // Kirim nama kategori
-        loc_type: locTypeName,      // Kirim nama loc_type
-        "X-coordinate": num1,
-        "Y-coordinate": num2,
+        category_id: categoryName, // Send category name
+        loc_type: locTypeName, // Send loc_type name
+        "Y-coordinate": num1,
+        "Z-coordinate": num2,
         description: errorDescription
     };
 
@@ -673,7 +1084,7 @@ function submitReport(markerId, lat, lng, categoryId, nameEn, locType) {
     console.log('Submitting report with the following data:', formattedJson);
 
     // Send the report using fetch
-    fetch('https://autumn-dream-8c07.square-spon.workers.dev/report_form')
+    fetch('https://autumn-dream-8c07.square-spon.workers.dev/marker')
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -684,10 +1095,10 @@ function submitReport(markerId, lat, lng, categoryId, nameEn, locType) {
             console.log('Loaded existing data:', existingData);
 
             // Merge existing data with new data
-            const mergedData = { ...existingData, [markerId]: newReportData };
+            const mergedData = { ...existingData, [markerId]: jsonData }; // Use jsonData for merging
             console.log('Merged data:', JSON.stringify(mergedData, null, 4));
 
-            return fetch('https://autumn-dream-8c07.square-spon.workers.dev/report', {
+            return fetch('https://autumn-dream-8c07.square-spon.workers.dev/marker', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -700,6 +1111,12 @@ function submitReport(markerId, lat, lng, categoryId, nameEn, locType) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             console.log('Data successfully submitted to the endpoint.');
+            showSuccessMessages(); // Call to show success messages
+
+            // Reset the form fields
+            resetReportForm();
+
+            // Close the report form
             closeReportForm();
         })
         .catch(error => {
@@ -707,77 +1124,157 @@ function submitReport(markerId, lat, lng, categoryId, nameEn, locType) {
         });
 }
 
-// Function to set up marker interactions (popup, report button, etc.)
+function showSuccessMessages() {
+    const messages = [
+        { text: "Thanks for it...", duration: 2000 },
+        { text: "Your marker is under review.", duration: 3000 }
+    ];
+
+    // Create a message container
+    const messageContainer = document.createElement('div');
+    messageContainer.style.position = "fixed";
+    messageContainer.style.top = "50%";  // Center vertically
+    messageContainer.style.left = "50%"; // Center horizontally
+    messageContainer.style.color = "white"
+    messageContainer.style.transform = "translate(-50%, -50%)"; // Centering
+    messageContainer.style.zIndex = "1000"; // Ensure it's on top
+    messageContainer.style.textAlign = "center"; // Center the text
+
+    // Create an image element
+    const iconElement = document.createElement('img');
+    iconElement.src = 'icons/bangone.png'; // Replace with the actual path to your icon
+    iconElement.alt = 'Banone Icon';
+    iconElement.style.width = '70px'; // Set width to 50px
+    iconElement.style.height = '70px'; // Set height to 50px
+    iconElement.style.display = 'block'; // Ensures the image is on its own line
+    iconElement.style.marginBottom = '5px'; // Space between icon and text
+
+    // Append the icon to the container
+    messageContainer.appendChild(iconElement);
+
+    // Function to show messages
+    let index = 0;
+
+    function displayNextMessage() {
+        if (index < messages.length) {
+            const messageElement = document.createElement('span');
+            messageElement.innerText = messages[index].text;
+            messageElement.style.display = 'block'; // Make it a block element
+            messageElement.style.marginBottom = '5px'; // Space between messages
+
+            // Append the message to the container
+            messageContainer.appendChild(messageElement);
+
+            // Remove the message after its duration
+            setTimeout(() => {
+                messageElement.remove();
+                index++;
+                displayNextMessage(); // Show the next message
+            }, messages[index].duration);
+        } else {
+            // Remove the message container after the last message
+            setTimeout(() => {
+                messageContainer.remove();
+            }, 1000); // Delay before removing the container
+        }
+    }
+
+    // Append the message container to the body
+    document.body.appendChild(messageContainer);
+    displayNextMessage(); // Start showing messages
+}
+
+
+
+
+// Function to reset the report form
+function resetReportForm() {
+    document.getElementById('reportForm').reset(); // Reset the form fields
+}
+
+
+function getVideoIdFromUrl(url) {
+    const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?|watch|.+\/))|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const matches = url.match(regex);
+    return matches ? matches[1] : null;
+}
+
 function setupMarkerInteractions(marker, location, key) {
-    // Create the content for the popup
+    // Dapatkan ID video dari URL
+    const videoId = getVideoIdFromUrl(location.links_info);
+    const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : '';
+
+    // Membuat konten untuk pop-up
     const contentString = `
-        <div style="position: relative; padding: 15px; font-family: Arial, sans-serif; border-radius: 8px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25); background-color: rgba(19, 39, 96, 0.613);">
-            <h3 style="margin-top: 0; margin-bottom: 8px; color: #ffffff; font-size: 18px;">${location.en_name}</h3>
-            <p style="font-size: 14px; color: #ffffff; margin-bottom: 8px;">${(location.desc || 'No description available.').replace(/\n/g, '<br>').replace(/<b>/g, '<b>').replace(/<\/b>/g, '</b>')}</p>
-            ${(location.links_info && location.links_info !== '[]') ? `<a href="${location.links_info}" target="_blank" style="display: inline-block; padding: 8px 12px; margin-top: 8px; font-size: 14px; color: #ffffff; background-color: #007bff; border-radius: 4px; text-decoration: none;">Watch Video</a>` : ''}
-            <button class="reportButton" data-id="${key}" style="position: absolute; bottom: 10px; right: 10px; background: none; border: none; color: red; font-size: 12px; cursor: pointer; z-index: 1300;">Report</button>
+        <div class="leaflet-popup-content">
+            <h4 class="popup-title">${location.en_name}</h4>
+            <p class="popup-description">${(location.desc || 'No description available.').replace(/\n/g, '<br>')}</p>
+            
+            ${thumbnailUrl ? `
+                <div class="popup-thumbnail">
+                    <img src="${thumbnailUrl}" alt="YouTube Thumbnail" style="width: auto; height: 200px; border-radius: 4px;">
+                    <a href="${location.links_info}" target="_blank" class="popup-play-button">
+                        <img src="https://img.icons8.com/material-outlined/24/ffffff/play.png" alt="Play">
+                    </a>
+                </div>
+            ` : ''}
+            
+            <button class="reportButton" data-id="${key}" style="background: none; border: none; color: red; font-size: 12px; cursor: pointer; z-index: 1300; right: -25px; pointer-events: auto;">Report</button>
         </div>
     `;
 
-    // Bind the popup with an offset to position it above the marker
+    // Bind the popup with offset to position it above the marker
     marker.bindPopup(contentString, {
-        offset: L.point(0, -20) // Adjust the Y offset as needed
+        offset: L.point(0, -20) // Set Y offset as needed
     });
-marker.on('popupopen', () => {
-    console.log('Popup opened for marker:', marker.options.id);
-    setupReportButton(marker, marker.options.id);
-});
 
     // Handle marker click to open popup and set up report button
-marker.on('contextmenu', (e) => {
-    const currentOpacity = marker.options.opacity || 1.0; // Default opacity is 1.0
-    const newOpacity = currentOpacity === 1.0 ? 0.5 : 1.0; // Toggle opacity
+    marker.on('contextmenu', (e) => {
+        const currentOpacity = marker.options.opacity || 1.0; // Default opacity is 1.0
+        const newOpacity = currentOpacity === 1.0 ? 0.5 : 1.0; // Toggle opacity
 
-    // Log for debugging
-    console.log(`Changing opacity for marker ${marker.options.id}: from ${currentOpacity} to ${newOpacity}`);
+        // Log for debugging
+        console.log(`Changing opacity for marker ${marker.options.id}: from ${currentOpacity} to ${newOpacity}`);
 
-    // Update category counts based on the old opacity
-    if (currentOpacity === 0.5) {
-        // Jika marker sebelumnya transparan, kurangi current count
-        updateCategoryCounts(marker.options.loc_type, marker.options.category, currentOpacity, false); // Decrease count
-    } else if (currentOpacity === 1.0) {
-        // Jika marker sebelumnya tidak transparan, tidak perlu melakukan apa-apa
-    }
+        // Update category counts based on the old opacity
+        if (currentOpacity === 0.5) {
+            // If the marker was previously transparent, decrease current count
+            updateCategoryCounts(marker.options.loc_type, marker.options.category, currentOpacity, false); // Decrease count
+        }
 
-    // Set the new opacity
-    marker.setOpacity(newOpacity); // Change marker opacity
-    saveMarkerOpacity(marker.options.id, newOpacity); // Save the new opacity
+        // Set the new opacity
+        marker.setOpacity(newOpacity); // Change marker opacity
+        saveMarkerOpacity(marker.options.id, newOpacity); // Save the new opacity
 
-    if (newOpacity === 0.5) {
-        // Jika marker baru saja menjadi transparan, tingkatkan current count
-        updateCategoryCounts(marker.options.loc_type, marker.options.category, newOpacity, true); // Increase count
-    } else if (newOpacity === 1.0) {
-        // Jika marker baru saja menjadi tidak transparan, kurangi current count
-        updateCategoryCounts(marker.options.loc_type, marker.options.category, newOpacity, false); // Decrease count
-    }
+        if (newOpacity === 0.5) {
+            // If the marker just became transparent, increase current count
+            updateCategoryCounts(marker.options.loc_type, marker.options.category, newOpacity, true); // Increase count
+        }
 
-    updateCategoryDisplay(marker.options.loc_type); // Refresh category display
-});
+        updateCategoryDisplay(marker.options.loc_type); // Refresh category display
+    });
 
-
+    // Ensure that the report button functionality is set up when the popup opens
+    marker.on('popupopen', () => {
+        console.log('Popup opened for marker:', marker.options.id);
+        setupReportButton(marker, key); // Pass the key for identifying the report button
+    });
 }
 
-// Function to set up the report button functionality
+// Ensure the report button functionality is set up when the popup opens
 function setupReportButton(marker, key) {
-    // Attach event listener to the Report button in the popup
     const reportButton = document.querySelector('.reportButton[data-id="' + key + '"]');
     console.log('Checking for Report Button with key:', key);  // Debugging
-    console.log('Report Button:', reportButton);  // Debugging untuk memastikan tombol ditemukan
 
     if (reportButton) {
         reportButton.addEventListener('click', () => {
-            console.log('Report button clicked'); // Untuk memastikan tombol diklik
-            showReportForm(marker);
+            showReportForm(marker); // Call the function to display the report form
         });
     } else {
         console.log('Report button not found');
     }
 }
+
 
 
 
@@ -804,28 +1301,45 @@ function getCategoryFromMarker(marker) {
     if (iconUrl.includes('icon_train.png')) return 'training';
     if (iconUrl.includes('icon_scenery.png')) return 'scenery';
     if (iconUrl.includes('icon_resource.png')) return 'resource';
+    if (iconUrl.includes('icon_scrap.png')) return 'scrap'; // Scrap
+    if (iconUrl.includes('icon_stone.png')) return 'material'; // Wood
+    if (iconUrl.includes('icon_wood.png')) return 'material'; // Stone
+    if (iconUrl.includes('icon_fiber.png')) return 'material'; // Fiber
     
     return null; // Category not found
 }
+
 
 // Function to get icon URL based on category ID
 function getIconUrl(categoryId) {
     switch (categoryId) {
         case "1": return "icons/icon_teleport.png"; // Teleport
-        case "2": return "icons/icon_treasure.png"; // Treasure Hunt
+        case "2": return "icons/icon_treasure.png"; // Old World Treasure
         case "3": return "icons/icon_zone.png"; // Zone
+        case "6":
+        case "19":
+        case "20": return "icons/icon_scrap.png"; // Scrap for all three categories
         case "7": return "icons/icon_train.png"; // Training
         case "8": return "icons/icon_scenery.png"; // Scenery
-        case "9": return "icons/icon_fishing.png"; // Fishing
+        case "9":
         case "10":
         case "11":
         case "12":
         case "13":
-        case "14": return "icons/rare_fishing.png"; // Fishing
-        case "18": return "icons/icon_resource.png";
+        case "14": return "icons/rare_fishing.png"; // Rare Fishing
+        case "15": return "icons/icon_stone.png"; // Stone
+        case "16": return "icons/icon_wood.png"; // Wood
+        case "17": return "icons/icon_fiber.png"; // Fiber
+        case "18": return "icons/icon_resource.png"; // Resource
+        case "23": return "icons/icon_rarewood.png"; // Rare Item
+        case "24": return "icons/icon_rarestone.png"; // Rare Stone
+        case "25": return "icons/icon_rarewastes.png"; // Rare Wastes
+        case "26": return "icons/icon_rarewood.png"; // Rare Wood
         default: return "icons/default_icon.png"; // Default icon if no match
     }
 }
+
+
 
 // Function to save marker opacity to local storage
 function saveMarkerOpacity(id, opacity) {
@@ -892,10 +1406,8 @@ function filterMarkers() {
 addMarkersToMap(map);
 setupFilterListeners();
 
-// Call setupFilterListeners after all markers are added to the map
-addMarkersToMap(map);
-setupFilterListeners();
 
+// Function to handle button interactions
 // Function to handle button interactions
 function setupButtonInteractions() {
     // Handle Donate Button Click
@@ -927,44 +1439,67 @@ function setupButtonInteractions() {
             }
         });
     }
-
-// Function to reset the opacity of all markers
-function resetMarkerOpacity() {
-    console.log('Resetting marker opacity to default (1.0)'); // Check if function is invoked
-    
-    // Check if markers is an array and is populated
-    if (!Array.isArray(markers) || markers.length === 0) {
-        console.error('Markers array is empty or not defined.'); // Log if markers are not available
-        return; // Exit if markers are not available
-    }
-
-    // Loop through each marker and set opacity to 1.0
-    markers.forEach(marker => {
-        console.log(`Resetting opacity for marker with ID: ${marker.options.id}`); // Log which marker is being reset
-        marker.setOpacity(1.0); // Set opacity to default (1.0)
-
-        // Save the change if you have a function for it
-        if (typeof saveMarkerOpacity === 'function') {
-            saveMarkerOpacity(marker.options.id, 1.0);
-        }
-    });
 }
 
-
-// Button setup to reset opacity
 document.addEventListener('DOMContentLoaded', () => {
     const resetOpacityBtn = document.getElementById('reset-opacity');
-    
-    if (resetOpacityBtn) {
+    const modal = document.getElementById('confirm-modal');
+    const confirmYes = document.getElementById('confirm-yes');
+    const confirmNo = document.getElementById('confirm-no');
+
+    if (resetOpacityBtn && modal && confirmYes && confirmNo) {
         resetOpacityBtn.addEventListener('click', () => {
-            console.log('Reset opacity button clicked'); // This log should appear when button is clicked
-            resetMarkerOpacity(); // Call the function when the button is clicked
+            // Check if there are any markers with opacity 0.5
+            const hasTransparentMarkers = markers.some(marker => marker.options.opacity === 0.5);
+            if (!hasTransparentMarkers) {
+                alert("No markers are currently transparent.");
+                return; // Exit if no transparent markers
+            }
+            modal.style.display = 'block'; // Show the modal if there are transparent markers
         });
-    } else {
-        console.error('Reset opacity button not found'); // Log if button isn't found
+
+        // Handle confirmation
+        confirmYes.onclick = function() {
+            resetMarkerOpacity(); // Call the reset function upon confirmation
+            modal.style.display = 'none'; // Hide modal after confirmation
+        };
+
+        // Handle cancellation
+        confirmNo.onclick = function() {
+            modal.style.display = 'none'; // Hide modal if user cancels
+            console.log("Opacity reset canceled."); // Log the cancellation
+        };
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none'; // Hide modal if user clicks outside
+            }
+        };
     }
+
+    // Function to reset the opacity of all markers
+    function resetMarkerOpacity() {
+        if (!Array.isArray(markers) || markers.length === 0) {
+            console.warn("No markers to reset opacity for.");
+            return;
+        }
+
+        // Reset opacity of all markers
+        markers.forEach(marker => {
+            marker.setOpacity(1.0); // Set opacity to fully opaque
+            if (typeof saveMarkerOpacity === 'function') {
+                saveMarkerOpacity(marker.options.id, 1.0); // Save the updated opacity if function exists
+            }
+        });
+
+        // Reset category counts for all loc_types
+        resetCategoryCounts();
+    }
+
+    setupButtonInteractions(); // Ensure other button interactions are set up
 });
-}
+
 
 const toggleNewFiltersContainer = document.querySelector('.toggle-new-filters-container');
 const newFilterContainer = document.querySelector('.new-filter-container');
@@ -1154,7 +1689,6 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
         updateCategoryDisplay(locType); 
     });
 });
-
 // Fungsi untuk menampilkan loc_type
 function showLocType(locType) {
     // Sembunyikan semua loc-type
@@ -1169,16 +1703,264 @@ function showLocType(locType) {
         locTypeElement.style.display = 'block'; // Tampilkan yang sesuai
         currentLocType = locType; // Simpan loc_type yang saat ini
     }
+
+    // Sembunyikan semua filter di collect-container
+    const allCheckboxFilters = document.querySelectorAll('.checkbox-filters');
+    allCheckboxFilters.forEach(filter => {
+        filter.style.display = 'none'; // Sembunyikan semua filter
+    });
+
+    // Perbarui label dan checkbox berdasarkan loc_type yang dipilih
+    updateMaterialLabelsAndCheckboxes(locType); // Panggil fungsi untuk memperbarui label dan checkbox
 }
 
-// Panggil fungsi ini ketika loc_type diubah
+// Ambil elemen collect-container dan tombol toggle
+const collectContainer = document.getElementById('collect-container');
+const toggleCollectButton = document.getElementById('toggle-collect');
+
+// Fungsi untuk menutup collect-container
+function closeCollectContainer() {
+    collectContainer.style.right = '-250px'; // Sembunyikan sidebar
+}
+
+// Fungsi untuk toggle collect-container
+toggleCollectButton.addEventListener('click', function() {
+    const isVisible = collectContainer.style.right === '0px';
+
+    if (isVisible) {
+        closeCollectContainer(); // Panggil fungsi untuk menutup
+    } else {
+        collectContainer.style.right = '0px'; // Tampilkan sidebar
+    }
+});
+
+// Event listener untuk mendeteksi klik di luar collect-container
+document.addEventListener('click', function(event) {
+    // Cek apakah klik terjadi di luar collect-container dan tombol toggle
+    if (!collectContainer.contains(event.target) && !toggleCollectButton.contains(event.target)) {
+        closeCollectContainer(); // Tutup collect-container jika klik di luar
+    }
+});
+
+// Tambahkan event listener untuk tombol toggle pada setiap item
+const toggleButtons = document.querySelectorAll('.collect-item button');
+toggleButtons.forEach(button => {
+    button.addEventListener('click', (event) => {
+        // Toggle logika untuk menampilkan atau menyembunyikan elemen checkbox filters
+        const filters = button.nextElementSibling; // Ambil elemen setelah tombol
+        if (filters.style.display === 'none' || filters.style.display === '') {
+            filters.style.display = 'block'; // Tampilkan filters
+        } else {
+            filters.style.display = 'none'; // Sembunyikan filters
+        }
+        event.stopPropagation(); // Hentikan event bubbling untuk mencegah penutupan
+    });
+});
+
+// Additional logic for handling scroll if needed
+collectContainer.addEventListener('scroll', function() {
+    const maxScrollTop = collectContainer.scrollHeight - collectContainer.clientHeight;
+    if (collectContainer.scrollTop >= maxScrollTop) {
+        collectContainer.scrollTop = maxScrollTop; // Keep at the bottom
+    }
+});
+
+
+// Toggle untuk Material group (Wood, Stone, Fiber)
+document.getElementById('toggle-material').addEventListener('click', function() {
+    var materialGroup = document.getElementById('material-group');
+    var arrow = this.querySelector('.arrow');
+
+    if (materialGroup.style.display === 'none' || materialGroup.style.display === '') {
+        materialGroup.style.display = 'block'; // Tampilkan grup
+        arrow.textContent = 'v'; // Arahkan panah ke bawah
+    } else {
+        materialGroup.style.display = 'none'; // Sembunyikan grup
+        arrow.textContent = '<'; // Arahkan panah ke kiri
+    }
+});
+
+// Fungsi untuk toggle setiap material (Wood, Stone, Fiber, Scrap, Ingredients, Old World Treasure)
+function setupMaterialToggles() {
+    const toggles = [
+        { id: 'toggle-wood', filter: 'wood', elementId: 'wood-filters' },
+        { id: 'toggle-stone', filter: 'stone', elementId: 'stone-filters' },
+        { id: 'toggle-fiber', filter: 'fiber', elementId: 'fiber-filters' },
+        { id: 'toggle-scrap', filter: 'scrap', elementId: 'scrap-filters' },
+        { id: 'toggle-ingredients', filter: 'ingredients', elementId: 'ingredients-filters' },
+        { id: 'toggle-oldworld', filter: 'oldworld', elementId: 'oldworld-filters' }
+    ];
+
+    toggles.forEach(toggle => {
+        document.getElementById(toggle.id).addEventListener('click', function() {
+            const filtersElement = document.getElementById(toggle.elementId);
+            const arrow = this.querySelector('.arrow');
+
+            // Toggle display
+            if (filtersElement.style.display === 'none' || filtersElement.style.display === '') {
+                filtersElement.style.display = 'block'; // Tampilkan filter
+                arrow.textContent = 'v'; // Arahkan panah ke bawah
+            } else {
+                filtersElement.style.display = 'none'; // Sembunyikan filter
+                arrow.textContent = '<'; // Arahkan panah ke kiri
+            }
+
+            // Update markers jika diperlukan
+            updateMarkers(); // Perbarui marker setelah perubahan filter
+        });
+    });
+}
+
+// Inisialisasi toggle
+setupMaterialToggles();
+
+
+
+function updateMaterialLabelsAndCheckboxes(locType) {
+    const materials = materialsByLocType[locType] || {};
+    
+    console.log('Updated materials for locType', locType, materials); // Log untuk memeriksa data
+
+    // Kosongkan checkbox yang ada sebelumnya
+    const ingredientsFilters = document.getElementById('ingredients-filters');
+    const woodFilters = document.getElementById('wood-filters');
+    const stoneFilters = document.getElementById('stone-filters');
+    const fiberFilters = document.getElementById('fiber-filters');
+    const scrapFilters = document.getElementById('scrap-filters');
+    const rareFilters = document.getElementById('rare-filters'); 
+    const oldWorldFilters = document.getElementById('oldworld-filters');
+
+    // Kosongkan HTML filter
+    ingredientsFilters.innerHTML = '';
+    woodFilters.innerHTML = '';
+    stoneFilters.innerHTML = '';
+    fiberFilters.innerHTML = '';
+    scrapFilters.innerHTML = '';
+    rareFilters.innerHTML = ''; 
+    oldWorldFilters.innerHTML = '';
+
+    // Menampilkan checkbox untuk wood
+    if (materials.wood) {
+        materials.wood.forEach(item => {
+            woodFilters.innerHTML += `<label><input type="checkbox" class="material-checkbox" data-filter="${item.filter || 'wood'}"> <img src="${item.icon}" alt="${item.name} icon" class="material-icon"> ${item.name}</label>`;
+        });
+    }
+
+    // Menampilkan checkbox untuk stone
+    if (materials.stone) {
+        materials.stone.forEach(item => {
+            stoneFilters.innerHTML += `<label><input type="checkbox" class="material-checkbox" data-filter="${item.filter || 'stone'}"> <img src="${item.icon}" alt="${item.name} icon" class="material-icon"> ${item.name}</label>`;
+        });
+    }
+
+    // Menampilkan checkbox untuk fiber
+    if (materials.fiber) {
+        materials.fiber.forEach(item => {
+            fiberFilters.innerHTML += `<label><input type="checkbox" class="material-checkbox" data-filter="${item.filter || 'fiber'}"> <img src="${item.icon}" alt="${item.name} icon" class="material-icon"> ${item.name}</label>`;
+        });
+    }
+
+    // Menampilkan checkbox untuk scrap
+    if (materials.scrap) {
+        materials.scrap.forEach(item => {
+            scrapFilters.innerHTML += `<label><input type="checkbox" class="material-checkbox" data-filter="${item.filter || 'scrap'}"> <img src="${item.icon}" alt="${item.name} icon" class="material-icon"> ${item.name}</label>`;
+        });
+    }
+
+    // Menampilkan checkbox untuk rare
+    if (materials.rare) { 
+        materials.rare.forEach(item => {
+            rareFilters.innerHTML += `<label><input type="checkbox" class="material-checkbox" data-filter="${item.filter || 'rare'}"> <img src="${item.icon}" alt="${item.name} icon" class="material-icon"> ${item.name}</label>`;
+        });
+    }
+
+    // Menampilkan checkbox untuk ingredients
+    if (materials.ingredients) {
+        materials.ingredients.forEach(item => {
+            ingredientsFilters.innerHTML += `<label><input type="checkbox" class="material-checkbox" data-filter="${item.filter || 'ingredients'}"> <img src="${item.icon}" alt="${item.name} icon" class="material-icon"> ${item.name}</label>`;
+        });
+    }
+
+    // Menampilkan checkbox untuk old world treasure
+    if (materials.oldWorldTreasure) {
+        oldWorldFilters.innerHTML += `<label><input type="checkbox" data-filter="oldworld"> ${materials.oldWorldTreasure}</label>`;
+    }
+
+    // Sembunyikan filters pada awalnya
+    ingredientsFilters.style.display = 'none';
+    woodFilters.style.display = 'none';
+    stoneFilters.style.display = 'none';
+    fiberFilters.style.display = 'none';
+    scrapFilters.style.display = 'none';
+    rareFilters.style.display = 'none'; 
+    oldWorldFilters.style.display = 'none';
+
+    // Tampilkan filters jika ada isinya
+    if (ingredientsFilters.innerHTML) {
+        ingredientsFilters.style.display = 'block';
+    }
+    if (woodFilters.innerHTML) {
+        woodFilters.style.display = 'block';
+    }
+    if (stoneFilters.innerHTML) {
+        stoneFilters.style.display = 'block';
+    }
+    if (fiberFilters.innerHTML) {
+        fiberFilters.style.display = 'block';
+    }
+    if (scrapFilters.innerHTML) {
+        scrapFilters.style.display = 'block';
+    }
+    if (rareFilters.innerHTML) { 
+        rareFilters.style.display = 'block';
+    }
+    if (oldWorldFilters.innerHTML) {
+        oldWorldFilters.style.display = 'block';
+    }
+
+    setupMaterialFilterListeners(); // Setup listeners untuk checkbox
+}
+
+function updateMainTitle(locType) {
+    const mainTitleElement = document.getElementById('main-title');
+    const mainTitle = materialsByLocType[locType]?.mainTitle || 'Collectible Materials';
+    mainTitleElement.textContent = mainTitle;
+}
+document.querySelectorAll('.loc-type-selector').forEach(selector => {
+    selector.addEventListener('change', (event) => {
+        const selectedLocType = event.target.value; // Ambil loc_type yang dipilih
+        updateMainTitle(selectedLocType); // Memperbarui judul
+        // Panggil fungsi lain yang diperlukan
+    });
+});
+
+// Function to toggle filters
+function toggleFilters(buttonId, filtersId) {
+    const button = document.getElementById(buttonId);
+    const filters = document.getElementById(filtersId);
+
+    // Toggle display of filters
+    if (filters.style.display === 'none') {
+        filters.style.display = 'block'; // Show filters
+        button.querySelector('.arrow').textContent = 'v'; // Change arrow to down
+        button.parentElement.classList.add('active'); // Add active class
+    } else {
+        filters.style.display = 'none'; // Hide filters
+        button.querySelector('.arrow').textContent = '<'; // Change arrow back to left
+        button.parentElement.classList.remove('active'); // Remove active class
+    }
+}
+
+
+
+// Call this function whenever the loc_type changes
 function onLocTypeChange(newLocType) {
     showLocType(newLocType); // Tampilkan loc-type baru
+    updateMaterialLabelsAndCheckboxes(newLocType); // Memperbarui material labels dan checkboxes
+    updateMainTitle(newLocType); // Memperbarui judul utama
     updateCategoryDisplay(newLocType); // Update display setelah loc-type berubah
 }
 
-
-// New function to add markers for the active mini-map
 
 // Function to center the map on the given bounds
 function centerMapOnBounds(imageBounds) {
@@ -1203,6 +1985,30 @@ function centerMapOnBounds(imageBounds) {
     }, 1000); // Wait for 2.5 seconds for the zoom out to finish
 }
 
+// Fungsi untuk mengatur listener pada checkbox material
+function setupMaterialFilterListeners() {
+    const materialCheckboxes = document.querySelectorAll('.material-checkbox');
+    
+    materialCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            updateMaterialFilters(); // ONLY trigger when checkbox changes
+        });
+    });
+}
+
+// Function to update material filters based on the checkboxes
+function updateMaterialFilters() {
+    const materialCheckboxes = document.querySelectorAll('.material-checkbox');
+    activeFilters = []; // Kosongkan dulu daftar activeFilters
+
+    materialCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            activeFilters.push(checkbox.dataset.filter); // Tambahkan ke filter aktif
+        }
+    });
+
+    updateMarkers(); // Panggil fungsi untuk memperbarui marker di peta
+}
 
 // Function to update filter listeners
 function setupFilterListeners() {
@@ -1279,13 +2085,25 @@ function clearAllMarks() {
 function isCategoryMatch(marker) {
     if (activeFilters.includes('all')) return true;
     const category = marker.options.category;
-    return (activeFilters.includes('treasure') && category === '2') ||
-           (activeFilters.includes('teleport') && category === '1') ||
-           (activeFilters.includes('fishing') && ['9', '10', '11', '12', '13', '14'].includes(category)) ||
-           (activeFilters.includes('zone') && category === '3') ||
-           (activeFilters.includes('training') && category === '7') ||
-           (activeFilters.includes('scenery') && category === '8') ||
-           (activeFilters.includes('resource') && category === '18');
+return (activeFilters.includes('treasure') && category === '2') ||
+       (activeFilters.includes('teleport') && category === '1') ||
+       (activeFilters.includes('fishing') && ['9', '10', '11', '12', '13', '14'].includes(category)) ||
+       (activeFilters.includes('zone') && category === '3') ||
+       (activeFilters.includes('scrap') && category === '6') ||
+       (activeFilters.includes('training') && category === '7') ||
+       (activeFilters.includes('scenery') && category === '8') ||
+       (activeFilters.includes('fiber') && category === '17') ||
+       (activeFilters.includes('resin') && ['21', '16', '18'].includes(category)) ||
+       (activeFilters.includes('clay') && ['22', '15', '18'].includes(category)) ||
+       (activeFilters.includes('wood') && category === '16') ||
+       (activeFilters.includes('stone') && category === '15') ||
+       (activeFilters.includes('resource') && category === '18') ||
+       (activeFilters.includes('scrap2') && category === '19') ||
+       (activeFilters.includes('scrap3') && category === '20') ||
+       (activeFilters.includes('rarewood1') && category === '23') ||
+       (activeFilters.includes('rarestone') && category === '24') ||
+       (activeFilters.includes('rarewastes') && category === '25') ||
+       (activeFilters.includes('rarewood2') && category === '26');
 }
 document.addEventListener('DOMContentLoaded', () => {
     const buttons = document.querySelectorAll('.new-filter-container .filter-btn');
@@ -1387,6 +2205,35 @@ window.onload = function() {
         }
     };
 };
+// Mengambil elemen yang diperlukan
+const materialGroup = document.getElementById('material-group');
+const checkboxFilters = document.querySelectorAll('.checkbox-filters');
+
+
+// Fungsi untuk menambah class no-scroll pada body
+function preventScroll() {
+    document.body.classList.add('no-scroll');
+}
+
+// Fungsi untuk menghapus class no-scroll dari body
+function allowScroll() {
+    document.body.classList.remove('no-scroll');
+}
+
+// Menambahkan event listener pada materialGroup dan collectContainer
+materialGroup.addEventListener('mouseenter', preventScroll);
+materialGroup.addEventListener('mouseleave', allowScroll);
+
+collectContainer.addEventListener('mouseenter', preventScroll);
+collectContainer.addEventListener('mouseleave', allowScroll);
+
+// Menambahkan event listener pada setiap checkbox filter
+checkboxFilters.forEach(filter => {
+    filter.addEventListener('mouseenter', preventScroll);
+    filter.addEventListener('mouseleave', allowScroll);
+});
+
+
 
 // Optional: Handle scroll for filter-checkbox-btn
 const container = document.querySelector('.new-filter-container');
@@ -1454,10 +2301,10 @@ document.getElementById("hildeBtn").onclick = function () {
 document.addEventListener("DOMContentLoaded", function() {
     // Daftar teks untuk preloader
     const preloaderTexts = [
-        "TIPS:\nTry Hold Marker to Mark it",
-        "TIPS: You Can Report Error Marker",
+        "TIPS: Give Us Your Marker, Let Help Each Other",
+        "TIPS: Use Mobile To Better Experience",
         "If There Are Any Problems And Suggestions Contact Bangone On Tiktok",
-        "Fetching location data...",
+        "TIPS: Give Us Your Marker, Let Help Each Other",
         "Almost ready, hang tight!"
     ];
 
