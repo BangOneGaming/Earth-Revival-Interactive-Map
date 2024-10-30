@@ -33,7 +33,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100&display=swap" rel="stylesheet">
     
-    <link href="app.css?v=2.8.2" rel="stylesheet" type="text/css">
+    <link href="app.css?v=3.0" rel="stylesheet" type="text/css">
 
     <!-- Leaflet for maps -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -56,7 +56,7 @@
         <span class="close">&times;</span>
 
         <h4>BIG UPDATE</h4>
-        <p>VERSION 5.0- SEPTEMBER 2024</p>
+        <p>VERSION 5.0- NOVEMBER 2024</p>
         <ul>
             <li><b>NEW UI AND MORE DYNAMIC</b></li>
             <li>Fix Reset Button</li>
@@ -143,18 +143,11 @@
 
 
     <div id="map"></div>
-    <div class="adsense-ad">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-8582564022805467"
-             data-ad-slot="2853838244"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-    </div>
   <div class="trakteer-overlay" id="trakteerOverlay">
   <button class="close-btn" id="closeOverlayBtn">&times;</button> <!-- Tombol close dengan simbol "×" -->
   <iframe class="trakteer-frame" src="https://stream.trakteer.id/top-supporter-transitional.html?ts_font=default&ts_theme=transitional&ts_sortby=nominal&ts_customsubtitle=Donatur&key=trstream-bm2DcuTwpuXomRzGOBqD&timestamp=1726331187"></iframe>
 </div>
+
 <div id="preloader">
     <img src="icons/bangone.png" alt="Loading...">
     <div id="loading-bar-container">
@@ -163,9 +156,22 @@
         </div>
     </div>
     <p class="preloader-text" id="preloader-text">Loading markers, tiles, and UI components...</p>
+    
+    <!-- Menambahkan teks "Contact Me" di atas ikon -->
+    <h5 style="text-align: center; margin-top: 20px;">Contact Me</h5>
+    
+    <div id="social-icons" style="margin-top: 20px; display: flex; justify-content: center;">
+        <a href="https://youtube.com/@bangonegaming6596?si=YE4ShL6FsNHjc1Un" target="_blank" style="margin: 0 10px;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" alt="YouTube" style="width: 40px; height: auto;">
+        </a>
+        <a href="https://www.tiktok.com/@bangonegaming97?_t=8qxkzA0qteR&_r=1" target="_blank" style="margin: 0 10px;">
+            <img src="https://cdn4.iconfinder.com/data/icons/social-media-flat-7/64/Social-media_Tiktok-1024.png" alt="TikTok" style="width: 40px; height: auto;">
+        </a>
+        <a href="https://discord.gg/earth-revival-845962679885627402" target="_blank" style="margin: 0 10px;">
+            <img src="https://cdn0.iconfinder.com/data/icons/free-social-media-set/24/discord-1024.png" alt="Discord" style="width: 40px; height: auto;">
+        </a>
+    </div>
 </div>
-
-
 
         <!-- Donate Container -->
         <div class="donate-container">
@@ -404,25 +410,10 @@
 <div id="collect-container" class="collect-container">
     <h1 id="main-title">Collectible Materials</h1> <!-- Main title -->
     <h3>Collectible</h3> <!-- Subheading -->
-
-    <div class="collect-item">
-        <button id="toggle-ingredients">
-            <img src="icons/ingredients.png" alt="Ingredients Icon" class="icon"> Ingredients <span class="arrow"><</span>
-        </button>
-        </div>
-        <div class="checkbox-filters" id="ingredients-filters" style="display: none;">
-            <!-- Checkbox for ingredients will be added dynamically here -->
-        </div>
-   
-        <div class="collect-item">         
-            <div class="checkbox-filters" id="rare-filters" style="display: none;"> Special Resource
-                <!-- Checkbox for rare will be added dynamically here -->
-            </div>
-        </div>
         
     <div class="collect-item">
         <button id="toggle-material">
-            <img src="icons/material.png" alt="Material Icon" class="icon"> Resource <span class="arrow"><</span>
+            <img src="icons/material.png" alt="Material Icon" class="icon"><b>Resource</b><span class="arrow"><</span>
         </button>
     </div>
     
@@ -464,10 +455,23 @@
             </div>
         
 </div>
-
+    <div class="collect-item">
+        <button id="toggle-ingredients">
+            <img src="icons/ingredients.png" alt="Ingredients Icon" class="icon"><b>Ingredients</b><span class="arrow"><</span>
+        </button>
+        </div>
+        <div class="checkbox-filters" id="ingredients-filters" style="display: none;">
+            <!-- Checkbox for ingredients will be added dynamically here -->
+        </div>
+   
+        <div class="collect-item">         
+            <div class="checkbox-filters" id="rare-filters" style="display: none;"><b>Special Resource</b>
+                <!-- Checkbox for rare will be added dynamically here -->
+            </div>
+        </div>
     <div class="collect-item">
         <button id="toggle-oldworld">
-            Old World Treasure (On Going) <span class="arrow"><</span>
+            <b>Old World Treasure (On Going)</b> <span class="arrow"><</span>
         </button>
         </div>
         <div class="checkbox-filters" id="oldworld-filters" style="display: none;">
@@ -484,7 +488,7 @@
 
         <label for="locType">Which Map?:</label>
         <select id="locType" name="locType" required>
-            <option value="">Select Loc Type</option>
+            <option value="">Select The Map</option>
             <option value="2">Sundale Valley</option>
             <option value="5">Howling Gobi</option>
             <option value="4">Edengate</option>
@@ -492,46 +496,54 @@
             <option value="6">Kepler Harbour</option>
         </select>
         
-        <label for="category">Category:</label>
-        <select id="category" name="category" required>
-            <option value="">Select Category</option>
-            <option value="1">Teleport</option>
-            <option value="2">Treasure Hunt</option>
-            <option value="3">Zone Commission</option>
-            <option value="7">Limited Time Training</option>
-            <option value="8">Scenery</option>
-            <option value="9">Fishing 1</option>
-            <option value="10">Fishing 2</option>
-            <option value="11">Fishing 3</option>
-            <option value="12">Fishing 4</option>
-            <option value="13">Fishing 5</option>
-            <option value="14">Fishing 6</option>
-            <option value="15">Stone</option>
-            <option value="16">Wood</option>
-            <option value="17">Fiber</option>
-            <option value="18">Resource Chest</option>
-            <option value="6">Scrap</option>
-            <option value="19">Scrap 2</option>
-            <option value="20">Scrap 3</option>
-            <option value="21">Resin</option>
-            <option value="22">Clay</option>
-            <option value="23">Rare Wood 1</option>
-            <option value="24">Rare Stone</option>
-            <option value="25">Rare Wastes</option>
-            <option value="26">Rare Wood 2 Kepler Harbour</option>
-            <option value="27">Old World Treasure</option>
-            <option value="28">Ingredient</option>
-        </select>
+<div style="margin-top: 10px;">
+    <label for="category" style="display: flex; align-items: center;">
+        Category:
+        <img id="categoryIcon" src="" alt="Category Icon" style="display:none; width: 20px; height: 20px; margin-left: 10px; padding: 3px; background-color: rgba(10, 28, 61, 0.883); border-radius: 3px; border: 1px solid #889dcb;" />
+    </label>
+</div>
+<select id="category" name="category" required>
+    <option value="">Select Category</option>
+    <option value="1">Teleport</option>
+    <option value="2">Treasure Hunt</option>
+    <option value="3">Zone Commission</option>
+    <option value="7">Limited Time Training</option>
+    <option value="8">Scenery</option>
+    <option value="9">Fishing 1</option>
+    <option value="10">Fishing 2</option>
+    <option value="11">Fishing 3</option>
+    <option value="12">Fishing 4</option>
+    <option value="13">Fishing 5</option>
+    <option value="14">Fishing 6</option>
+    <option value="15">Stone</option>
+    <option value="16">Wood</option>
+    <option value="17">Fiber</option>
+    <option value="18">Resource Chest</option>
+    <option value="6">Scrap</option>
+    <option value="19">Scrap 2</option>
+    <option value="20">Scrap 3</option>
+    <option value="21">Resin</option>
+    <option value="22">Clay</option>
+    <option value="23">Rare Wood 1</option>
+    <option value="24">Rare Stone</option>
+    <option value="25">Rare Wastes</option>
+    <option value="26">Rare Wood 2 Kepler Harbour</option>
+    <option value="27">Old World Treasure</option>
+    <option value="28">Ingredient</option>
+</select>
+
+
+
 
 <form id="submitMarkerForm">
     <label for="nameMark" class="hidden">Name Mark:</label>
-    <input type="text" id="nameMark" name="nameMark" class="hidden" required>
+    <input type="text" id="nameMark" name="nameMark" class="hidden" required placeholder="NAME/SERVER" style="color: white;">
 
     <label id="oldWorldTreasureLabel" class="hidden">Old World Treasure:</label>
-    <input id="oldWorldTreasureInput" class="hidden" type="text" />
+    <input id="oldWorldTreasureInput" class="hidden" type="text" placeholder="Enter Old World Treasure Name"style="color: white;">
 
     <label id="ingredientsNameLabel" class="hidden">Ingredients Name:</label>
-    <input id="ingredientsNameInput" class="hidden" type="text" />
+    <input id="ingredientsNameInput" class="hidden" type="text" placeholder="Enter Ingredients Name"style="color: white;">
 
     <label for="description">Explain or Give A Clue:</label>
     <textarea id="description" name="description" rows="4" required></textarea>
@@ -544,21 +556,21 @@
 
     <label for="imageUpload">Images Info (Optional, But Needed):</label>
     <input type="file" id="imageUpload" name="imageUpload" accept="image/*">
-
+    <!-- Placeholder for the image preview -->
+    <div id="imagePreviewContainer"></div>
+    
     <label for="ysId">Your In Game Names (For Show Your Name In Marker):</label>
     <input type="text" id="ysId" name="ysId">
 
     <button type="submit">Send to BangOne Gaming</button>
 </form>
 
-    <!-- Placeholder for the image preview -->
-    <div id="imagePreviewContainer"></div>
 </div>
 
 <div id="statusMessage" style="display: none; margin-top: 10px;"></div>
 <div id="submit-container">
-    <div id="tooltip">Here you can<br>Submit Your Own mark</div>
-    <button id="submit-marker-button">Submit Marker</button>
+    <div id="tooltip">Here You Can<br>Add Your Own Mark</div>
+    <button id="submit-marker-button">Send Your Marker</button>
 </div>
 
     <div id="reportFormContainer"style="display: none;">

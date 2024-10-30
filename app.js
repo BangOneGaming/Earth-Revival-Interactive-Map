@@ -755,113 +755,114 @@ function updateCategoryOptions() {
     switch (locType) {
         case '2':
             categoryOptions = [
-                { value: "1", text: "Teleport" },
-                { value: "2", text: "Treasure Hunt" },
-                { value: "3", text: "Zone Commission" },
-                { value: "7", text: "Limited Time Training" },
-                { value: "8", text: "Scenery" },
-                { value: "14", text: "Fishing" },
-                { value: "15", text: "Stone" },
-                { value: "16", text: "Wood" },
-                { value: "17", text: "Fiber" },
-                { value: "18", text: "Resource Chest" },
-                { value: "6", text: "Lens" },
-                { value: "19", text: "Screw" },
-                { value: "20", text: "Zipper" },
-                { value: "21", text: "Resin" },
-                { value: "22", text: "Clay" },
-                { value: "23", text: "Rare Wood Sundale Valley" },
-                { value: "27", text: "Old World Treasure" },
-                { value: "28", text: "Ingredients" },
+                { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
+                { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
+                { value: "3", text: "Zone Commission", icon_url: "icons/icon_zone.png" },
+                { value: "7", text: "Limited Time Training", icon_url: "icons/icon_train.png" },
+                { value: "8", text: "Scenery", icon_url: "icons/icon_scenery.png" },
+                { value: "14", text: "Fishing", icon_url: "icons/icon_fishing.png" },
+                { value: "15", text: "Stone", icon_url: "icons/icon_stone.png" },
+                { value: "16", text: "Wood", icon_url: "icons/icon_wood.png" },
+                { value: "17", text: "Fiber", icon_url: "icons/icon_fiber.png" },
+                { value: "18", text: "Resource Chest", icon_url: "icons/icon_resource.png" },
+                { value: "6", text: "Lens", icon_url: "resource_img/lens.png" },
+                { value: "19", text: "Screw", icon_url: "resource_img/screw.png" },
+                { value: "20", text: "Zipper", icon_url: "resource_img/zipper.png" },
+                { value: "21", text: "Resin", icon_url: "resource_img/resin.png" },
+                { value: "22", text: "Clay", icon_url: "resource_img/clay.png" },
+                { value: "23", text: "Rare Wood Sundale Valley", icon_url: "icons/rarewood.png" },
+                { value: "27", text: "Old World Treasure", icon_url: "" },
+                { value: "28", text: "Ingredients", icon_url: "icons/ingredients.png" },
             ];
             break;
         case '5':
             categoryOptions = [
-                { value: "1", text: "Teleport" },
-                { value: "2", text: "Treasure Hunt" },
-                { value: "3", text: "Zone Commission" },
-                { value: "7", text: "Limited Time Training" },
-                { value: "8", text: "Scenery" },
-                { value: "9", text: "Fishing" },
-                { value: "15", text: "Stone" },
-                { value: "16", text: "Wood" },
-                { value: "17", text: "Fiber" },
-                { value: "18", text: "Resource Chest" },
-                { value: "6", text: "Rubber" },
-                { value: "19", text: "Machine Part" },
-                { value: "20", text: "Spring" },
-                { value: "21", text: "Resin" },
-                { value: "22", text: "Clay" },
-                { value: "24", text: "Rare Stone" },
-                { value: "27", text: "Old World Treasure" },
-                { value: "28", text: "Ingredients" },
+                { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
+                { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
+                { value: "3", text: "Zone Commission", icon_url: "icons/icon_zone.png" },
+                { value: "7", text: "Limited Time Training", icon_url: "icons/icon_train.png" },
+                { value: "8", text: "Scenery", icon_url: "icons/icon_scenery.png" },
+                { value: "9", text: "Fishing", icon_url: "icons/icon_fishing.png" },
+                { value: "15", text: "Stone", icon_url: "icons/icon_stone.png" },
+                { value: "16", text: "Wood", icon_url: "icons/icon_wood.png" },
+                { value: "17", text: "Fiber", icon_url: "icons/icon_fiber.png" },
+                { value: "18", text: "Resource Chest", icon_url: "icons/icon_resource.png" },
+                { value: "6", text: "Rubber", icon_url: "resource_img/rubber.png" },
+                { value: "19", text: "Machine Part", icon_url: "resource_img/machine_part.png" },
+                { value: "20", text: "Spring", icon_url: "resource_img/spring.png" },
+                { value: "21", text: "Resin", icon_url: "resource_img/resin.png" },
+                { value: "22", text: "Clay", icon_url: "resource_img/clay.png" },
+                { value: "24", text: "Rare Stone", icon_url: "icons/icon_rarestone.png" },
+                { value: "27", text: "Old World Treasure", icon_url: "" },
+                { value: "28", text: "Ingredients", icon_url: "icons/ingredients.png" },
             ];
             break;
         case '4':
             categoryOptions = [
-                { value: "1", text: "Teleport" },
-                { value: "2", text: "Treasure Hunt" },
-                { value: "3", text: "Zone Commission" },
-                { value: "7", text: "Limited Time Training" },
-                { value: "8", text: "Scenery" },
-                { value: "9", text: "Fishing" },
-                { value: "15", text: "Stone" },
-                { value: "16", text: "Wood" },
-                { value: "17", text: "Fiber" },
-                { value: "18", text: "Resource Chest" },
-                { value: "6", text: "Diode" },
-                { value: "19", text: "Precision Part" },
-                { value: "20", text: "Electronical Component" },
-                { value: "21", text: "Resin" },
-                { value: "22", text: "Clay" },
-                { value: "25", text: "Rare Wastes" },
-                { value: "27", text: "Old World Treasure" },
-                { value: "28", text: "Ingredients" },
+                { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
+                { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
+                { value: "3", text: "Zone Commission", icon_url: "icons/icon_zone.png" },
+                { value: "7", text: "Limited Time Training", icon_url: "icons/icon_train.png" },
+                { value: "8", text: "Scenery", icon_url: "icons/icon_scenery.png" },
+                { value: "9", text: "Fishing", icon_url: "icons/icon_fishing.png" },
+                { value: "15", text: "Stone", icon_url: "icons/icon_stone.png" },
+                { value: "16", text: "Wood", icon_url: "icons/icon_wood.png" },
+                { value: "17", text: "Fiber", icon_url: "icons/icon_fiber.png" },
+                { value: "18", text: "Resource Chest", icon_url: "icons/icon_resource.png" },
+                { value: "6", text: "Diode", icon_url: "img_resource/diode.png" },
+                { value: "19", text: "Precision Part", icon_url: "img_resource/precision_part.png" },
+                { value: "20", text: "Electronical Component", icon_url: "img_resource/electronical_component.png" },
+                { value: "21", text: "Resin", icon_url: "resource_img/resin.png" },
+                { value: "22", text: "Clay", icon_url: "resource_img/clay.png" },
+                { value: "25", text: "Rare Wastes", icon_url: "icons/icon_rarewastes.png" },
+                { value: "27", text: "Old World Treasure", icon_url: "" },
+                { value: "28", text: "Ingredients", icon_url: "icons/ingredients.png" },
             ];
             break;
         case '3':
             categoryOptions = [
-                { value: "1", text: "Teleport" },
-                { value: "2", text: "Treasure Hunt" },
-                { value: "3", text: "Zone Commission" },
-                { value: "7", text: "Limited Time Training" },
-                { value: "8", text: "Scenery" },
-                { value: "9", text: "Fishing" },
-                { value: "15", text: "Stone" },
-                { value: "16", text: "Wood" },
-                { value: "17", text: "Fiber" },
-                { value: "18", text: "Resource Chest" },
-                { value: "6", text: "Industrial Hinge" },
-                { value: "19", text: "Magnet Coil" },
-                { value: "20", text: "Insulation Coating" },
-                { value: "21", text: "Amber" },
-                { value: "22", text: "Quartz" },
-                { value: "27", text: "Old World Treasure" },
-                { value: "28", text: "Ingredients" },
+                { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
+                { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
+                { value: "3", text: "Zone Commission", icon_url: "icons/icon_zone.png" },
+                { value: "7", text: "Limited Time Training", icon_url: "icons/icon_train.png" },
+                { value: "8", text: "Scenery", icon_url: "icons/icon_scenery.png" },
+                { value: "9", text: "Fishing", icon_url: "icons/icon_fishing.png" },
+                { value: "15", text: "Stone", icon_url: "icons/icon_stone.png" },
+                { value: "16", text: "Wood", icon_url: "icons/icon_wood.png" },
+                { value: "17", text: "Fiber", icon_url: "icons/icon_fiber.png" },
+                { value: "18", text: "Resource Chest", icon_url: "icons/icon_resource.png" },
+                { value: "6", text: "Industrial Hinge", icon_url: "resource_img/industrialhinge.png" },
+                { value: "19", text: "Magnet Coil", icon_url: "resource_img/magnetcoil.png" },
+                { value: "20", text: "Insulation Coating", icon_url: "resource_img/insulationcoating.png" },
+                { value: "21", text: "Amber", icon_url: "resource_img/amber.png" },
+                { value: "22", text: "Quartz", icon_url: "resource_img/quartz.png" },
+                { value: "27", text: "Old World Treasure", icon_url: "" },
+                { value: "28", text: "Ingredients", icon_url: "icons/ingredients.png" },
             ];
             break;
         case '6':
             categoryOptions = [
-                { value: "1", text: "Teleport" },
-                { value: "2", text: "Treasure Hunt" },
-                { value: "3", text: "Zone Commission" },
-                { value: "7", text: "Limited Time Training" },
-                { value: "8", text: "Scenery" },
-                { value: "9", text: "Fishing" },
-                { value: "15", text: "Stone" },
-                { value: "16", text: "Wood" },
-                { value: "17", text: "Fiber" },
-                { value: "18", text: "Resource Chest" },
-                { value: "6", text: "Artificial Leather" },
-                { value: "19", text: "Power Component" },
-                { value: "20", text: "Integrated Motor" },
-                { value: "21", text: "Amber" },
-                { value: "22", text: "Quartz" },
-                { value: "26", text: "Rare Wood 2 Keplre Harbour" },
-                { value: "27", text: "Old World Treasure" },
-                { value: "28", text: "Ingredients" },
+                { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
+                { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
+                { value: "3", text: "Zone Commission", icon_url: "icons/icon_zone.png" },
+                { value: "7", text: "Limited Time Training", icon_url: "icons/icon_train.png" },
+                { value: "8", text: "Scenery", icon_url: "icons/icon_scenery.png" },
+                { value: "9", text: "Fishing", icon_url: "icons/icon_fishing.png" },
+                { value: "15", text: "Stone", icon_url: "icons/icon_stone.png" },
+                { value: "16", text: "Wood", icon_url: "icons/icon_wood.png" },
+                { value: "17", text: "Fiber", icon_url: "icons/icon_fiber.png" },
+                { value: "18", text: "Resource Chest", icon_url: "icons/icon_resource.png" },
+                { value: "6", text: "Artificial Leather", icon_url: "resource_img/artificialleather.png" },
+                { value: "19", text: "Power Component", icon_url: "resource_img/powercomponent.png" },
+                { value: "20", text: "Integrated Motor", icon_url: "resource_img/integratedmotor.png" },
+                { value: "21", text: "Amber", icon_url: "resource_img/amber.png" },
+                { value: "22", text: "Quartz", icon_url: "resource_img/quartz.png" },
+                { value: "26", text: "Rare Wood 2 Kepler Harbour", icon_url: "icons/rarewood.png" },
+                { value: "27", text: "Old World Treasure", icon_url: "" },
+                { value: "28", text: "Ingredients", icon_url: "icons/ingredients.png" },
             ];
             break;
+
         default:
             break;
     }
@@ -871,6 +872,7 @@ function updateCategoryOptions() {
         const opt = document.createElement('option');
         opt.value = option.value;
         opt.textContent = option.text;
+        opt.setAttribute("data-icon", option.icon_url); // Set icon URL as a data attribute
         categorySelect.appendChild(opt);
     });
 
@@ -892,6 +894,7 @@ function resetExtraInputs() {
     const oldWorldTreasureInput = document.getElementById("oldWorldTreasureInput");
     const ingredientsNameLabel = document.getElementById("ingredientsNameLabel");
     const ingredientsNameInput = document.getElementById("ingredientsNameInput");
+    const categoryIcon = document.getElementById("categoryIcon");
 
     // Mengatur display ke 'none' untuk menyembunyikan elemen
     oldWorldTreasureLabel.style.display = 'none';
@@ -902,8 +905,20 @@ function resetExtraInputs() {
 
 // Event listener untuk perubahan kategori
 document.getElementById("category").addEventListener("change", function() {
-    resetExtraInputs(); // Reset untuk menyembunyikan semua
+    resetExtraInputs(); // Reset to hide all
 
+    // Get the selected option
+    const selectedOption = this.options[this.selectedIndex];
+    const iconUrl = selectedOption.getAttribute("data-icon");
+    
+    // Update the category icon
+    const categoryIcon = document.getElementById("categoryIcon");
+    if (iconUrl && iconUrl !== "") {
+        categoryIcon.src = iconUrl; // Set the icon URL
+        categoryIcon.style.display = 'inline'; // Show the icon
+    } else {
+        categoryIcon.style.display = 'none'; // Hide the icon if no URL
+    }
     if (this.value == "27") { // Other 1
         // Tampilkan Old World Treasure
         oldWorldTreasureLabel.style.display = 'block'; // Mengatur display ke 'block'
@@ -1031,32 +1046,29 @@ function submitReport(markerId, lat, lng, categoryId, nameEn, locType) {
         "6": "Kepler Harbour"
     };
 
-    const categoryMap = {
-        "1": "Teleport",
-        "2": "Treasure",
-        "3": "Zone",
-        "6": "Scrap",
-        "7": "Training",
-        "8": "Scenery",
-        "9": "Fishing",
-        "10": "Fishing",
-        "11": "Fishing",
-        "12": "Fishing",
-        "13": "Fishing",
-        "14": "Fishing",
-        "15": "Stone",
-        "16": "Wood",
-        "17": "Fiber",
-        "18": "Resource",
-        "19": "Scrap2",
-        "20": "Scrap3",
-        "21": "Resin",
-        "22": "Clay",
-        "23": "Rare Wood 1",
-        "24": "Rare Stone",
-        "25": "Rare Wastes",
-        "26": "Rare Wood 2"
-    };
+const categoryMap = {
+    "1": { name: "Teleport", icon_url: "icons/icon_teleport.png" },
+    "2": { name: "Treasure", icon_url: "icons/icon_treasure.png" },
+    "3": { name: "Zone", icon_url: "icons/icon_zone.png" },
+    "6": { name: "Scrap", icon_url: "icons/icon_scrap.png" },
+    "7": { name: "Training", icon_url: "icons/icon_train.png" },
+    "8": { name: "Scenery", icon_url: "icons/icon_scenery.png" },
+    "9": { name: "Fishing", icon_url: "icons/rare_fishing.png" },
+    "10": { name: "Fishing", icon_url: "icons/icon_fishing.png" },
+    "11": { name: "Fishing", icon_url: "icons/icon_fishing.png" },
+    "12": { name: "Fishing", icon_url: "icons/icon_fishing.png" },
+    "13": { name: "Fishing", icon_url: "icons/icon_fishing.png" },
+    "14": { name: "Fishing", icon_url: "icons/icon_fishing.png" },
+    "15": { name: "Stone", icon_url: "icons/icon_stone.png" },
+    "16": { name: "Wood", icon_url: "icons/icon_wood.png" },
+    "17": { name: "Fiber", icon_url: "icons/icon_fiber.png" },
+    "18": { name: "Resource", icon_url: "icons/icon_resource.png" },
+    "23": { name: "Rare Wood 1", icon_url: "icons/icon_rarewood.png" },
+    "24": { name: "Rare Stone", icon_url: "icons/icon_rarestone.png" },
+    "25": { name: "Rare Wastes", icon_url: "icons/icon_rarewastes.png" },
+    "26": { name: "Rare Wood 2", icon_url: "icons/icon_rarewood.png" }
+};
+
 
     // Replace ID with name using mapping
     const categoryName = categoryMap[categoryId] || 'Unknown';
@@ -2185,26 +2197,7 @@ window.addEventListener('resize', checkVisibility);
 centerOnHover();
 });
 
-// Display the pop-up when the page loads
-window.onload = function() {
-    const popup = document.getElementById('patch-popup');
-    const closeBtn = document.querySelector('.popup .close');
 
-    // Show the pop-up
-    popup.style.display = 'flex';
-
-    // Hide the pop-up when the close button is clicked
-    closeBtn.onclick = function() {
-        popup.style.display = 'none';
-    };
-
-    // Hide the pop-up when clicking outside the content
-    window.onclick = function(event) {
-        if (event.target === popup) {
-            popup.style.display = 'none';
-        }
-    };
-};
 // Mengambil elemen yang diperlukan
 const materialGroup = document.getElementById('material-group');
 const checkboxFilters = document.querySelectorAll('.checkbox-filters');
@@ -2346,16 +2339,33 @@ document.addEventListener("DOMContentLoaded", function() {
         } else {
             clearInterval(loadingProgressInterval);
         }
-    }, 700); // Update setiap 500ms
+    }, 700); // Update setiap 700ms
 
-    // Mengubah teks setiap 2 detik
+    // Mengubah teks setiap 3 detik
     setInterval(changePreloaderText, 3000);
 
-    // Otomatis menutup preloader setelah 5 detik
+    // Otomatis menutup preloader setelah loading selesai
     setTimeout(() => {
         loadingText.textContent = "Loading... 100%"; // Tampilkan 100% untuk saat terakhir
         setTimeout(() => {
             document.getElementById('preloader').style.display = 'none'; // Sembunyikan preloader
-        }, 5000); // Tunggu 1 detik sebelum menyembunyikan
-    }, 7000); // Total 5 detik delay untuk menutup otomatis
+
+            // Tampilkan pop-up setelah preloader selesai
+            const popup = document.getElementById('patch-popup');
+            const closeBtn = document.querySelector('.popup .close');
+            popup.style.display = 'flex';
+
+            // Hide the pop-up when the close button is clicked
+            closeBtn.onclick = function() {
+                popup.style.display = 'none';
+            };
+
+            // Hide the pop-up when clicking outside the content
+            window.onclick = function(event) {
+                if (event.target === popup) {
+                    popup.style.display = 'none';
+                }
+            };
+        }, 3000); // Tunggu 1 detik sebelum menyembunyikan preloader dan menampilkan pop-up
+    }, 10000); // Total 7 detik delay untuk menutup otomatis
 });

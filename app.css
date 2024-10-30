@@ -315,7 +315,8 @@ overflow: hidden;
 }
 
 .submit-marker-form button:hover {
-    background-color: rgba(2, 160, 197, 0.8); /* Hover effect for button */
+    background-color: #02a0c5 /* Hover effect for button */
+    border: 1px solid  #02a0c5;
 }
 
 /* Image upload styling */
@@ -896,7 +897,10 @@ h3 {
     font-weight: normal; /* Lighter font weight than main title */
     padding: 10px 10px -5px 10px; /* Padding with no bottom padding */
 }
-
+h5 {
+    color: white;
+    font-size: 20px
+    }
 /* Saat container ditampilkan */
 .collect-container.active {
     right: -2px; /* Tampilkan container */
@@ -1104,7 +1108,7 @@ h3 {
 }
 #submit-container {
     top: 57px; /* Jarak dari atas */
-    right: 45px; /* Jarak dari sisi kanan */
+    right: 41px; /* Jarak dari sisi kanan */
 }
 .collect-container {
     position: fixed;
