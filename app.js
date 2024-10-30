@@ -80,7 +80,7 @@ function addMarkersToMap() {
 
             // Konversi lat/lng ke float dan siapkan koordinat
             // Tambahkan 0.0200 ke latitude
-            const latLng = [parseFloat(location.lat) + 0.0200, parseFloat(location.lng)];
+            const latLng = [parseFloat(location.lat) + 0.0000, parseFloat(location.lng)];
 
             // Dapatkan URL ikon berdasarkan category_id
             const iconUrl = getIconUrl(location.category_id);
