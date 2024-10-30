@@ -1,4 +1,5 @@
 
+
 let activeFilters = [];
 let activeLocTypes = [];
 let markers = [];
@@ -809,7 +810,7 @@ function updateCategoryOptions() {
                 { value: "16", text: "Wood", icon_url: "icons/icon_wood.png" },
                 { value: "17", text: "Fiber", icon_url: "icons/icon_fiber.png" },
                 { value: "18", text: "Resource Chest", icon_url: "icons/icon_resource.png" },
-                { value: "6", text: "Diode", icon_url: "img_resource/diode.png" },
+                { value: "6", text: "Diode", icon_url: "resource_img/diode.png" },
                 { value: "19", text: "Precision Part", icon_url: "img_resource/precisionpart.png" },
                 { value: "20", text: "Electronical Component", icon_url: "img_resource/electronicalcomponent.png" },
                 { value: "21", text: "Resin", icon_url: "resource_img/resin.png" },
@@ -1205,6 +1206,8 @@ function resetReportForm() {
 }
 
 
+let markTipShown = false; // Flag to track if the mark tip has been shown
+
 function getVideoIdFromUrl(url) {
     const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?|watch|.+\/))|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
     const matches = url.match(regex);
@@ -1212,16 +1215,13 @@ function getVideoIdFromUrl(url) {
 }
 
 function setupMarkerInteractions(marker, location, key) {
-    // Dapatkan ID video dari URL
     const videoId = getVideoIdFromUrl(location.links_info);
     const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : '';
 
-    // Membuat konten untuk pop-up
     const contentString = `
         <div class="leaflet-popup-content">
             <h4 class="popup-title">${location.en_name}</h4>
             <p class="popup-description">${(location.desc || 'No description available.').replace(/\n/g, '<br>')}</p>
-            
             ${thumbnailUrl ? `
                 <div class="popup-thumbnail">
                     <img src="${thumbnailUrl}" alt="YouTube Thumbnail" style="width: auto; height: 200px; border-radius: 4px;">
@@ -1230,63 +1230,136 @@ function setupMarkerInteractions(marker, location, key) {
                     </a>
                 </div>
             ` : ''}
-            
             <button class="reportButton" data-id="${key}" style="background: none; border: none; color: red; font-size: 12px; cursor: pointer; z-index: 1300; right: -25px; pointer-events: auto;">Report</button>
         </div>
     `;
 
-    // Bind the popup with offset to position it above the marker
-    marker.bindPopup(contentString, {
-        offset: L.point(0, -20) // Set Y offset as needed
-    });
+    marker.bindPopup(contentString, { offset: L.point(0, -20) });
 
-    // Handle marker click to open popup and set up report button
     marker.on('contextmenu', (e) => {
-        const currentOpacity = marker.options.opacity || 1.0; // Default opacity is 1.0
-        const newOpacity = currentOpacity === 1.0 ? 0.5 : 1.0; // Toggle opacity
+        const currentOpacity = marker.options.opacity || 1.0;
+        const newOpacity = currentOpacity === 1.0 ? 0.5 : 1.0;
 
-        // Log for debugging
         console.log(`Changing opacity for marker ${marker.options.id}: from ${currentOpacity} to ${newOpacity}`);
 
-        // Update category counts based on the old opacity
         if (currentOpacity === 0.5) {
-            // If the marker was previously transparent, decrease current count
-            updateCategoryCounts(marker.options.loc_type, marker.options.category, currentOpacity, false); // Decrease count
+            updateCategoryCounts(marker.options.loc_type, marker.options.category, currentOpacity, false);
         }
 
-        // Set the new opacity
-        marker.setOpacity(newOpacity); // Change marker opacity
-        saveMarkerOpacity(marker.options.id, newOpacity); // Save the new opacity
+        marker.setOpacity(newOpacity);
+        saveMarkerOpacity(marker.options.id, newOpacity);
 
         if (newOpacity === 0.5) {
-            // If the marker just became transparent, increase current count
-            updateCategoryCounts(marker.options.loc_type, marker.options.category, newOpacity, true); // Increase count
+            updateCategoryCounts(marker.options.loc_type, marker.options.category, newOpacity, true);
         }
 
-        updateCategoryDisplay(marker.options.loc_type); // Refresh category display
+        updateCategoryDisplay(marker.options.loc_type);
     });
 
-    // Ensure that the report button functionality is set up when the popup opens
     marker.on('popupopen', () => {
         console.log('Popup opened for marker:', marker.options.id);
-        setupReportButton(marker, key); // Pass the key for identifying the report button
+        setupReportButton(marker, key);
+
+        // Show tip only on first touch for this marker
+        if (!markTipShown) {
+            setTimeout(() => {
+                showMarkTip(marker);
+            }, 2000); // 2-second delay before showing the tip
+            markTipShown = true; // Set the flag to prevent showing tip again
+        }
+    });
+
+    // Hide mark tip on clicking outside the marker popup or when a different marker is touched
+    map.on('click', function(event) {
+        if (marker.getPopup().isOpen()) {
+            marker.closePopup(); // Close the popup if it's open
+            markTipShown = false; // Reset the tip shown flag
+            removeCurrentMarkTip();
+        } else {
+            // Hide tip if clicking on a different marker
+            removeCurrentMarkTip();
+        }
     });
 }
 
-// Ensure the report button functionality is set up when the popup opens
-function setupReportButton(marker, key) {
-    const reportButton = document.querySelector('.reportButton[data-id="' + key + '"]');
-    console.log('Checking for Report Button with key:', key);  // Debugging
+// Function to remove the current mark tip
+function removeCurrentMarkTip() {
+    if (currentMarkTip) {
+        currentMarkTip.remove(); // Remove the current tip if it exists
+        currentMarkTip = null; // Reset the reference
+    }
+}
 
+let currentMarkTip = null; // Store reference to the active mark tip
+
+function showMarkTip(marker) {
+    // Remove the existing tip if it exists
+    if (currentMarkTip) {
+        currentMarkTip.remove();
+    }
+
+    // Create a divIcon for the mark tip
+    currentMarkTip = L.divIcon({
+        className: 'mark-tip',
+        html: `
+            <div style="
+                background-color: rgba(255, 255, 255, 0.9);
+                padding: 5px;
+                border-radius: 3px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+                white-space: nowrap;
+                z-index: 2500; /* Ensure it is above other elements visually */
+            ">
+                TRY TO HOLD MARK FOR SECOND
+            </div>`,
+        iconSize: 'auto', // Automatically size the container based on content
+        iconAnchor: [90, 0] // Position it below the marker
+    });
+
+    // Get the position of the marker's popup
+    const popupPosition = marker.getLatLng(); // Use getLatLng directly from marker
+    const tipMarker = L.marker([popupPosition.lat - 0.0005, popupPosition.lng], { icon: currentMarkTip, interactive: false }).addTo(marker._map);
+
+    // Automatically close the tip after 10 seconds
+    setTimeout(() => {
+        tipMarker.remove();
+        currentMarkTip = null; // Reset tip
+        console.log('Mark tip closed after timeout');
+    }, 10000); // 10000 milliseconds = 10 seconds
+
+    // Ensure the tip follows the marker when dragged
+    marker.on('drag', function(event) {
+        tipMarker.setLatLng(event.target.getLatLng()); // Update tip position on drag
+    });
+
+    // Hide the tip if another marker is clicked or the map is clicked
+    map.on('click', (event) => {
+        if (tipMarker) {
+            tipMarker.remove(); // Remove tip on map click
+            currentMarkTip = null; // Reset reference
+        }
+    });
+
+    // Add a listener to close the tip if another marker is clicked
+    marker.on('popupclose', () => {
+        tipMarker.remove(); // Remove tip when popup closes
+        currentMarkTip = null; // Reset reference
+    });
+
+    console.log('Mark tip displayed at position:', popupPosition);
+}
+
+
+function setupReportButton(marker, key) {
+    const reportButton = document.querySelector(`.reportButton[data-id="${key}"]`);
     if (reportButton) {
         reportButton.addEventListener('click', () => {
-            showReportForm(marker); // Call the function to display the report form
+            showReportForm(marker);
         });
     } else {
         console.log('Report button not found');
     }
 }
-
 
 
 
@@ -2296,7 +2369,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const preloaderTexts = [
         "TIPS: Give Us Your Marker, Let Help Each Other",
         "TIPS: Use Mobile To Better Experience",
-        "If There Are Any Problems And Suggestions Contact Bangone On Tiktok",
+        "If There Are Any Problems And Suggestions Contact BangOne Gaming On Tiktok",
         "TIPS: Give Us Your Marker, Let Help Each Other",
         "Almost ready, hang tight!"
     ];

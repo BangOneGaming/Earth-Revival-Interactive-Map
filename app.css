@@ -493,7 +493,7 @@ overflow: hidden;
     font-family: 'Roboto', sans-serif;
     animation: bounceIn 0.6s ease; /* Animasi muncul */
 }
-/* Leaflet popup wrapper */
+
 /* Leaflet popup content wrapper */
 .leaflet-popup-content-wrapper {
     background: rgba(19, 39, 96, 0.613) !important; /* Same background as count container */
