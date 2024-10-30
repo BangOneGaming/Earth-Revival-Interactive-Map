@@ -374,32 +374,33 @@ function changeMarkerOpacity(markerId, newOpacity) {
 
 
 // Function to update category counts based on marker opacity
-function updateCategoryCounts(locType, categoryId, opacity, increase = true) {
+function updateCategoryCounts(locType, categoryId, opacity) {
     const categoryName = getCategoryName(categoryId);
     
     if (!categoryName) {
         console.log(`Unrecognized categoryId: ${categoryId}`);
-        return; // Keluar jika categoryName tidak dikenali
+        return; // Exit if categoryName is not recognized
     }
 
-    // Pastikan categoryCounts ada untuk locType dan category yang relevan
+    // Ensure categoryCounts exists for locType and relevant category
     if (categoryCounts[locType] && categoryCounts[locType][categoryName]) {
         const currentCount = categoryCounts[locType][categoryName].current;
 
-        // Tambah current count untuk marker dengan opacity 0.5
-        if (opacity === 0.5 && increase) {
-            categoryCounts[locType][categoryName].current++; 
-            console.log(`Current count increased to ${categoryCounts[locType][categoryName].current} for ${categoryName}`); // Log penambahan
+        // Increase count for marker with opacity 0.5
+        if (opacity === 0.5) {
+            categoryCounts[locType][categoryName].current++;
+            console.log(`Current count increased to ${categoryCounts[locType][categoryName].current} for ${categoryName}`);
         } 
-        // Kurangi current count saat opacity diubah menjadi 1.0
-        else if (opacity === 1.0 && !increase) {
+        // Decrease count when opacity is set to 1.0
+        else if (opacity === 1.0) {
             categoryCounts[locType][categoryName].current = Math.max(0, currentCount - 1);
-            console.log(`Current count decreased to ${categoryCounts[locType][categoryName].current} for ${categoryName}`); // Log pengurangan
+            console.log(`Current count decreased to ${categoryCounts[locType][categoryName].current} for ${categoryName}`);
         }
     } else {
-        console.log(`Counts not found for locType: ${locType}, categoryName: ${categoryName}`); // Log jika tidak ada kategori
+        console.log(`Counts not found for locType: ${locType}, categoryName: ${categoryName}`);
     }
 }
+
 
 // Function to save current count to local storage
 function saveCurrentCount(locType, categoryName, currentCount) {
@@ -1236,25 +1237,27 @@ function setupMarkerInteractions(marker, location, key) {
 
     marker.bindPopup(contentString, { offset: L.point(0, -20) });
 
-    marker.on('contextmenu', (e) => {
-        const currentOpacity = marker.options.opacity || 1.0;
-        const newOpacity = currentOpacity === 1.0 ? 0.5 : 1.0;
+marker.on('contextmenu', (e) => {
+    const currentOpacity = marker.options.opacity || 1.0;
+    const newOpacity = currentOpacity === 1.0 ? 0.5 : 1.0;
 
-        console.log(`Changing opacity for marker ${marker.options.id}: from ${currentOpacity} to ${newOpacity}`);
+    console.log(`Changing opacity for marker ${marker.options.id}: from ${currentOpacity} to ${newOpacity}`);
 
-        if (currentOpacity === 0.5) {
-            updateCategoryCounts(marker.options.loc_type, marker.options.category, currentOpacity, false);
-        }
+    if (currentOpacity === 0.5) {
+        // Decrease count when changing from 0.5 to 1
+        updateCategoryCounts(marker.options.loc_type, marker.options.category, newOpacity);
+    } else {
+        // Increase count when changing to 0.5
+        updateCategoryCounts(marker.options.loc_type, marker.options.category, newOpacity);
+    }
 
-        marker.setOpacity(newOpacity);
-        saveMarkerOpacity(marker.options.id, newOpacity);
+    // Set the new opacity
+    marker.setOpacity(newOpacity);
+    saveMarkerOpacity(marker.options.id, newOpacity);
 
-        if (newOpacity === 0.5) {
-            updateCategoryCounts(marker.options.loc_type, marker.options.category, newOpacity, true);
-        }
+    updateCategoryDisplay(marker.options.loc_type);
+});
 
-        updateCategoryDisplay(marker.options.loc_type);
-    });
 
     marker.on('popupopen', () => {
         console.log('Popup opened for marker:', marker.options.id);
