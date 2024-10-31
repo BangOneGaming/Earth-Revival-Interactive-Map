@@ -1049,28 +1049,27 @@ function submitReport(markerId, lat, lng, categoryId, nameEn, locType) {
     };
 
 const categoryMap = {
-    "1": { name: "Teleport", icon_url: "icons/icon_teleport.png" },
-    "2": { name: "Treasure", icon_url: "icons/icon_treasure.png" },
-    "3": { name: "Zone", icon_url: "icons/icon_zone.png" },
-    "6": { name: "Scrap", icon_url: "icons/icon_scrap.png" },
-    "7": { name: "Training", icon_url: "icons/icon_train.png" },
-    "8": { name: "Scenery", icon_url: "icons/icon_scenery.png" },
-    "9": { name: "Fishing", icon_url: "icons/rare_fishing.png" },
-    "10": { name: "Fishing", icon_url: "icons/icon_fishing.png" },
-    "11": { name: "Fishing", icon_url: "icons/icon_fishing.png" },
-    "12": { name: "Fishing", icon_url: "icons/icon_fishing.png" },
-    "13": { name: "Fishing", icon_url: "icons/icon_fishing.png" },
-    "14": { name: "Fishing", icon_url: "icons/icon_fishing.png" },
-    "15": { name: "Stone", icon_url: "icons/icon_stone.png" },
-    "16": { name: "Wood", icon_url: "icons/icon_wood.png" },
-    "17": { name: "Fiber", icon_url: "icons/icon_fiber.png" },
-    "18": { name: "Resource", icon_url: "icons/icon_resource.png" },
-    "23": { name: "Rare Wood 1", icon_url: "icons/icon_rarewood.png" },
-    "24": { name: "Rare Stone", icon_url: "icons/icon_rarestone.png" },
-    "25": { name: "Rare Wastes", icon_url: "icons/icon_rarewastes.png" },
-    "26": { name: "Rare Wood 2", icon_url: "icons/icon_rarewood.png" }
+    "1": "Teleport",
+    "2": "Treasure",
+    "3": "Zone",
+    "6": "Scrap",
+    "7": "Training",
+    "8": "Scenery",
+    "9": "Fishing",
+    "10": "Fishing",
+    "11": "Fishing",
+    "12": "Fishing",
+    "13": "Fishing",
+    "14": "Fishing",
+    "15": "Stone",
+    "16": "Wood",
+    "17": "Fiber",
+    "18": "Resource",
+    "23": "Rare Wood 1",
+    "24": "Rare Stone",
+    "25": "Rare Wastes",
+    "26": "Rare Wood 2"
 };
-
 
     // Replace ID with name using mapping
     const categoryName = categoryMap[categoryId] || 'Unknown';
