@@ -209,6 +209,7 @@ overflow: hidden;
     white-space: nowrap; /* Mencegah teks terpotong */
     position: relative; /* Untuk posisi panah */
     border: 2px solid #889dcb; /* Warna border tooltip */
+    pointer-events: none;
 }
 
 /* Panah yang menunjukkan ke kanan */
@@ -222,6 +223,7 @@ overflow: hidden;
     border-style: solid;
     border-color: transparent transparent transparent white; /* Panah berwarna putih */
     margin-left: 2px; /* Sedikit jarak agar panah terlihat dari border */
+    
 }
 
 
@@ -712,6 +714,25 @@ overflow: hidden;
   background: #ff1e1e;
 }
 
+.homepage-button-container {
+    position: absolute; /* Use absolute positioning */
+    top: 275px; /* Center vertically */
+    left: 10px; /* Position from the left edge */
+    transform: translateY(-50%); /* Adjust to truly center vertically */
+    z-index: 1200; /* Ensure it appears above the map */
+    cursor: pointer; /* Change cursor on hover */
+    transition: box-shadow 0.3s ease; /* Transition effect */
+}
+
+.homepage-button-container img {
+    width: 50px; /* Adjust width as needed */
+    height: 50px; /* Maintain aspect ratio */
+}
+
+.homepage-button-container:active {
+    box-shadow: 0 0 15px 5px rgb(255, 224, 25); /* Active effect */
+}
+
 .toggle-legend-container, .toggle-new-filters-container {
   position: absolute;
   z-index: 1500;
@@ -907,7 +928,7 @@ h5 {
 }
 .collect-tip-container {
     position: fixed; /* Fixed positioning to keep it in view */
-    top: 210px;
+    top: 215px;
     left: 10px; /* Position from the left */
     transform: translateY(-50%); /* Adjust for centering */
     display: flex; /* Use flexbox to align items */
@@ -944,6 +965,7 @@ h5 {
     white-space: nowrap; /* Prevent text wrapping */
     position: relative; /* Position for the arrow */
     border: 2px solid #889dcb; /* Border color for the tool tips */
+    pointer-events: none;
 }
 
 /* Arrow that points to the left */

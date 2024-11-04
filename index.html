@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Earth Revival Interactive Maps</title>
     <meta name="description" content="A complete interactive map for exploration in Earth Revival. Includes Treasure Hunt, Limited Time Training, Scenery, and Fishing Spots in various locations such as Sundale Valley, Howling Gobi, Edengate, Ragon Snowy Peak, Kepler Harbour, Pegasus, and Hilde. Discover your adventure today!">
     <meta name="keywords" content="Earth Revival, interactive maps,map Earth Revival, treasure locations, training zones, fishing spots, zone markers, old world treasure, earth revival guide, map features, gaming guide">
-    <meta name="google-site-verification" content="Ix3dO38-z_FWaZ-DWBk7kaoGb7I9MaAzrtqd-LvZLqw" />
 
     <!-- Open Graph tags -->
     <meta property="og:title" content="Earth Revival Interactive Maps"/>
@@ -15,7 +15,7 @@
     <meta property="og:image:width" content="1200"/>
     <meta property="og:image:height" content="630"/>
     <meta property="og:type" content="website"/>
-    <meta property="og:url" content="https://bangonegaming.com"/>
+    <meta property="og:url" content="https://your-website.com"/>
 
     <!-- Twitter Card tags -->
     <meta name="twitter:card" content="summary_large_image">
@@ -194,19 +194,26 @@
 <div id="toggle-filters" class="toggle-new-filters-container">
     <img src="icons/new_filter-btn.png" alt="Toggle Filters">
 </div>
-    <button id="reset-opacity" title="Reset Opacity">
-        <img src="icons/reset.png" alt="Reset Icon">
-    </button>
-    
-    <!-- Confirmation Reset Opacity -->
-    <div id="confirm-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <p>Are you sure you want to reset the opacity of all markers?</p>
-            <button id="confirm-yes" class="modal-button">Yes</button>
-            <button id="confirm-no" class="modal-button">No</button>
-        </div>
+<button id="reset-opacity" title="Reset Opacity">
+    <img src="icons/reset.png" alt="Reset Icon">
+</button>
+
+<!-- New Homepage Button -->
+<div id="homepage-button" class="homepage-button-container">
+    <a href="https://bangonegaming.com/" target="_blank" title="Homepage">
+        <img src="icons/home.png" alt="Homepage">
+    </a>
+</div>
+
+<!-- Confirmation Reset Opacity -->
+<div id="confirm-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <p>Are you sure you want to reset the opacity of all markers?</p>
+        <button id="confirm-yes" class="modal-button">Yes</button>
+        <button id="confirm-no" class="modal-button">No</button>
     </div>
 </div>
+
 
 <!-- New filter container for mark -->
 <div class="new-filter-container">
@@ -595,6 +602,10 @@
 <div id="map"></div>
 </div>
 <script src="minimap_config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>
+  eruda.init();
+</script>
 <script src="category.js"></script>
 <script src="app.js?t=<?=time()?>"></script>
 </body>
