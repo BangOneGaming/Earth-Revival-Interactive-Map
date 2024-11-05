@@ -63,7 +63,6 @@ function initMiniMap() {
 initMap(); // Initialize your main map first
 initMiniMap(); // Then initialize the mini-map markers and overlays
 
-
 function addMarkersToMap() {
     markers = []; // Reset markers array setiap kali fungsi dipanggil
 
@@ -79,8 +78,7 @@ function addMarkersToMap() {
             }
 
             // Konversi lat/lng ke float dan siapkan koordinat
-            // Tambahkan 0.0200 ke latitude
-            const latLng = [parseFloat(location.lat) + 0.0000, parseFloat(location.lng)];
+            const latLng = [parseFloat(location.lat), parseFloat(location.lng)];
 
             // Dapatkan URL ikon berdasarkan category_id
             const iconUrl = getIconUrl(location.category_id);
@@ -93,12 +91,16 @@ function addMarkersToMap() {
             const categoryId = location.category_id || 'Unknown'; 
             const nameEn = location.en_name || 'Unknown'; 
             const markerId = location.id || key; // Gunakan ID dari data atau fallback ke key
+            const ysId = location.ys_id || 'Unknown'; // Menambahkan ys_id jika ada
+
+            // Placeholder untuk image_info, jika tersedia di JSON
+            const imageInfo = location.image_info || 'No image info available';
 
             // Buat marker Leaflet dengan ikon dan opacity yang ditentukan
             const marker = L.marker(latLng, {
                 icon: L.icon({
                     iconUrl: iconUrl,
-                    iconSize: [32, 32],
+                    iconSize: [32, 32], // Ukuran ikon tetap
                     iconAnchor: [16, 32],
                 }),
                 opacity: initialOpacity, // Atur opacity (default 1.0)
@@ -109,6 +111,8 @@ function addMarkersToMap() {
             marker.options.category = categoryId;
             marker.options.id = markerId;
             marker.options.en_name = nameEn;
+            marker.options.ys_id = ysId; // Menyimpan ys_id ke marker options
+            marker.options.image_info = imageInfo; // Menyimpan image_info ke marker options
 
             // Simpan marker ke array markers untuk referensi di masa depan
             markers.push(marker);
@@ -128,6 +132,7 @@ function addMarkersToMap() {
     hideMarkers();
     updateCategoryDisplay(); // Pastikan tampilan kategori diupdate setelah menambahkan semua marker
 }
+
 
 
 function calculateMaxCounts() {
@@ -1218,10 +1223,48 @@ function setupMarkerInteractions(marker, location, key) {
     const videoId = getVideoIdFromUrl(location.links_info);
     const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : '';
 
+    const coordMatch = location.desc && location.desc.match(/\((\d+),\s*(\d+)\)/);
+    const xCoord = coordMatch ? coordMatch[1] : null;
+    const zCoord = coordMatch ? coordMatch[2] : null;
+
+    let imageInfoContent = '';
+    let showImageButton = ''; // Placeholder for the Show Image button HTML
+
+    if (location.images_info && location.images_info !== "0" && location.images_info !== "[]") {
+        try {
+            const parsedImagesInfo = JSON.parse(location.images_info);
+            if (Array.isArray(parsedImagesInfo) && parsedImagesInfo.length > 0 && parsedImagesInfo[0].link) {
+                const imageUrl = parsedImagesInfo[0].link.startsWith('//') ? `https:${parsedImagesInfo[0].link}` : parsedImagesInfo[0].link;
+                imageInfoContent = `<img src="${imageUrl}" alt="Image Info" class="popup-image-info" style="width: 100%; height: auto; border-radius: 4px; display: none;">`;
+                showImageButton = `<button class="showImageButton" onclick="toggleImageVisibility(this)">Show Image</button>`;
+            }
+        } catch (error) {
+            console.warn("Error parsing images_info JSON:", error);
+        }
+    }
+
+    const showYsId = location.ys_id && location.ys_id !== "0";
+
     const contentString = `
         <div class="leaflet-popup-content">
             <h4 class="popup-title">${location.en_name}</h4>
-            <p class="popup-description">${(location.desc || 'No description available.').replace(/\n/g, '<br>')}</p>
+            <p class="popup-description">
+                ${(location.desc || 'No description available.').replace(/\n/g, '<br>')}
+            </p>
+            ${xCoord && zCoord ? `
+                <div class="copy-buttons">
+                    <button class="copyButton" onclick="copyToClipboard('${xCoord}', event)">
+                        Copy X
+                    </button>
+                    <button class="copyButton" onclick="copyToClipboard('${zCoord}', event)">
+                        Copy Z
+                    </button>
+                </div>
+            ` : ''}
+            <div id="copyFeedback" class="copy-feedback" style="display: none;">
+                <img src="icons/bangone.png" alt="Feedback Icon" class="feedback-icon">
+                <span>Copied to clipboard!</span>
+            </div>
             ${thumbnailUrl ? `
                 <div class="popup-thumbnail">
                     <img src="${thumbnailUrl}" alt="YouTube Thumbnail" style="width: auto; height: 200px; border-radius: 4px;">
@@ -1230,7 +1273,14 @@ function setupMarkerInteractions(marker, location, key) {
                     </a>
                 </div>
             ` : ''}
-            <button class="reportButton" data-id="${key}" style="background: none; border: none; color: red; font-size: 12px; cursor: pointer; z-index: 1300; right: -25px; pointer-events: auto;">Report</button>
+            ${showImageButton ? `
+            <button class="showImageButton" onclick="toggleImageVisibility(this)" style="background: none; border: none; color: #028c9a; font-size: 12px; cursor: pointer;">
+                <b>Show Image</b>
+            </button>
+        ` : ''}
+            ${imageInfoContent} <!-- Gambar yang disembunyikan secara default -->
+            ${showYsId ? `<p class="popup-ys-id">YS ID: ${location.ys_id}</p>` : ''}
+            <button class="reportButton" data-id="${key}" style="background: none; border: none; color: red; font-size: 12px; cursor: pointer;">Report</button>
         </div>
     `;
 
@@ -1283,6 +1333,56 @@ marker.on('contextmenu', (e) => {
         }
     });
 }
+// Fungsi JavaScript untuk toggle visibilitas gambar dan mengubah teks tombol
+function toggleImageVisibility(button) {
+    const image = button.nextElementSibling; // Mendapatkan elemen gambar setelah tombol
+    if (image.style.display === "none") {
+        image.style.display = "block";
+        button.textContent = "Hide Image";
+    } else {
+        image.style.display = "none";
+        button.textContent = "Show Image";
+    }
+}
+// Fungsi untuk menyalin teks ke clipboard
+function copyToClipboard(text, event) {
+    const button = event.target; // Ambil tombol yang ditekan
+    const feedback = button.closest('.leaflet-popup-content').querySelector('#copyFeedback'); // Ambil elemen feedback
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+            feedback.classList.add('show'); // Tampilkan pesan
+            feedback.style.display = 'flex'; // Tampilkan feedback
+            setTimeout(() => {
+                feedback.classList.remove('show'); // Hapus setelah 2 detik
+                feedback.style.display = 'none'; // Sembunyikan lagi
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+        });
+    } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";  // Prevent scrolling to bottom
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            feedback.classList.add('show'); // Tampilkan pesan
+            feedback.style.display = 'flex'; // Tampilkan feedback
+            setTimeout(() => {
+                feedback.classList.remove('show'); // Hapus setelah 2 detik
+                feedback.style.display = 'none'; // Sembunyikan lagi
+            }, 2000);
+        } catch (err) {
+            console.error('Fallback: Failed to copy', err);
+        }
+        document.body.removeChild(textArea);
+    }
+}
+
+
 
 // Function to remove the current mark tip
 function removeCurrentMarkTip() {
@@ -1300,6 +1400,14 @@ function showMarkTip(marker) {
         currentMarkTip.remove();
     }
 
+    // Determine if the user is on a mobile device
+    const isMobile = window.matchMedia("(max-width: 768px)").matches; // Adjust the width as needed for mobile detection
+
+    // Set the message based on the device type
+    const message = isMobile ? 
+        'Hold Mark If You Already Take it' : // Mobile message
+        'Right Click if you already Take it'; // Global (desktop) message
+
     // Create a divIcon for the mark tip
     currentMarkTip = L.divIcon({
         className: 'mark-tip',
@@ -1310,13 +1418,15 @@ function showMarkTip(marker) {
                 border-radius: 3px;
                 box-shadow: 0 2px 5px rgba(0,0,0,0.3);
                 white-space: nowrap;
-                z-index: 2500; /* Ensure it is above other elements visually */
+                z-index: 5000; /* Ensure it is above other elements visually */
             ">
-                TRY TO HOLD MARK FOR SECOND
+                ${message} <!-- Insert the message here -->
             </div>`,
         iconSize: 'auto', // Automatically size the container based on content
         iconAnchor: [90, 0] // Position it below the marker
     });
+
+
 
     // Get the position of the marker's popup
     const popupPosition = marker.getLatLng(); // Use getLatLng directly from marker
@@ -1776,6 +1886,48 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
         updateCategoryDisplay(locType); 
     });
 });
+
+
+// Select the toggle-count-container element
+const toggleContainer = document.querySelector('.toggle-count-container');
+
+// Add click event listener to toggle the 'hover' class
+toggleContainer.addEventListener('click', function() {
+    toggleContainer.classList.toggle('hover');
+});
+
+// Select all elements with the 'collect-toggle' class
+document.querySelectorAll('.collect-toggle').forEach(item => {
+    item.addEventListener('click', (event) => {
+        event.stopPropagation(); // Prevent the click from bubbling up to the document
+        item.classList.toggle('hover-active'); // Toggle the "hover-active" class on click
+    });
+});
+// Select both toggle containers and add the toggle effect
+document.querySelectorAll('.toggle-legend-container, .toggle-new-filters-container').forEach(button => {
+    button.addEventListener('click', () => {
+        // Toggle the "hover" class on click to keep or remove the effect
+        button.classList.toggle('hover');
+    });
+});
+
+
+
+
+let locTypesVisible = true; // Flag to track visibility
+
+function toggleLocTypes() {
+    const countContainer = document.querySelector('.count-container');
+    locTypesVisible = !locTypesVisible; // Toggle the visibility flag
+
+    // Show or hide the container based on the flag
+    if (locTypesVisible) {
+        countContainer.style.display = 'block'; // Show the container
+    } else {
+        countContainer.style.display = 'none'; // Hide the container
+    }
+}
+
 // Fungsi untuk menampilkan loc_type
 function showLocType(locType) {
     // Sembunyikan semua loc-type
@@ -1800,6 +1952,18 @@ function showLocType(locType) {
     // Perbarui label dan checkbox berdasarkan loc_type yang dipilih
     updateMaterialLabelsAndCheckboxes(locType); // Panggil fungsi untuk memperbarui label dan checkbox
 }
+// Function to show the overlay
+function showOverlay() {
+    document.getElementById('trakteerOverlay').style.display = 'block';
+}
+
+// Function to hide the overlay
+document.getElementById('closeOverlayBtn').addEventListener('click', function() {
+    document.getElementById('trakteerOverlay').style.display = 'none';
+});
+
+// Example call to show the overlay (you can call this when needed)
+showOverlay(); // Call this function whenever you need to display the overlay
 
 // Ambil elemen collect-container dan tombol toggle
 const collectContainer = document.getElementById('collect-container');
@@ -1807,7 +1971,12 @@ const toggleCollectButton = document.getElementById('toggle-collect');
 
 // Fungsi untuk menutup collect-container
 function closeCollectContainer() {
-    collectContainer.style.right = '-250px'; // Sembunyikan sidebar
+    collectContainer.style.right = '-250px'; // Hide the sidebar
+
+    // Remove 'hover-active' class from all collect-toggle elements
+    document.querySelectorAll('.collect-toggle').forEach(item => {
+        item.classList.remove('hover-active'); // Disable hover effect
+    });
 }
 
 // Fungsi untuk toggle collect-container
@@ -2055,7 +2224,13 @@ function centerMapOnBounds(imageBounds) {
     const midLng = (imageBounds[0][1] + imageBounds[1][1]) / 2;
     const offsetLng = 0.01; // Adjust this value as needed
     const newCenter = [midLat, midLng - offsetLng];
-
+       
+       // Disable hover effect on the new filters container
+        const newFiltersContainer = document.querySelector('.toggle-new-filters-container');
+        if (newFiltersContainer) {
+            newFiltersContainer.classList.remove('hover'); // Disable hover effect
+        }
+        
     // Step 1: Zoom out to level 4
     map.setView(map.getCenter(), 4, { animate: true, duration: 5 }); // 2 seconds for zoom out
 

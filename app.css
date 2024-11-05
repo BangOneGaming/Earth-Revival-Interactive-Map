@@ -331,12 +331,10 @@ overflow: hidden;
     display: none;
 }
 
-
-
 .count-container {
     position: absolute;
-    top: 250px;
-    left: 10px;
+    bottom: 50px;
+    left: 70px;
     background: rgba(19, 39, 96, 0.613);
     color: white;
     border-radius: 10px;
@@ -352,21 +350,23 @@ overflow: hidden;
 }
 
 .count-item {
-    display: flex;
+    display: inline-flex; /* Use inline-flex for horizontal alignment */
     align-items: center;
     background-color: rgba(10, 28, 61, 0.883);
     color: #fff;
+    width: 100px;
     border-radius: 8px;
-    padding: 1px 1px;
+    padding: 1px 5px; /* Padding for better spacing */
     font-size: 10px;
     font-weight: bold;
+    margin-right: 4px; /* Space between items */
 }
 
-       .count-icon {
-            width: 24px; /* Icon size */
-            height: 24px;
-            margin-right: 8px; /* Space between icon and count */
-        }
+.count-icon {
+    width: 24px; /* Icon size */
+    height: 24px;
+    margin-right: 8px; /* Space between icon and count */
+}
 
 .count-text {
     display: inline; /* Pastikan teks muncul */
@@ -378,6 +378,44 @@ overflow: hidden;
     display: inline-block; /* Pastikan gambar muncul */
     vertical-align: middle; /* Agar sejalan dengan teks */
 }
+.count-container h4 {
+    font-size: 100px
+    color: orange;
+    font-family: 'Lato', sans-serif;
+    margin: 10px;
+}
+.count-container > div {
+    display: none; /* Sembunyikan semua loc-type pada awalnya */
+}
+/* Heading style for all loc_type sections */
+
+
+/* Toggle button styles */
+.toggle-count-container {
+    position: absolute;
+    top: 305px; /* Adjust position to center as needed */
+    left: 30px;
+    transform: translateX(-50%); /* Center horizontally */
+    width: 40px; /* Set width of the toggle button */
+    height: 40px; /* Set height of the toggle button */
+    background: url('icons/toggle_count.png') no-repeat center center; /* Use the toggle image */
+    background-size: contain; /* Make sure the image fits well */
+    cursor: pointer; /* Change cursor to pointer for better UX */
+    z-index: 1000; /* Make sure it's above other elements */
+}
+.toggle-count-container img {
+    width: 50px; /* Icon size */
+    height: 50px;
+    transition: filter 0.3s ease, border 0.3s ease; /* Smooth transition for filter and border only */
+    box-sizing: border-box; /* Ensures border stays within the image size */
+}
+
+.toggle-count-container.hover img {
+    filter: brightness(1.6); /* Increase brightness on hover */
+    border: 2px solid #02a0c5; /* Add border within image boundaries */
+}
+
+
 
 /* Reset Opacity Button Styles */
 #reset-opacity {
@@ -399,12 +437,9 @@ overflow: hidden;
     display: block; /* Remove space below the image */
 }
 
-#reset-opacity:hover {
-    transform: scale(1.1); /* Zoom effect on hover */
-}
-
-#reset-opacity:focus {
-    outline: 2px solid #889dcb; /* Outline color when focused */
+#reset-opacity img:hover {
+    filter: brightness(1.6); /* Increase brightness */
+    border: 2px solid #02a0c5; /* Add border within image boundaries */
 }
 
 .modal {
@@ -461,9 +496,7 @@ overflow: hidden;
 
 
 
-.count-container > div {
-    display: none; /* Sembunyikan semua loc-type pada awalnya */
-}
+
 
 /* Pop-up background */
 /* Pop-up background */
@@ -528,7 +561,6 @@ overflow: hidden;
 .leaflet-popup-content .popup-desc {
     font-size: 12px; /* Description size */
     color: white; /* Text color */
-    padding: 5px; /* Padding around description */
 }
 
 /* Additional separator inside popup */
@@ -554,6 +586,62 @@ overflow: hidden;
     padding: 8px; /* Padding for button */
     pointer-events: auto; /* Allow interaction with the button */
 }
+.copyButton {
+    background: rgba(10, 28, 61, 0.883);
+    color: white;
+    border: 2px solid #889dcb;
+    border-radius: 5px;
+    padding: 5px 5px;
+    font-size: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 5px; /* Lebih dekat ke deskripsi */
+}
+
+.copyButton:hover {
+    transform: scale(0.95);
+}
+
+.copyButton:active {
+    background-color: #028c9a;
+    transform: scale(0.95);
+}
+
+.copy-buttons {
+    display: row;
+    gap: 5px;
+    margin-top: -20px; /* Atur jarak antara deskripsi dan tombol */
+    margin-bottom: 5px;
+}
+.copy-feedback {
+    display: none; /* Sembunyikan secara default */
+    background-color: rgba(10, 28, 61, 0.883);
+    border: 2px solid #028c9a;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    position: absolute; /* Posisi relatif terhadap parent */
+    top: 50%; /* Atur posisi di atas tombol */
+    left: 50%; /* Posisikan di tengah */
+    transform: translateX(-50%); /* Sesuaikan posisi ke tengah */
+    transition: opacity 0.5s ease;
+    opacity: 0; /* Sembunyikan secara default */
+    z-index: 1300; /* Pastikan berada di atas elemen lain */
+    display: flex; /* Gunakan flex untuk menyusun ikon dan teks */
+    align-items: center; /* Rata tengah secara vertikal */
+}
+
+.feedback-icon {
+    width: 50px; /* Ukuran ikon */
+    height: 50px; /* Ukuran ikon */
+    margin-right: 5px; /* Spasi antara ikon dan teks */
+}
+
+.copy-feedback.show {
+    display: flex; /* Tampilkan dengan flex saat diperlukan */
+    opacity: 1; /* Tampilkan dengan efek transisi */
+}
+
 
 /* Play button image size */
 .popup-play-button img {
@@ -730,32 +818,35 @@ overflow: hidden;
 }
 
 .homepage-button-container:active {
-    box-shadow: 0 0 15px 5px rgb(255, 224, 25); /* Active effect */
+    filter: brightness(1.6); /* Increase brightness on hover */
+    border: 2px solid #02a0c5; /* Add border within image boundaries */
 }
 
 .toggle-legend-container, .toggle-new-filters-container {
   position: absolute;
   z-index: 1500;
   cursor: pointer;
-  transition: box-shadow 0.3s ease;
-  top: 10px; /* Position 10px from the bottom */
+  top: 10px; /* Position 10px from the top */
   left: 10px;   /* Position 10px from the left */
 }
 
 .toggle-legend-container + .toggle-new-filters-container {
-  top: 70px; /* Stack the second button 50px above the first one */
-}
-
-.toggle-legend-container:active,
-.toggle-new-filters-container:active {
-  box-shadow: 0 0 15px 5px rgb(255, 224, 25);
+  top: 70px; /* Stack the second button 60px above the first one */
 }
 
 .toggle-legend-container img,
 .toggle-new-filters-container img {
-  width: 50px;
-  height: 50px;
+    width: 50px;
+    height: 50px;
 }
+
+/* Keep hover effect when the class is applied */
+.toggle-legend-container.hover img,
+.toggle-new-filters-container.hover img {
+    filter: brightness(1.6); /* Increase brightness */
+    border: 2px solid #02a0c5; /* Add border within image boundaries */
+}
+
 
 .filter-container,
 .new-filter-container {
@@ -938,20 +1029,27 @@ h5 {
 }
 
 .collect-toggle {
-    position: relative; /* Position relative to keep tooltip aligned */
-    z-index: 1500; /* Ensure toggle is above other elements */
-    cursor: pointer; /* Pointer cursor on hover */
-    transition: box-shadow 0.3s ease; /* Transition for box-shadow */
-    width: 50px; /* Set width of toggle button */
-    height: 50px; /* Set height of toggle button */
-    display: flex; /* Flexbox for centering image */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
+    position: relative;
+    z-index: 1500;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .collect-toggle img {
-    max-width: 100%; /* Ensure the image scales to fit the button */
-    max-height: 100%; /* Ensure the image scales to fit the button */
+    max-width: 100%;
+    max-height: 100%;
+    transition: filter 0.3s ease, border 0.3s ease;
+}
+
+/* Hover effect */
+.collect-toggle.hover-active img {
+    filter: brightness(1.6); /* Increase brightness */
+    border: 2px solid #02a0c5; /* Border within image boundaries */
 }
 
 .collect-tooltip { 
@@ -1249,30 +1347,35 @@ h5 {
     padding: 0;
     background: transparent;
     box-sizing: border-box;
-    font-size: 16px; /* Ukuran font */
-    color: White;
+    font-size: 16px;
+    color: white;
     text-align: center;
-    width: 200px; /* Ukuran tombol */
-    height: 200px; /* Tinggi tombol */
+    width: 200px;
+    height: 200px;
     background-size: cover;
     background-position: center;
-    flex-shrink: 0; /* Mencegah tombol menyusut */
-    scroll-snap-align: center; /* Pusatkan tombol di viewport */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Efek transisi untuk transformasi dan box-shadow */
+    flex-shrink: 0;
+    scroll-snap-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-   .new-filter-container .filter-btn:first-child {
-        margin-left: 200px; /* Margin kiri pada tombol pertama */
-        margin-right: 2px;
-   }
-    .new-filter-container .filter-btn.hover {
-        transform: scale(1.5); /* Perbesar tombol saat hover */
-        box-shadow: 0 0 10px rgba(255, 165, 0, 0.8); /* Efek box-shadow saat hover */
-    }
 
-    .new-filter-container .filter-btn:hover {
-        transform: scale(1.5); /* Perbesar tombol saat hover */
-        box-shadow: 0 0 10px rgba(255, 165, 0, 0.8); /* Efek box-shadow saat hover */
-    }
+.new-filter-container .filter-btn:first-child {
+    margin-left: 200px;
+    margin-right: 2px;
+}
+
+/* Persistent hover effect */
+.new-filter-container .filter-btn.hover-active {
+    transform: scale(1.5);
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
+}
+
+/* Regular hover effect */
+.new-filter-container .filter-btn:hover {
+    transform: scale(1.5);
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
+}
+
 
 .new-filter-container .filter-btn img {
     width: 100%;
@@ -1327,7 +1430,8 @@ h5 {
         color: white;
         border-radius: 10px;
         border: 2px solid #889dcb;
-        padding: 7px;
+        padding: 5px;
+        margin-right: 140px;
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
         display: flex;
         flex-direction: row;
@@ -1337,6 +1441,12 @@ h5 {
         flex-wrap: nowrap;  /* Mencegah item berbaris ke bawah */
         overflow-x: auto;   /* Menambahkan scroll horizontal jika item terlalu banyak */
     }
+.count-container h4 {
+    color: orange;
+    font-family: 'Lato', sans-serif;
+    text-align: center;
+    margin: 10px;
+}
 .trakteer-overlay {
   position: fixed;
   bottom: 20px;
