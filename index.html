@@ -33,7 +33,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100&display=swap" rel="stylesheet">
     
-    <link href="app.css?v=3.3" rel="stylesheet" type="text/css">
+    <link href="app.css?v=3.5" rel="stylesheet" type="text/css">
 
     <!-- Leaflet for maps -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -56,18 +56,18 @@
         <span class="close">&times;</span>
 
         <h4>BIG UPDATE</h4>
-        <p>VERSION 5.0- NOVEMBER 2024</p>
+        <p>VERSION 5.3- NOVEMBER 2024</p>
         <ul>
             <li><b>NEW BUTTON AND MORE OPTIMIZE UI</b></li>
             <li>Fix Donated Close Button</li>
             <li>Update <b>COPY COORDINATE</b></li>
             <li>Show Contribute ID Name And Image Location</li>
-            
+            <li>Upload Image</li>
             <li>
                 We Add <b>NEW BUTTON</b>:</li>
                 <span>
     <img src="icons/home.png" alt="Home" style="width: 20px; vertical-align: middle; display: inline-block;">⬅Found More Tips Here
-    <img src="icons/count_toggle.png" alt="Icon Wood" style="width: 20px; vertical-align: middle; display: inline-block;">
+    <img src="icons/count_toggle.png" alt="Icon Wood" style="width: 20px; vertical-align: middle; display: inline-block;"> ⬅ Hide Calculate Marker
 
             </span>
         </ul>
@@ -554,9 +554,12 @@
 <div id="map"></div>
 </div>
 <script src="minimap_config.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>
+  eruda.init();
+</script>
 <script src="category.js"></script>
-<script src="app.js?v=3.3"></script>
+<script src="app.js?v=3.5"></script>
 </body>
 
 

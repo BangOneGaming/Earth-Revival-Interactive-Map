@@ -1228,7 +1228,7 @@ function setupMarkerInteractions(marker, location, key) {
     const zCoord = coordMatch ? coordMatch[2] : null;
 
     let imageInfoContent = '';
-    let showImageButton = ''; // Placeholder for the Show Image button HTML
+    let showImageButton = '';
 
     if (location.images_info && location.images_info !== "0" && location.images_info !== "[]") {
         try {
@@ -1241,98 +1241,355 @@ function setupMarkerInteractions(marker, location, key) {
         } catch (error) {
             console.warn("Error parsing images_info JSON:", error);
         }
+    } else {
+        // Fetch image only when popup opens, if images_info is empty
+        marker.on('popupopen', () => {
+            fetch("https://autumn-dream-8c07.square-spon.workers.dev/ER_Image")
+                .then(response => response.json())
+                .then(data => {
+                    const markerData = data[key];
+                    if (markerData && markerData.image) {
+                        const base64Image = markerData.image;
+                        const username = markerData.username;
+
+                        imageInfoContent = `
+                            <div style="position: relative; width: 100%; height: auto;">
+                                <img src="${base64Image}" alt="Base64 Image" class="popup-image-info" style="width: 100%; height: auto; border-radius: 4px;">
+                                <div style="position: absolute; bottom: 1px; left: 0; width: 100%; color: white; background-color: rgba(0, 0, 0, 0.5); text-align: center; font-size: 14px;">
+                                    ${username}
+                                </div>
+                            </div>`;
+                        marker.getPopup().setContent(createPopupContent()); // Update the popup content
+                    }
+                })
+                .catch(() => {
+                    // Silently handle fetch errors if marker ID does not exist in endpoint
+                });
+        });
     }
 
     const showYsId = location.ys_id && location.ys_id !== "0";
 
-    const contentString = `
-        <div class="leaflet-popup-content">
-            <h4 class="popup-title">${location.en_name}</h4>
-            <p class="popup-description">
-                ${(location.desc || 'No description available.').replace(/\n/g, '<br>')}
-            </p>
-            ${xCoord && zCoord ? `
-                <div class="copy-buttons">
-                    <button class="copyButton" onclick="copyToClipboard('${xCoord}', event)">
-                        Copy X
-                    </button>
-                    <button class="copyButton" onclick="copyToClipboard('${zCoord}', event)">
-                        Copy Z
-                    </button>
+    function createPopupContent() {
+        return `
+            <div class="leaflet-popup-content">
+                <h4 class="popup-title">${location.en_name}</h4>
+                <p class="popup-description">
+                    ${(location.desc || 'No description available.').replace(/\n/g, '<br>')}
+                </p>
+                ${xCoord && zCoord ? `
+                    <div class="copy-buttons">
+                        <button class="copyButton" onclick="copyToClipboard('${xCoord}', event)">Copy Coordinates X</button>
+                        <button class="copyButton" onclick="copyToClipboard('${zCoord}', event)">Copy Coordinates Z</button>
+                    </div>
+                ` : ''}
+                <div id="copyFeedback" class="copy-feedback" style="display: none;">
+                    <img src="icons/bangone.png" alt="Feedback Icon" class="feedback-icon">
+                    <span>Copied to clipboard!</span>
                 </div>
-            ` : ''}
-            <div id="copyFeedback" class="copy-feedback" style="display: none;">
-                <img src="icons/bangone.png" alt="Feedback Icon" class="feedback-icon">
-                <span>Copied to clipboard!</span>
+                ${thumbnailUrl ? `
+                    <div class="popup-thumbnail">
+                        <img src="${thumbnailUrl}" alt="YouTube Thumbnail" style="width: auto; height: 200px; border-radius: 4px;">
+                        <a href="${location.links_info}" target="_blank" class="popup-play-button">
+                            <img src="https://img.icons8.com/material-outlined/24/ffffff/play.png" alt="Play">
+                        </a>
+                    </div>
+                ` : ''}
+                ${showImageButton ? `
+                    <button class="showImageButton" onclick="toggleImageVisibility(this)" style="background: none; border: none; color: #028c9a; font-size: 12px; cursor: pointer;">
+                        <b>Show Image</b>
+                    </button>
+                ` : ''}
+                ${imageInfoContent}
+                ${showYsId ? `<p class="popup-ys-id">YS ID: ${location.ys_id}</p>` : ''}
+                <button class="reportButton" data-id="${key}" style="background: none; border: none; color: red; font-size: 12px; cursor: pointer;">Report</button>
+                ${!imageInfoContent ? `<button class="uploadImageButton" onclick="openImageFormPopup('${key}')" style="background: none; border: none; color: #FFD700; font-size: 12px; cursor: pointer;"><b>Upload Screenshot Location</b></button>` : ''}
             </div>
-            ${thumbnailUrl ? `
-                <div class="popup-thumbnail">
-                    <img src="${thumbnailUrl}" alt="YouTube Thumbnail" style="width: auto; height: 200px; border-radius: 4px;">
-                    <a href="${location.links_info}" target="_blank" class="popup-play-button">
-                        <img src="https://img.icons8.com/material-outlined/24/ffffff/play.png" alt="Play">
-                    </a>
-                </div>
-            ` : ''}
-            ${showImageButton ? `
-            <button class="showImageButton" onclick="toggleImageVisibility(this)" style="background: none; border: none; color: #028c9a; font-size: 12px; cursor: pointer;">
-                <b>Show Image</b>
-            </button>
-        ` : ''}
-            ${imageInfoContent} <!-- Gambar yang disembunyikan secara default -->
-            ${showYsId ? `<p class="popup-ys-id">YS ID: ${location.ys_id}</p>` : ''}
-            <button class="reportButton" data-id="${key}" style="background: none; border: none; color: red; font-size: 12px; cursor: pointer;">Report</button>
-        </div>
-    `;
-
-    marker.bindPopup(contentString, { offset: L.point(0, -20) });
-
-marker.on('contextmenu', (e) => {
-    const currentOpacity = marker.options.opacity || 1.0;
-    const newOpacity = currentOpacity === 1.0 ? 0.5 : 1.0;
-
-    console.log(`Changing opacity for marker ${marker.options.id}: from ${currentOpacity} to ${newOpacity}`);
-
-    if (currentOpacity === 0.5) {
-        // Decrease count when changing from 0.5 to 1
-        updateCategoryCounts(marker.options.loc_type, marker.options.category, newOpacity);
-    } else {
-        // Increase count when changing to 0.5
-        updateCategoryCounts(marker.options.loc_type, marker.options.category, newOpacity);
+        `;
     }
 
-    // Set the new opacity
-    marker.setOpacity(newOpacity);
-    saveMarkerOpacity(marker.options.id, newOpacity);
+    marker.bindPopup(createPopupContent(), { offset: L.point(0, -20) });
 
-    updateCategoryDisplay(marker.options.loc_type);
-});
 
+    marker.on('contextmenu', (e) => {
+        const currentOpacity = marker.options.opacity || 1.0;
+        const newOpacity = currentOpacity === 1.0 ? 0.5 : 1.0;
+
+        console.log(`Changing opacity for marker ${marker.options.id}: from ${currentOpacity} to ${newOpacity}`);
+
+        if (currentOpacity === 0.5) {
+            updateCategoryCounts(marker.options.loc_type, marker.options.category, newOpacity);
+        } else {
+            updateCategoryCounts(marker.options.loc_type, marker.options.category, newOpacity);
+        }
+
+        marker.setOpacity(newOpacity);
+        saveMarkerOpacity(marker.options.id, newOpacity);
+        updateCategoryDisplay(marker.options.loc_type);
+    });
 
     marker.on('popupopen', () => {
         console.log('Popup opened for marker:', marker.options.id);
         setupReportButton(marker, key);
 
-        // Show tip only on first touch for this marker
         if (!markTipShown) {
             setTimeout(() => {
                 showMarkTip(marker);
-            }, 2000); // 2-second delay before showing the tip
-            markTipShown = true; // Set the flag to prevent showing tip again
+            }, 2000);
+            markTipShown = true;
         }
     });
 
-    // Hide mark tip on clicking outside the marker popup or when a different marker is touched
     map.on('click', function(event) {
         if (marker.getPopup().isOpen()) {
-            marker.closePopup(); // Close the popup if it's open
-            markTipShown = false; // Reset the tip shown flag
+            marker.closePopup();
+            markTipShown = false;
             removeCurrentMarkTip();
         } else {
-            // Hide tip if clicking on a different marker
             removeCurrentMarkTip();
         }
     });
 }
+function openImageFormPopup(markerId) {
+    console.log('Creating form popup for marker:', markerId);
+
+    const formHtml = `
+        <div id="send-image" class="popup-form">
+            <form id="send-image-form" onsubmit="submitImageForm('${markerId}'); return false;">
+                <h6>Upload Your Image and In Game Name</h6>
+                <label for="username">Your In Game Name:</label>
+                <input type="text" id="username" name="username" required placeholder="Enter your in game name">
+
+                <label for="imageUpload">Upload Image:</label>
+                <input type="file" id="imageUpload" name="imageUpload" accept="image/*" onchange="handleImageUpload(this, '${markerId}')">
+
+                <div id="PreviewContainer"></div> <!-- Image preview container -->
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    `;
+
+    const popupContainer = document.createElement("div");
+    popupContainer.setAttribute("id", "popupContainer");
+    popupContainer.innerHTML = formHtml;
+    document.body.appendChild(popupContainer);
+
+    console.log('Form popup appended to body');
+}
+
+// Menangani double klik di luar form untuk menutup popup
+function handleOutsideDoubleClick(event) {
+    const formContainer = document.getElementById('send-image');
+    const popupContainer = document.getElementById('popupContainer');
+    
+    // Menutup form jika double klik di luar form
+    if (formContainer && !formContainer.contains(event.target) && !popupContainer.contains(event.target)) {
+        closePopup();
+    }
+}
+
+// Menambahkan event listener untuk menangani double click di luar form
+document.addEventListener('dblclick', function(event) {
+    handleOutsideDoubleClick(event);
+});
+
+// Fungsi untuk menutup popup
+function closePopup() {
+    const popupContainer = document.getElementById('popupContainer');
+    if (popupContainer) {
+        document.body.removeChild(popupContainer); // Hapus popup dari body
+    }
+}
+
+
+// Fungsi untuk submit gambar dan data user ke server
+function submitImageForm(markerId) {
+    const username = document.getElementById('username').value;
+    const input = document.getElementById('imageUpload');
+    const base64String = input.getAttribute("data-base64");
+
+    if (base64String && username) {
+        // Langkah 1: Ambil data yang sudah ada dari endpoint menggunakan GET
+        fetch("https://autumn-dream-8c07.square-spon.workers.dev/ER_Image", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => response.json())
+        .then(existingData => {
+            // Langkah 2: Siapkan data baru dari form
+            const newMarkerData = {
+                id: markerId,      // ID dari marker aktif yang terkait
+                username: username, // Nama pengguna yang diinputkan
+                image: base64String // Gambar dalam format base64
+            };
+
+            // Gabungkan data baru dengan data lama
+            existingData[markerId] = newMarkerData;
+
+            // Langkah 3: Kirim data gabungan ke server dengan metode PUT
+            return fetch("https://autumn-dream-8c07.square-spon.workers.dev/ER_Image", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(existingData)
+            });
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Image and Username uploaded successfully!");
+                document.getElementById('send-image').remove();  // Tutup pop-up form
+            } else {
+                alert("Failed to upload image.");
+            }
+        })
+        .catch(error => {
+            console.error("Error uploading image:", error);
+            alert("Error uploading image.");
+        });
+    } else {
+        alert("Please complete all fields.");
+    }
+}
+// Fungsi untuk reset form saat map ditutup (misalnya)
+function resetFormOnMapClose() {
+    const formContainer = document.getElementById('send-image');
+    if (formContainer) {
+        formContainer.reset(); // Mereset form
+        document.getElementById('username').value = document.getElementById('username').value; // Tetap mempertahankan username
+    }
+}
+document.getElementById('imageUpload').addEventListener('paste', handlePasteImage);
+
+function handlePasteImage(event) {
+    const clipboardData = event.clipboardData || window.clipboardData;
+    const items = clipboardData.items;
+    
+    // Cek apakah ada item bertipe gambar
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+
+        if (item.type.indexOf("image") !== -1) {
+            const blob = item.getAsFile();
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                // Tampilkan gambar yang di-paste di preview
+                const PreviewContainer = document.getElementById("PreviewContainer");
+                PreviewContainer.innerHTML = ''; // Hapus preview sebelumnya
+                const imgElement = document.createElement("img");
+                imgElement.src = e.target.result; // Gambar hasil paste
+                imgElement.classList.add("image-preview");
+                PreviewContainer.appendChild(imgElement);
+
+                // Simpan data base64 untuk pengiriman nanti
+                document.getElementById('imageUpload').setAttribute("data-base64", e.target.result);
+            };
+
+            reader.readAsDataURL(blob);
+        }
+    }
+}
+
+// Fungsi untuk menangani upload gambar
+function handleImageUpload(input, markerId) {
+    const file = input.files[0];
+    const PreviewContainer = document.getElementById("PreviewContainer");
+    const imageUploadInput = document.getElementById("imageUpload");
+
+    if (file) {
+        // Clear previous preview
+        PreviewContainer.innerHTML = '';
+
+        // Check if file is an image
+        if (!file.type.startsWith('image/')) {
+            alert("Please upload a valid image file.");
+            return;
+        }
+
+        // Hide the file input after the file is selected
+        imageUploadInput.style.display = 'none';
+
+        // Show a loading indicator
+        const loadingIndicator = document.createElement("div");
+        loadingIndicator.classList.add('loading-indicator');
+        loadingIndicator.innerText = "Loading...";
+        PreviewContainer.appendChild(loadingIndicator);
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // Clear the loading indicator after image is loaded
+            PreviewContainer.innerHTML = '';
+
+            // Create an image element for preview
+            const imgElement = document.createElement("img");
+            imgElement.src = e.target.result;
+            imgElement.classList.add("image-preview");  // Optionally add a class for styling
+
+            // Add the image to the container
+            PreviewContainer.appendChild(imgElement);
+        };
+        reader.readAsDataURL(file);
+    } else {
+        console.log("No file selected.");
+    }
+}
+
+// Fungsi untuk submit gambar dan data user ke server
+function submitImageForm(markerId) {
+    const username = document.getElementById('username').value;
+    const input = document.getElementById('imageUpload');
+    const base64String = input.getAttribute("data-base64");
+
+    if (base64String && username) {
+        // Langkah 1: Ambil data yang sudah ada dari endpoint menggunakan GET
+        fetch("https://autumn-dream-8c07.square-spon.workers.dev/ER_Image", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => response.json())
+        .then(existingData => {
+            // Langkah 2: Siapkan data baru dari form
+            const newMarkerData = {
+                id: markerId,      // ID dari marker aktif yang terkait
+                username: username, // Nama pengguna yang diinputkan
+                image: base64String // Gambar dalam format base64
+            };
+
+            // Gabungkan data baru dengan data lama
+            existingData[markerId] = newMarkerData;
+
+            // Langkah 3: Kirim data gabungan ke server dengan metode PUT
+            return fetch("https://autumn-dream-8c07.square-spon.workers.dev/ER_Image", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(existingData)
+            });
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Image and Username uploaded successfully!");
+                closePopup();  // Tutup pop-up form
+            } else {
+                alert("Failed to upload image.");
+            }
+        })
+        .catch(error => {
+            console.error("Error uploading image:", error);
+            alert("Error uploading image.");
+        });
+    } else {
+        alert("Please complete all fields.");
+    }
+}
+
 // Fungsi JavaScript untuk toggle visibilitas gambar dan mengubah teks tombol
 function toggleImageVisibility(button) {
     const image = button.nextElementSibling; // Mendapatkan elemen gambar setelah tombol
@@ -1346,16 +1603,24 @@ function toggleImageVisibility(button) {
 }
 // Fungsi untuk menyalin teks ke clipboard
 function copyToClipboard(text, event) {
-    const button = event.target; // Ambil tombol yang ditekan
-    const feedback = button.closest('.leaflet-popup-content').querySelector('#copyFeedback'); // Ambil elemen feedback
+    const button = event.target; // Get the button that was pressed
+    const feedback = button.closest('.leaflet-popup-content').querySelector('#copyFeedback'); // Find the feedback element
+    const isXCoord = button.innerText.includes('X'); // Check if the button text includes 'X'
+    const isZCoord = button.innerText.includes('Z'); // Check if the button text includes 'Z'
+
+    // Set dynamic feedback message based on button
+    const feedbackMessage = isXCoord ? 'Coordinates X Copied' : isZCoord ? 'Coordinates Z Copied' : 'Copied to clipboard!';
+
+    // Update feedback text
+    feedback.querySelector('span').innerText = feedbackMessage; 
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).then(() => {
-            feedback.classList.add('show'); // Tampilkan pesan
-            feedback.style.display = 'flex'; // Tampilkan feedback
+            feedback.classList.add('show'); // Show feedback
+            feedback.style.display = 'flex'; // Display feedback
             setTimeout(() => {
-                feedback.classList.remove('show'); // Hapus setelah 2 detik
-                feedback.style.display = 'none'; // Sembunyikan lagi
+                feedback.classList.remove('show'); // Remove feedback after 2 seconds
+                feedback.style.display = 'none'; // Hide feedback
             }, 2000);
         }).catch(err => {
             console.error('Failed to copy: ', err);
@@ -1369,11 +1634,11 @@ function copyToClipboard(text, event) {
         textArea.select();
         try {
             document.execCommand('copy');
-            feedback.classList.add('show'); // Tampilkan pesan
-            feedback.style.display = 'flex'; // Tampilkan feedback
+            feedback.classList.add('show'); // Show feedback
+            feedback.style.display = 'flex'; // Display feedback
             setTimeout(() => {
-                feedback.classList.remove('show'); // Hapus setelah 2 detik
-                feedback.style.display = 'none'; // Sembunyikan lagi
+                feedback.classList.remove('show'); // Remove feedback after 2 seconds
+                feedback.style.display = 'none'; // Hide feedback
             }, 2000);
         } catch (err) {
             console.error('Fallback: Failed to copy', err);

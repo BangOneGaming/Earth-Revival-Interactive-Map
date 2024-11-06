@@ -591,11 +591,11 @@ overflow: hidden;
     color: white;
     border: 2px solid #889dcb;
     border-radius: 5px;
-    padding: 5px 5px;
-    font-size: 8px;
+    padding: 5px 10px;
+    font-size: 10px;
     cursor: pointer;
     transition: background-color 0.2s ease;
-    margin-top: 5px; /* Lebih dekat ke deskripsi */
+    margin: 15px 0px 10px 0px; /* Lebih dekat ke deskripsi */
 }
 
 .copyButton:hover {
@@ -641,12 +641,82 @@ overflow: hidden;
     display: flex; /* Tampilkan dengan flex saat diperlukan */
     opacity: 1; /* Tampilkan dengan efek transisi */
 }
+/* Popup Form Styles */
+.popup-form {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(19, 39, 96, 0.613);
+    color: white;
+    border-radius: 10px;
+    border: 2px solid #889dcb;
+    padding: 5px;
+    margin: 5px 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+    z-index: 1000;
+    font-family: Arial, sans-serif;
+}
+
+/* Header in the Form */
+.popup-form h6 {
+    color: orange;
+    font-family: 'Lato', sans-serif;
+    text-align: center;
+    z-index: 2000px;
+    font-size: 30px;
+}
+
+/* Label Styles */
+.popup-form label {
+    color: #ffffff;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Input Field Styles */
+.popup-form input[type="text"],
+.popup-form input[type="file"] {
+    padding: 8px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #889dcb;
+}
+
+#PreviewContainer {
+    margin-top: 10px;
+    text-align: center;
+}
+
+#PreviewContainer img {
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+#PreviewContainer .loading-indicator {
+    font-size: 16px;
+    color: #02a0c5;
+    font-weight: bold;
+}
 
 
-/* Play button image size */
-.popup-play-button img {
-    width: 24px; /* Image width */
-    height: 24px; /* Image height */
+/* Submit Button Styles */
+.popup-form button {
+    background: #02a0c5;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+/* Hover Effect for Submit Button */
+.popup-form button:hover {
+    background: #028c9a;
 }
 
 
@@ -807,7 +877,7 @@ overflow: hidden;
     top: 275px; /* Center vertically */
     left: 10px; /* Position from the left edge */
     transform: translateY(-50%); /* Adjust to truly center vertically */
-    z-index: 1200; /* Ensure it appears above the map */
+    z-index: 900; /* Ensure it appears above the map */
     cursor: pointer; /* Change cursor on hover */
     transition: box-shadow 0.3s ease; /* Transition effect */
 }
