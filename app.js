@@ -1218,7 +1218,6 @@ function getVideoIdFromUrl(url) {
     const matches = url.match(regex);
     return matches ? matches[1] : null;
 }
-
 function setupMarkerInteractions(marker, location, key) {
     const videoId = getVideoIdFromUrl(location.links_info);
     const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : '';
@@ -1270,6 +1269,7 @@ function setupMarkerInteractions(marker, location, key) {
 
     const showYsId = location.ys_id && location.ys_id !== "0";
 
+
     function createPopupContent() {
         return `
             <div class="leaflet-popup-content">
@@ -1309,6 +1309,26 @@ function setupMarkerInteractions(marker, location, key) {
     }
 
     marker.bindPopup(createPopupContent(), { offset: L.point(0, -20) });
+
+// Event to show equator lines when popup is opened
+marker.on('popupopen', () => {
+    marker.getElement().classList.add('active');
+    showEquatorLines(marker); // Show equator lines when popup is open
+    console.log(`Equator lines triggered for marker: ${marker.options.id}`);
+});
+
+// Event to remove equator lines when popup is closed
+marker.on('popupclose', () => {
+    marker.getElement().classList.remove('active');
+    
+    // Remove all parts of the equator lines from the map container
+    const equatorLines = document.querySelectorAll('.equator-line');
+    
+    // Remove all equator lines (both horizontal and vertical parts)
+    equatorLines.forEach(line => line.remove());
+
+    console.log(`Equator lines removed for marker: ${marker.options.id}`);
+});
 
 
     marker.on('contextmenu', (e) => {
@@ -1350,20 +1370,26 @@ function setupMarkerInteractions(marker, location, key) {
         }
     });
 }
+
+// Open the image form popup
 function openImageFormPopup(markerId) {
     console.log('Creating form popup for marker:', markerId);
 
     const formHtml = `
         <div id="send-image" class="popup-form">
             <form id="send-image-form" onsubmit="submitImageForm('${markerId}'); return false;">
-                <h6>Upload Your Image and In Game Name</h6>
+                <h6>Upload Your Image</h6>
                 <label for="username">Your In Game Name:</label>
                 <input type="text" id="username" name="username" required placeholder="Enter your in game name">
 
-                <label for="imageUpload">Upload Image:</label>
-                <input type="file" id="imageUpload" name="imageUpload" accept="image/*" onchange="handleImageUpload(this, '${markerId}')">
+                <!-- Drop Area for Drag-and-Drop and Paste Upload -->
+                <div id="dropArea" class="drop-area">
+                    <p>Drag & drop an image here, click to upload, or paste an image</p>
+                    <input type="file" id="imageUpload" name="imageUpload" accept="image/*" 
+                           onchange="handleImageUpload(this, '${markerId}')">
+                </div>
 
-                <div id="PreviewContainer"></div> <!-- Image preview container -->
+                <div id="PreviewContainer" class="preview-container" style="display:none;"></div> <!-- Hidden Preview Container -->
 
                 <button type="submit">Submit</button>
             </form>
@@ -1375,8 +1401,315 @@ function openImageFormPopup(markerId) {
     popupContainer.innerHTML = formHtml;
     document.body.appendChild(popupContainer);
 
+    const dropArea = document.getElementById("dropArea");
+    const imageUploadInput = document.getElementById("imageUpload");
+
+    // Drag-and-drop highlight effects
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight'), false);
+    });
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'), false);
+    });
+
+    // Handle click to trigger file input for image upload
+    dropArea.addEventListener('click', () => {
+        imageUploadInput.click();  // Directly trigger file input click
+    });
+
+    // Handle image paste events
+    document.addEventListener('paste', (e) => {
+        const items = e.clipboardData.items;
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            if (item.type.indexOf("image") !== -1) {
+                const blob = item.getAsFile();
+                processImageFile(blob);
+            }
+        }
+    });
+
     console.log('Form popup appended to body');
 }
+
+// Prevent default behavior for drag-and-drop events
+function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+}
+// Open the image form popup for markerId
+function openImageFormPopup(markerId) {
+    console.log('Creating form popup for marker:', markerId);
+
+    const isMobile = window.innerWidth <= 768; // Deteksi perangkat mobile
+
+    const formHtml = `
+        <div id="send-image" class="popup-form">
+            <form id="send-image-form" onsubmit="submitImageForm('${markerId}'); return false;">
+                <h6>Upload Your Image</h6>
+                <label for="username">Your In Game Name:</label>
+                <input type="text" id="username" name="username" required placeholder="Enter your in game name">
+
+                <!-- Drop Area for Drag-and-Drop and Paste Upload (only for non-mobile devices) -->
+                ${isMobile ? '' : `
+                <div id="dropArea" class="drop-area">
+                    <p>Drag & drop an image here, click to upload, or paste an image</p>
+                    <input type="file" id="imageUpload" name="imageUpload" accept="image/*" 
+                           onchange="handleImageUpload(this, '${markerId}')">
+                </div>`}
+
+                <!-- Input file (always visible for mobile devices) -->
+                ${isMobile ? `
+                <div id="mobileFileInput" class="mobile-file-input">
+                    <label for="imageUploadMobile">Select an image</label>
+                    <input type="file" id="imageUploadMobile" name="imageUpload" accept="image/*" 
+                           onchange="handleImageUpload(this, '${markerId}')">
+                </div>` : ''}
+
+                <div id="PreviewContainer" class="preview-container" style="display:none;"></div> <!-- Hidden Preview Container -->
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    `;
+
+    const popupContainer = document.createElement("div");
+    popupContainer.setAttribute("id", "popupContainer");
+    popupContainer.innerHTML = formHtml;
+    document.body.appendChild(popupContainer);
+
+    if (!isMobile) {
+        const dropArea = document.getElementById("dropArea");
+        const imageUploadInput = document.getElementById("imageUpload");
+
+        // Drag-and-drop highlight effects
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight'), false);
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'), false);
+        });
+
+        // Handle click to trigger file input for image upload
+        dropArea.addEventListener('click', () => {
+            imageUploadInput.click();  // Directly trigger file input click
+        });
+
+        // Handle image paste events
+        document.addEventListener('paste', (e) => {
+            const items = e.clipboardData.items;
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                if (item.type.indexOf("image") !== -1) {
+                    const blob = item.getAsFile();
+                    processImageFile(blob);
+                }
+            }
+        });
+    }
+
+    console.log('Form popup appended to body');
+}
+
+// Prevent default behavior for drag-and-drop events
+function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+}
+
+
+function handleImageUpload(input, markerId) {
+    const file = input.files[0] || input;  // Get the file, either from input or drag-and-drop
+    const PreviewContainer = document.getElementById("PreviewContainer");
+    const dropArea = document.getElementById("dropArea");
+
+    if (file) {
+        console.log("File selected:", file);
+
+        // Clear previous preview
+        PreviewContainer.innerHTML = '';
+        console.log("Cleared previous preview");
+
+        // Ensure the file is an image
+        if (!file.type.startsWith('image/')) {
+            console.log("Invalid file type:", file.type);
+            alert("Please upload a valid image file.");
+            return;
+        }
+
+        // Use FileReader to read and preview the image
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            console.log("FileReader loaded the image");
+
+            // Create an img element to show the preview
+            const imgElement = document.createElement("img");
+            imgElement.src = e.target.result;
+            imgElement.classList.add("image-preview");
+
+            // Append the image to the preview container
+            PreviewContainer.appendChild(imgElement);
+            console.log("Appended image preview to container");
+
+            // Save the base64 image for submission
+            input.setAttribute("data-base64", e.target.result);
+            console.log("Saved base64 data to input");
+
+            // Show the preview container
+            PreviewContainer.style.display = "block";
+            console.log("Preview container displayed");
+
+            // Hide drop area once an image is uploaded
+            if (dropArea) {
+                dropArea.style.display = "none";
+                console.log("Drop area hidden");
+            }
+        };
+        reader.readAsDataURL(file); // Read file as base64
+        console.log("Reading file as base64 with FileReader");
+    } else {
+        console.log("No file selected.");
+    }
+}
+
+// Function to process images dropped or pasted
+function processImageFile(file) {
+    const PreviewContainer = document.getElementById("PreviewContainer");
+    const imageUploadInput = document.getElementById("imageUpload");
+
+    if (file) {
+        // Clear previous preview
+        PreviewContainer.innerHTML = '';
+
+        // Ensure the file is an image
+        if (!file.type.startsWith('image/')) {
+            alert("Please upload a valid image file.");
+            return;
+        }
+
+        // Display loading indicator
+        const loadingIndicator = document.createElement("div");
+        loadingIndicator.classList.add('loading-indicator');
+        loadingIndicator.innerText = "Loading...";
+        PreviewContainer.appendChild(loadingIndicator);
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // Clear the loading indicator once the image is loaded
+            PreviewContainer.innerHTML = '';
+
+            // Create img element to show the preview
+            const imgElement = document.createElement("img");
+            imgElement.src = e.target.result;
+            imgElement.classList.add("image-preview");
+
+            // Append image to preview container
+            PreviewContainer.appendChild(imgElement);
+
+            // Save base64 image to input for submission
+            imageUploadInput.setAttribute("data-base64", e.target.result);
+
+            // Show the preview container
+            PreviewContainer.style.display = "block";
+
+            // Hide drop area once an image is processed
+            const dropArea = document.getElementById("dropArea");
+            if (dropArea) {
+                dropArea.style.display = "none"; // Hide drop area after the image is uploaded
+            }
+        };
+        reader.readAsDataURL(file); // Read file as base64
+    } else {
+        console.log("No file selected.");
+    }
+}
+
+
+// Submit form when the submit button is clicked
+function submitImageForm(markerId) {
+    const username = document.getElementById('username').value;
+    const input = document.getElementById('imageUpload');
+    let base64String = input.getAttribute("data-base64");
+
+    // Check if base64 string is empty and if the file input has a selected file
+    if (!base64String && input.files.length > 0) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            base64String = e.target.result;
+            handleSubmit(markerId, username, base64String);
+        };
+        reader.readAsDataURL(file); // Read file as base64
+    } else {
+        handleSubmit(markerId, username, base64String);
+    }
+}
+
+// Handle the final submission after preview
+function handleSubmit(markerId, username, base64String) {
+    if (base64String && username) {
+        // Display preview if base64 string is valid
+        const PreviewContainer = document.getElementById("PreviewContainer");
+        if (PreviewContainer && base64String) {
+            const imgElement = document.createElement("img");
+            imgElement.src = base64String;
+            imgElement.classList.add("image-preview");
+            PreviewContainer.innerHTML = ''; // Clear old preview
+            PreviewContainer.appendChild(imgElement); // Add new preview
+            PreviewContainer.style.display = "block"; // Ensure preview is displayed
+        }
+
+        // Fetch existing data from endpoint
+        fetch("https://autumn-dream-8c07.square-spon.workers.dev/ER_Image", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => response.json())
+        .then(existingData => {
+            // Prepare new marker data
+            const newMarkerData = {
+                id: markerId,
+                username: username,
+                image: base64String
+            };
+            // Tambahkan data marker baru ke data yang ada
+            existingData[markerId] = newMarkerData;
+
+            // Update data dengan mengirimkan data yang telah dimodifikasi
+            return fetch("https://autumn-dream-8c07.square-spon.workers.dev/ER_Image", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(existingData)
+            });
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("THANKS FOR SUBMIT YOUR SCREENSHOT");
+                closePopup(); // Tutup popup setelah berhasil
+            } else {
+                alert("Failed to upload image.");
+            }
+        })
+        .catch(error => {
+            console.error("Error uploading image:", error);
+            alert("Error uploading image.");
+        });
+    } else {
+        alert("Please complete all fields.");
+        console.warn("Missing data - Username:", username, "Base64:", base64String);
+    }
+}
+
 
 // Menangani double klik di luar form untuk menutup popup
 function handleOutsideDoubleClick(event) {
@@ -1389,10 +1722,7 @@ function handleOutsideDoubleClick(event) {
     }
 }
 
-// Menambahkan event listener untuk menangani double click di luar form
-document.addEventListener('dblclick', function(event) {
-    handleOutsideDoubleClick(event);
-});
+document.addEventListener('dblclick', handleOutsideDoubleClick);
 
 // Fungsi untuk menutup popup
 function closePopup() {
@@ -1402,58 +1732,6 @@ function closePopup() {
     }
 }
 
-
-// Fungsi untuk submit gambar dan data user ke server
-function submitImageForm(markerId) {
-    const username = document.getElementById('username').value;
-    const input = document.getElementById('imageUpload');
-    const base64String = input.getAttribute("data-base64");
-
-    if (base64String && username) {
-        // Langkah 1: Ambil data yang sudah ada dari endpoint menggunakan GET
-        fetch("https://autumn-dream-8c07.square-spon.workers.dev/ER_Image", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-        .then(response => response.json())
-        .then(existingData => {
-            // Langkah 2: Siapkan data baru dari form
-            const newMarkerData = {
-                id: markerId,      // ID dari marker aktif yang terkait
-                username: username, // Nama pengguna yang diinputkan
-                image: base64String // Gambar dalam format base64
-            };
-
-            // Gabungkan data baru dengan data lama
-            existingData[markerId] = newMarkerData;
-
-            // Langkah 3: Kirim data gabungan ke server dengan metode PUT
-            return fetch("https://autumn-dream-8c07.square-spon.workers.dev/ER_Image", {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(existingData)
-            });
-        })
-        .then(response => {
-            if (response.ok) {
-                alert("Image and Username uploaded successfully!");
-                document.getElementById('send-image').remove();  // Tutup pop-up form
-            } else {
-                alert("Failed to upload image.");
-            }
-        })
-        .catch(error => {
-            console.error("Error uploading image:", error);
-            alert("Error uploading image.");
-        });
-    } else {
-        alert("Please complete all fields.");
-    }
-}
 // Fungsi untuk reset form saat map ditutup (misalnya)
 function resetFormOnMapClose() {
     const formContainer = document.getElementById('send-image');
@@ -1462,133 +1740,93 @@ function resetFormOnMapClose() {
         document.getElementById('username').value = document.getElementById('username').value; // Tetap mempertahankan username
     }
 }
-document.getElementById('imageUpload').addEventListener('paste', handlePasteImage);
 
-function handlePasteImage(event) {
-    const clipboardData = event.clipboardData || window.clipboardData;
-    const items = clipboardData.items;
+function showEquatorLines(marker) {
+    const latlng = marker.getLatLng(); // Get the coordinates of the active marker
     
-    // Cek apakah ada item bertipe gambar
-    for (let i = 0; i < items.length; i++) {
-        const item = items[i];
+    // Only add the lines if they are not already added
+    if (!document.querySelector('.equator-line.horizontal') && !document.querySelector('.equator-line.vertical')) {
+        // Create horizontal and vertical equator lines
+        const horizontalLineLeft = document.createElement('div');
+        horizontalLineLeft.className = 'equator-line horizontal left';
+        
+        const horizontalLineRight = document.createElement('div');
+        horizontalLineRight.className = 'equator-line horizontal right';
+        
+        const verticalLineTop = document.createElement('div');
+        verticalLineTop.className = 'equator-line vertical top';
+        
+        const verticalLineBottom = document.createElement('div');
+        verticalLineBottom.className = 'equator-line vertical bottom';
+        
+        // Append lines to the map container
+        const mapContainer = marker._map.getContainer(); // Get the map container
+        mapContainer.appendChild(horizontalLineLeft);
+        mapContainer.appendChild(horizontalLineRight);
+        mapContainer.appendChild(verticalLineTop);
+        mapContainer.appendChild(verticalLineBottom);
 
-        if (item.type.indexOf("image") !== -1) {
-            const blob = item.getAsFile();
-            const reader = new FileReader();
+        // Position the equator lines based on the marker's coordinates
+        const map = marker._map;  // Get the map object
+        const updateEquatorLinesPosition = () => {
+            const point = map.latLngToContainerPoint(latlng); // Convert latLng to container (screen) coordinates
 
-            reader.onload = function(e) {
-                // Tampilkan gambar yang di-paste di preview
-                const PreviewContainer = document.getElementById("PreviewContainer");
-                PreviewContainer.innerHTML = ''; // Hapus preview sebelumnya
-                const imgElement = document.createElement("img");
-                imgElement.src = e.target.result; // Gambar hasil paste
-                imgElement.classList.add("image-preview");
-                PreviewContainer.appendChild(imgElement);
+            // Position the horizontal equator line on the left (without crossing the center)
+            horizontalLineLeft.style.position = 'absolute';
+            horizontalLineLeft.style.left = `${point.x - 530}px`; // Extend 500px to the left of the marker
+            horizontalLineLeft.style.top = `${point.y - 10}px`; // Position 5px above the marker's vertical position
+            horizontalLineLeft.style.width = '500px'; // Extend to the left
+            horizontalLineLeft.style.height = '0.5px'; // Line thickness
+            horizontalLineLeft.style.backgroundColor = '#ffffff';
+            horizontalLineLeft.style.opacity = 0.8;
+            horizontalLineLeft.style.pointerEvents = 'none'; // Make the line unclickable
+            horizontalLineLeft.style.zIndex = '1000'; // Ensure the line is on top of the map
 
-                // Simpan data base64 untuk pengiriman nanti
-                document.getElementById('imageUpload').setAttribute("data-base64", e.target.result);
-            };
+            // Position the horizontal equator line on the right (without crossing the center)
+            horizontalLineRight.style.position = 'absolute';
+            horizontalLineRight.style.left = `${point.x + 40}px`; // Position 1px to the right of the marker's horizontal position
+            horizontalLineRight.style.top = `${point.y - 10}px`; // Position 5px above the marker's vertical position
+            horizontalLineRight.style.width = '500px'; // Extend to the right
+            horizontalLineRight.style.height = '0.5px'; // Line thickness
+            horizontalLineRight.style.backgroundColor = '#ffffff';
+            horizontalLineRight.style.opacity = 0.8;
+            horizontalLineRight.style.pointerEvents = 'none'; // Make the line unclickable
+            horizontalLineRight.style.zIndex = '1000'; // Ensure the line is on top of the map
 
-            reader.readAsDataURL(blob);
-        }
-    }
-}
+            // Position the vertical equator line on top (without crossing the center)
+            verticalLineTop.style.position = 'absolute';
+            verticalLineTop.style.left = `${point.x - -5}px`; // Position 1px to the left of the marker's horizontal position
+            verticalLineTop.style.top = `${point.y - 540}px`; // Extend 500px upwards from the marker
+            verticalLineTop.style.width = '0.5px'; // Line thickness
+            verticalLineTop.style.height = '500px'; // Extend upwards
+            verticalLineTop.style.backgroundColor = '#ffffff';
+            verticalLineTop.style.opacity = 0.8;
+            verticalLineTop.style.pointerEvents = 'none'; // Make the line unclickable
+            verticalLineTop.style.zIndex = '1000'; // Ensure the line is on top of the map
 
-// Fungsi untuk menangani upload gambar
-function handleImageUpload(input, markerId) {
-    const file = input.files[0];
-    const PreviewContainer = document.getElementById("PreviewContainer");
-    const imageUploadInput = document.getElementById("imageUpload");
-
-    if (file) {
-        // Clear previous preview
-        PreviewContainer.innerHTML = '';
-
-        // Check if file is an image
-        if (!file.type.startsWith('image/')) {
-            alert("Please upload a valid image file.");
-            return;
-        }
-
-        // Hide the file input after the file is selected
-        imageUploadInput.style.display = 'none';
-
-        // Show a loading indicator
-        const loadingIndicator = document.createElement("div");
-        loadingIndicator.classList.add('loading-indicator');
-        loadingIndicator.innerText = "Loading...";
-        PreviewContainer.appendChild(loadingIndicator);
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            // Clear the loading indicator after image is loaded
-            PreviewContainer.innerHTML = '';
-
-            // Create an image element for preview
-            const imgElement = document.createElement("img");
-            imgElement.src = e.target.result;
-            imgElement.classList.add("image-preview");  // Optionally add a class for styling
-
-            // Add the image to the container
-            PreviewContainer.appendChild(imgElement);
+            // Position the vertical equator line on the bottom (without crossing the center)
+            verticalLineBottom.style.position = 'absolute';
+            verticalLineBottom.style.left = `${point.x - -5}px`; // Position 1px to the left of the marker's horizontal position
+            verticalLineBottom.style.top = `${point.y + 20}px`; // Position 1px below the marker's vertical position
+            verticalLineBottom.style.width = '0.5px'; // Line thickness
+            verticalLineBottom.style.height = '500px'; // Extend downwards
+            verticalLineBottom.style.backgroundColor = '#ffffff';
+            verticalLineBottom.style.opacity = 0.8;
+            verticalLineBottom.style.pointerEvents = 'none'; // Make the line unclickable
+            verticalLineBottom.style.zIndex = '1000'; // Ensure the line is on top of the map
         };
-        reader.readAsDataURL(file);
-    } else {
-        console.log("No file selected.");
+
+        // Initial positioning of the lines
+        updateEquatorLinesPosition();
+
+        // Update positions whenever the map is moved or zoomed
+        marker._map.on('move', updateEquatorLinesPosition);
+        marker._map.on('zoom', updateEquatorLinesPosition);
     }
 }
 
-// Fungsi untuk submit gambar dan data user ke server
-function submitImageForm(markerId) {
-    const username = document.getElementById('username').value;
-    const input = document.getElementById('imageUpload');
-    const base64String = input.getAttribute("data-base64");
 
-    if (base64String && username) {
-        // Langkah 1: Ambil data yang sudah ada dari endpoint menggunakan GET
-        fetch("https://autumn-dream-8c07.square-spon.workers.dev/ER_Image", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-        .then(response => response.json())
-        .then(existingData => {
-            // Langkah 2: Siapkan data baru dari form
-            const newMarkerData = {
-                id: markerId,      // ID dari marker aktif yang terkait
-                username: username, // Nama pengguna yang diinputkan
-                image: base64String // Gambar dalam format base64
-            };
 
-            // Gabungkan data baru dengan data lama
-            existingData[markerId] = newMarkerData;
-
-            // Langkah 3: Kirim data gabungan ke server dengan metode PUT
-            return fetch("https://autumn-dream-8c07.square-spon.workers.dev/ER_Image", {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(existingData)
-            });
-        })
-        .then(response => {
-            if (response.ok) {
-                alert("Image and Username uploaded successfully!");
-                closePopup();  // Tutup pop-up form
-            } else {
-                alert("Failed to upload image.");
-            }
-        })
-        .catch(error => {
-            console.error("Error uploading image:", error);
-            alert("Error uploading image.");
-        });
-    } else {
-        alert("Please complete all fields.");
-    }
-}
 
 // Fungsi JavaScript untuk toggle visibilitas gambar dan mengubah teks tombol
 function toggleImageVisibility(button) {

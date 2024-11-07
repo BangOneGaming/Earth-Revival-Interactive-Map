@@ -326,7 +326,24 @@ overflow: hidden;
     border: none; /* No border */
     padding: 5px; /* Padding */
     margin-bottom: 15px; /* Space below */
+    
 }
+/* Gaya default untuk label */
+label[for="imageUpload"] {
+    text-align: center;
+    color: #02a0c5; /* Warna teks default */
+    border: 2px solid #889dcb; /* Border default */
+    padding: 5px; /* Memberi sedikit ruang pada label */
+    cursor: pointer; /* Menunjukkan bahwa ini bisa diklik */
+    transition: border-color 0.3s, color 0.3s; /* Transisi untuk perubahan border dan warna */
+}
+
+/* Gaya saat label diklik (active) */
+label[for="imageUpload"]:active {
+    color: rgba (225,225,225, 0.8); /* Warna teks saat diklik */
+    border: 2px solid #02a0c5; /* Border saat diklik */
+}
+
 .hidden {
     display: none;
 }
@@ -528,6 +545,21 @@ overflow: hidden;
     font-family: 'Roboto', sans-serif;
     animation: bounceIn 0.6s ease; /* Animasi muncul */
 }
+/* Active marker styling with background image */
+.leaflet-marker-icon.active {
+    background-image: url('icons/marker.png');
+    background-size: 100px 100px; /* Match the marker size */
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+    z-index: 4000; /* Ensures marker image is above lines */
+}
+
+
+.leaflet-marker-icon {
+    padding: 5px;
+    
+}
 
 /* Leaflet popup content wrapper */
 .leaflet-popup-content-wrapper {
@@ -641,6 +673,8 @@ overflow: hidden;
     display: flex; /* Tampilkan dengan flex saat diperlukan */
     opacity: 1; /* Tampilkan dengan efek transisi */
 }
+/* Custom border for marker */
+
 /* Popup Form Styles */
 .popup-form {
     position: fixed;
@@ -664,7 +698,7 @@ overflow: hidden;
     font-family: 'Lato', sans-serif;
     text-align: center;
     z-index: 2000px;
-    font-size: 30px;
+    font-size: 20px;
 }
 
 /* Label Styles */
@@ -684,17 +718,6 @@ overflow: hidden;
     border: 1px solid #889dcb;
 }
 
-#PreviewContainer {
-    margin-top: 10px;
-    text-align: center;
-}
-
-#PreviewContainer img {
-    max-width: 100%;
-    max-height: 300px;
-    object-fit: contain;
-    border-radius: 8px;
-}
 
 #PreviewContainer .loading-indicator {
     font-size: 16px;
@@ -717,6 +740,59 @@ overflow: hidden;
 /* Hover Effect for Submit Button */
 .popup-form button:hover {
     background: #028c9a;
+}
+/* Hide the preview container initially */
+#PreviewContainer {
+    display: none;
+    margin-top: 10px;
+    text-align: center;
+}
+
+/* Image Preview Styling */
+#PreviewContainer img {
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-top: 10px;
+}
+
+/* Drop Area Styles */
+#dropArea {
+    border: 2px dashed #aaa;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    color: #666;
+    font-size: 16px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+/* Highlight when dragging over the drop area */
+#dropArea.highlight {
+    background-color: #f0f8ff; /* Light blue background */
+    border-color: #4a90e2; /* Bright blue border */
+    color: #4a90e2;
+}
+
+/* Styling for text inside drop area */
+#dropArea p {
+    margin: 0;
+    color: inherit;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+    color: #4a90e2;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+/* Hide the file input as it's triggered programmatically */
+#imageUpload {
+    display: none;
 }
 
 
