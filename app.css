@@ -121,7 +121,7 @@ overflow: hidden;
   height: 100vh;
   width: 100%;
   position: relative;
-  z-index: 1;
+  z-index: 600;
 }
 /* Styles for the report form container */
 /* Styles for the report form container */
@@ -545,20 +545,15 @@ label[for="imageUpload"]:active {
     font-family: 'Roboto', sans-serif;
     animation: bounceIn 0.6s ease; /* Animasi muncul */
 }
-/* Active marker styling with background image */
-.leaflet-marker-icon.active {
-    background-image: url('icons/marker.png');
-    background-size: 100px 100px; /* Match the marker size */
-    background-repeat: no-repeat;
-    background-position: center;
-    position: relative;
-    z-index: 4000; /* Ensures marker image is above lines */
+.leaflet-popup {
+    pointer-events: none;
 }
-
-
-.leaflet-marker-icon {
-    padding: 5px;
-    
+.equator-line {
+    position: absolute;
+    background-color: #ffffff;
+    opacity: 0.8;
+    pointer-events: none;
+    z-index: 400; /* Z-index lebih rendah dari popup */
 }
 
 /* Leaflet popup content wrapper */
@@ -567,7 +562,10 @@ label[for="imageUpload"]:active {
     border: 2px solid #889dcb !important; /* Same border color */
     border-radius: 10px !important; /* Rounded corners */
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25) !important; /* Shadow for depth */
+    z-index: 1002 !important;
     animation: bounceIn 0.6s ease; /* Animation for showing popup */
+    padding: 200px;
+    pointer-events: none;
 }
 
 /* Leaflet popup content */
@@ -578,6 +576,8 @@ label[for="imageUpload"]:active {
     border-radius: 10px;
     font-family: 'Open Sans', Arial, sans-serif; /* Font family */
     padding: 2px; /* Adjusted padding for better spacing */
+    z-index: -100 !important;
+    pointer-events: none;
 }
 
 /* Popup main title */
@@ -587,24 +587,28 @@ label[for="imageUpload"]:active {
     color: white; /* Text color */
     margin-bottom: 10px; /* Space below title */
     padding: 5px; /* Padding around title */
+    pointer-events: none;
 }
 
 /* Popup description */
 .leaflet-popup-content .popup-desc {
     font-size: 12px; /* Description size */
     color: white; /* Text color */
+    pointer-events: none;
 }
 
 /* Additional separator inside popup */
 .separator {
     border: none; /* No border */
     margin: 10px 0; /* Space around separator */
+    pointer-events: none;
 }
 
 /* Thumbnail for popup */
 .popup-thumbnail {
     position: relative; /* Position relative for play button */
     display: inline-block; /* Inline block for layout */
+    pointer-events: none;
 }
 
 /* Play button inside popup */
@@ -628,6 +632,7 @@ label[for="imageUpload"]:active {
     cursor: pointer;
     transition: background-color 0.2s ease;
     margin: 15px 0px 10px 0px; /* Lebih dekat ke deskripsi */
+    pointer-events: auto;
 }
 
 .copyButton:hover {
@@ -644,6 +649,7 @@ label[for="imageUpload"]:active {
     gap: 5px;
     margin-top: -20px; /* Atur jarak antara deskripsi dan tombol */
     margin-bottom: 5px;
+    pointer-events: auto;
 }
 .copy-feedback {
     display: none; /* Sembunyikan secara default */
@@ -811,6 +817,10 @@ label[for="imageUpload"]:active {
     }
 }
 
+#patch-popup {
+    display: none;/* Popup disembunyikan pada awalnya */
+    /* Gaya lainnya seperti posisi dan layout popup */
+}
 
 /* Close button */
 .popup .close {

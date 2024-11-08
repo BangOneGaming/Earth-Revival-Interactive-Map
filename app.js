@@ -84,26 +84,24 @@ function addMarkersToMap() {
             const iconUrl = getIconUrl(location.category_id);
 
             // Load opacity marker (jika sebelumnya disimpan)
-            const initialOpacity = loadMarkerOpacity(key) || 1.0; // Default opacity 1.0 jika tidak ditemukan
+            const initialOpacity = loadMarkerOpacity(key) || 1.0;
 
             // Assign properti tambahan ke marker (dengan fallback value)
-            const locType = location.loc_type || 'Unknown'; 
-            const categoryId = location.category_id || 'Unknown'; 
-            const nameEn = location.en_name || 'Unknown'; 
-            const markerId = location.id || key; // Gunakan ID dari data atau fallback ke key
-            const ysId = location.ys_id || 'Unknown'; // Menambahkan ys_id jika ada
-
-            // Placeholder untuk image_info, jika tersedia di JSON
+            const locType = location.loc_type || 'Unknown';
+            const categoryId = location.category_id || 'Unknown';
+            const nameEn = location.en_name || 'Unknown';
+            const markerId = location.id || key;
+            const ysId = location.ys_id || 'Unknown';
             const imageInfo = location.image_info || 'No image info available';
 
             // Buat marker Leaflet dengan ikon dan opacity yang ditentukan
             const marker = L.marker(latLng, {
                 icon: L.icon({
                     iconUrl: iconUrl,
-                    iconSize: [32, 32], // Ukuran ikon tetap
+                    iconSize: [32, 32],
                     iconAnchor: [16, 32],
                 }),
-                opacity: initialOpacity, // Atur opacity (default 1.0)
+                opacity: initialOpacity,
             });
 
             // Tambahkan properti tambahan ke marker options
@@ -111,16 +109,33 @@ function addMarkersToMap() {
             marker.options.category = categoryId;
             marker.options.id = markerId;
             marker.options.en_name = nameEn;
-            marker.options.ys_id = ysId; // Menyimpan ys_id ke marker options
-            marker.options.image_info = imageInfo; // Menyimpan image_info ke marker options
+            marker.options.ys_id = ysId;
+            marker.options.image_info = imageInfo;
 
             // Simpan marker ke array markers untuk referensi di masa depan
             markers.push(marker);
 
-            // Setup interaksi marker, termasuk tombol laporan
+            // Setup interaksi marker
             setupMarkerInteractions(marker, location, markerId);
 
-            // Update jumlah kategori berdasarkan kategori marker dan opacity
+            // Tambahkan event click untuk animasi bounce
+            marker.on('click', function () {
+                console.log(`Marker ${markerId} clicked! Starting animation...`);
+                
+                // Membuat animatedMarker setelah marker diklik
+                const animatedMarker = L.animatedMarker(marker.getLatLng(), {
+                    autoStart: true,
+                    interval: 300,
+                });
+
+                // Menambahkan marker animasi ke peta
+                animatedMarker.addTo(map);
+
+                // Memulai animasi
+                animatedMarker.start();
+            });
+
+            // Update kategori berdasarkan kategori marker dan opacity
             updateCategoryCounts(locType, categoryId, initialOpacity);
         }
     }
@@ -130,10 +145,8 @@ function addMarkersToMap() {
 
     // Sembunyikan marker awal dan update tampilan kategori
     hideMarkers();
-    updateCategoryDisplay(); // Pastikan tampilan kategori diupdate setelah menambahkan semua marker
+    updateCategoryDisplay();  // Pastikan tampilan kategori diupdate setelah menambahkan semua marker
 }
-
-
 
 function calculateMaxCounts() {
     const seenMarkers = new Set(); // Gunakan set untuk melacak marker yang sudah dihitung
@@ -443,6 +456,7 @@ let draggableMarker = null; // Store reference to the marker
 let confirmationPopup = null; // Store reference to the popup
 let labelMarker = null;
 function addDraggableIcon() {
+    map.closePopup();
     const icon = L.icon({
         iconUrl: 'icons/icon_default.png',
         iconSize: [32, 32],
@@ -1269,10 +1283,10 @@ function setupMarkerInteractions(marker, location, key) {
 
     const showYsId = location.ys_id && location.ys_id !== "0";
 
-
+    // Function to create the content for the popup
     function createPopupContent() {
         return `
-            <div class="leaflet-popup-content">
+            <div class="leaflet-popup-content" style="z-index: 9999;">
                 <h4 class="popup-title">${location.en_name}</h4>
                 <p class="popup-description">
                     ${(location.desc || 'No description available.').replace(/\n/g, '<br>')}
@@ -1296,38 +1310,70 @@ function setupMarkerInteractions(marker, location, key) {
                     </div>
                 ` : ''}
                 ${showImageButton ? `
-                    <button class="showImageButton" onclick="toggleImageVisibility(this)" style="background: none; border: none; color: #028c9a; font-size: 12px; cursor: pointer;">
+                    <button class="showImageButton" onclick="toggleImageVisibility(this)" style="background: none; border: none; color: #028c9a; font-size: 12px; cursor: pointer; pointer-events: auto;">
                         <b>Show Image</b>
                     </button>
                 ` : ''}
                 ${imageInfoContent}
                 ${showYsId ? `<p class="popup-ys-id">YS ID: ${location.ys_id}</p>` : ''}
-                <button class="reportButton" data-id="${key}" style="background: none; border: none; color: red; font-size: 12px; cursor: pointer;">Report</button>
-                ${!imageInfoContent ? `<button class="uploadImageButton" onclick="openImageFormPopup('${key}')" style="background: none; border: none; color: #FFD700; font-size: 12px; cursor: pointer;"><b>Upload Screenshot Location</b></button>` : ''}
+                <button class="reportButton" data-id="${key}" style="background: none; border: none; color: red; font-size: 12px; cursor: pointer; pointer-events: auto;">Report</button>
+                ${!imageInfoContent ? `<button class="uploadImageButton" onclick="openImageFormPopup('${key}')" style="background: none; border: none; color: #FFD700; font-size: 12px; cursor: pointer; pointer-events: auto;"><b>Upload Screenshot Location</b></button>` : ''}
             </div>
         `;
     }
 
+    // Bind popup content to the marker
     marker.bindPopup(createPopupContent(), { offset: L.point(0, -20) });
 
-// Event to show equator lines when popup is opened
-marker.on('popupopen', () => {
-    marker.getElement().classList.add('active');
-    showEquatorLines(marker); // Show equator lines when popup is open
-    console.log(`Equator lines triggered for marker: ${marker.options.id}`);
-});
+    // Event to show equator lines and center icon when popup is opened
+    marker.on('popupopen', () => {
+        // Pastikan hanya elemen yang relevan yang dimodifikasi
+        const newFiltersContainer = document.querySelector('.toggle-new-filters-container');
+        
+        if (newFiltersContainer) {
+            newFiltersContainer.classList.remove('hover'); // Menonaktifkan efek hover
+        } else {
+            console.warn("Element '.toggle-new-filters-container' not found!");
+        }
 
-// Event to remove equator lines when popup is closed
-marker.on('popupclose', () => {
-    marker.getElement().classList.remove('active');
-    
-    // Remove all parts of the equator lines from the map container
-    const equatorLines = document.querySelectorAll('.equator-line');
-    
-    // Remove all equator lines (both horizontal and vertical parts)
-    equatorLines.forEach(line => line.remove());
+        showEquatorLines(marker); // Menampilkan garis khatulistiwa dan ikon pusat saat popup terbuka
 
-    console.log(`Equator lines removed for marker: ${marker.options.id}`);
+        console.log(`Equator lines triggered for marker: ${marker.options.id}`);
+
+        // Menaikkan Z-index marker
+        marker.setZIndexOffset(1000);  // Ubah angka ini sesuai kebutuhan Anda
+    });
+
+    // Menghilangkan animasi setelah animasi selesai
+    marker.on('popupclose', () => {
+        const equatorLines = document.querySelectorAll('.equator-line');
+        const centerIcon = document.querySelector('.center-icon');
+
+        if (equatorLines.length > 0) {
+            equatorLines.forEach(line => line.remove());
+        }
+
+        if (centerIcon) {
+            centerIcon.remove();
+        }
+
+        // Menghapus kelas bounce dan mengembalikan Z-index ke nilai default
+        marker.getElement().classList.remove('marker-bounce');
+        marker.setZIndexOffset(0);  // Kembalikan ke nilai default
+    });
+
+ // Menambahkan event click untuk animasi bounce
+marker.on('click', function () {
+    console.log(`Marker dengan ID ${marker.options.id} diklik. Mulai animasi bounce...`);
+
+    // Menambahkan kelas bounce pada marker
+    marker.getElement().classList.add('marker-bounce');
+
+    // Menghapus kelas bounce setelah animasi selesai
+    setTimeout(function() {
+        marker.getElement().classList.remove('marker-bounce');
+        console.log(`Animasi bounce selesai untuk marker dengan ID ${marker.options.id}`);
+    }, 500);  // Waktu animasi (harus sesuai dengan durasi di CSS)
 });
 
 
@@ -1742,90 +1788,99 @@ function resetFormOnMapClose() {
 }
 
 function showEquatorLines(marker) {
-    const latlng = marker.getLatLng(); // Get the coordinates of the active marker
-    
-    // Only add the lines if they are not already added
-    if (!document.querySelector('.equator-line.horizontal') && !document.querySelector('.equator-line.vertical')) {
-        // Create horizontal and vertical equator lines
+    const latlng = marker.getLatLng();
+
+    // Pastikan elemen garis ekuator dan ikon pusat tidak dibuat lebih dari sekali
+    if (!document.querySelector('.equator-line.horizontal') && !document.querySelector('.equator-line.vertical') && !document.querySelector('.center-icon')) {
+        const centerIcon = document.createElement('img');
+        centerIcon.src = 'icons/marker.png';
+        centerIcon.className = 'center-icon';
+        centerIcon.style.width = '100px';
+        centerIcon.style.height = '100px';
+        centerIcon.style.position = 'absolute';
+        centerIcon.style.zIndex = '500';  // Semua elemen memiliki z-index yang sama yaitu 500
+
         const horizontalLineLeft = document.createElement('div');
         horizontalLineLeft.className = 'equator-line horizontal left';
-        
+        horizontalLineLeft.style.zIndex = '500';  // Sama dengan z-index ikon pusat
+
         const horizontalLineRight = document.createElement('div');
         horizontalLineRight.className = 'equator-line horizontal right';
-        
+        horizontalLineRight.style.zIndex = '500';  // Sama dengan z-index ikon pusat
+
         const verticalLineTop = document.createElement('div');
         verticalLineTop.className = 'equator-line vertical top';
-        
+        verticalLineTop.style.zIndex = '500';  // Sama dengan z-index ikon pusat
+
         const verticalLineBottom = document.createElement('div');
         verticalLineBottom.className = 'equator-line vertical bottom';
-        
-        // Append lines to the map container
-        const mapContainer = marker._map.getContainer(); // Get the map container
+        verticalLineBottom.style.zIndex = '500';  // Sama dengan z-index ikon pusat
+
+        const mapContainer = marker._map.getContainer();
+        mapContainer.appendChild(centerIcon);
         mapContainer.appendChild(horizontalLineLeft);
         mapContainer.appendChild(horizontalLineRight);
         mapContainer.appendChild(verticalLineTop);
         mapContainer.appendChild(verticalLineBottom);
 
-        // Position the equator lines based on the marker's coordinates
-        const map = marker._map;  // Get the map object
+        const map = marker._map;
         const updateEquatorLinesPosition = () => {
-            const point = map.latLngToContainerPoint(latlng); // Convert latLng to container (screen) coordinates
+            const point = map.latLngToContainerPoint(latlng);
 
-            // Position the horizontal equator line on the left (without crossing the center)
+            // Posisi ikon pusat
+            centerIcon.style.left = `${point.x - 50}px`;
+            centerIcon.style.top = `${point.y - 67}px`;
+            centerIcon.style.pointerEvents = 'none';
+
+            // Posisi garis horizontal kiri
             horizontalLineLeft.style.position = 'absolute';
-            horizontalLineLeft.style.left = `${point.x - 530}px`; // Extend 500px to the left of the marker
-            horizontalLineLeft.style.top = `${point.y - 10}px`; // Position 5px above the marker's vertical position
-            horizontalLineLeft.style.width = '500px'; // Extend to the left
-            horizontalLineLeft.style.height = '0.5px'; // Line thickness
+            horizontalLineLeft.style.left = '0px';
+            horizontalLineLeft.style.top = `${point.y - 15 - 50 + 10 + 40}px`;
+            horizontalLineLeft.style.width = `${point.x - 50}px`;
+            horizontalLineLeft.style.height = '1.5px';
             horizontalLineLeft.style.backgroundColor = '#ffffff';
             horizontalLineLeft.style.opacity = 0.8;
-            horizontalLineLeft.style.pointerEvents = 'none'; // Make the line unclickable
-            horizontalLineLeft.style.zIndex = '1000'; // Ensure the line is on top of the map
+            horizontalLineLeft.style.pointerEvents = 'none';
 
-            // Position the horizontal equator line on the right (without crossing the center)
+            // Posisi garis horizontal kanan
             horizontalLineRight.style.position = 'absolute';
-            horizontalLineRight.style.left = `${point.x + 40}px`; // Position 1px to the right of the marker's horizontal position
-            horizontalLineRight.style.top = `${point.y - 10}px`; // Position 5px above the marker's vertical position
-            horizontalLineRight.style.width = '500px'; // Extend to the right
-            horizontalLineRight.style.height = '0.5px'; // Line thickness
+            horizontalLineRight.style.left = `${point.x + 50}px`;
+            horizontalLineRight.style.top = `${point.y - 15 - 50 + 10 + 40}px`;
+            horizontalLineRight.style.width = `${window.innerWidth - point.x - 50}px`;
+            horizontalLineRight.style.height = '1.5px';
             horizontalLineRight.style.backgroundColor = '#ffffff';
             horizontalLineRight.style.opacity = 0.8;
-            horizontalLineRight.style.pointerEvents = 'none'; // Make the line unclickable
-            horizontalLineRight.style.zIndex = '1000'; // Ensure the line is on top of the map
+            horizontalLineRight.style.pointerEvents = 'none';
 
-            // Position the vertical equator line on top (without crossing the center)
+            // Posisi garis vertikal atas
             verticalLineTop.style.position = 'absolute';
-            verticalLineTop.style.left = `${point.x - -5}px`; // Position 1px to the left of the marker's horizontal position
-            verticalLineTop.style.top = `${point.y - 540}px`; // Extend 500px upwards from the marker
-            verticalLineTop.style.width = '0.5px'; // Line thickness
-            verticalLineTop.style.height = '500px'; // Extend upwards
+            verticalLineTop.style.left = `${point.x}px`;
+            verticalLineTop.style.top = `-${30}px`;
+            verticalLineTop.style.width = '1.5px';
+            verticalLineTop.style.height = `${point.y - 50}px`;
             verticalLineTop.style.backgroundColor = '#ffffff';
-            verticalLineTop.style.opacity = 0.8;
-            verticalLineTop.style.pointerEvents = 'none'; // Make the line unclickable
-            verticalLineTop.style.zIndex = '1000'; // Ensure the line is on top of the map
+            verticalLineTop.style.opacity = 0;
+            verticalLineTop.style.pointerEvents = 'none';
 
-            // Position the vertical equator line on the bottom (without crossing the center)
+            // Posisi garis vertikal bawah
             verticalLineBottom.style.position = 'absolute';
-            verticalLineBottom.style.left = `${point.x - -5}px`; // Position 1px to the left of the marker's horizontal position
-            verticalLineBottom.style.top = `${point.y + 20}px`; // Position 1px below the marker's vertical position
-            verticalLineBottom.style.width = '0.5px'; // Line thickness
-            verticalLineBottom.style.height = '500px'; // Extend downwards
+            verticalLineBottom.style.left = `${point.x}px`;
+            verticalLineBottom.style.top = `${point.y + 30}px`;
+            verticalLineBottom.style.width = '1.5px';
+            verticalLineBottom.style.height = `${window.innerHeight - point.y - 50}px`;
             verticalLineBottom.style.backgroundColor = '#ffffff';
             verticalLineBottom.style.opacity = 0.8;
-            verticalLineBottom.style.pointerEvents = 'none'; // Make the line unclickable
-            verticalLineBottom.style.zIndex = '1000'; // Ensure the line is on top of the map
+            verticalLineBottom.style.pointerEvents = 'none';
         };
 
-        // Initial positioning of the lines
+        // Posisi garis ekuator saat pertama kali dibuka
         updateEquatorLinesPosition();
 
-        // Update positions whenever the map is moved or zoomed
+        // Update posisi setiap kali peta dipindahkan atau di-zoom
         marker._map.on('move', updateEquatorLinesPosition);
         marker._map.on('zoom', updateEquatorLinesPosition);
     }
 }
-
-
 
 
 // Fungsi JavaScript untuk toggle visibilitas gambar dan mengubah teks tombol
@@ -2064,26 +2119,6 @@ function findMarkerById(markerId) {
 document.addEventListener("DOMContentLoaded", () => {
     initMap();
 });
-
-// Function for popup handling
-window.onload = function() {
-    const popup = document.getElementById('patch-popup');
-    const closeBtn = document.querySelector('.popup .close');
-
-    popup.style.display = 'flex';
-
-    closeBtn.onclick = () => {
-        popup.style.display = 'none';
-    };
-
-    window.onclick = (event) => {
-        if (event.target === popup) {
-            popup.style.display = 'none';
-        }
-    };
-
-    initMap();
-};
 
 
 // Function to filter markers based on selected categories
@@ -2723,17 +2758,14 @@ function onLocTypeChange(newLocType) {
 
 // Function to center the map on the given bounds
 function centerMapOnBounds(imageBounds) {
+    // Close any open popups at the very start
+    map.closePopup();
+
     const midLat = (imageBounds[0][0] + imageBounds[1][0]) / 2;
     const midLng = (imageBounds[0][1] + imageBounds[1][1]) / 2;
     const offsetLng = 0.01; // Adjust this value as needed
     const newCenter = [midLat, midLng - offsetLng];
-       
-       // Disable hover effect on the new filters container
-        const newFiltersContainer = document.querySelector('.toggle-new-filters-container');
-        if (newFiltersContainer) {
-            newFiltersContainer.classList.remove('hover'); // Disable hover effect
-        }
-        
+
     // Step 1: Zoom out to level 4
     map.setView(map.getCenter(), 4, { animate: true, duration: 5 }); // 2 seconds for zoom out
 
@@ -2748,7 +2780,17 @@ function centerMapOnBounds(imageBounds) {
             updateMarkers(); // Ensure filters are applied after markers are cleared
         }, 500); // Wait for half a second before zooming in
     }, 1000); // Wait for 2.5 seconds for the zoom out to finish
+
+    // Ensure the filter container hover effect is disabled when the marker is active and popup is open
+    map.on('popupopen', function () {
+        const newFiltersContainer = document.querySelector('.toggle-new-filters-container');
+        if (newFiltersContainer) {
+            newFiltersContainer.classList.remove('hover'); // Disable hover effect
+        }
+    });
 }
+
+
 
 // Fungsi untuk mengatur listener pada checkbox material
 function setupMaterialFilterListeners() {
@@ -3103,22 +3145,25 @@ document.addEventListener("DOMContentLoaded", function() {
         setTimeout(() => {
             document.getElementById('preloader').style.display = 'none'; // Sembunyikan preloader
 
-            // Tampilkan pop-up setelah preloader selesai
-            const popup = document.getElementById('patch-popup');
-            const closeBtn = document.querySelector('.popup .close');
-            popup.style.display = 'flex';
+            // Tambahkan delay 2 detik sebelum menampilkan popup
+            setTimeout(() => {
+                // Tampilkan pop-up setelah preloader selesai
+                const popup = document.getElementById('patch-popup');
+                const closeBtn = document.querySelector('.popup .close');
+                popup.style.display = 'flex'; // Popup ditampilkan setelah 2 detik
 
-            // Hide the pop-up when the close button is clicked
-            closeBtn.onclick = function() {
-                popup.style.display = 'none';
-            };
-
-            // Hide the pop-up when clicking outside the content
-            window.onclick = function(event) {
-                if (event.target === popup) {
+                // Hide the pop-up when the close button is clicked
+                closeBtn.onclick = function() {
                     popup.style.display = 'none';
-                }
-            };
-        }, 3000); // Tunggu 1 detik sebelum menyembunyikan preloader dan menampilkan pop-up
-    }, 10000); // Total 7 detik delay untuk menutup otomatis
+                };
+
+                // Hide the pop-up when clicking outside the content
+                window.onclick = function(event) {
+                    if (event.target === popup) {
+                        popup.style.display = 'none';
+                    }
+                };
+            }, 900); // Tunda 2 detik setelah preloader selesai sebelum menampilkan pop-up
+        }, 3000); // Tunggu 3 detik sebelum menyembunyikan preloader dan memulai delay 2 detik
+    }, 10000); // Total 10 detik delay untuk menutup otomatis
 });

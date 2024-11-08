@@ -33,11 +33,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100&display=swap" rel="stylesheet">
     
-    <link href="app.css?v=3.5" rel="stylesheet" type="text/css">
+    <link href="app.css?v=3.7" rel="stylesheet" type="text/css">
 
     <!-- Leaflet for maps -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<!-- Import Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+
         <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XV19ZR4EBT"></script>
     <script>
@@ -55,19 +58,18 @@
     <div class="popup-content">
         <span class="close">&times;</span>
 
-        <h4>BIG UPDATE</h4>
-        <p>VERSION 5.3- NOVEMBER 2024</p>
+        <h4>UPDATE PATCH</h4>
+        <p>VERSION 5.5- NOVEMBER 2024</p>
         <ul>
             <li><b>NEW BUTTON AND MORE OPTIMIZE UI</b></li>
-            <li>Fix Donated Close Button</li>
-            <li>Update <b>COPY COORDINATE</b></li>
-            <li>Show Contribute ID Name And Image Location</li>
+            <li>Fix Hold or Right Click on Marker</li>
+            <li>Fix <b>VARIOUS BUG</b></li>
+            <li>Fix Marker Active Now Easy To See</li>
             <li>Upload Image Fixed</li>
             <li>
-                We Add <b>NEW BUTTON</b>:</li>
+                <b>NEW VISUAL MARKER</b><br>⬇⬇⬇⬇:</li>
                 <span>
-    <img src="icons/home.png" alt="Home" style="width: 20px; vertical-align: middle; display: inline-block;">⬅Found More Tips Here <br>
-    <img src="icons/count_toggle.png" alt="Count" style="width: 20px; vertical-align: middle; display: inline-block;"> ⬅ Hide Calculate Marker
+    <img src="icons/marker.png" alt="Marker" style="width: 100px; vertical-align: middle; display: inline-block;"
 
             </span>
         </ul>
@@ -555,8 +557,12 @@
 <div id="map"></div>
 </div>
 <script src="minimap_config.js"></script>
+<!-- Import leaflet-animatedmarker -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-animatedmarker/0.0.2/leaflet.animatedmarker.min.js"></script>
+
+
 <script src="category.js"></script>
-<script src="app.js?v=3.5"></script>
+<script src="app.js?v=3.7"></script>
 </body>
 
 
