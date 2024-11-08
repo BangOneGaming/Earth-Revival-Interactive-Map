@@ -1248,14 +1248,19 @@ function setupMarkerInteractions(marker, location, key) {
             const parsedImagesInfo = JSON.parse(location.images_info);
             if (Array.isArray(parsedImagesInfo) && parsedImagesInfo.length > 0 && parsedImagesInfo[0].link) {
                 const imageUrl = parsedImagesInfo[0].link.startsWith('//') ? `https:${parsedImagesInfo[0].link}` : parsedImagesInfo[0].link;
-                imageInfoContent = `<img src="${imageUrl}" alt="Image Info" class="popup-image-info" style="width: 100%; height: auto; border-radius: 4px; display: none;">`;
-                showImageButton = `<button class="showImageButton" onclick="toggleImageVisibility(this)">Show Image</button>`;
+                imageInfoContent = `
+                    <img src="${imageUrl}" alt="Image Info" class="popup-image-info" onclick="showFullImagePreview('${imageUrl}')" style="width: 100%; height: auto; border-radius: 4px; display: none; cursor: pointer; pointer-events: auto;">
+                `;
+                showImageButton = `
+                    <button class="showImageButton" onclick="toggleImageVisibility(this)" style="pointer-events: auto;">
+                        Show Image
+                    </button>
+                `;
             }
         } catch (error) {
             console.warn("Error parsing images_info JSON:", error);
         }
     } else {
-        // Fetch image only when popup opens, if images_info is empty
         marker.on('popupopen', () => {
             fetch("https://autumn-dream-8c07.square-spon.workers.dev/ER_Image")
                 .then(response => response.json())
@@ -1267,23 +1272,22 @@ function setupMarkerInteractions(marker, location, key) {
 
                         imageInfoContent = `
                             <div style="position: relative; width: 100%; height: auto;">
-                                <img src="${base64Image}" alt="Base64 Image" class="popup-image-info" style="width: 100%; height: auto; border-radius: 4px;">
+                                <img src="${base64Image}" alt="Base64 Image" class="popup-image-info" onclick="showFullImagePreview('${base64Image}')" style="width: 100%; height: auto; border-radius: 4px; cursor: pointer; pointer-events: auto;">
                                 <div style="position: absolute; bottom: 1px; left: 0; width: 100%; color: white; background-color: rgba(0, 0, 0, 0.5); text-align: center; font-size: 14px;">
                                     ${username}
                                 </div>
                             </div>`;
-                        marker.getPopup().setContent(createPopupContent()); // Update the popup content
+                        marker.getPopup().setContent(createPopupContent());
                     }
                 })
                 .catch(() => {
-                    // Silently handle fetch errors if marker ID does not exist in endpoint
+                    console.warn("Error fetching base64 image");
                 });
         });
     }
 
     const showYsId = location.ys_id && location.ys_id !== "0";
 
-    // Function to create the content for the popup
     function createPopupContent() {
         return `
             <div class="leaflet-popup-content" style="z-index: 9999;">
@@ -1309,11 +1313,11 @@ function setupMarkerInteractions(marker, location, key) {
                         </a>
                     </div>
                 ` : ''}
-                ${showImageButton ? `
-                    <button class="showImageButton" onclick="toggleImageVisibility(this)" style="background: none; border: none; color: #028c9a; font-size: 12px; cursor: pointer; pointer-events: auto;">
-                        <b>Show Image</b>
-                    </button>
-                ` : ''}
+${showImageButton ? `
+    <button class="showImageButton" onclick="toggleImageVisibility(this, event)" style="background: rgba(10, 28, 61, 0.883); border: none; color: #028c9a; font-size: 12px; cursor: pointer; pointer-events: auto;">
+        <b>Show Image</b>
+    </button>
+` : ''}
                 ${imageInfoContent}
                 ${showYsId ? `<p class="popup-ys-id">YS ID: ${location.ys_id}</p>` : ''}
                 <button class="reportButton" data-id="${key}" style="background: none; border: none; color: red; font-size: 12px; cursor: pointer; pointer-events: auto;">Report</button>
@@ -1321,6 +1325,8 @@ function setupMarkerInteractions(marker, location, key) {
             </div>
         `;
     }
+
+
 
     // Bind popup content to the marker
     marker.bindPopup(createPopupContent(), { offset: L.point(0, -20) });
@@ -1362,20 +1368,6 @@ function setupMarkerInteractions(marker, location, key) {
         marker.setZIndexOffset(0);  // Kembalikan ke nilai default
     });
 
- // Menambahkan event click untuk animasi bounce
-marker.on('click', function () {
-    console.log(`Marker dengan ID ${marker.options.id} diklik. Mulai animasi bounce...`);
-
-    // Menambahkan kelas bounce pada marker
-    marker.getElement().classList.add('marker-bounce');
-
-    // Menghapus kelas bounce setelah animasi selesai
-    setTimeout(function() {
-        marker.getElement().classList.remove('marker-bounce');
-        console.log(`Animasi bounce selesai untuk marker dengan ID ${marker.options.id}`);
-    }, 500);  // Waktu animasi (harus sesuai dengan durasi di CSS)
-});
-
 
     marker.on('contextmenu', (e) => {
         const currentOpacity = marker.options.opacity || 1.0;
@@ -1416,77 +1408,33 @@ marker.on('click', function () {
         }
     });
 }
-
-// Open the image form popup
-function openImageFormPopup(markerId) {
-    console.log('Creating form popup for marker:', markerId);
-
-    const formHtml = `
-        <div id="send-image" class="popup-form">
-            <form id="send-image-form" onsubmit="submitImageForm('${markerId}'); return false;">
-                <h6>Upload Your Image</h6>
-                <label for="username">Your In Game Name:</label>
-                <input type="text" id="username" name="username" required placeholder="Enter your in game name">
-
-                <!-- Drop Area for Drag-and-Drop and Paste Upload -->
-                <div id="dropArea" class="drop-area">
-                    <p>Drag & drop an image here, click to upload, or paste an image</p>
-                    <input type="file" id="imageUpload" name="imageUpload" accept="image/*" 
-                           onchange="handleImageUpload(this, '${markerId}')">
-                </div>
-
-                <div id="PreviewContainer" class="preview-container" style="display:none;"></div> <!-- Hidden Preview Container -->
-
-                <button type="submit">Submit</button>
-            </form>
+function showFullImagePreview(imageUrl) {
+    const modal = document.createElement('div');
+    modal.classList.add('image-modal');
+    modal.innerHTML = `
+        <div class="image-modal-content" onclick="event.stopPropagation()">
+            <span class="image-modal-close" onclick="closeImagePreview(event)">&times;</span>
+            <img src="${imageUrl}" alt="Full Preview Image" class="image-modal-img">
         </div>
     `;
 
-    const popupContainer = document.createElement("div");
-    popupContainer.setAttribute("id", "popupContainer");
-    popupContainer.innerHTML = formHtml;
-    document.body.appendChild(popupContainer);
+    // Menambahkan modal ke dalam body
+    document.body.appendChild(modal);
 
-    const dropArea = document.getElementById("dropArea");
-    const imageUploadInput = document.getElementById("imageUpload");
-
-    // Drag-and-drop highlight effects
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, preventDefaults, false);
-    });
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight'), false);
-    });
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'), false);
-    });
-
-    // Handle click to trigger file input for image upload
-    dropArea.addEventListener('click', () => {
-        imageUploadInput.click();  // Directly trigger file input click
-    });
-
-    // Handle image paste events
-    document.addEventListener('paste', (e) => {
-        const items = e.clipboardData.items;
-        for (let i = 0; i < items.length; i++) {
-            const item = items[i];
-            if (item.type.indexOf("image") !== -1) {
-                const blob = item.getAsFile();
-                processImageFile(blob);
-            }
-        }
-    });
-
-    console.log('Form popup appended to body');
+    // Menutup modal saat klik di luar konten gambar
+    modal.addEventListener('click', closeImagePreview);
 }
 
-// Prevent default behavior for drag-and-drop events
-function preventDefaults(e) {
-    e.preventDefault();
-    e.stopPropagation();
+function closeImagePreview(event) {
+    event.stopPropagation(); // Menghindari propagasi saat menutup modal
+    const modal = document.querySelector('.image-modal');
+    if (modal) {
+        document.body.removeChild(modal);
+    }
 }
-// Open the image form popup for markerId
+
+
+// Open the image form popup
 function openImageFormPopup(markerId) {
     console.log('Creating form popup for marker:', markerId);
 
@@ -1499,21 +1447,23 @@ function openImageFormPopup(markerId) {
                 <label for="username">Your In Game Name:</label>
                 <input type="text" id="username" name="username" required placeholder="Enter your in game name">
 
-                <!-- Drop Area for Drag-and-Drop and Paste Upload (only for non-mobile devices) -->
+                <!-- Drop Area for Drag-and-Drop and Paste Upload (Desktop Only) -->
                 ${isMobile ? '' : `
                 <div id="dropArea" class="drop-area">
                     <p>Drag & drop an image here, click to upload, or paste an image</p>
                     <input type="file" id="imageUpload" name="imageUpload" accept="image/*" 
                            onchange="handleImageUpload(this, '${markerId}')">
-                </div>`}
+                </div>
+                `}
 
-                <!-- Input file (always visible for mobile devices) -->
+                <!-- Mobile File Input -->
                 ${isMobile ? `
-                <div id="mobileFileInput" class="mobile-file-input">
-                    <label for="imageUploadMobile">Select an image</label>
-                    <input type="file" id="imageUploadMobile" name="imageUpload" accept="image/*" 
+                <div id="mobileUpload" class="mobile-upload">
+                    <label for="imageUploadMobile" class="mobile-upload-label">Select an Image</label>
+                    <input type="file" id="imageUploadMobile" name="imageUploadMobile" accept="image/*" 
                            onchange="handleImageUpload(this, '${markerId}')">
-                </div>` : ''}
+                </div>
+                ` : ''}
 
                 <div id="PreviewContainer" class="preview-container" style="display:none;"></div> <!-- Hidden Preview Container -->
 
@@ -1527,6 +1477,7 @@ function openImageFormPopup(markerId) {
     popupContainer.innerHTML = formHtml;
     document.body.appendChild(popupContainer);
 
+    // Desktop only: Handle drag-and-drop events
     if (!isMobile) {
         const dropArea = document.getElementById("dropArea");
         const imageUploadInput = document.getElementById("imageUpload");
@@ -1544,7 +1495,7 @@ function openImageFormPopup(markerId) {
 
         // Handle click to trigger file input for image upload
         dropArea.addEventListener('click', () => {
-            imageUploadInput.click();  // Directly trigger file input click
+            imageUploadInput.click();
         });
 
         // Handle image paste events
@@ -1567,6 +1518,15 @@ function openImageFormPopup(markerId) {
 function preventDefaults(e) {
     e.preventDefault();
     e.stopPropagation();
+}
+
+// Close the form popup
+function closeFormPopup() {
+    const popupContainer = document.getElementById("popupContainer");
+    if (popupContainer) {
+        document.body.removeChild(popupContainer);
+        console.log('Form popup removed from body');
+    }
 }
 
 
@@ -1604,7 +1564,7 @@ function handleImageUpload(input, markerId) {
             console.log("Appended image preview to container");
 
             // Save the base64 image for submission
-            input.setAttribute("data-base64", e.target.result);
+            input.setAttribute("data-base64", e.target.result);  // Ensure Base64 is saved
             console.log("Saved base64 data to input");
 
             // Show the preview container
@@ -1617,6 +1577,13 @@ function handleImageUpload(input, markerId) {
                 console.log("Drop area hidden");
             }
         };
+
+        reader.onloadend = function() {
+            console.log("FileReader onloadend triggered");
+            // At this point the reader has finished, data-base64 should be set properly
+            console.log("Base64 after reading:", input.getAttribute("data-base64"));
+        };
+
         reader.readAsDataURL(file); // Read file as base64
         console.log("Reading file as base64 with FileReader");
     } else {
@@ -1680,22 +1647,30 @@ function processImageFile(file) {
 // Submit form when the submit button is clicked
 function submitImageForm(markerId) {
     const username = document.getElementById('username').value;
-    const input = document.getElementById('imageUpload');
-    let base64String = input.getAttribute("data-base64");
-
-    // Check if base64 string is empty and if the file input has a selected file
-    if (!base64String && input.files.length > 0) {
-        const file = input.files[0];
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            base64String = e.target.result;
-            handleSubmit(markerId, username, base64String);
-        };
-        reader.readAsDataURL(file); // Read file as base64
-    } else {
-        handleSubmit(markerId, username, base64String);
+    const input = document.getElementById('imageUploadMobile') || document.getElementById('imageUpload');
+    
+    // Pastikan username dan file sudah ada
+    if (!username || !input.files.length) {
+        alert("Please complete all fields.");
+        console.warn("Missing data - Username:", username, "File:", input.files.length === 0);
+        return;
     }
+
+    // Ambil file dan langsung konversi menjadi base64 tanpa menunggu pembacaan
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const base64String = e.target.result;  // Simpan base64 data
+
+        // Kirimkan data ke server
+        handleSubmit(markerId, username, base64String);
+    };
+
+    reader.readAsDataURL(file);  // Langsung baca file sebagai base64
 }
+
+
+
 
 // Handle the final submission after preview
 function handleSubmit(markerId, username, base64String) {
@@ -1884,7 +1859,10 @@ function showEquatorLines(marker) {
 
 
 // Fungsi JavaScript untuk toggle visibilitas gambar dan mengubah teks tombol
-function toggleImageVisibility(button) {
+function toggleImageVisibility(button, event) {
+    // Prevent the event from propagating and closing the popup
+    event.stopPropagation();
+
     const image = button.nextElementSibling; // Mendapatkan elemen gambar setelah tombol
     if (image.style.display === "none") {
         image.style.display = "block";
@@ -1894,6 +1872,7 @@ function toggleImageVisibility(button) {
         button.textContent = "Show Image";
     }
 }
+
 // Fungsi untuk menyalin teks ke clipboard
 function copyToClipboard(text, event) {
     const button = event.target; // Get the button that was pressed
@@ -2444,6 +2423,7 @@ document.querySelectorAll('.collect-toggle').forEach(item => {
 // Select both toggle containers and add the toggle effect
 document.querySelectorAll('.toggle-legend-container, .toggle-new-filters-container').forEach(button => {
     button.addEventListener('click', () => {
+    map.closePopup();
         // Toggle the "hover" class on click to keep or remove the effect
         button.classList.toggle('hover');
     });
@@ -2760,7 +2740,7 @@ function onLocTypeChange(newLocType) {
 function centerMapOnBounds(imageBounds) {
     // Close any open popups at the very start
     map.closePopup();
-
+ 
     const midLat = (imageBounds[0][0] + imageBounds[1][0]) / 2;
     const midLng = (imageBounds[0][1] + imageBounds[1][1]) / 2;
     const offsetLng = 0.01; // Adjust this value as needed
