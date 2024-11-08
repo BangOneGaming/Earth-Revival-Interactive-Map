@@ -2420,14 +2420,19 @@ document.querySelectorAll('.collect-toggle').forEach(item => {
         item.classList.toggle('hover-active'); // Toggle the "hover-active" class on click
     });
 });
-// Select both toggle containers and add the toggle effect
+// Pilih kedua elemen toggle dan tambahkan efek toggle
 document.querySelectorAll('.toggle-legend-container, .toggle-new-filters-container').forEach(button => {
     button.addEventListener('click', () => {
-    map.closePopup();
-        // Toggle the "hover" class on click to keep or remove the effect
+        // Toggle kelas "hover" untuk efek klik
         button.classList.toggle('hover');
+
+        // Cek apakah popup saat ini terbuka, lalu tutup jika terbuka
+        if (map && map.hasLayer(map._popup)) {
+            map.closePopup();
+        }
     });
 });
+
 
 
 
