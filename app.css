@@ -545,15 +545,50 @@ label[for="imageUpload"]:active {
     font-family: 'Roboto', sans-serif;
     animation: bounceIn 0.6s ease; /* Animasi muncul */
 }
+
+/* Animasi untuk Garis Ekuator dengan Delay setelah Ikon Pusat */
+.equator-line {
+    opacity: 0;
+    animation: fadeIn 0.3s ease forwards;
+    animation-delay: 0.4s; /* Delay 1 detik setelah animasi ikon selesai (0.5 detik) */
+}
+
+/* Animasi untuk Garis Vertikal Atas (opacity tetap 0, tanpa animasi) */
+.equator-line.vertical.top {
+    animation: none;
+    opacity: 0;
+}
+
+/* Animasi Ukuran untuk Ikon Pusat */
+.center-icon {
+    animation: growIn 0.5s ease forwards;
+    transform: scale(0);
+}
+
+/* Definisi Animasi */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0.8;
+    }
+}
+
+@keyframes growIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+
 .leaflet-popup {
     pointer-events: none;
-}
-.equator-line {
-    position: absolute;
-    background-color: #ffffff;
-    opacity: 0.8;
-    pointer-events: none;
-    z-index: 400; /* Z-index lebih rendah dari popup */
 }
 
 /* Leaflet popup content wrapper */
@@ -1019,7 +1054,7 @@ label[for="imageUpload"]:active {
 
 .toggle-legend-container, .toggle-new-filters-container {
   position: absolute;
-  z-index: 1500;
+  z-index: 1000;
   cursor: pointer;
   top: 10px; /* Position 10px from the top */
   left: 10px;   /* Position 10px from the left */

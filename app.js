@@ -1332,23 +1332,35 @@ ${showImageButton ? `
     marker.bindPopup(createPopupContent(), { offset: L.point(0, -20) });
 
     // Event to show equator lines and center icon when popup is opened
-    marker.on('popupopen', () => {
-        // Pastikan hanya elemen yang relevan yang dimodifikasi
-        const newFiltersContainer = document.querySelector('.toggle-new-filters-container');
-        
-        if (newFiltersContainer) {
-            newFiltersContainer.classList.remove('hover'); // Menonaktifkan efek hover
-        } else {
-            console.warn("Element '.toggle-new-filters-container' not found!");
-        }
+marker.on('popupopen', () => {
+    // Pastikan hanya elemen yang relevan yang dimodifikasi
+    const newFiltersContainer = document.querySelector('.toggle-new-filters-container');
+    
+    if (newFiltersContainer) {
+        newFiltersContainer.classList.remove('hover'); // Menonaktifkan efek hover
+    } else {
+        console.warn("Element '.toggle-new-filters-container' not found!");
+    }
 
-        showEquatorLines(marker); // Menampilkan garis khatulistiwa dan ikon pusat saat popup terbuka
+    // Menampilkan garis khatulistiwa dan ikon pusat saat popup terbuka
+    showEquatorLines(marker);
 
-        console.log(`Equator lines triggered for marker: ${marker.options.id}`);
+    console.log(`Equator lines triggered for marker: ${marker.options.id}`);
 
-        // Menaikkan Z-index marker
-        marker.setZIndexOffset(1000);  // Ubah angka ini sesuai kebutuhan Anda
-    });
+    // Menaikkan Z-index marker
+    marker.setZIndexOffset(1000);
+
+    // Menggeser peta agar marker berada di tengah layar dengan sedikit offset ke atas
+    const latlng = marker.getLatLng();
+    
+    // Menambahkan offset untuk menaikkan peta sedikit lebih tinggi dari marker
+    const offsetLat = latlng.lat + 0.200; // Sesuaikan nilai 0.01 sesuai kebutuhan
+    
+    // Menggeser peta dengan animasi
+    marker._map.setView([offsetLat, latlng.lng], marker._map.getZoom(), { animate: true });
+});
+
+
 
     // Menghilangkan animasi setelah animasi selesai
     marker.on('popupclose', () => {
@@ -1773,23 +1785,23 @@ function showEquatorLines(marker) {
         centerIcon.style.width = '100px';
         centerIcon.style.height = '100px';
         centerIcon.style.position = 'absolute';
-        centerIcon.style.zIndex = '500';  // Semua elemen memiliki z-index yang sama yaitu 500
+        centerIcon.style.zIndex = '500';
 
         const horizontalLineLeft = document.createElement('div');
         horizontalLineLeft.className = 'equator-line horizontal left';
-        horizontalLineLeft.style.zIndex = '500';  // Sama dengan z-index ikon pusat
+        horizontalLineLeft.style.zIndex = '500';
 
         const horizontalLineRight = document.createElement('div');
         horizontalLineRight.className = 'equator-line horizontal right';
-        horizontalLineRight.style.zIndex = '500';  // Sama dengan z-index ikon pusat
+        horizontalLineRight.style.zIndex = '500';
 
         const verticalLineTop = document.createElement('div');
         verticalLineTop.className = 'equator-line vertical top';
-        verticalLineTop.style.zIndex = '500';  // Sama dengan z-index ikon pusat
+        verticalLineTop.style.zIndex = '500';
 
         const verticalLineBottom = document.createElement('div');
         verticalLineBottom.className = 'equator-line vertical bottom';
-        verticalLineBottom.style.zIndex = '500';  // Sama dengan z-index ikon pusat
+        verticalLineBottom.style.zIndex = '500';
 
         const mapContainer = marker._map.getContainer();
         mapContainer.appendChild(centerIcon);
@@ -1814,8 +1826,6 @@ function showEquatorLines(marker) {
             horizontalLineLeft.style.width = `${point.x - 50}px`;
             horizontalLineLeft.style.height = '1.5px';
             horizontalLineLeft.style.backgroundColor = '#ffffff';
-            horizontalLineLeft.style.opacity = 0.8;
-            horizontalLineLeft.style.pointerEvents = 'none';
 
             // Posisi garis horizontal kanan
             horizontalLineRight.style.position = 'absolute';
@@ -1824,8 +1834,6 @@ function showEquatorLines(marker) {
             horizontalLineRight.style.width = `${window.innerWidth - point.x - 50}px`;
             horizontalLineRight.style.height = '1.5px';
             horizontalLineRight.style.backgroundColor = '#ffffff';
-            horizontalLineRight.style.opacity = 0.8;
-            horizontalLineRight.style.pointerEvents = 'none';
 
             // Posisi garis vertikal atas
             verticalLineTop.style.position = 'absolute';
@@ -1834,8 +1842,6 @@ function showEquatorLines(marker) {
             verticalLineTop.style.width = '1.5px';
             verticalLineTop.style.height = `${point.y - 50}px`;
             verticalLineTop.style.backgroundColor = '#ffffff';
-            verticalLineTop.style.opacity = 0;
-            verticalLineTop.style.pointerEvents = 'none';
 
             // Posisi garis vertikal bawah
             verticalLineBottom.style.position = 'absolute';
@@ -1844,8 +1850,6 @@ function showEquatorLines(marker) {
             verticalLineBottom.style.width = '1.5px';
             verticalLineBottom.style.height = `${window.innerHeight - point.y - 50}px`;
             verticalLineBottom.style.backgroundColor = '#ffffff';
-            verticalLineBottom.style.opacity = 0.8;
-            verticalLineBottom.style.pointerEvents = 'none';
         };
 
         // Posisi garis ekuator saat pertama kali dibuka
