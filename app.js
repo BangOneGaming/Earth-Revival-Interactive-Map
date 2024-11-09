@@ -23,45 +23,172 @@ function getNormalizedCoord(coord, zoom) {
 
     return { x: x, y: y };
 }
-function initMiniMap() {
-    const miniMapMarkers = {};
+document.addEventListener("DOMContentLoaded", function() {
+    const preloaderTexts = [
+        "TIPS: Give Us Your Marker, Let Help Each Other",
+        "TIPS: Use Mobile To Better Experience",
+        "If There Are Any Problems And Suggestions Contact BangOne Gaming On Tiktok",
+        "TIPS: Give Us Your Marker, Let Help Each Other",
+        "Almost ready, hang tight!"
+    ];
 
-    for (const key in mini_map_type) {
-        if (mini_map_type.hasOwnProperty(key)) {
-            const info = mini_map_type[key];
-            const loc_position = info.loc_position.split(",");
-            const marker = L.marker([parseFloat(loc_position[0]), parseFloat(loc_position[1])], {
-                icon: L.icon({
-                    iconUrl: 'null',
-                    iconSize: [1, 1]
-                })
-            }).addTo(map);
+    const textElement = document.getElementById("preloader-text");
+    const loadingBar = document.getElementById("loading-bar");
+    const loadingText = document.getElementById("loading-text");
+    const mapElement = document.getElementById("map");
 
-            const bounds = [
-                [parseFloat(info['map_position'][0].split(",")[0]), parseFloat(info['map_position'][0].split(",")[1])],
-                [parseFloat(info['map_position'][1].split(",")[0]), parseFloat(info['map_position'][1].split(",")[1])]
-            ];
+    if (!textElement || !loadingBar || !loadingText || !mapElement) {
+        console.error("Elemen tidak ditemukan!");
+        return;
+    }
 
-            const historicalOverlay = L.imageOverlay(info['type']['default']['map_url'], bounds).addTo(map);
-            historicalOverlay.remove(); // Initially hide the overlay
+    let index = 0;
+    let totalProgress = 0;  // Total progress bar
+    const totalMiniMapMarkers = Object.keys(mini_map_type).length; // Jumlah marker minimap
+    let totalMiniMapImages = 0;
+    let loadedMiniMapMarkers = 0;
+    let loadedMiniMapImages = 0;
 
-            marker.on('click', function () {
-                if (map.hasLayer(historicalOverlay)) {
-                    map.removeLayer(historicalOverlay);
-                } else {
-                    map.addLayer(historicalOverlay);
-                }
-            });
+    let activeMiniMapMarkers = [];  // Array untuk menyimpan marker minimap
 
-            miniMapMarkers[key] = marker;
+    // Mengubah teks preloader secara berkala
+    function changePreloaderText() {
+        index = (index + 1) % preloaderTexts.length;
+        textElement.textContent = preloaderTexts[index];
+    }
+
+    // Mengupdate loading bar
+    function updateLoadingBar() {
+        loadingBar.style.width = totalProgress + "%";
+        loadingText.textContent = `Loading... ${totalProgress}%`;  // Tampilkan progres dalam teks
+    }
+
+    // Pemuatan progress bar secara berkala
+    const loadingProgressInterval = setInterval(() => {
+        if (totalProgress < 100) {
+            updateLoadingBar();
+        } else {
+            clearInterval(loadingProgressInterval);
+        }
+    }, 700);
+
+    setInterval(changePreloaderText, 3000);
+
+    // Memuat marker minimap
+    function loadMiniMapMarkers() {
+        let miniMapLoaded = 0;
+        for (const key in mini_map_type) {
+            if (mini_map_type.hasOwnProperty(key)) {
+                const info = mini_map_type[key];
+                const loc_position = info.loc_position.split(",");
+                const marker = L.marker([parseFloat(loc_position[0]), parseFloat(loc_position[1])], {
+                    icon: L.icon({
+                        iconUrl: 'null',  // Menyembunyikan ikon sementara
+                        iconSize: [1, 1]  // Marker kecil atau tidak terlihat
+                    })
+                });
+
+                // Simpan marker di array tanpa menambahkannya ke peta
+                activeMiniMapMarkers.push(marker);
+
+                // Update progres setelah marker dimuat
+                miniMapLoaded++;
+                let miniMapProgress = (miniMapLoaded / totalMiniMapMarkers) * 50; // Setengah progres untuk marker
+                loadedMiniMapMarkers = miniMapLoaded;  // Update jumlah marker yang dimuat
+                totalProgress = miniMapProgress + (loadedMiniMapImages / totalMiniMapImages) * 50; // Gabungkan progres marker dan gambar
+            }
         }
     }
-}
+
+    // Memuat gambar minimap
+    function loadMinimapImages() {
+        for (const key in mini_map_type) {
+            if (mini_map_type.hasOwnProperty(key)) {
+                const mapType = mini_map_type[key].type;
+                for (const typeKey in mapType) {
+                    if (mapType.hasOwnProperty(typeKey)) {
+                        const mapUrl = mapType[typeKey].map_url;
+                        totalMiniMapImages++;
+
+                        const minimapImage = new Image();
+                        minimapImage.src = mapUrl;
+
+                        minimapImage.onload = function() {
+                            loadedMiniMapImages++;
+                            let imageProgress = (loadedMiniMapImages / totalMiniMapImages) * 50; // Setengah progres untuk gambar
+                            totalProgress = (loadedMiniMapMarkers / totalMiniMapMarkers) * 50 + imageProgress; // Gabungkan progres marker dan gambar minimap
+
+                            updateLoadingBar();
+                        };
+
+                        minimapImage.onerror = function() {
+                            console.error("Gagal memuat gambar minimap.");
+                        };
+                    }
+                }
+            }
+        }
+    }
+
+    // Memulai pemuatan
+    function initMiniMap() {
+        loadMiniMapMarkers();  // Memuat marker minimap
+        loadMinimapImages();   // Memuat gambar minimap
+    }
+
+    // Pastikan elemen minimap dan peta disembunyikan saat proses preload
+    mapElement.classList.add('hidden');  // Sembunyikan peta saat preload
+
+    // Memanggil initMiniMap setelah pemuatan utama selesai
+    initMap(); // Initialize main map first
+    initMiniMap(); // Then initialize mini-map markers and load the minimap images
 
 
-// Call initMiniMap after your main map initialization
-initMap(); // Initialize your main map first
-initMiniMap(); // Then initialize the mini-map markers and overlays
+    // Menyembunyikan preloader setelah loading selesai
+    const hidePreloader = () => {
+        loadingText.textContent = "Loading... 100%";
+        setTimeout(() => {
+            document.getElementById('preloader').style.display = 'none';
+
+            // Tampilkan peta setelah preloader selesai
+            setTimeout(() => {
+                
+                mapElement.classList.remove('hidden'); // Tampilkan peta dan minimap
+
+                // Tampilkan marker setelah peta terlihat
+                clearAllMarks(); 
+                
+
+                // Tampilkan pop-up setelah peta terlihat
+                setTimeout(() => {
+                    const popup = document.getElementById('patch-popup');
+                    const closeBtn = document.querySelector('.popup .close');
+                    popup.style.display = 'flex';
+
+                    closeBtn.onclick = function() {
+                        popup.style.display = 'none';
+                    };
+
+                    window.onclick = function(event) {
+                        if (event.target === popup) {
+                            popup.style.display = 'none';
+                        }
+                    };
+                }, 1000);
+            }, 0); // Delay 1 detik setelah preloader selesai
+        }, 1000); // Delay 1 detik sebelum menutup preloader
+    };
+
+    // Memeriksa apakah progress bar sudah mencapai 100% sebelum menutup preloader
+    const checkProgress = setInterval(() => {
+        if (totalProgress >= 100) {
+            clearInterval(checkProgress);
+            loadingText.textContent = "Overall Progress: 100%";  // Menampilkan "Overall Progress: 100%"
+            hidePreloader();
+            
+        }
+    }, 100); // Memeriksa setiap 100ms hingga progress bar mencapai 100%
+});
 
 function addMarkersToMap() {
     markers = []; // Reset markers array setiap kali fungsi dipanggil
@@ -118,22 +245,12 @@ function addMarkersToMap() {
             // Setup interaksi marker
             setupMarkerInteractions(marker, location, markerId);
 
-            // Tambahkan event click untuk animasi bounce
-            marker.on('click', function () {
-                console.log(`Marker ${markerId} clicked! Starting animation...`);
-                
-                // Membuat animatedMarker setelah marker diklik
-                const animatedMarker = L.animatedMarker(marker.getLatLng(), {
-                    autoStart: true,
-                    interval: 300,
-                });
+            // Tambahkan marker ke peta
+            marker.addTo(map);
 
-                // Menambahkan marker animasi ke peta
-                animatedMarker.addTo(map);
-
-                // Memulai animasi
-                animatedMarker.start();
-            });
+            // Terapkan animasi bounceIn saat marker ditambahkan ke peta
+            const iconElement = marker._icon; // Dapatkan elemen icon marker
+            iconElement.classList.add('bounceIn'); // Tambahkan kelas bounceIn untuk animasi
 
             // Update kategori berdasarkan kategori marker dan opacity
             updateCategoryCounts(locType, categoryId, initialOpacity);
@@ -147,6 +264,8 @@ function addMarkersToMap() {
     hideMarkers();
     updateCategoryDisplay();  // Pastikan tampilan kategori diupdate setelah menambahkan semua marker
 }
+
+
 
 function calculateMaxCounts() {
     const seenMarkers = new Set(); // Gunakan set untuk melacak marker yang sudah dihitung
@@ -201,17 +320,26 @@ function setupFilterListeners() {
 function initMap() {
     const init_position = window.init_position || "60.871009248911655,-76.62568359375001";
     const center_position = init_position.split(",");
+    const mapElement = document.getElementById("map");
 
-    // Mengatur batas peta dengan latLng yang sesuai
+    if (!mapElement) {
+        console.error("Elemen #map tidak ditemukan!");
+        return;
+    }
+
+    // Tampilkan elemen peta yang sebelumnya tersembunyi
+    mapElement.classList.remove('hidden'); // Tampilkan elemen peta
+
+    // Mengatur batas peta
     const southWest = L.latLng(57, -89.4);
     const northEast = L.latLng(66, -67.40522460937501);
     const mapBounds = L.latLngBounds(southWest, northEast);
 
     map = L.map('map', {
         maxBounds: mapBounds,
-        maxBoundsViscosity: 1.0, // Mencegah pengguna keluar dari batas
-        zoomSnap: 0.1, // Atur langkah zoom ke 0.1
-        zoomDelta: 0.1, // Atur langkah zoom saat menggunakan kontrol zoom
+        maxBoundsViscosity: 1.0,
+        zoomSnap: 0.1,
+        zoomDelta: 0.1,
     }).setView([parseFloat(center_position[0]), parseFloat(center_position[1])], 6);
 
     // Menambahkan tile layer
@@ -220,7 +348,7 @@ function initMap() {
         minZoom: 6,
         maxZoom: 9,
         noWrap: true,
-        bounds: mapBounds, // Set bounds untuk tile layer
+        bounds: mapBounds,
         zoomFilter: function(coords, zoom) {
             if (zoom < 4 || zoom > 9) return false;
             const temp = xyDeny[`zoom_${zoom}`];
@@ -228,22 +356,22 @@ function initMap() {
                    (temp[0] <= coords.y && coords.y <= temp[1]);
         },
         getTileUrl: function(coords) {
-            return this.options.zoomFilter(coords, coords.z) 
-                ? `statics/yuan_${coords.z}_${coords.x}_${coords.y}.png` 
+            return this.options.zoomFilter(coords, coords.z)
+                ? `statics/yuan_${coords.z}_${coords.x}_${coords.y}.png`
                 : '';
         }
     }).addTo(map);
 
-    // Menambahkan listener untuk menangani pergeseran peta
+    // Listener untuk pergeseran peta
     map.on('dragend', function() {
         const currentCenter = map.getCenter();
-        const tileBounds = L.latLngBounds(southWest, northEast); // Batas tile yang dimuat
+        const tileBounds = L.latLngBounds(southWest, northEast);
         if (!tileBounds.contains(currentCenter)) {
-            map.setView(tileBounds.getCenter()); // Menarik kembali ke pusat batas tile
+            map.setView(tileBounds.getCenter());
         }
     });
 
-    // Pastikan untuk menambahkan layer dan pengaturan filter setelah memuat data
+    // Mengambil data marker dan menambahkannya ke peta
     fetch('https://autumn-dream-8c07.square-spon.workers.dev/earthrevivalinteractivemaps')
         .then(response => {
             if (!response.ok) {
@@ -255,10 +383,11 @@ function initMap() {
             console.log(`Fetched Data: `, data);
             jsonData = data;
             addMarkersToMap(); // Tambahkan marker setelah mengambil data
-            setupFilterListeners(); // Pastikan listener filter disiapkan
+            setupFilterListeners(); // Siapkan listener filter
         })
         .catch(error => console.error('Error fetching marker data:', error));
 }
+
 
 
 // Fungsi utama untuk menampilkan atau menyembunyikan marker berdasarkan filter
@@ -1288,50 +1417,65 @@ function setupMarkerInteractions(marker, location, key) {
 
     const showYsId = location.ys_id && location.ys_id !== "0";
 
-    function createPopupContent() {
-        return `
-            <div class="leaflet-popup-content" style="z-index: 9999;">
-                <h4 class="popup-title">${location.en_name}</h4>
-                <p class="popup-description">
-                    ${(location.desc || 'No description available.').replace(/\n/g, '<br>')}
-                </p>
-                ${xCoord && zCoord ? `
-                    <div class="copy-buttons">
-                        <button class="copyButton" onclick="copyToClipboard('${xCoord}', event)">Copy Coordinates X</button>
-                        <button class="copyButton" onclick="copyToClipboard('${zCoord}', event)">Copy Coordinates Z</button>
-                    </div>
-                ` : ''}
-                <div id="copyFeedback" class="copy-feedback" style="display: none;">
-                    <img src="icons/bangone.png" alt="Feedback Icon" class="feedback-icon">
-                    <span>Copied to clipboard!</span>
+
+function createPopupContent() {
+    return `
+        <div class="leaflet-popup-content" style="z-index: 9999;">
+            <h4 class="popup-title">${location.en_name}</h4>
+            <p class="popup-description">
+                ${(location.desc || 'No description available.').replace(/\n/g, '<br>')}
+            </p>
+            ${xCoord && zCoord ? `
+                <div class="copy-buttons">
+                    <button class="copyButton" onclick="copyToClipboard('${xCoord}', event)">Copy Coordinates X</button>
+                    <button class="copyButton" onclick="copyToClipboard('${zCoord}', event)">Copy Coordinates Z</button>
                 </div>
-                ${thumbnailUrl ? `
-                    <div class="popup-thumbnail">
-                        <img src="${thumbnailUrl}" alt="YouTube Thumbnail" style="width: auto; height: 200px; border-radius: 4px;">
-                        <a href="${location.links_info}" target="_blank" class="popup-play-button">
-                            <img src="https://img.icons8.com/material-outlined/24/ffffff/play.png" alt="Play">
-                        </a>
-                    </div>
-                ` : ''}
-${showImageButton ? `
-    <button class="showImageButton" onclick="toggleImageVisibility(this, event)" style="background: rgba(10, 28, 61, 0.883); border: none; color: #028c9a; font-size: 12px; cursor: pointer; pointer-events: auto;">
-        <b>Show Image</b>
-    </button>
-` : ''}
-                ${imageInfoContent}
-                ${showYsId ? `<p class="popup-ys-id">YS ID: ${location.ys_id}</p>` : ''}
-                <button class="reportButton" data-id="${key}" style="background: none; border: none; color: red; font-size: 12px; cursor: pointer; pointer-events: auto;">Report</button>
-                ${!imageInfoContent ? `<button class="uploadImageButton" onclick="openImageFormPopup('${key}')" style="background: none; border: none; color: #FFD700; font-size: 12px; cursor: pointer; pointer-events: auto;"><b>Upload Screenshot Location</b></button>` : ''}
+            ` : ''}
+            <div id="copyFeedback" class="copy-feedback" style="display: none;">
+                <img src="icons/bangone.png" alt="Feedback Icon" class="feedback-icon">
+                <span>Copied to clipboard!</span>
             </div>
-        `;
-    }
+            
+            <!-- Iklan Google AdSense with white background -->
+            <div id="popup-ad-container" style="margin-top: 2px; text-align: center; background-color: rgba (255,255,255,0.5); padding: 2px; border-radius: 5px;">
+                <ins class="adsbygoogle"
+                    style="display:inline-block; width:100%;  height:30px;"
+                    data-ad-client="ca-pub-8582564022805467"
+                    data-ad-slot="1368580738"
+                    data-ad-format="auto"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+
+            ${thumbnailUrl ? `
+                <div class="popup-thumbnail">
+                    <img src="${thumbnailUrl}" alt="YouTube Thumbnail" style="width: auto; height: 200px; border-radius: 4px;">
+                    <a href="${location.links_info}" target="_blank" class="popup-play-button">
+                        <img src="https://img.icons8.com/material-outlined/24/ffffff/play.png" alt="Play">
+                    </a>
+                </div>
+            ` : ''}
+            
+            ${showImageButton ? `
+                <button class="showImageButton" onclick="toggleImageVisibility(this, event)" style="background: rgba(10, 28, 61, 0.883); border: none; color: #028c9a; font-size: 12px; cursor: pointer; pointer-events: auto;">
+                    <b>Show Image</b>
+                </button>
+            ` : ''}
+            ${imageInfoContent}
+            ${showYsId ? `<p class="popup-ys-id">YS ID: ${location.ys_id}</p>` : ''}
+            <button class="reportButton" data-id="${key}" style="background: none; border: none; color: red; font-size: 12px; cursor: pointer; pointer-events: auto;">Report</button>
+            ${!imageInfoContent ? `<button class="uploadImageButton" onclick="openImageFormPopup('${key}')" style="background: none; border: none; color: #FFD700; font-size: 12px; cursor: pointer; pointer-events: auto;"><b>Upload Screenshot Location</b></button>` : ''}
+        </div>
+    `;
+}
 
 
+// Bind popup content to the marker
+marker.bindPopup(createPopupContent(), { offset: L.point(0, -20) });
 
-    // Bind popup content to the marker
-    marker.bindPopup(createPopupContent(), { offset: L.point(0, -20) });
 
-    // Event to show equator lines and center icon when popup is opened
+// Event to show equator lines and center icon when popup is opened
 marker.on('popupopen', () => {
     // Pastikan hanya elemen yang relevan yang dimodifikasi
     const newFiltersContainer = document.querySelector('.toggle-new-filters-container');
@@ -1360,25 +1504,23 @@ marker.on('popupopen', () => {
     marker._map.setView([offsetLat, latlng.lng], marker._map.getZoom(), { animate: true });
 });
 
+// Menghilangkan animasi setelah animasi selesai
+marker.on('popupclose', () => {
+    const equatorLines = document.querySelectorAll('.equator-line');
+    const centerIcon = document.querySelector('.center-icon');
 
+    if (equatorLines.length > 0) {
+        equatorLines.forEach(line => line.remove());
+    }
 
-    // Menghilangkan animasi setelah animasi selesai
-    marker.on('popupclose', () => {
-        const equatorLines = document.querySelectorAll('.equator-line');
-        const centerIcon = document.querySelector('.center-icon');
+    if (centerIcon) {
+        centerIcon.remove();
+    }
 
-        if (equatorLines.length > 0) {
-            equatorLines.forEach(line => line.remove());
-        }
-
-        if (centerIcon) {
-            centerIcon.remove();
-        }
-
-        // Menghapus kelas bounce dan mengembalikan Z-index ke nilai default
-        marker.getElement().classList.remove('marker-bounce');
-        marker.setZIndexOffset(0);  // Kembalikan ke nilai default
-    });
+    // Menghapus kelas bounce dan mengembalikan Z-index ke nilai default
+    marker.getElement().classList.remove('marker-bounce');
+    marker.setZIndexOffset(0);  // Kembalikan ke nilai default
+});
 
 
     marker.on('contextmenu', (e) => {
@@ -2018,7 +2160,7 @@ function setupReportButton(marker, key) {
 
 // Initialize the map and add markers (assuming this is called on DOMContentLoaded)
 document.addEventListener("DOMContentLoaded", () => {
-    initMap();
+   
     // Assume jsonData is loaded here
     addMarkersToMap(jsonData); // Call this with your actual jsonData
 });
@@ -2098,10 +2240,7 @@ function findMarkerById(markerId) {
     return markers.find(marker => marker.options.icon.options.iconUrl.includes(markerId));
 }
 
-// Initialize map on document ready
-document.addEventListener("DOMContentLoaded", () => {
-    initMap();
-});
+
 
 
 // Function to filter markers based on selected categories
@@ -2814,18 +2953,18 @@ function setupFilterListeners() {
     filterCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', () => {
             if (checkbox.dataset.filter === 'all') {
-                // If 'all' is checked/unchecked, update all other checkboxes
+                // Jika checkbox 'all' diubah, perbarui semua checkbox lainnya
                 filterCheckboxes.forEach(cb => {
                     if (cb !== allCheckbox) {
                         cb.checked = allCheckbox.checked;
                     }
                 });
             } else {
-                // If any other checkbox is unchecked, uncheck 'all'
+                // Jika checkbox lain tidak dicentang, hapus centang dari 'all'
                 if (!checkbox.checked) {
                     allCheckbox.checked = false;
                 }
-                // If all other checkboxes are checked, check 'all'
+                // Jika semua checkbox lain dicentang, centang 'all'
                 const allOthersChecked = Array.from(filterCheckboxes)
                     .filter(cb => cb !== allCheckbox)
                     .every(cb => cb.checked);
@@ -2834,12 +2973,19 @@ function setupFilterListeners() {
                 }
             }
 
-            // Update activeFilters based on current checkbox states
+            // Menutup popup jika ada yang terbuka
+            markers.forEach(marker => {
+                if (marker.isPopupOpen()) {
+                    marker.closePopup();
+                }
+            });
+
+            // Memperbarui activeFilters berdasarkan status checkbox saat ini
             activeFilters = Array.from(filterCheckboxes)
                 .filter(cb => cb.checked)
                 .map(cb => cb.dataset.filter);
 
-            // Update markers visibility
+            // Memperbarui visibilitas marker
             updateMarkers();
         });
     });
@@ -3075,84 +3221,3 @@ document.getElementById("hildeBtn").onclick = function () {
     window.location.href = "https://bangonegaming.com/hilde/index.html";
 };
 
-document.addEventListener("DOMContentLoaded", function() {
-    // Daftar teks untuk preloader
-    const preloaderTexts = [
-        "TIPS: Give Us Your Marker, Let Help Each Other",
-        "TIPS: Use Mobile To Better Experience",
-        "If There Are Any Problems And Suggestions Contact BangOne Gaming On Tiktok",
-        "TIPS: Give Us Your Marker, Let Help Each Other",
-        "Almost ready, hang tight!"
-    ];
-
-    // Mendapatkan elemen DOM
-    const textElement = document.getElementById("preloader-text");
-    const loadingBar = document.getElementById("loading-bar");
-    const loadingText = document.getElementById("loading-text");
-
-    // Cek apakah elemen ditemukan sebelum mengaksesnya
-    if (!textElement || !loadingBar || !loadingText) {
-        console.error("Elemen tidak ditemukan!");
-        return; // Keluar dari fungsi jika elemen tidak ditemukan
-    }
-
-    let index = 0;
-    let percentage = 0;
-
-    // Fungsi untuk mengubah teks preloader
-    function changePreloaderText() {
-        index = (index + 1) % preloaderTexts.length;
-        textElement.textContent = preloaderTexts[index];
-    }
-
-    // Fungsi untuk memperbarui loading bar
-    function updateLoadingBar() {
-        percentage += 10; // Menambah persentase setiap interval
-        if (percentage <= 100) {
-            loadingBar.style.width = percentage + "%";
-            loadingText.textContent = "Loading... " + percentage + "%";
-        } else {
-            clearInterval(loadingInterval); // Hentikan interval setelah mencapai 100%
-        }
-    }
-
-    // Simulasi loading progress
-    const loadingProgressInterval = setInterval(() => {
-        if (percentage < 100) {
-            updateLoadingBar();
-        } else {
-            clearInterval(loadingProgressInterval);
-        }
-    }, 700); // Update setiap 700ms
-
-    // Mengubah teks setiap 3 detik
-    setInterval(changePreloaderText, 3000);
-
-    // Otomatis menutup preloader setelah loading selesai
-    setTimeout(() => {
-        loadingText.textContent = "Loading... 100%"; // Tampilkan 100% untuk saat terakhir
-        setTimeout(() => {
-            document.getElementById('preloader').style.display = 'none'; // Sembunyikan preloader
-
-            // Tambahkan delay 2 detik sebelum menampilkan popup
-            setTimeout(() => {
-                // Tampilkan pop-up setelah preloader selesai
-                const popup = document.getElementById('patch-popup');
-                const closeBtn = document.querySelector('.popup .close');
-                popup.style.display = 'flex'; // Popup ditampilkan setelah 2 detik
-
-                // Hide the pop-up when the close button is clicked
-                closeBtn.onclick = function() {
-                    popup.style.display = 'none';
-                };
-
-                // Hide the pop-up when clicking outside the content
-                window.onclick = function(event) {
-                    if (event.target === popup) {
-                        popup.style.display = 'none';
-                    }
-                };
-            }, 900); // Tunda 2 detik setelah preloader selesai sebelum menampilkan pop-up
-        }, 3000); // Tunggu 3 detik sebelum menyembunyikan preloader dan memulai delay 2 detik
-    }, 10000); // Total 10 detik delay untuk menutup otomatis
-});

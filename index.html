@@ -38,7 +38,12 @@
     <!-- Leaflet for maps -->
 <!-- Import Leaflet -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<!-- Memuat pustaka Leaflet.js -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<!-- Memuat pustaka AnimatedMarker -->
+<script src="https://cdn.jsdelivr.net/npm/leaflet-bounce-marker@0.1.0/src/index.min.js"></script>
+
 
 
         <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -50,10 +55,21 @@
     
       gtag('config', 'G-XV19ZR4EBT');
     </script>
+
 </head>
-
 <body>
-
+    <!-- Kontainer iklan di atas peta -->
+    <div id="ads-container">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-8582564022805467"
+             data-ad-slot="1368580738"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
 <div id="patch-popup" class="popup">
     <div class="popup-content">
         <span class="close">&times;</span>
@@ -62,7 +78,7 @@
         <p>VERSION 5.5- NOVEMBER 2024</p>
         <ul>
             <li><b>NEW BUTTON AND MORE OPTIMIZE UI</b></li>
-            <li>Fix Hold or Right Click on Marker</li>
+            <li>QUICK LOADING</li>
             <li>Fix <b>VARIOUS BUG</b></li>
             <li>Fix Marker Active Now Easy To See</li>
             <li>Upload Image Fixed</li>
@@ -554,14 +570,18 @@
 
 
 
-<div id="map"></div>
+<div id="map" class="hidden"></div>
+
 </div>
 <script src="minimap_config.js"></script>
 <!-- Import leaflet-animatedmarker -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-animatedmarker/0.0.2/leaflet.animatedmarker.min.js"></script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467"
      crossorigin="anonymous"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>
+  eruda.init();
+</script>
 <script src="category.js"></script>
 <script src="app.js?v=3.7"></script>
 </body>
