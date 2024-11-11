@@ -6,39 +6,85 @@ body, html, #root, .App {
 overflow: hidden;
   font-family: 'Roboto', sans-serif;
 }
-#ads-container {
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-    position: absolute;
-    bottom: 20px; /* Adjust the distance from the bottom of the popup */
+/* Popup Iklan */
+#ad-popup {
+    display: none; /* Tersembunyi secara default */
+    position: fixed;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%); /* Center the ad horizontally */
-    z-index: 1000; /* Ensure it's above other content */
-    height: 50px; /* Reduced height for the banner */
-    width: 50%; /* Adjust width as necessary (50% of the container) */
-    text-align: center; /* Center the ad content */
-    border-radius: 10px; /* Optional: rounded corners for a smoother look */
-    padding: 5px; /* Optional: padding inside the container */
-    display: flex; /* Use flexbox for alignment */
-    justify-content: space-between; /* Space between close button and ad */
-    align-items: center; /* Vertically center content */
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 400px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    z-index: 1000;
+    text-align: center;
 }
+
+.ad-content {
+    margin-top: 10px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(255, 0, 0, 0.8);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 16px;
+}
+
+.close-btn:hover {
+    background-color: rgba(255, 0, 0, 1);
+}
+
+#ads-container {
+    background-color: rgba(0, 0, 0, 0.7); /* Latar belakang semi-transparan */
+    position: fixed;
+    bottom: 0; /* Ditempatkan di bagian bawah layar */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: 100%; /* Lebar penuh layar */
+    max-width: 768px; /* Maksimal lebar di desktop */
+    height: 60px; /* Tinggi banner lebih kecil */
+    padding: 5px 10px;
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .adsbygoogle {
-  width: 100%;
-  height: auto;
+    width: 100%;
+    max-height: 50px; /* Batas tinggi maksimal iklan */
+    object-fit: contain; /* Menyesuaikan konten iklan */
 }
 
 #ads-container .close-btn {
     position: absolute;
     top: 5px;
-    right: 5px;
-    background-color: rgba(255, 255, 255, 0.7);
+    right: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
     border: none;
     color: #333;
-    font-size: 18px;
+    font-size: 14px;
     cursor: pointer;
-    padding: 5px 10px;
+    padding: 5px;
     border-radius: 50%;
 }
+
+#ads-container .close-btn:hover {
+    background-color: rgba(255, 255, 255, 1);
+}
+
 
 #ads-container .close-btn:hover {
     background-color: rgba(255, 255, 255, 1);

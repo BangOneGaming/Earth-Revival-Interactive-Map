@@ -58,18 +58,21 @@
 
 </head>
 <body>
-    <!-- Kontainer iklan di atas peta -->
+    <!-- Kontainer iklan di bagian bawah peta -->
     <div id="ads-container">
+        <button class="close-btn" onclick="hideAd()">X</button>
         <ins class="adsbygoogle"
-             style="display:block"
+             style="display:inline-block"
              data-ad-client="ca-pub-8582564022805467"
              data-ad-slot="1368580738"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
+             data-ad-format="horizontal"
+             data-full-width-responsive="false"></ins>
         <script>
             (adsbygoogle = window.adsbygoogle || []).push({});
         </script>
     </div>
+
+
 <div id="patch-popup" class="popup">
     <div class="popup-content">
         <span class="close">&times;</span>
@@ -568,6 +571,22 @@
         </form>
     </div>
 
+<!-- Popup Iklan -->
+<div id="ad-popup" class="ad-popup">
+    <button class="close-btn" onclick="hideAdPopup()">✖</button>
+    <div class="ad-content">
+        <!-- Iklan Google AdSense -->
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-8582564022805467"
+             data-ad-slot="1368580738"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+</div>
 
 
 <div id="map" class="hidden"></div>

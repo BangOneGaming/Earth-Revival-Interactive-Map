@@ -1434,19 +1434,7 @@ function createPopupContent() {
             <div id="copyFeedback" class="copy-feedback" style="display: none;">
                 <img src="icons/bangone.png" alt="Feedback Icon" class="feedback-icon">
                 <span>Copied to clipboard!</span>
-            </div>
-            
-            <!-- Iklan Google AdSense with white background -->
-            <div id="popup-ad-container" style="margin-top: 2px; text-align: center; background-color: rgba (255,255,255,0.5); padding: 2px; border-radius: 5px;">
-                <ins class="adsbygoogle"
-                    style="display:inline-block; width:100%;  height:30px;"
-                    data-ad-client="ca-pub-8582564022805467"
-                    data-ad-slot="1368580738"
-                    data-ad-format="auto"></ins>
-                <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-            </div>
+            </div>          
 
             ${thumbnailUrl ? `
                 <div class="popup-thumbnail">
@@ -3221,3 +3209,30 @@ document.getElementById("hildeBtn").onclick = function () {
     window.location.href = "https://bangonegaming.com/hilde/index.html";
 };
 
+function hideAd() {
+    const adsContainer = document.getElementById('ads-container');
+    adsContainer.style.display = 'none';
+}
+// Fungsi untuk menampilkan popup iklan
+function showAdPopup() {
+    const adPopup = document.getElementById('ad-popup');
+    adPopup.style.display = 'block';
+
+    // Muat ulang iklan AdSense jika diperlukan
+    try {
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {
+        console.error('Error loading AdSense ad:', e);
+    }
+}
+
+// Fungsi untuk menyembunyikan popup iklan
+function hideAdPopup() {
+    const adPopup = document.getElementById('ad-popup');
+    adPopup.style.display = 'none';
+}
+
+// Menampilkan iklan setiap kali halaman dimuat atau direfresh
+window.addEventListener('load', () => {
+    showAdPopup();
+});
