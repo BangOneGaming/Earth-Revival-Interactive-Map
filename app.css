@@ -136,6 +136,7 @@ overflow: hidden;
 }
 
 
+/* CSS untuk preloader */
 #preloader {
     position: fixed;
     top: 0;
@@ -152,6 +153,8 @@ overflow: hidden;
     align-items: center;
     z-index: 9999;
 }
+
+/* Animasi Bounce untuk gambar preloader */
 @keyframes bounce {
     0%, 20%, 50%, 80%, 100% {
         transform: translateY(0);
@@ -164,7 +167,15 @@ overflow: hidden;
     }
 }
 
-/* Keyframes for text fade-in animation */
+/* Gambar pada preloader */
+#preloader img {
+    width: 200px;
+    height: auto;
+    margin-bottom: 20px;
+    animation: bounce 2s infinite; /* Animasi bounce untuk gambar preloader */
+}
+
+/* Animasi fade-in untuk teks preloader */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -174,32 +185,102 @@ overflow: hidden;
     }
 }
 
-#preloader img {
-    width: 200px; /* Adjust the width as needed */
-    height: auto;
-    margin-bottom: 20px;
-    animation: bounce 2s infinite;
-}
-
+/* Teks pada preloader */
 .preloader-text {
-    font-size: 20px; /* Adjust font size as needed */
-    color: #fff; /* Text color */
+    font-size: 20px; /* Ukuran font */
+    color: #fff; /* Warna teks */
     background: linear-gradient(to right, rgba(72, 144, 226, 0.8), rgba(255, 255, 255, 0.5)); 
     padding: 10px 20px; 
     border-radius: 8px; 
     text-align: center;
-    font-family: 'Arial', sans-serif; 
+    font-family: 'Open Sans', Arial, sans-serif; /* Font family */
     font-weight: bold; 
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); 
     margin-top: 10px; 
     animation: fadeIn 3s ease-in-out;
 }
 
+/* CSS untuk gambar dinamis */
+#image-info-preload {
+    margin:20px 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 300px; /* Tentukan tinggi container */
+    height: 150px;
+}
+
+/* Gambar dinamis - Menghindari animasi bounce */
+#dynamic-image {
+    max-width: 90%; /* Menghindari gambar terlalu lebar */
+    max-height: auto; /* Menghindari gambar melebihi tinggi container */
+    width: auto;
+    height: auto;
+    object-fit: contain; /* Mengatur gambar agar sesuai dalam container tanpa distorsi */
+    border-radius: 8px; /* Memberikan sedikit border radius */
+    opacity: 0; /* Awalnya tersembunyi */
+    animation: none !important; /* Menghapus animasi bounce untuk gambar dinamis */
+}
+
+/* Animasi Bounce In untuk gambar dinamis */
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Animasi Bounce Out untuk gambar dinamis */
+@keyframes bounceOut {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+}
+
+/* Kelas animasi untuk gambar dinamis */
+.bounce-in {
+    animation: bounceIn 0.6s ease forwards;
+}
+
+.bounce-out {
+    animation: bounceOut 0.6s ease forwards;
+}
+
+/* Animasi fade out untuk gambar preloader saat selesai */
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Jika preloader selesai, hilangkan gambar dengan animasi fade */
+#preloader.fade-out img {
+    animation: fadeOut 1s forwards;
+}
+
+
+/* CSS untuk loading bar */
 #loading {
     font-size: 16px;
     color: #333;
     margin-top: 20px;
 }
+
 /* Map container */
 #map {
   background-color: black;
@@ -579,7 +660,10 @@ label[for="imageUpload"]:active {
     margin: 5px; /* Margin between buttons */
     transition: background-color 0.3s; /* Smooth transition on hover */
 }
-
+/* Efek blur pada latar belakang modal */
+.modal.active {
+    backdrop-filter: blur(10px); /* Efek blur */
+}
 /* Specific styles for Yes button */
 #confirm-yes {
     background-color: rgba(72, 144, 226, 0.8); /* Light blue */
@@ -675,7 +759,11 @@ label[for="imageUpload"]:active {
 .leaflet-popup {
     pointer-events: none;
 }
-
+   .showImageButton:hover {
+        background: rgba(2, 140, 154, 0.8);
+        color: #ffffff;
+pointer-events: auto;
+    }
 /* Leaflet popup content wrapper */
 .leaflet-popup-content-wrapper {
     background: rgba(19, 39, 96, 0.613) !important; /* Same background as count container */
@@ -1240,7 +1328,8 @@ label[for="imageUpload"]:active {
   cursor: pointer;
   box-shadow: 0px 2px 6px rgb(255, 255, 255);
   color: rgb(255, 255, 255);
-  font-size: 16px;
+  font-size: 20px;
+  font-family: 'Lato', sans-serif;
   text-transform: capitalize;
   transition: background-color 0.3s ease;
   flex-grow: 1;
@@ -1662,7 +1751,8 @@ h5 {
     padding: 0;
     background: transparent;
     box-sizing: border-box;
-    font-size: 16px;
+    font-size: 20px;
+    font-weight: bold;
     color: white;
     text-align: center;
     width: 200px;
@@ -1675,7 +1765,7 @@ h5 {
 }
 
 .new-filter-container .filter-btn:first-child {
-    margin-left: 200px;
+    margin-left: 200px; 
     margin-right: 2px;
 }
 

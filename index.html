@@ -58,47 +58,38 @@
 
 </head>
 <body>
-    <!-- Kontainer iklan di bagian bawah peta -->
-    <div id="ads-container">
-        <button class="close-btn" onclick="hideAd()">X</button>
-        <ins class="adsbygoogle"
-             style="display:inline-block"
-             data-ad-client="ca-pub-8582564022805467"
-             data-ad-slot="1368580738"
-             data-ad-format="horizontal"
-             data-full-width-responsive="false"></ins>
-        <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-    </div>
+<!-- Kontainer iklan di bagian bawah peta -->
+<div id="ads-container">
+    <button class="close-btn" onclick="hideAd()">X</button>
+    <ins id="map-ad" class="adsbygoogle"
+         style="display:block; width: 100%; height: auto;"
+         data-ad-client="ca-pub-8582564022805467"
+         data-ad-slot="1368580738"
+         data-ad-format="horizontal"
+         data-full-width-responsive="false"></ins>
+</div>
 
 
 <div id="patch-popup" class="popup">
     <div class="popup-content">
         <span class="close">&times;</span>
 
-        <h4>UPDATE PATCH</h4>
-        <p>VERSION 5.5- NOVEMBER 2024</p>
-        <ul>
-            <li><b>NEW BUTTON AND MORE OPTIMIZE UI</b></li>
-            <li>QUICK LOADING</li>
-            <li>Fix <b>VARIOUS BUG</b></li>
-            <li>Fix Marker Active Now Easy To See</li>
-            <li>Upload Image Fixed</li>
-            <li>
-                <b>NEW VISUAL MARKER</b><br>⬇⬇⬇⬇:</li>
-                <span>
-    <img src="icons/marker.png" alt="Marker" style="width: 100px; vertical-align: middle; display: inline-block;"
+<h4>PATCH UPDATE</h4>
+<p>VERSION 5.8 - NOVEMBER 2024</p>
+<ul>
+    <li>LOADING OPTIMIZATION</li>
+    <li>Fixed <b><span style="color: #FFD700;">UPLOAD SCREENSHOT</span></b> issue</li>
+    <li>Fixed Image Review After Sending</li>
+    <li><span style="color: orange;"><b>MINI MAP</b></span> Now Loads Instantly</li>
+    <li>Fixed Ads Not Obstructing the Screen</li>
+</ul>
+<img src="icons/Sad.png" alt="Icon">
+<h2><span style="color: white;">Thank You for Your Donations</span></h2>
+<p>Please <b><span style="color: green;">DONATE</span></b>, I Need Support to Cover Server Costs</p>
 
-            </span>
-        </ul>
-        <img src="icons/Sad.png" alt="Icon">
-        <h2>Thanks For Your Donate</h2>
-        <p><b>Please Donate I Need to Pay for Server</b></p>
-        
         <!-- Tombol Trakteer -->
-        <a href="https://trakteer.id/BangOneGaming/tip" target="_blank" class="donate-btn">TRAKTEER <br>Donate</br></a>
-        <p>👇 You Can Donate Via Paypal 👇</p>
+        <a href="https://trakteer.id/BangOneGaming/tip" target="_blank" class="donate-btn">TRAKTEER <br><span style="color: yellow;">Donate</span></br></a>
+        <p><span style="color: white;">👇 You Can Donate Via Paypal 👇</span></p>
         <!-- Menambahkan tombol PayPal di sini -->
         <div class="paypal-button">
             <a href="https://www.paypal.me/IrvanNazmudin" target="_blank">
@@ -107,9 +98,6 @@
         </div>
     </div>
 </div>
-
-
-
 
 
     <div id="map"></div>
@@ -126,11 +114,23 @@
         </div>
     </div>
     <p class="preloader-text" id="preloader-text">Loading markers, tiles, and UI components...</p>
-    
+    <!-- Gambar Baru di Bawah Teks Preload -->
+<!-- Gambar Baru di Bawah Teks Preload -->
+<div id="image-info-preload">
+    <img id="dynamic-image" src="icons/icon_default.png" alt="Additional Image">
+</div>
+
     <!-- Menambahkan teks "Contact Me" di atas ikon -->
-    <h5 style="text-align: center; margin-top: 20px;">Contact Me</h5>
-    
-    <div id="social-icons" style="margin-top: 20px; display: flex; justify-content: center;">
+    <h5 style="text-align: center; margin-top: 5px;">Contact Me</h5>
+    <!-- Tombol PayPal di Preloader -->
+    <div style="text-align: center; margin-top: 5px;">
+        <p style="color: white;">Support Us via PayPal</p>
+        <a href="https://www.paypal.me/IrvanNazmudin" target="_blank">
+            <img src="icons/paypal.png" alt="PayPal" style="width: 200px; height: auto;">
+        </a>
+    </div>
+    <!-- Ikon Media Sosial -->
+    <div id="social-icons" style="margin-top: 5px; display: flex; justify-content: center;">
         <a href="https://youtube.com/@bangonegaming6596?si=YE4ShL6FsNHjc1Un" target="_blank" style="margin: 0 10px;">
             <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" alt="YouTube" style="width: 40px; height: auto;">
         </a>
@@ -142,6 +142,7 @@
         </a>
     </div>
 </div>
+
 
         <!-- Donate Container -->
         <div class="donate-container">
@@ -572,19 +573,15 @@
     </div>
 
 <!-- Popup Iklan -->
-<div id="ad-popup" class="ad-popup">
+<div id="ad-popup" class="ad-popup" style="display: none;">
     <button class="close-btn" onclick="hideAdPopup()">✖</button>
     <div class="ad-content">
-        <!-- Iklan Google AdSense -->
-        <ins class="adsbygoogle"
-             style="display:block"
+        <ins id="popup-ad" class="adsbygoogle"
+             style="display:block; width: 100%; height: auto;"
              data-ad-client="ca-pub-8582564022805467"
              data-ad-slot="1368580738"
              data-ad-format="auto"
              data-full-width-responsive="true"></ins>
-        <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
     </div>
 </div>
 

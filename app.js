@@ -23,38 +23,134 @@ function getNormalizedCoord(coord, zoom) {
 
     return { x: x, y: y };
 }
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const preloaderTexts = [
-        "TIPS: Give Us Your Marker, Let Help Each Other",
-        "TIPS: Use Mobile To Better Experience",
-        "If There Are Any Problems And Suggestions Contact BangOne Gaming On Tiktok",
-        "TIPS: Give Us Your Marker, Let Help Each Other",
-        "Almost ready, hang tight!"
+        "<span style='color: yellow;'>Upload Your Screenshot</span> and Show It on Our Map",
+        "<span style='color: red;'>Report a Marker</span> If You Find a Wrong Marker",
+        "<span style='color: orange;'>TIPS:</span> Share Your Marker, Let's Help Each Other",
+        "<span style='color: orange;'>TIPS:</span> Use Mobile for a Better Experience",
+        "For Problems or Suggestions, Contact <span style='color: red;'>BangOne Gaming</span> on TikTok",
+        "<span style='color: orange;'>TIPS:</span> Share Your Marker, Let's Help Each Other",
+        "<span style='color: blue;'>Almost ready</span>, hang tight!"
+    ];
+    const imagesForTextThree = [
+        "icons/icon_train.png",
+        "icons/icon_treasure.png",
+        "icons/icon_zone.png",
+        "icons/icon_wood.png"
+    ];
+
+    const imagesForTextSix = [
+        "icons/icon_train.png",
+        "icons/icon_treasure.png",
+        "icons/icon_zone.png",
+        "icons/icon_wood.png"
     ];
 
     const textElement = document.getElementById("preloader-text");
+    const dynamicImage = document.getElementById("dynamic-image");
     const loadingBar = document.getElementById("loading-bar");
     const loadingText = document.getElementById("loading-text");
     const mapElement = document.getElementById("map");
 
-    if (!textElement || !loadingBar || !loadingText || !mapElement) {
+    if (!textElement || !loadingBar || !loadingText || !mapElement || !dynamicImage) {
         console.error("Elemen tidak ditemukan!");
         return;
     }
 
-    let index = 0;
     let totalProgress = 0;  // Total progress bar
     const totalMiniMapMarkers = Object.keys(mini_map_type).length; // Jumlah marker minimap
     let totalMiniMapImages = 0;
     let loadedMiniMapMarkers = 0;
     let loadedMiniMapImages = 0;
+    let loadedBase64Images = 0;
+    let totalBase64Images = 0;
 
-    let activeMiniMapMarkers = [];  // Array untuk menyimpan marker minimap
+    // Array untuk menyimpan marker minimap
+    let activeMiniMapMarkers = [];
+    let imageIndex = 0; // Menambahkan deklarasi imageIndex
+    let imageInterval;   // Menambahkan deklarasi imageInterval
 
-    // Mengubah teks preloader secara berkala
+    function changeImageWithAnimation(newSrc) {
+        // Hapus animasi sebelumnya dari gambar dinamis
+        dynamicImage.classList.remove("bounce-in", "bounce-out");
+
+        // Tambahkan animasi keluar (bounce out)
+        dynamicImage.classList.add("bounce-out");
+
+        // Tunggu hingga animasi keluar selesai (0.6 detik), lalu ganti gambar dan tambahkan animasi masuk
+        setTimeout(() => {
+            dynamicImage.src = newSrc;
+            dynamicImage.classList.remove("bounce-out");
+            dynamicImage.classList.add("bounce-in");
+
+            // Jika gambar berasal dari array imagesForTextThree atau imagesForTextSix
+            if (imagesForTextThree.includes(newSrc) || imagesForTextSix.includes(newSrc)) {
+                dynamicImage.style.width = "60px";
+                dynamicImage.style.height = "60px";
+            } else {
+                dynamicImage.style.width = "auto";
+                dynamicImage.style.height = "auto";
+            }
+
+            // Atur opacity gambar dinamis agar terlihat setelah animasi selesai
+            dynamicImage.style.opacity = 1;
+        }, 600);
+    }
+
+    // Fungsi untuk mengganti gambar berdasarkan teks preloader
+    function updateImageBasedOnText(text) {
+        clearInterval(imageInterval); // Clear previous interval for changing images
+
+        switch (text) {
+            case preloaderTexts[0]:
+                changeImageWithAnimation("icons/upload.png");
+                break;
+            case preloaderTexts[1]:
+                changeImageWithAnimation("icons/report.png");
+                break;
+            case preloaderTexts[2]:
+                // Bergantian gambar setiap 0.3 detik dengan animasi
+                imageIndex = 0;
+                imageInterval = setInterval(() => {
+                    changeImageWithAnimation(imagesForTextThree[imageIndex]);
+                    imageIndex = (imageIndex + 1) % imagesForTextThree.length;
+                }, 300);
+                break;
+            case preloaderTexts[3]:
+                changeImageWithAnimation("https://cdn.pixabay.com/animation/2022/11/30/19/48/19-48-34-65_512.gif");
+                break;
+            case preloaderTexts[4]:
+                changeImageWithAnimation("icons/cheer.gif");
+                break;
+            case preloaderTexts[5]:
+                // Bergantian gambar setiap 0.3 detik dengan animasi
+                imageIndex = 0;
+                imageInterval = setInterval(() => {
+                    changeImageWithAnimation(imagesForTextSix[imageIndex]);
+                    imageIndex = (imageIndex + 1) % imagesForTextSix.length;
+                }, 300);
+                break;
+            default:
+                changeImageWithAnimation("icons/icon_default.png");
+                break;
+        }
+    }
+
+    // Fungsi untuk mengubah teks preloader secara acak
     function changePreloaderText() {
-        index = (index + 1) % preloaderTexts.length;
-        textElement.textContent = preloaderTexts[index];
+        const randomIndex = Math.floor(Math.random() * (preloaderTexts.length - 1)); // Pilih acak, kecuali teks terakhir
+        const selectedText = preloaderTexts[randomIndex];
+        textElement.innerHTML = selectedText;
+        updateImageBasedOnText(selectedText);
+    }
+
+    // Fungsi untuk menampilkan teks terakhir jika progress sudah hampir selesai
+    function checkFinalText() {
+        if (totalProgress >= 90) {
+            textElement.innerHTML = preloaderTexts[preloaderTexts.length - 1];
+            updateImageBasedOnText(preloaderTexts[preloaderTexts.length - 1]);
+        }
     }
 
     // Mengupdate loading bar
@@ -66,13 +162,46 @@ document.addEventListener("DOMContentLoaded", function() {
     // Pemuatan progress bar secara berkala
     const loadingProgressInterval = setInterval(() => {
         if (totalProgress < 100) {
+            totalProgress += 1;  // Setiap interval, naikkan progres 1%
             updateLoadingBar();
+            checkFinalText();  // Cek apakah harus menampilkan teks terakhir
         } else {
             clearInterval(loadingProgressInterval);
         }
     }, 700);
 
-    setInterval(changePreloaderText, 3000);
+    // Ubah teks preloader secara acak setiap 3 detik
+    const textChangeInterval = setInterval(changePreloaderText, 3000);
+
+
+// Fungsi untuk preload base64 images
+function preloadBase64Images() {
+    return fetchBase64Images().then(() => {
+        totalBase64Images = Object.keys(base64ImageCache).length;
+        console.log('Total Base64 Images:', totalBase64Images);
+
+        // Pastikan ada gambar untuk di-preload
+        if (totalBase64Images > 0) {
+            Object.values(base64ImageCache).forEach((image, index) => {
+                const img = new Image();
+                img.src = image;
+                img.onload = () => {
+                    loadedBase64Images++;
+                    totalProgress = (loadedBase64Images / totalBase64Images) * 50; // 50% untuk base64 images
+                    updateLoadingBar();
+                };
+                img.onerror = () => {
+                    console.error(`Gagal memuat base64 image index ${index}`);
+                };
+            });
+        } else {
+            console.log("No base64 images to preload.");
+        }
+    }).catch(error => {
+        console.error("Error during image preload:", error);
+    });
+}
+
 
     // Memuat marker minimap
     function loadMiniMapMarkers() {
@@ -139,10 +268,12 @@ document.addEventListener("DOMContentLoaded", function() {
     // Pastikan elemen minimap dan peta disembunyikan saat proses preload
     mapElement.classList.add('hidden');  // Sembunyikan peta saat preload
 
-    // Memanggil initMiniMap setelah pemuatan utama selesai
-    initMap(); // Initialize main map first
-    initMiniMap(); // Then initialize mini-map markers and load the minimap images
-
+    // Memanggil preloadBase64Images terlebih dahulu
+    preloadBase64Images()
+        .then(() => {
+            initMap(); // Initialize main map setelah base64 images selesai
+            initMiniMap(); // Kemudian inisialisasi mini-map markers dan load gambar minimap
+        });
 
     // Menyembunyikan preloader setelah loading selesai
     const hidePreloader = () => {
@@ -152,12 +283,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Tampilkan peta setelah preloader selesai
             setTimeout(() => {
-                
                 mapElement.classList.remove('hidden'); // Tampilkan peta dan minimap
 
                 // Tampilkan marker setelah peta terlihat
                 clearAllMarks(); 
-                
 
                 // Tampilkan pop-up setelah peta terlihat
                 setTimeout(() => {
@@ -185,15 +314,68 @@ document.addEventListener("DOMContentLoaded", function() {
             clearInterval(checkProgress);
             loadingText.textContent = "Overall Progress: 100%";  // Menampilkan "Overall Progress: 100%"
             hidePreloader();
-            
         }
     }, 100); // Memeriksa setiap 100ms hingga progress bar mencapai 100%
 });
 
+
+const base64ImageCache = {};
+const usernameCache = {}; // Cache untuk menyimpan username
+
+// Fungsi untuk mengambil dan memperbarui cache, baik secara global maupun terbatas
+function fetchBase64Images(updatedId = null) { 
+    return fetch('https://autumn-dream-8c07.square-spon.workers.dev/ER_Image')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch Base64 images from KV: ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Fetched data:', data);
+
+            // Jika ID diperbarui, hanya perbarui cache untuk ID tersebut
+            if (updatedId && data[updatedId]) {
+                const item = data[updatedId];
+
+                // Memperbarui cache hanya untuk ID yang sesuai
+                if (item.image) {
+                    base64ImageCache[updatedId] = item.image;
+                    console.log(`Updated image for ${updatedId}: ${base64ImageCache[updatedId]}`);
+                }
+
+                if (item.username) {
+                    usernameCache[updatedId] = item.username;
+                    console.log(`Updated username for ${updatedId}: ${usernameCache[updatedId]}`);
+                }
+            } else {
+                // Jika tidak ada ID yang ditentukan, perbarui seluruh cache
+                for (const id in data) {
+                    if (data.hasOwnProperty(id)) {
+                        const item = data[id];
+
+                        // Memperbarui seluruh cache
+                        if (item.image) {
+                            base64ImageCache[id] = item.image;
+                            console.log(`Updated image for ${id}: ${base64ImageCache[id]}`);
+                        }
+
+                        if (item.username) {
+                            usernameCache[id] = item.username;
+                            console.log(`Updated username for ${id}: ${usernameCache[id]}`);
+                        }
+                    }
+                }
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching Base64 images:", error);
+        });
+}
+
 function addMarkersToMap() {
     markers = []; // Reset markers array setiap kali fungsi dipanggil
 
-    // Iterasi melalui jsonData
     for (const key in jsonData) {
         if (jsonData.hasOwnProperty(key)) {
             const location = jsonData[key];
@@ -204,24 +386,11 @@ function addMarkersToMap() {
                 continue;
             }
 
-            // Konversi lat/lng ke float dan siapkan koordinat
             const latLng = [parseFloat(location.lat), parseFloat(location.lng)];
-
-            // Dapatkan URL ikon berdasarkan category_id
             const iconUrl = getIconUrl(location.category_id);
-
-            // Load opacity marker (jika sebelumnya disimpan)
             const initialOpacity = loadMarkerOpacity(key) || 1.0;
 
-            // Assign properti tambahan ke marker (dengan fallback value)
-            const locType = location.loc_type || 'Unknown';
-            const categoryId = location.category_id || 'Unknown';
-            const nameEn = location.en_name || 'Unknown';
-            const markerId = location.id || key;
-            const ysId = location.ys_id || 'Unknown';
-            const imageInfo = location.image_info || 'No image info available';
-
-            // Buat marker Leaflet dengan ikon dan opacity yang ditentukan
+            // Buat marker Leaflet
             const marker = L.marker(latLng, {
                 icon: L.icon({
                     iconUrl: iconUrl,
@@ -231,29 +400,31 @@ function addMarkersToMap() {
                 opacity: initialOpacity,
             });
 
-            // Tambahkan properti tambahan ke marker options
-            marker.options.loc_type = locType;
-            marker.options.category = categoryId;
-            marker.options.id = markerId;
-            marker.options.en_name = nameEn;
-            marker.options.ys_id = ysId;
-            marker.options.image_info = imageInfo;
+            // Ambil gambar dari URL jika ada, atau gunakan Base64 dari cache
+            const imageLink = location.image_info || base64ImageCache[key] || '';
 
-            // Simpan marker ke array markers untuk referensi di masa depan
+            marker.options.loc_type = location.loc_type || 'Unknown';
+            marker.options.category = location.category_id || 'Unknown';
+            marker.options.id = location.id || key;
+            marker.options.en_name = location.en_name || 'Unknown';
+            marker.options.ys_id = location.ys_id || 'Unknown';
+            marker.options.image_info = imageLink;
+
+            // Simpan marker ke array markers
             markers.push(marker);
 
             // Setup interaksi marker
-            setupMarkerInteractions(marker, location, markerId);
+            setupMarkerInteractions(marker, location, key);
 
             // Tambahkan marker ke peta
             marker.addTo(map);
 
-            // Terapkan animasi bounceIn saat marker ditambahkan ke peta
-            const iconElement = marker._icon; // Dapatkan elemen icon marker
-            iconElement.classList.add('bounceIn'); // Tambahkan kelas bounceIn untuk animasi
+            // Terapkan animasi bounceIn
+            const iconElement = marker._icon;
+            iconElement.classList.add('bounceIn');
 
-            // Update kategori berdasarkan kategori marker dan opacity
-            updateCategoryCounts(locType, categoryId, initialOpacity);
+            // Update kategori
+            updateCategoryCounts(location.loc_type, location.category_id, initialOpacity);
         }
     }
 
@@ -262,9 +433,8 @@ function addMarkersToMap() {
 
     // Sembunyikan marker awal dan update tampilan kategori
     hideMarkers();
-    updateCategoryDisplay();  // Pastikan tampilan kategori diupdate setelah menambahkan semua marker
+    updateCategoryDisplay();
 }
-
 
 
 function calculateMaxCounts() {
@@ -328,7 +498,7 @@ function initMap() {
     }
 
     // Tampilkan elemen peta yang sebelumnya tersembunyi
-    mapElement.classList.remove('hidden'); // Tampilkan elemen peta
+    mapElement.classList.remove('hidden');
 
     // Mengatur batas peta
     const southWest = L.latLng(57, -89.4);
@@ -371,7 +541,7 @@ function initMap() {
         }
     });
 
-    // Mengambil data marker dan menambahkannya ke peta
+    // Tidak perlu fetchBase64Images lagi, gambar sudah di-cache
     fetch('https://autumn-dream-8c07.square-spon.workers.dev/earthrevivalinteractivemaps')
         .then(response => {
             if (!response.ok) {
@@ -380,15 +550,14 @@ function initMap() {
             return response.json();
         })
         .then(data => {
-            console.log(`Fetched Data: `, data);
+            console.log('Fetched Data:', data);
             jsonData = data;
-            addMarkersToMap(); // Tambahkan marker setelah mengambil data
+            addMarkersToMap(); // Tambahkan marker setelah cache terisi
             setupFilterListeners(); // Siapkan listener filter
+            
         })
-        .catch(error => console.error('Error fetching marker data:', error));
+        .catch(error => console.error('Error during map initialization:', error));
 }
-
-
 
 // Fungsi utama untuk menampilkan atau menyembunyikan marker berdasarkan filter
 function showMarkers() {
@@ -1372,95 +1541,117 @@ function setupMarkerInteractions(marker, location, key) {
     let imageInfoContent = '';
     let showImageButton = '';
 
-    if (location.images_info && location.images_info !== "0" && location.images_info !== "[]") {
+// Periksa jika ada image_info atau base64ImageCache untuk menampilkan gambar
+const base64Image = base64ImageCache[key] || ''; // Ambil base64 dari cache
+const imageLink = location.image_info || base64Image; // Gunakan image_info atau base64 sebagai fallback
+const username = usernameCache[key] || ''; // Ambil username dari cache
+
+// Jika imageLink ada (baik URL atau base64), buat konten gambar dan tombol Show Image
+if (imageLink) {
+    imageInfoContent = `
+        <div class="popup-image-container" style="position: relative; width: 100%; height: auto;">
+            <img src="${imageLink}" alt="Image" class="popup-image-info" 
+                 onclick="showFullImagePreview('${imageLink}')"
+                 style="width: 100%; height: auto; border-radius: 4px; cursor: pointer; display: none; pointer-events: all;">
+            ${username ? `
+                <div class="image-username-overlay" style="
+                    position: absolute;
+                    display: none;
+                    bottom: 0;
+                    left: 0;
+                    width: 100%;
+                    background: rgba(0, 0, 0, 0.7);
+                    color: #fff;
+                    text-align: center;
+                    padding: 3px 0;
+                    font-size: 12px;
+                    font-weight: bold;
+                    border-bottom-left-radius: 4px;
+                    border-bottom-right-radius: 4px;
+                ">
+                    From: ${username}
+                </div>
+            ` : ''}
+        </div>
+    `;
+    showImageButton = `
+        <button class="showImageButton" onclick="toggleImageVisibility(this, event)" 
+                style="background: none; border: none; color: #007bff; font-size: 14px; cursor: pointer; pointer-events: auto;">
+            Show Image
+        </button>
+    `;
+
+
+    } else if (location.images_info && location.images_info !== "0" && location.images_info !== "[]") {
+        // Jika images_info berisi URL gambar
         try {
             const parsedImagesInfo = JSON.parse(location.images_info);
             if (Array.isArray(parsedImagesInfo) && parsedImagesInfo.length > 0 && parsedImagesInfo[0].link) {
                 const imageUrl = parsedImagesInfo[0].link.startsWith('//') ? `https:${parsedImagesInfo[0].link}` : parsedImagesInfo[0].link;
                 imageInfoContent = `
-                    <img src="${imageUrl}" alt="Image Info" class="popup-image-info" onclick="showFullImagePreview('${imageUrl}')" style="width: 100%; height: auto; border-radius: 4px; display: none; cursor: pointer; pointer-events: auto;">
+                    <div class="popup-image-container" style="position: relative; width: 100%; height: auto;">
+                        <img src="${imageUrl}" alt="Image Info" class="popup-image-info" 
+                             onclick="showFullImagePreview('${imageUrl}')" 
+                             style="width: 100%; height: auto; border-radius: 4px; display: none; cursor: pointer; pointer-events: all;">
+                    </div>
                 `;
                 showImageButton = `
-                    <button class="showImageButton" onclick="toggleImageVisibility(this)" style="pointer-events: auto;">
+                    <button class="showImageButton" onclick="toggleImageVisibility(this, event)" 
+                            style="background: none; border: none; color: #007bff; font-size: 14px; cursor: pointer; pointer-events: auto;">
                         Show Image
                     </button>
                 `;
+                console.log("Show Image button added for imageUrl:", imageUrl); // Log jika tombol Show Image ditambahkan
             }
         } catch (error) {
             console.warn("Error parsing images_info JSON:", error);
         }
-    } else {
-        marker.on('popupopen', () => {
-            fetch("https://autumn-dream-8c07.square-spon.workers.dev/ER_Image")
-                .then(response => response.json())
-                .then(data => {
-                    const markerData = data[key];
-                    if (markerData && markerData.image) {
-                        const base64Image = markerData.image;
-                        const username = markerData.username;
-
-                        imageInfoContent = `
-                            <div style="position: relative; width: 100%; height: auto;">
-                                <img src="${base64Image}" alt="Base64 Image" class="popup-image-info" onclick="showFullImagePreview('${base64Image}')" style="width: 100%; height: auto; border-radius: 4px; cursor: pointer; pointer-events: auto;">
-                                <div style="position: absolute; bottom: 1px; left: 0; width: 100%; color: white; background-color: rgba(0, 0, 0, 0.5); text-align: center; font-size: 14px;">
-                                    ${username}
-                                </div>
-                            </div>`;
-                        marker.getPopup().setContent(createPopupContent());
-                    }
-                })
-                .catch(() => {
-                    console.warn("Error fetching base64 image");
-                });
-        });
     }
 
     const showYsId = location.ys_id && location.ys_id !== "0";
 
+    // Buat konten popup untuk marker
+    const createPopupContent = () => {
+        return `
+            <div class="leaflet-popup-content" style="z-index: 9999;">
+                <h4 class="popup-title">${location.en_name}</h4>
+                <p class="popup-description">
+                    ${(location.desc || 'No description available.').replace(/\n/g, '<br>')}
+                </p>
+                ${xCoord && zCoord ? `
+                    <div class="copy-buttons">
+                        <button class="copyButton" onclick="copyToClipboard('${xCoord}', event)">Copy Coordinates X</button>
+                        <button class="copyButton" onclick="copyToClipboard('${zCoord}', event)">Copy Coordinates Z</button>
+                    </div>
+                ` : ''}
+                <div id="copyFeedback" class="copy-feedback" style="display: none;">
+                    <img src="icons/bangone.png" alt="Feedback Icon" class="feedback-icon">
+                    <span>Copied to clipboard!</span>
+                </div>          
 
-function createPopupContent() {
-    return `
-        <div class="leaflet-popup-content" style="z-index: 9999;">
-            <h4 class="popup-title">${location.en_name}</h4>
-            <p class="popup-description">
-                ${(location.desc || 'No description available.').replace(/\n/g, '<br>')}
-            </p>
-            ${xCoord && zCoord ? `
-                <div class="copy-buttons">
-                    <button class="copyButton" onclick="copyToClipboard('${xCoord}', event)">Copy Coordinates X</button>
-                    <button class="copyButton" onclick="copyToClipboard('${zCoord}', event)">Copy Coordinates Z</button>
-                </div>
-            ` : ''}
-            <div id="copyFeedback" class="copy-feedback" style="display: none;">
-                <img src="icons/bangone.png" alt="Feedback Icon" class="feedback-icon">
-                <span>Copied to clipboard!</span>
-            </div>          
+                ${thumbnailUrl ? `
+                    <div class="popup-thumbnail">
+                        <img src="${thumbnailUrl}" alt="YouTube Thumbnail" style="width: auto; height: 200px; border-radius: 4px;">
+                        <a href="${location.links_info}" target="_blank" class="popup-play-button">
+                            <img src="https://img.icons8.com/material-outlined/24/ffffff/play.png" alt="Play">
+                        </a>
+                    </div>
+                ` : ''}
+                
+                ${imageInfoContent} <!-- Gambar dan tombol Show Image ditambahkan di sini -->
+                ${showImageButton} <!-- Tombol Show Image ditambahkan di sini -->
 
-            ${thumbnailUrl ? `
-                <div class="popup-thumbnail">
-                    <img src="${thumbnailUrl}" alt="YouTube Thumbnail" style="width: auto; height: 200px; border-radius: 4px;">
-                    <a href="${location.links_info}" target="_blank" class="popup-play-button">
-                        <img src="https://img.icons8.com/material-outlined/24/ffffff/play.png" alt="Play">
-                    </a>
-                </div>
-            ` : ''}
-            
-            ${showImageButton ? `
-                <button class="showImageButton" onclick="toggleImageVisibility(this, event)" style="background: rgba(10, 28, 61, 0.883); border: none; color: #028c9a; font-size: 12px; cursor: pointer; pointer-events: auto;">
-                    <b>Show Image</b>
-                </button>
-            ` : ''}
-            ${imageInfoContent}
-            ${showYsId ? `<p class="popup-ys-id">YS ID: ${location.ys_id}</p>` : ''}
-            <button class="reportButton" data-id="${key}" style="background: none; border: none; color: red; font-size: 12px; cursor: pointer; pointer-events: auto;">Report</button>
-            ${!imageInfoContent ? `<button class="uploadImageButton" onclick="openImageFormPopup('${key}')" style="background: none; border: none; color: #FFD700; font-size: 12px; cursor: pointer; pointer-events: auto;"><b>Upload Screenshot Location</b></button>` : ''}
-        </div>
-    `;
-}
+                ${showYsId ? `<p class="popup-ys-id">YS ID: ${location.ys_id}</p>` : ''}
+                <button class="reportButton" data-id="${key}" style="background: none; border: none; color: red; font-size: 12px; cursor: pointer; pointer-events: auto;">Report</button>
+                ${!imageInfoContent ? `<button class="uploadImageButton" onclick="openImageFormPopup('${key}')" style="background: none; border: none; color: #FFD700; font-size: 12px; cursor: pointer; pointer-events: auto;"><b>Upload Screenshot Location</b></button>` : ''}
+            </div>
+        `;
+    }
+
+    // Menambahkan konten popup ke marker
+    marker.bindPopup(createPopupContent(), { offset: L.point(0, -20) });
 
 
-// Bind popup content to the marker
-marker.bindPopup(createPopupContent(), { offset: L.point(0, -20) });
 
 
 // Event to show equator lines and center icon when popup is opened
@@ -1477,7 +1668,6 @@ marker.on('popupopen', () => {
     // Menampilkan garis khatulistiwa dan ikon pusat saat popup terbuka
     showEquatorLines(marker);
 
-    console.log(`Equator lines triggered for marker: ${marker.options.id}`);
 
     // Menaikkan Z-index marker
     marker.setZIndexOffset(1000);
@@ -1551,11 +1741,15 @@ marker.on('popupclose', () => {
     });
 }
 function showFullImagePreview(imageUrl) {
+    // Membuat modal
     const modal = document.createElement('div');
     modal.classList.add('image-modal');
+
+    // Menambahkan konten modal
     modal.innerHTML = `
         <div class="image-modal-content" onclick="event.stopPropagation()">
             <span class="image-modal-close" onclick="closeImagePreview(event)">&times;</span>
+            <!-- Pastikan untuk menggunakan imageUrl langsung, apakah URL atau base64 -->
             <img src="${imageUrl}" alt="Full Preview Image" class="image-modal-img">
         </div>
     `;
@@ -1563,15 +1757,16 @@ function showFullImagePreview(imageUrl) {
     // Menambahkan modal ke dalam body
     document.body.appendChild(modal);
 
-    // Menutup modal saat klik di luar konten gambar
+    // Menutup modal saat klik di luar gambar
     modal.addEventListener('click', closeImagePreview);
 }
 
+// Fungsi untuk menutup modal
 function closeImagePreview(event) {
-    event.stopPropagation(); // Menghindari propagasi saat menutup modal
-    const modal = document.querySelector('.image-modal');
+    event.stopPropagation();  // Mencegah event bubble
+    const modal = event.target.closest('.image-modal');
     if (modal) {
-        document.body.removeChild(modal);
+        modal.remove();  // Menghapus modal dari DOM
     }
 }
 
@@ -1673,65 +1868,114 @@ function closeFormPopup() {
 
 
 function handleImageUpload(input, markerId) {
-    const file = input.files[0] || input;  // Get the file, either from input or drag-and-drop
+    const file = input.files[0] || input;  // Ambil file, baik dari input atau drag-and-drop
     const PreviewContainer = document.getElementById("PreviewContainer");
     const dropArea = document.getElementById("dropArea");
 
     if (file) {
         console.log("File selected:", file);
 
-        // Clear previous preview
+        // Hapus preview sebelumnya
         PreviewContainer.innerHTML = '';
         console.log("Cleared previous preview");
 
-        // Ensure the file is an image
+        // Pastikan file adalah gambar
         if (!file.type.startsWith('image/')) {
             console.log("Invalid file type:", file.type);
             alert("Please upload a valid image file.");
             return;
         }
 
-        // Use FileReader to read and preview the image
+        // Buat objek gambar untuk memuat file yang dipilih
+        const img = new Image();
         const reader = new FileReader();
+
         reader.onload = function(e) {
             console.log("FileReader loaded the image");
 
-            // Create an img element to show the preview
+            // Buat elemen gambar dari hasil FileReader
+            img.src = e.target.result;
+        };
+
+        reader.readAsDataURL(file); // Baca file sebagai base64
+
+        img.onload = function() {
+            console.log("Image loaded successfully");
+
+            // Resize gambar menggunakan canvas
+            const MAX_WIDTH = 800; // Lebar maksimum
+            const MAX_HEIGHT = 600; // Tinggi maksimum
+
+            let width = img.width;
+            let height = img.height;
+
+            // Hitung dimensi baru sambil mempertahankan rasio aspek
+            if (width > MAX_WIDTH) {
+                height = Math.round(height * MAX_WIDTH / width);
+                width = MAX_WIDTH;
+            }
+
+            if (height > MAX_HEIGHT) {
+                width = Math.round(width * MAX_HEIGHT / height);
+                height = MAX_HEIGHT;
+            }
+
+            // Buat canvas untuk menggambar gambar yang sudah diresize
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+
+            canvas.width = width;
+            canvas.height = height;
+
+            // Gambar gambar pada canvas dengan dimensi baru
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Mengubah format gambar menjadi JPEG dan mengurangi kualitas
+            const resizedImageBase64 = canvas.toDataURL('image/jpeg', 0.7); // Kualitas 70%
+
+            // Cek ukuran file setelah kompresi
+            const byteSize = resizedImageBase64.length * (3 / 4); // Menghitung ukuran dalam byte
+            const maxSizeInBytes = 2 * 1024 * 1024; // Batas 2 MB
+
+            console.log(`Original Image Size: ${(file.size / 1024).toFixed(2)} KB`);
+            console.log(`Compressed Image Size: ${(byteSize / 1024).toFixed(2)} KB`);
+
+            // Jika ukuran file terlalu besar setelah kompresi, tampilkan peringatan
+            if (byteSize > maxSizeInBytes) {
+                alert("Gambar terlalu besar setelah kompresi. Harap pilih gambar dengan ukuran lebih kecil.");
+                return;
+            }
+
+            // Buat elemen img untuk menampilkan preview gambar yang sudah diresize
             const imgElement = document.createElement("img");
-            imgElement.src = e.target.result;
+            imgElement.src = resizedImageBase64;
             imgElement.classList.add("image-preview");
 
-            // Append the image to the preview container
+            // Tambahkan gambar ke kontainer preview
             PreviewContainer.appendChild(imgElement);
-            console.log("Appended image preview to container");
+            console.log("Appended resized image preview to container");
 
-            // Save the base64 image for submission
-            input.setAttribute("data-base64", e.target.result);  // Ensure Base64 is saved
-            console.log("Saved base64 data to input");
+            // Simpan gambar base64 yang sudah diresize untuk pengiriman
+            input.setAttribute("data-base64", resizedImageBase64);
+            console.log("Saved resized base64 data to input");
 
-            // Show the preview container
+            // Tampilkan kontainer preview
             PreviewContainer.style.display = "block";
             console.log("Preview container displayed");
 
-            // Hide drop area once an image is uploaded
+            // Sembunyikan drop area setelah gambar diunggah
             if (dropArea) {
                 dropArea.style.display = "none";
                 console.log("Drop area hidden");
             }
         };
 
-        reader.onloadend = function() {
-            console.log("FileReader onloadend triggered");
-            // At this point the reader has finished, data-base64 should be set properly
-            console.log("Base64 after reading:", input.getAttribute("data-base64"));
-        };
-
-        reader.readAsDataURL(file); // Read file as base64
-        console.log("Reading file as base64 with FileReader");
     } else {
         console.log("No file selected.");
     }
 }
+
+
 
 // Function to process images dropped or pasted
 function processImageFile(file) {
@@ -1813,10 +2057,39 @@ function submitImageForm(markerId) {
 
 
 
-
-// Handle the final submission after preview
 function handleSubmit(markerId, username, base64String) {
     if (base64String && username) {
+        // Display "Submitting..." message before the fetch request
+        const submittingMessage = document.createElement("div");
+        submittingMessage.id = "submittingMessage";
+
+        submittingMessage.innerHTML = `
+            <h4>Submitting...</h4>
+            <p>It may take a While</p>
+            <p>Please be patient...</p>
+        `;
+
+        // Styling untuk pesan yang muncul
+        submittingMessage.style.position = "fixed";
+        submittingMessage.style.top = "50%";
+        submittingMessage.style.left = "50%";
+        submittingMessage.style.transform = "translate(-50%, -50%)";
+        submittingMessage.style.padding = "20px";
+        submittingMessage.style.backgroundColor = "rgba(19, 39, 96, 0.613)";
+        submittingMessage.style.border= "2px solid #889dcb";
+        submittingMessage.style.color = "#fff";
+        submittingMessage.style.fontSize = "18px";
+        submittingMessage.style.textAlign = "center";
+        submittingMessage.style.borderRadius = "10px";
+        submittingMessage.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.5)";
+        submittingMessage.style.zIndex = "10000"; // Pastikan di atas semua elemen lain
+
+        // Tambahkan elemen ke body
+        document.body.appendChild(submittingMessage);
+
+        // Close the popup immediately
+        closePopup();
+
         // Display preview if base64 string is valid
         const PreviewContainer = document.getElementById("PreviewContainer");
         if (PreviewContainer && base64String) {
@@ -1828,7 +2101,7 @@ function handleSubmit(markerId, username, base64String) {
             PreviewContainer.style.display = "block"; // Ensure preview is displayed
         }
 
-        // Fetch existing data from endpoint
+        // Fetch existing data from endpoint /ER_Image
         fetch("https://autumn-dream-8c07.square-spon.workers.dev/ER_Image", {
             method: "GET",
             headers: {
@@ -1837,16 +2110,18 @@ function handleSubmit(markerId, username, base64String) {
         })
         .then(response => response.json())
         .then(existingData => {
-            // Prepare new marker data
+            if (typeof existingData !== 'object' || existingData === null) {
+                existingData = {};
+            }
+
             const newMarkerData = {
                 id: markerId,
                 username: username,
                 image: base64String
             };
-            // Tambahkan data marker baru ke data yang ada
+
             existingData[markerId] = newMarkerData;
 
-            // Update data dengan mengirimkan data yang telah dimodifikasi
             return fetch("https://autumn-dream-8c07.square-spon.workers.dev/ER_Image", {
                 method: "PUT",
                 headers: {
@@ -1857,20 +2132,127 @@ function handleSubmit(markerId, username, base64String) {
         })
         .then(response => {
             if (response.ok) {
-                alert("THANKS FOR SUBMIT YOUR SCREENSHOT");
-                closePopup(); // Tutup popup setelah berhasil
+                updateMarkerInfo(markerId);
+                alert("THANKS FOR SUBMITTING YOUR SCREENSHOT");
             } else {
                 alert("Failed to upload image.");
+                console.error("Failed response:", response);
             }
         })
         .catch(error => {
             console.error("Error uploading image:", error);
-            alert("Error uploading image.");
+            alert("Error uploading image. Try Again Later");
+        })
+        .finally(() => {
+            // Hapus "Submitting..." message setelah proses selesai
+            const submittingMessage = document.getElementById("submittingMessage");
+            if (submittingMessage) {
+                submittingMessage.remove();
+            }
         });
     } else {
         alert("Please complete all fields.");
         console.warn("Missing data - Username:", username, "Base64:", base64String);
     }
+}
+
+
+
+// Fungsi untuk mendapatkan marker berdasarkan ID
+function getMarkerById(markerId) {
+    // Menggunakan array markers yang sudah ada
+    return markers.find(marker => marker.options.id === markerId);
+}
+
+
+
+function updateMarkerInfo(markerId) {
+    // Pertama, perbarui cache base64 untuk ID yang sesuai
+    fetchBase64Images(markerId) // Mengupdate cache hanya untuk marker yang sedang diperbarui
+        .then(() => {
+            // Setelah cache diperbarui, lanjutkan dengan pemrosesan marker
+            fetch(`https://autumn-dream-8c07.square-spon.workers.dev/earthrevivalinteractivemaps`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const markerData = data[markerId];
+                if (markerData) {
+                    // Ambil data yang diperlukan
+                    const { en_name, desc, links_info, ys_id, images_info } = markerData;
+
+                    // Cari marker di peta berdasarkan ID
+                    const marker = getMarkerById(markerId);
+                    if (marker) {
+                        // Periksa jika ada image_info atau base64ImageCache untuk menampilkan gambar
+                        const base64Image = base64ImageCache[markerId] || ''; // Ambil base64 dari cache
+                        const imageLink = images_info && images_info.length > 0 ? images_info[0].link.replace(/\\/g, '') : base64Image; // Gunakan image_info atau base64 sebagai fallback
+
+                        // Jika imageLink ada, buat konten gambar dan tombol Show Image
+                        let imageInfoContent = '';
+                        let showImageButton = '';
+                        if (imageLink) {
+                            imageInfoContent = `
+                                <div class="popup-image-container" style="position: relative; width: 100%; height: auto;">
+                                    <img src="${imageLink}" alt="Image" class="popup-image-info" 
+                                         onclick="showFullImagePreview('${imageLink}')"
+                                         style="width: 100%; height: auto; border-radius: 4px; cursor: pointer; display: block; pointer-events: all;">
+                                </div>
+                            `;
+                            showImageButton = `
+                                <button class="showImageButton" onclick="toggleImageVisibility(this, event)" 
+                                        style="background: none; border: none; color: #007bff; font-size: 14px; cursor: pointer; pointer-events: auto;">
+                                    Show Image
+                                </button>
+                            `;
+                        }
+
+                        // Buat konten popup untuk marker
+                        const createPopupContent = () => {
+                            return `
+                                <div class="leaflet-popup-content" style="z-index: 9999;">
+                                    <h4 class="popup-title">${en_name}</h4>
+                                    <p class="popup-description">
+                                        ${(desc || 'No description available.').replace(/\n/g, '<br>')}
+                                    </p>
+
+                                    ${links_info && links_info !== '[]' ? `
+                                        <p><strong>Links:</strong> <a href="${links_info}" target="_blank">${links_info}</a></p>
+                                    ` : ''}
+
+                                    ${imageInfoContent} <!-- Gambar dan tombol Show Image ditambahkan di sini -->
+                                    ${showImageButton} <!-- Tombol Show Image ditambahkan di sini -->
+
+                                    ${ys_id && ys_id !== "0" ? `<p class="popup-ys-id">YS ID: ${ys_id}</p>` : ''}
+
+                                    <button class="reportButton" data-id="${markerId}" style="background: none; border: none; color: red; font-size: 12px; cursor: pointer; pointer-events: auto;">
+                                        Report
+                                    </button>
+                                </div>
+                            `;
+                        };
+
+                        // Update konten popup dengan informasi terbaru
+                        marker.setPopupContent(createPopupContent());
+
+                        // Refresh marker dengan menutup dan membuka popup untuk update
+                        marker.closePopup(); // Tutup popup jika sudah terbuka
+                        marker.openPopup();  // Buka popup kembali untuk memperbarui informasi yang ditampilkan
+                    } else {
+                        console.warn(`Marker dengan ID ${markerId} tidak ditemukan di peta.`);
+                    }
+                } else {
+                    console.warn(`Data tidak ditemukan untuk marker ID ${markerId} di /earthrevivalinteractivemaps.`);
+                }
+            })
+            .catch(error => {
+                console.error("Error memperbarui informasi marker:", error);
+                alert("Gagal memperbarui informasi marker.");
+            });
+        });
 }
 
 
@@ -1992,20 +2374,33 @@ function showEquatorLines(marker) {
 }
 
 
-// Fungsi JavaScript untuk toggle visibilitas gambar dan mengubah teks tombol
+// Fungsi JavaScript untuk toggle visibilitas gambar dan username overlay
 function toggleImageVisibility(button, event) {
-    // Prevent the event from propagating and closing the popup
-    event.stopPropagation();
+    const imageContainer = button.previousElementSibling;
+    const imageElement = imageContainer.querySelector('img');
+    const usernameOverlay = imageContainer.querySelector('.image-username-overlay');
 
-    const image = button.nextElementSibling; // Mendapatkan elemen gambar setelah tombol
-    if (image.style.display === "none") {
-        image.style.display = "block";
-        button.textContent = "Hide Image";
-    } else {
-        image.style.display = "none";
-        button.textContent = "Show Image";
+    if (imageElement) {
+        const currentDisplay = imageElement.style.display;
+        if (currentDisplay === 'none') {
+            // Tampilkan gambar dan username overlay
+            imageElement.style.display = 'block';
+            if (usernameOverlay) {
+                usernameOverlay.style.display = 'block';
+            }
+            button.textContent = 'Hide Image'; // Ganti teks tombol
+        } else {
+            // Sembunyikan gambar dan username overlay
+            imageElement.style.display = 'none';
+            if (usernameOverlay) {
+                usernameOverlay.style.display = 'none';
+            }
+            button.textContent = 'Show Image'; // Ganti teks tombol
+        }
     }
 }
+
+
 
 // Fungsi untuk menyalin teks ke clipboard
 function copyToClipboard(text, event) {
@@ -3209,30 +3604,61 @@ document.getElementById("hildeBtn").onclick = function () {
     window.location.href = "https://bangonegaming.com/hilde/index.html";
 };
 
+// Fungsi untuk menyembunyikan iklan di kontainer bawah
 function hideAd() {
     const adsContainer = document.getElementById('ads-container');
-    adsContainer.style.display = 'none';
+    if (adsContainer) {
+        adsContainer.style.display = 'none';
+    } else {
+        console.error('Element ads-container not found.');
+    }
 }
+
 // Fungsi untuk menampilkan popup iklan
 function showAdPopup() {
     const adPopup = document.getElementById('ad-popup');
-    adPopup.style.display = 'block';
+    if (adPopup) {
+        adPopup.style.display = 'block';
 
-    // Muat ulang iklan AdSense jika diperlukan
-    try {
-        (adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (e) {
-        console.error('Error loading AdSense ad:', e);
+        // Muat ulang iklan AdSense jika elemen belum dimuat sebelumnya
+        const popupAd = document.getElementById('popup-ad');
+        if (popupAd && !popupAd.hasAttribute('data-loaded')) {
+            try {
+                (adsbygoogle = window.adsbygoogle || []).push({});
+                popupAd.setAttribute('data-loaded', 'true');
+            } catch (e) {
+                console.error('Error loading AdSense ad:', e);
+            }
+        }
+    } else {
+        console.error('Element ad-popup not found.');
     }
 }
 
 // Fungsi untuk menyembunyikan popup iklan
 function hideAdPopup() {
     const adPopup = document.getElementById('ad-popup');
-    adPopup.style.display = 'none';
+    if (adPopup) {
+        adPopup.style.display = 'none';
+    } else {
+        console.error('Element ad-popup not found.');
+    }
 }
 
-// Menampilkan iklan setiap kali halaman dimuat atau direfresh
-window.addEventListener('load', () => {
+// Menampilkan iklan setelah halaman selesai dimuat
+document.addEventListener('DOMContentLoaded', () => {
     showAdPopup();
+
+    // Muat iklan di bagian bawah peta jika elemen tersedia
+    const mapAd = document.getElementById('map-ad');
+    if (mapAd && !mapAd.hasAttribute('data-loaded')) {
+        try {
+            (adsbygoogle = window.adsbygoogle || []).push({});
+            mapAd.setAttribute('data-loaded', 'true');
+        } catch (e) {
+            console.error('Error loading AdSense ad:', e);
+        }
+    } else if (!mapAd) {
+        console.error('Element map-ad not found.');
+    }
 });
