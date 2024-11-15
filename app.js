@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "<span style='color: red;'>Report a Marker</span> If You Find a Wrong Marker",
         "<span style='color: orange;'>TIPS:</span> Share Your Marker, Let's Help Each Other",
         "<span style='color: orange;'>TIPS:</span> Use Mobile for a Better Experience",
-        "For Problems or Suggestions, Contact <span style='color: red;'>BangOne Gaming</span> on TikTok",
+        "For Problems or Suggestions, Contact <span style='color: orange;'><b>BangOne Gaming</b></span> on TikTok",
         "<span style='color: orange;'>TIPS:</span> Share Your Marker, Let's Help Each Other",
         "<span style='color: blue;'>Almost ready</span>, hang tight!"
     ];
@@ -956,7 +956,6 @@ document.getElementById("submit-marker-button").addEventListener("click", functi
     map.setZoom(9);
 });
 
-// Form submission handling
 document.getElementById("markerForm").addEventListener("submit", async function (event) {
     event.preventDefault();
 
@@ -968,7 +967,7 @@ document.getElementById("markerForm").addEventListener("submit", async function 
         statusMessage.style.display = "none";
     }, 7000);
 
-    // Capture form data
+    // Ambil data form
     const nameMark = document.getElementById("nameMark").value;
     const category = document.getElementById("category").value;
     const locType = document.getElementById("locType").value;
@@ -978,11 +977,16 @@ document.getElementById("markerForm").addEventListener("submit", async function 
     const yCoord = document.getElementById("yCoordinates").value;
     const zCoord = document.getElementById("zCoordinates").value;
 
-    // Capture additional inputs
+    // Koordinat menggunakan savedLat dan savedLng
+const lat = savedLat ? savedLat.toString() : '[]';  // Jika savedLat tidak ada, gunakan fallback []
+const lng = savedLng ? savedLng.toString() : '[]';  // Jika savedLng tidak ada, gunakan fallback []
+
+
+    // Ambil input tambahan
     const oldWorldTreasureInput = document.getElementById("oldWorldTreasureInput").value;
     const ingredientsNameInput = document.getElementById("ingredientsNameInput").value;
 
-    // Combine into finalDescription
+    // Kombinasi deskripsi
     const finalDescription = `(${yCoord}, ${zCoord})\n${description.trim()}\n${oldWorldTreasureInput.trim()}\n${ingredientsNameInput.trim()}`;
 
     const imageFile = document.getElementById("imageUpload").files[0];
@@ -994,7 +998,7 @@ document.getElementById("markerForm").addEventListener("submit", async function 
     try {
         const response = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/Feedback");
         let existingData = {};
-        
+
         if (response.ok) {
             const responseData = await response.json();
             existingData = responseData || {};
@@ -1002,7 +1006,7 @@ document.getElementById("markerForm").addEventListener("submit", async function 
             console.error("Failed to load existing data:", response.statusText);
         }
 
-        // Generate new ID
+        // Generate ID baru
         const existingIds = Object.keys(existingData).map(Number);
         const newId = (Math.max(...existingIds, 0) + 1).toString();
 
@@ -1014,8 +1018,8 @@ document.getElementById("markerForm").addEventListener("submit", async function 
                 name: nameMark.trim(),
                 en_name: nameMark.trim(),
                 category_id: category,
-                lat: yCoord.toString(), // Use the captured coordinates
-                lng: zCoord.toString(), // Use the captured coordinates
+                lat: savedLat.toString(), // Gunakan savedLat
+                lng: savedLng.toString(), // Gunakan savedLng
                 redirect_params: "0",
                 first_member_id: "0",
                 challenge_id: "0",
@@ -1027,7 +1031,7 @@ document.getElementById("markerForm").addEventListener("submit", async function 
             }
         };
 
-        console.log("Data to be sent to endpoint:", JSON.stringify(newEntry, null, 2));
+        console.log("Data yang akan dikirim ke endpoint:", JSON.stringify(newEntry, null, 2));
 
         const mergedData = { ...existingData, ...newEntry };
 
@@ -1044,16 +1048,17 @@ document.getElementById("markerForm").addEventListener("submit", async function 
         if (!submitResponse.ok) {
             throw new Error('Network response was not ok: ' + submitResponse.statusText);
         }
-        
+
         console.log('Marker submitted successfully.');
 
-        // Reset the form fields after successful submission
-        document.getElementById("markerForm").reset(); // Reset the form fields
+        // Reset form setelah berhasil submit
+        document.getElementById("markerForm").reset();
 
     } catch (error) {
         console.error('Error during submission:', error);
     }
 });
+
 
 
 // Function to update category options based on selected loc_type
@@ -1718,17 +1723,99 @@ marker.on('popupclose', () => {
         updateCategoryDisplay(marker.options.loc_type);
     });
 
-    marker.on('popupopen', () => {
-        console.log('Popup opened for marker:', marker.options.id);
-        setupReportButton(marker, key);
+marker.on('popupopen', () => {
+    console.log('Popup opened for marker:', marker.options.id);
+    setupReportButton(marker, key);
 
-        if (!markTipShown) {
-            setTimeout(() => {
-                showMarkTip(marker);
-            }, 2000);
-            markTipShown = true;
-        }
-    });
+    if (!markTipShown) {
+        setTimeout(() => {
+            const steps = [
+                {
+                    element: document.querySelector('.copyButton'),
+                    intro: `
+                        <div>
+                            Copy Coordinates and Paste in the Game
+                            <br/>
+                            <img src="icons/hi.png" alt="Copy Icon" style="width: 80px; height: auto;">
+                        </div>`,
+                    tooltipClass: 'custom-tooltip',
+                    highlightClass: 'custom-highlight-copycoordinates'
+                },
+                {
+                    element: document.querySelector('.reportButton'),
+                    intro: `
+                        <div>
+                            Report if the Marker is Incorrect
+                            <br/>
+                            <img src="icons/bangone.png" alt="Report Icon" style="width: 80px; height: auto;">
+                        </div>`,
+                    tooltipClass: 'custom-tooltip',
+                    highlightClass: 'custom-highlight'
+                }
+            ];
+
+            if (document.querySelector('.showImageButton')) {
+                steps.push({
+                    element: document.querySelector('.showImageButton'),
+                    intro: `
+                        <div>
+                            View Location Images
+                            <br/>
+                            <img src="icons/wow.png" alt="Show Image Icon" style="width: 80px; height: auto;">
+                        </div>`,
+                    tooltipClass: 'custom-tooltip',
+                    highlightClass: 'custom-highlight'
+                });
+            }
+
+            if (document.querySelector('.uploadImageButton')) {
+                steps.push({
+                    element: document.querySelector('.uploadImageButton'),
+                    intro: `
+                        <div>
+                            Submit the Location with a Screenshot
+                            <br/>
+                            <img src="icons/sombong.png" alt="Upload Icon" style="width: 80px; height: auto;">
+                        </div>`,
+                    tooltipClass: 'custom-tooltip',
+                    highlightClass: 'custom-highlight'
+                });
+            }
+
+steps.push({
+    element: marker.getElement(),
+    intro: `
+        <div>
+            Right-click or Hold to Change Marker Opacity
+            <br/>
+            <img id="animatedOpacityIcon" src="icons/icon_default.png" alt="Opacity Icon" style="width: 50px; height: auto; opacity: 1; transition: opacity 0.5s ease;">
+        </div>`,
+    tooltipClass: 'custom-tooltip',
+    highlightClass: 'custom-highlight'
+});
+
+
+            introJs().setOptions({
+                steps: steps,
+                overlayOpacity: 0.85,
+                disableInteraction: true,
+                exitOnOverlayClick: false,
+                tooltipPosition: 'auto',
+                highlightClass: 'custom-highlight',
+                tooltipClass: 'custom-tooltip',
+                nextLabel: 'Next',
+                prevLabel: 'Prev',
+                skipLabel: '❌',
+                doneLabel: 'Done',
+                scrollToElement: true,
+                scrollPadding: 30
+            }).start();
+
+        }, 1000);
+
+        markTipShown = true;
+    }
+});
 
     map.on('click', function(event) {
         if (marker.getPopup().isOpen()) {
@@ -1770,6 +1857,7 @@ function closeImagePreview(event) {
     }
 }
 
+let existingDataCache = {}; // Inisialisasi sebagai objek kosong
 
 // Open the image form popup
 function openImageFormPopup(markerId) {
@@ -1802,7 +1890,7 @@ function openImageFormPopup(markerId) {
                 </div>
                 ` : ''}
 
-                <div id="PreviewContainer" class="preview-container" style="display:none;"></div> <!-- Hidden Preview Container -->
+                <div id="PreviewContainer" class="preview-container" style="display:none;"></div>
 
                 <button type="submit">Submit</button>
             </form>
@@ -1819,7 +1907,6 @@ function openImageFormPopup(markerId) {
         const dropArea = document.getElementById("dropArea");
         const imageUploadInput = document.getElementById("imageUpload");
 
-        // Drag-and-drop highlight effects
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropArea.addEventListener(eventName, preventDefaults, false);
         });
@@ -1830,12 +1917,10 @@ function openImageFormPopup(markerId) {
             dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'), false);
         });
 
-        // Handle click to trigger file input for image upload
         dropArea.addEventListener('click', () => {
             imageUploadInput.click();
         });
 
-        // Handle image paste events
         document.addEventListener('paste', (e) => {
             const items = e.clipboardData.items;
             for (let i = 0; i < items.length; i++) {
@@ -1846,6 +1931,32 @@ function openImageFormPopup(markerId) {
                 }
             }
         });
+    }
+
+    // Cek cache sebelum melakukan GET request
+    console.log("Checking existingDataCache:", existingDataCache);
+
+    if (Object.keys(existingDataCache).length === 0) {
+        console.log("Cache is empty, fetching data...");
+
+        fetch("https://autumn-dream-8c07.square-spon.workers.dev/ER_Image", {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        })
+        .then(response => {
+            console.log("Fetch response status:", response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log("Fetched data:", data);
+            existingDataCache = data || {}; // Pastikan data selalu objek
+            console.log("Data cached successfully:", existingDataCache);
+        })
+        .catch(error => {
+            console.error("Error fetching data:", error);
+        });
+    } else {
+        console.log("Using cached data:", existingDataCache);
     }
 
     console.log('Form popup appended to body');
@@ -2059,79 +2170,60 @@ function submitImageForm(markerId) {
 
 function handleSubmit(markerId, username, base64String) {
     if (base64String && username) {
-        // Display "Submitting..." message before the fetch request
         const submittingMessage = document.createElement("div");
         submittingMessage.id = "submittingMessage";
-
         submittingMessage.innerHTML = `
             <h4>Submitting...</h4>
             <p>It may take a While</p>
             <p>Please be patient...</p>
         `;
-
-        // Styling untuk pesan yang muncul
         submittingMessage.style.position = "fixed";
         submittingMessage.style.top = "50%";
         submittingMessage.style.left = "50%";
         submittingMessage.style.transform = "translate(-50%, -50%)";
         submittingMessage.style.padding = "20px";
         submittingMessage.style.backgroundColor = "rgba(19, 39, 96, 0.613)";
-        submittingMessage.style.border= "2px solid #889dcb";
+        submittingMessage.style.border = "2px solid #889dcb";
         submittingMessage.style.color = "#fff";
         submittingMessage.style.fontSize = "18px";
         submittingMessage.style.textAlign = "center";
         submittingMessage.style.borderRadius = "10px";
         submittingMessage.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.5)";
-        submittingMessage.style.zIndex = "10000"; // Pastikan di atas semua elemen lain
+        submittingMessage.style.zIndex = "10000";
 
-        // Tambahkan elemen ke body
         document.body.appendChild(submittingMessage);
-
-        // Close the popup immediately
         closePopup();
 
-        // Display preview if base64 string is valid
         const PreviewContainer = document.getElementById("PreviewContainer");
         if (PreviewContainer && base64String) {
             const imgElement = document.createElement("img");
             imgElement.src = base64String;
             imgElement.classList.add("image-preview");
-            PreviewContainer.innerHTML = ''; // Clear old preview
-            PreviewContainer.appendChild(imgElement); // Add new preview
-            PreviewContainer.style.display = "block"; // Ensure preview is displayed
+            PreviewContainer.innerHTML = '';
+            PreviewContainer.appendChild(imgElement);
+            PreviewContainer.style.display = "block";
         }
 
-        // Fetch existing data from endpoint /ER_Image
+        const existingData = existingDataCache || {};
+
+        const newMarkerData = {
+            id: markerId,
+            username: username,
+            image: base64String
+        };
+
+        existingData[markerId] = newMarkerData;
+
         fetch("https://autumn-dream-8c07.square-spon.workers.dev/ER_Image", {
-            method: "GET",
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json"
-            }
-        })
-        .then(response => response.json())
-        .then(existingData => {
-            if (typeof existingData !== 'object' || existingData === null) {
-                existingData = {};
-            }
-
-            const newMarkerData = {
-                id: markerId,
-                username: username,
-                image: base64String
-            };
-
-            existingData[markerId] = newMarkerData;
-
-            return fetch("https://autumn-dream-8c07.square-spon.workers.dev/ER_Image", {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(existingData)
-            });
+            },
+            body: JSON.stringify(existingData)
         })
         .then(response => {
             if (response.ok) {
+                existingDataCache = existingData; // Perbarui cache setelah PUT request berhasil
                 updateMarkerInfo(markerId);
                 alert("THANKS FOR SUBMITTING YOUR SCREENSHOT");
             } else {
@@ -2144,7 +2236,6 @@ function handleSubmit(markerId, username, base64String) {
             alert("Error uploading image. Try Again Later");
         })
         .finally(() => {
-            // Hapus "Submitting..." message setelah proses selesai
             const submittingMessage = document.getElementById("submittingMessage");
             if (submittingMessage) {
                 submittingMessage.remove();
@@ -2155,7 +2246,6 @@ function handleSubmit(markerId, username, base64String) {
         console.warn("Missing data - Username:", username, "Base64:", base64String);
     }
 }
-
 
 
 // Fungsi untuk mendapatkan marker berdasarkan ID
@@ -2205,7 +2295,7 @@ function updateMarkerInfo(markerId) {
                             showImageButton = `
                                 <button class="showImageButton" onclick="toggleImageVisibility(this, event)" 
                                         style="background: none; border: none; color: #007bff; font-size: 14px; cursor: pointer; pointer-events: auto;">
-                                    Show Image
+                                    Hide Image
                                 </button>
                             `;
                         }
@@ -2336,7 +2426,7 @@ function showEquatorLines(marker) {
             horizontalLineLeft.style.left = '0px';
             horizontalLineLeft.style.top = `${point.y - 15 - 50 + 10 + 40}px`;
             horizontalLineLeft.style.width = `${point.x - 50}px`;
-            horizontalLineLeft.style.height = '1.5px';
+            horizontalLineLeft.style.height = '1px';
             horizontalLineLeft.style.backgroundColor = '#ffffff';
 
             // Posisi garis horizontal kanan
@@ -2344,14 +2434,14 @@ function showEquatorLines(marker) {
             horizontalLineRight.style.left = `${point.x + 50}px`;
             horizontalLineRight.style.top = `${point.y - 15 - 50 + 10 + 40}px`;
             horizontalLineRight.style.width = `${window.innerWidth - point.x - 50}px`;
-            horizontalLineRight.style.height = '1.5px';
+            horizontalLineRight.style.height = '1px';
             horizontalLineRight.style.backgroundColor = '#ffffff';
 
             // Posisi garis vertikal atas
             verticalLineTop.style.position = 'absolute';
             verticalLineTop.style.left = `${point.x}px`;
             verticalLineTop.style.top = `-${30}px`;
-            verticalLineTop.style.width = '1.5px';
+            verticalLineTop.style.width = '1px';
             verticalLineTop.style.height = `${point.y - 50}px`;
             verticalLineTop.style.backgroundColor = '#ffffff';
 
@@ -2359,7 +2449,7 @@ function showEquatorLines(marker) {
             verticalLineBottom.style.position = 'absolute';
             verticalLineBottom.style.left = `${point.x}px`;
             verticalLineBottom.style.top = `${point.y + 30}px`;
-            verticalLineBottom.style.width = '1.5px';
+            verticalLineBottom.style.width = '1px';
             verticalLineBottom.style.height = `${window.innerHeight - point.y - 50}px`;
             verticalLineBottom.style.backgroundColor = '#ffffff';
         };

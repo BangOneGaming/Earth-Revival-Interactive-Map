@@ -32,7 +32,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100&display=swap" rel="stylesheet">
-    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js/minified/introjs.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/intro.js/minified/intro.min.js"></script>
+
     <link href="app.css?v=3.7" rel="stylesheet" type="text/css">
 
     <!-- Leaflet for maps -->
@@ -78,15 +80,11 @@
 <p>VERSION 5.8 - NOVEMBER 2024</p>
 <ul>
     <li>LOADING OPTIMIZATION</li>
-    <li>Fixed <b><span style="color: #FFD700;">UPLOAD SCREENSHOT</span></b> issue</li>
-    <li>Fixed Image Review After Sending</li>
+    <li>Now <b><span style="color: #FFD700;">UPLOAD SCREENSHOT</span></b> It Doesn't Take Too Long </li>
+    <li>New Introductions on Pop Up Marker</li>
     <li><span style="color: orange;"><b>MINI MAP</b></span> Now Loads Instantly</li>
     <li>Fixed Ads Not Obstructing the Screen</li>
 </ul>
-<img src="icons/Sad.png" alt="Icon">
-<h2><span style="color: white;">Thank You for Your Donations</span></h2>
-<p>Please <b><span style="color: green;">DONATE</span></b>, I Need Support to Cover Server Costs</p>
-
         <!-- Tombol Trakteer -->
         <a href="https://trakteer.id/BangOneGaming/tip" target="_blank" class="donate-btn">TRAKTEER <br><span style="color: yellow;">Donate</span></br></a>
         <p><span style="color: white;">👇 You Can Donate Via Paypal 👇</span></p>
@@ -96,6 +94,9 @@
                 <img src="icons/paypal.png" alt="PayPal">
             </a>
         </div>
+<img src="icons/Sad.png" alt="Icon">
+<h2><span style="color: white;">Thank You for Your Donations</span></h2>
+<p>Please <b><span style="color: green;">DONATE</span></b>, I Need Support to Cover Server Costs</p>
     </div>
 </div>
 
@@ -119,16 +120,17 @@
 <div id="image-info-preload">
     <img id="dynamic-image" src="icons/icon_default.png" alt="Additional Image">
 </div>
-
-    <!-- Menambahkan teks "Contact Me" di atas ikon -->
-    <h5 style="text-align: center; margin-top: 5px;">Contact Me</h5>
-    <!-- Tombol PayPal di Preloader -->
+<!-- Tombol PayPal di Preloader -->
     <div style="text-align: center; margin-top: 5px;">
         <p style="color: white;">Support Us via PayPal</p>
         <a href="https://www.paypal.me/IrvanNazmudin" target="_blank">
             <img src="icons/paypal.png" alt="PayPal" style="width: 200px; height: auto;">
         </a>
     </div>
+
+    <!-- Menambahkan teks "Contact Me" di atas ikon -->
+    <h5 style="text-align: center; margin-top: 5px;">Contact Me</h5>
+    
     <!-- Ikon Media Sosial -->
     <div id="social-icons" style="margin-top: 5px; display: flex; justify-content: center;">
         <a href="https://youtube.com/@bangonegaming6596?si=YE4ShL6FsNHjc1Un" target="_blank" style="margin: 0 10px;">
@@ -571,6 +573,9 @@
             <button type="button" class="cancel" id="cancelReportBtn">Cancel</button>
         </form>
     </div>
+    
+
+
 
 <!-- Popup Iklan -->
 <div id="ad-popup" class="ad-popup" style="display: none;">
@@ -594,10 +599,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-animatedmarker/0.0.2/leaflet.animatedmarker.min.js"></script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467"
      crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>
-  eruda.init();
-</script>
+
 <script src="category.js"></script>
 <script src="app.js?v=3.7"></script>
 </body>

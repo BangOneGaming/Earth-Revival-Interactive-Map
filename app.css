@@ -99,10 +99,11 @@ overflow: hidden;
 /* Loading bar container */
 #loading-bar-container {
     width: 80%;
+    height: 10px;
     background-color: #ddd;
     border-radius: 25px;
     border: 2px solid #889dcb;
-    margin-top: 20px;
+    margin-top: 5px;
     overflow: hidden;
 }
 
@@ -207,13 +208,12 @@ overflow: hidden;
     justify-content: center;
     align-items: center;
     width: 300px; /* Tentukan tinggi container */
-    height: 150px;
 }
 
 /* Gambar dinamis - Menghindari animasi bounce */
 #dynamic-image {
-    max-width: 90%; /* Menghindari gambar terlalu lebar */
-    max-height: auto; /* Menghindari gambar melebihi tinggi container */
+    max-width:100%; /* Menghindari gambar terlalu lebar */
+    max-height: 120px; /* Menghindari gambar melebihi tinggi container */
     width: auto;
     height: auto;
     object-fit: contain; /* Mengatur gambar agar sesuai dalam container tanpa distorsi */
@@ -278,7 +278,7 @@ overflow: hidden;
 #loading {
     font-size: 16px;
     color: #333;
-    margin-top: 20px;
+    margin-top: 5px;
 }
 
 /* Map container */
@@ -1596,6 +1596,202 @@ h5 {
 }
 .custom-marker-icon {
     transform: translateY(-5px); /* Geser ikon ke atas 5px */
+}
+/* Overlay Background (Latar belakang yang gelap) */
+.introjs-overlay {
+    background-color: rgba(0, 0, 0, 0.7); /* Warna overlay dengan opacity */
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* Tooltip Container (Mengubah warna latar belakang menjadi putih) */
+.introjs-tooltip {
+    background-color: #ffffff !important; /* Warna putih */
+    color: #000000 !important; /* Warna teks hitam */
+    border-radius: 10px !important;
+    padding: 5px !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important; /* Efek bayangan */
+    font-family: 'Lato', sans-serif !important;
+    font-weight: bold !important;
+    max-width: 300px !important;
+    position: relative !important;
+}
+
+/* Tooltip Title (Judul) */
+.introjs-tooltip-title {
+    color: white !important; /* Warna teks hitam */
+    font-size: 18px !important;
+    text-align: center!important;
+    font-family: 'Lato', sans-serif;
+    font-weight: bold;
+    margin-bottom: 2px !important;
+}
+
+/* Tooltip Text (Konten teks) */
+.introjs-tooltiptext {
+    color: white !important; /* Warna teks hitam */
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    text-align: center!important;
+    font-family: 'Lato', sans-serif;
+    font-weight: bold;
+}
+/* Menghilangkan elemen step indicator */
+.introjs-progress, .introjs-bullets {
+    display: none !important;
+}
+
+/* Menghilangkan nomor langkah (misal: "1 of 4") */
+.introjs-helperNumberLayer {
+    display: none !important;
+}
+
+/* Arrow (Panah) */
+.introjs-arrow {
+    margin-bottom: 30px;
+    color: blue;
+    position: absolute; /* Menempatkan panah di luar container */
+    top: -40px; /* Menyesuaikan posisi panah lebih ke atas */
+    border-color: #333 transparent transparent transparent; /* Mengubah warna panah */
+    border-width: 10px; /* Ukuran panah */
+}
+
+/* Tooltip Buttons Container */
+.introjs-tooltipbuttons {
+    display: flex;
+    justify-content: center; /* Menempatkan tombol di tengah */
+    align-items: center; /* Menjaga tombol agar rata secara vertikal */
+    gap: 10px; /* Menambahkan jarak antara tombol */
+    margin-top: 10px; /* Jarak dengan konten atas */
+}
+
+/* Next Button */
+.introjs-nextbutton {
+    background-color: green;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.introjs-nextbutton:hover {
+    background-color: #45A049;
+}
+
+/* Previous Button */
+.introjs-prevbutton {
+    background-color: #2196F3;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.introjs-prevbutton:hover {
+    background-color: #1976D2;
+}
+
+/* Skip Button */
+.introjs-skipbutton {
+    background-color: transparent;
+    font-size: 13px;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+
+/* Done Button */
+.introjs-donebutton {
+    background-color: green;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.introjs-donebutton:hover {
+    background-color: #5E35B1;
+}
+
+/* Highlighted Element (Focus Element) */
+.introjs-helperLayer {
+    border-radius: 8px;
+    transition: border-color 0.3s;
+}
+
+/* Highlight Overlay Layer (Mengatur area fokus) */
+.introjs-fixParent {
+    z-index: 10000;
+    margin-bottom: 10px;
+}
+
+/* Tooltip Close Button (X Button) */
+.introjs-closeButton {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Custom Tooltip Class (Jika Anda menggunakan custom-tooltip) */
+.custom-tooltip {
+    background-color: rgba(19, 39, 96, 0.613)!important;
+    border: 2px solid #889dcb!important;/* Border color */
+    color: white !important; /* Warna teks hitam */
+    border-radius: 10px !important;
+    padding: 5px !important;
+}
+
+/* Custom Highlight Class */
+.custom-highlight {
+    padding: 0;
+    border: 1px solid white;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+.custom-highlight-copycoordinates {
+    padding: 0 115px 0 0;
+    border: 1px solid white;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+/* Panah yang dinamis mengikuti posisi fokus */
+.introjs-arrow.top {
+    top: -20px;
+    border-color: transparent transparent #333 transparent;
+}
+
+.introjs-arrow.right {
+    top: -15px;
+    border-color: transparent transparent transparent #333;
+}
+
+.introjs-arrow.bottom {
+    top: 20px;
+    border-color: #333 transparent transparent transparent;
+}
+
+.introjs-arrow.left {
+    top: -15px;
+    border-color: transparent #333 transparent transparent;
+}
+
+/* Mengatur ukuran font umum untuk semua elemen */
+.introjs-button,
+.introjs-tooltiptext {
+    font-size: 14px;
 }
 
 @media (max-width: 600px) {
