@@ -559,23 +559,31 @@ function initMap() {
         .catch(error => console.error('Error during map initialization:', error));
 }
 
-// Fungsi utama untuk menampilkan atau menyembunyikan marker berdasarkan filter
+// Function to show markers and update the current count based on opacity
 function showMarkers() {
     markers.forEach(marker => {
         const locTypeMatch = activeLocTypes.length === 0 || activeLocTypes.includes(`loc_type${marker.options.loc_type}`);
         const categoryMatch = activeFilters.length === 0 || activeFilters.includes(marker.options.category.toString());
 
-        // Tampilkan marker jika sesuai dengan loc_type dan kategori
+        // Display marker if it matches loc_type and category
         if (locTypeMatch && categoryMatch) {
             marker.addTo(map);
+            // Update current count based on opacity of the marker
+            if (marker.options.opacity === 0.5) {
+                categoryCounts[marker.options.loc_type][getCategoryName(marker.options.category)].current++;
+            }
         } else {
             map.removeLayer(marker);
+            // Decrease current count if opacity is 0.5
+            if (marker.options.opacity === 0.5) {
+                categoryCounts[marker.options.loc_type][getCategoryName(marker.options.category)].current--;
+            }
         }
     });
-    updateCategoryDisplay(currentLocType); // Pastikan tampilan kategori diperbarui
+
+    // Update category display after marker changes
+    updateCategoryDisplay(currentLocType);
 }
-
-
 // Function to map categoryId to category name
 
 function getCategoryName(categoryId) {
@@ -654,36 +662,25 @@ function initializeMarkers() {
 }
 
 
-// Function to change marker opacity
+// Function to change marker opacity and update current count accordingly
 function changeMarkerOpacity(markerId, newOpacity) {
     const marker = findMarkerById(markerId);
 
     if (marker) {
-        const oldOpacity = marker.options.opacity; // Simpan opasitas lama
-        marker.setOpacity(newOpacity); // Ubah opasitas marker
-        saveMarkerOpacity(markerId, newOpacity); // Simpan opasitas baru
+        const oldOpacity = marker.options.opacity; // Save old opacity
+        marker.setOpacity(newOpacity); // Change marker opacity
 
-        console.log(`Changing opacity from ${oldOpacity} to ${newOpacity} for marker ID: ${markerId}`); // Log perubahan opacity
-
-        // Update counts berdasarkan opasitas lama dan baru
+        // Update counts based on old and new opacity
         if (oldOpacity === 0.5 && newOpacity === 1.0) {
-            // Ketika mengubah dari 0.5 ke 1.0, kurangi current count
-            updateCategoryCounts(marker.options.loc_type, marker.options.category, oldOpacity, false); // Kurangi current count
-            console.log(`Decreasing current count for ${marker.options.category} at locType ${marker.options.loc_type}`); // Log pengurangan
+            // Decrease current count for 0.5 opacity -> 1.0
+            categoryCounts[marker.options.loc_type][getCategoryName(marker.options.category)].current--;
         } else if (oldOpacity === 1.0 && newOpacity === 0.5) {
-            // Ketika mengubah dari 1.0 ke 0.5, tambah current count
-            updateCategoryCounts(marker.options.loc_type, marker.options.category, newOpacity, true); // Tambah current count
-            console.log(`Increasing current count for ${marker.options.category} at locType ${marker.options.loc_type}`); // Log penambahan
-        } else if (oldOpacity === 0.5 && newOpacity === 0.5) {
-            console.log(`Opacity remains 0.5 for marker ID: ${markerId}. No change to current count.`); // Log jika tidak ada perubahan
+            // Increase current count for 1.0 opacity -> 0.5
+            categoryCounts[marker.options.loc_type][getCategoryName(marker.options.category)].current++;
         }
 
-        // Tambahkan log untuk melihat current count sebelum dan sesudah perubahan
-        console.log(`Before update: ${categoryCounts[marker.options.loc_type][marker.options.category].current}`);
-        updateCategoryDisplay(marker.options.loc_type); // Refresh tampilan
-        console.log(`After update: ${categoryCounts[marker.options.loc_type][marker.options.category].current}`);
-    } else {
-        console.log(`Marker with ID: ${markerId} not found.`); // Log jika marker tidak ditemukan
+        // Update display
+        updateCategoryDisplay(marker.options.loc_type);
     }
 }
 
@@ -725,17 +722,16 @@ function saveCurrentCount(locType, categoryName, currentCount) {
     localStorage.setItem('markerCounts', JSON.stringify(savedCounts)); // Save back to local storage
 }
 
-// Function to update the display of category counts
+// Function to update the category display after the current count changes
 function updateCategoryDisplay(locType) {
     if (!locType) return;
 
-    // Loop melalui kategori di locType yang aktif dan perbarui tampilan
+    // Loop through active categories and update the display
     for (const category in categoryCounts[locType]) {
         const element = document.querySelector(`#count-${category}-loc${locType} .count-text`);
         if (element) {
             const { max, current } = categoryCounts[locType][category];
-            element.innerHTML = `${current}/${max}`; // Update hanya teks hitungan
-            console.log(`Displaying ${category.charAt(0).toUpperCase() + category.slice(1)}: ${current}/${max}`); // Log pembaruan tampilan
+            element.innerHTML = `${current}/${max}`; // Update only the count text
         }
     }
 }
@@ -3370,6 +3366,12 @@ function centerMapOnBounds(imageBounds) {
     // Step 1: Zoom out to level 4
     map.setView(map.getCenter(), 4, { animate: true, duration: 5 }); // 2 seconds for zoom out
 
+    // Disable hover effect during zoom out
+    const newFiltersContainer = document.querySelector('.toggle-new-filters-container');
+    if (newFiltersContainer) {
+        newFiltersContainer.classList.add('no-hover'); // Disable hover effect
+    }
+
     // Step 2: Wait for zoom out to complete, then move to new center
     setTimeout(() => {
         // Move to new center
@@ -3379,16 +3381,9 @@ function centerMapOnBounds(imageBounds) {
         setTimeout(() => {
             map.setView(newCenter, 7, { animate: true, duration: 5 }); // 2 seconds for zoom in
             updateMarkers(); // Ensure filters are applied after markers are cleared
+
         }, 500); // Wait for half a second before zooming in
     }, 1000); // Wait for 2.5 seconds for the zoom out to finish
-
-    // Ensure the filter container hover effect is disabled when the marker is active and popup is open
-    map.on('popupopen', function () {
-        const newFiltersContainer = document.querySelector('.toggle-new-filters-container');
-        if (newFiltersContainer) {
-            newFiltersContainer.classList.remove('hover'); // Disable hover effect
-        }
-    });
 }
 
 
