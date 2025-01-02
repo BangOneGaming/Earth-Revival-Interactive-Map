@@ -1,117 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaflet Map with Custom Tiles and Filters</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="/icons/favicon-16x16.png" sizes="16x16" type="image/png">
-    <link rel="icon" href="/icons/favicon-32x32.png" sizes="32x32" type="image/png">
-    <link rel="icon" href="/icons/favicon-48x48.png" sizes="48x48" type="image/png">
-    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180">
-    <link href="app.css" rel="stylesheet" type="text/css">
-</head>
-<body>
- <div id="patch-popup" class="popup">
-    <div class="popup-content">
-        <span class="close">&times;</span>
-        <h2>Patch Update</h2>
-        <p>Version 3.1- September 2024</p>
-        <ul>
-            <li>Fixed various bugs</li>
-            <li>Now <b>HOLD</b> can Change Opacity Mark</li>
-            <li>Calculated Marker UI</li>
-            <li> Fixed <b>REPORT</b> form</li>
-            <li>Get Better UI for Maps</li>
-        </ul>
-        <p><b>Please Donate If You Like The Feature</b></p>
-        <a href="https://trakteer.id/BangOneGaming/tip" target="_blank" class="donate-btn">Support Us <br>Donate</br></a>
-    </div>
-    </div>
-        <!-- Donate Container -->
-        <div class="donate-container">
-        <a href="https://trakteer.id/BangOneGaming/tip" target="_blank" class="donate-btn">Donate Here</a>
-     </div>
-    <div id="toggle-legend" class="toggle-legend-container">
-        <img src="icons/toggle_btn.png" alt="Toggle Legend">
-    </div>
-    <div id="toggle-filters" class="toggle-new-filters-container">
-        <img src="icons/new_filter-btn.png" alt="Toggle Filters">
-    </div>
-<button id="reset-opacity" title="Reset Opacity">
-    <img src="icons/reset.png" alt="Reset Icon">
-</button>
-  </div>
-<!-- New filter container for mark -->
-<div class="new-filter-container">
-    <div class="filter-btn" data-filter="loc_type2" style="background-image: url('icons/sundale.png');">Sundale Valley</div>
-    <div class="filter-btn" data-filter="loc_type5" style="background-image: url('icons/howling.png');">Howling Gobi</div>
-    <div class="filter-btn" data-filter="loc_type4" style="background-image: url('icons/eden.png');">Edengate</div>
-    <div class="filter-btn" data-filter="loc_type3" style="background-image: url('icons/ragon.png');">Ragon Snowy Peak</div>
-    <div class="filter-btn" data-filter="loc_type6" style="background-image: url('icons/kepler.png');">Kepler Harbour</div>
-    <div class="filter-btn" id="zoomBtn" style="background-image: url('icons/space.png');">Pegasus<br><b>(Go to Space)</b></div>
-    <div class="filter-btn" style="background-image: url('icons/hilde.png');" id="hildeBtn">Hilde</div>
-    
-</div>
-</div>
-<div class="count-container">
-<div id="count-treasure" class="count-item">Treasure: 0</div>
-<div id="count-training" class="count-item">Training: 0</div>
-<div id="count-zone" class="count-item">Zone: 0</div>
-<div id="count-fishing" class="count-item">Fishing: 0</div>
-<div id="count-scenery" class="count-item">Scenery: 0</div>
-
-    </div>
-</div>
-
-<!-- Container untuk gambar fullscreen -->
-<div id="fullscreen-image"></div>
-
-<!-- Logo -->
-<img src="statics/tittle_er.png" alt="Logo" id="logo" />
-
-<!-- Filter buttons -->
-<div class="filter-container">
-    <label class="filter-checkbox-btn">
-        <input type="checkbox" class="filter-checkbox" data-filter="all">
-        <img src="icons/here.png" alt="all"> all
-    </label>
-    <label class="filter-checkbox-btn">
-        <input type="checkbox" class="filter-checkbox" data-filter="treasure">
-        <img src="icons/icon_treasure.png" alt="Treasure"> Treasure
-    </label>
-    <label class="filter-checkbox-btn">
-        <input type="checkbox" class="filter-checkbox" data-filter="teleport">
-        <img src="icons/icon_teleport.png" alt="Teleport"> Teleport
-    </label>
-    <label class="filter-checkbox-btn">
-        <input type="checkbox" class="filter-checkbox" data-filter="fishing">
-        <img src="icons/icon_fishing.png" alt="Fishing"> Fishing
-    </label>
-    <label class="filter-checkbox-btn">
-        <input type="checkbox" class="filter-checkbox" data-filter="zone">
-        <img src="icons/icon_zone.png" alt="Zone"> Zone
-    </label>
-    <label class="filter-checkbox-btn">
-        <input type="checkbox" class="filter-checkbox" data-filter="training">
-        <img src="icons/icon_train.png" alt="Training"> Training
-    </label>
-        <label class="filter-checkbox-btn">
-        <input type="checkbox" class="filter-checkbox" data-filter="scenery">
-        <img src="icons/icon_scenery.png" alt="Scenery"> Scenery
-    </label>
-</div>
-
-
-<div id="map"></div>
-<script src="minimap_config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>
-  eruda.init();
-</script>
-<script>
 let activeFilters = [];
 let activeLocTypes = [];
 let markers = [];
@@ -197,40 +83,45 @@ function getNormalizedCoord(coord, zoom) {
     return { x: x, y: y };
 }
 function initMiniMap() {
-    const miniMapMarkers = {};
-
     for (const key in mini_map_type) {
         if (mini_map_type.hasOwnProperty(key)) {
             const info = mini_map_type[key];
+
+            // Parse location position for the marker
             const loc_position = info.loc_position.split(",");
-            const marker = L.marker([parseFloat(loc_position[0]), parseFloat(loc_position[1])], {
+            const latLng = [parseFloat(loc_position[0]), parseFloat(loc_position[1])];
+
+            // Create the marker
+            const marker = L.marker(latLng, {
                 icon: L.icon({
-                    iconUrl: 'icons/here1.png',
+                    iconUrl: 'icons/here.png',
                     iconSize: [50, 50]
                 })
-            }).addTo(map);
+            }).addTo(map); // Add the marker to the map
 
-            const bounds = [
+            // Create the image bounds for the overlay
+            const imageBounds = [
                 [parseFloat(info['map_position'][0].split(",")[0]), parseFloat(info['map_position'][0].split(",")[1])],
                 [parseFloat(info['map_position'][1].split(",")[0]), parseFloat(info['map_position'][1].split(",")[1])]
             ];
 
-            const historicalOverlay = L.imageOverlay(info['type']['default']['map_url'], bounds).addTo(map);
-            historicalOverlay.remove(); // Initially hide the overlay
+            // Create the overlay
+            const historicalOverlay = L.imageOverlay(info['type']['default']['map_url'], imageBounds);
 
+            // Add click listener to the marker
             marker.on('click', function () {
                 if (map.hasLayer(historicalOverlay)) {
-                    map.removeLayer(historicalOverlay);
+                    map.removeLayer(historicalOverlay); // Hide the overlay
                 } else {
-                    map.addLayer(historicalOverlay);
+                    historicalOverlay.addTo(map); // Show the overlay
                 }
             });
 
-            miniMapMarkers[key] = marker;
+            // Store the marker and overlay in the miniMapMarkers object
+            miniMapMarkers[key] = { marker, overlay: historicalOverlay };
         }
     }
 }
-
 
 // Call initMiniMap after your main map initialization
 initMap(); // Initialize your main map first
@@ -277,13 +168,8 @@ function addMarkersToMap() {
 
     // Tersembunyikan semua marker dan kemudian tampilkan berdasarkan filter
     hideMarkers();
+    showMarkers(); // Tampilkan marker berdasarkan filter aktif
     updateCategoryDisplay();
-}
-// Function untuk menyembunyikan semua marker dari peta
-function hideMarkers() {
-    markers.forEach(marker => {
-        map.removeLayer(marker); // Remove all markers from the map
-    });
 }
 
 
@@ -359,6 +245,57 @@ function initMap() {
         .catch(error => console.error('Error fetching marker data:', error));
 }
 
+function addMarkersToMap() {
+    resetCategoryCounts();
+    markers = []; // Reset markers array
+
+    console.log('jsonData:', jsonData); // Cek apakah data ada dan terstruktur dengan benar
+
+    for (const key in jsonData) {
+        if (jsonData.hasOwnProperty(key)) {
+            const location = jsonData[key];
+
+            // Pastikan bahwa properti 'loc_type' dan 'category_id' ada
+            if (typeof location.loc_type === 'undefined' || typeof location.category_id === 'undefined') {
+                console.warn(`Data tidak lengkap untuk key ${key}:`, location);
+                continue; // Lewati jika data tidak lengkap
+            }
+
+            // Ambil lat dan lng
+            const latLng = [parseFloat(location.lat), parseFloat(location.lng)];
+            const iconUrl = getIconUrl(location.category_id);
+            const initialOpacity = loadMarkerOpacity(key);
+
+            // Ambil loc_type dan category dari location
+            const locType = location.loc_type; 
+            const category = location.category_id; 
+
+            console.log(`Adding marker with loc_type: ${locType}, category: ${category}`); // Debugging log
+
+            const marker = L.marker(latLng, {
+                icon: L.icon({
+                    iconUrl: iconUrl,
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 32],
+                }),
+                opacity: initialOpacity || 1.0,
+            });
+
+            // Set options untuk marker
+            marker.options.loc_type = locType;
+            marker.options.category = category;
+
+            // Simpan marker dalam array
+            markers.push(marker);
+            setupMarkerInteractions(marker, location, key);
+            updateCategoryCounts(category, initialOpacity);
+        }
+    }
+
+    hideMarkers();
+    showMarkers(); // Tampilkan marker berdasarkan filter aktif
+    updateCategoryDisplay();
+}
 
 
 // Fungsi utama untuk menampilkan atau menyembunyikan marker berdasarkan filter
@@ -907,45 +844,91 @@ function isCategoryMatch(marker) {
         (activeFilters.includes('zone') && marker.options.category === '3') ||
         (activeFilters.includes('training') && marker.options.category === '7');
 }
-document.addEventListener('DOMContentLoaded', () => {
-    const buttons = document.querySelectorAll('.new-filter-container .filter-btn');
-    const checkboxes = document.querySelectorAll('.new-filter-container .filter-checkbox-btn');
-    const allCheckbox = document.getElementById('all-checkbox'); // Ensure you have an All checkbox in your HTML
-
-    // Initialize the Leaflet map
-    const map = L.map('map').setView([latitude, longitude], zoomLevel);
-
-    // Add a tile layer
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-    }).addTo(map);
-
-    function checkVisibility() {
-        const viewportHeight = window.innerHeight;
-        const viewportWidth = window.innerWidth;
-        const container = document.querySelector('.new-filter-container');
+    document.addEventListener('DOMContentLoaded', () => {
         const buttons = document.querySelectorAll('.new-filter-container .filter-btn');
-
-        buttons.forEach(button => {
-            const rect = button.getBoundingClientRect();
-            const containerRect = container.getBoundingClientRect();
-            const buttonCenterX = rect.left + rect.width / 2;
-            const containerCenterX = containerRect.left + containerRect.width / 2;
-
-            const isVisible = (
-                rect.top < viewportHeight &&
-                rect.bottom > 0 &&
-                rect.left < viewportWidth &&
-                rect.right > 0
-            );
-
-            if (isVisible && Math.abs(containerCenterX - buttonCenterX) < rect.width / 2) {
-                button.classList.add('active');
-            } else {
-                button.classList.remove('active');
-            }
-        });
+function updateActiveFilters(filter) {
+    if (filter.startsWith('loc_type')) {
+        const index = activeLocTypes.indexOf(filter);
+        if (index > -1) {
+            activeLocTypes.splice(index, 1);
+        } else {
+            activeLocTypes.push(filter);
+        }
+    } else {
+        updateCatagoryFilters(filter);
     }
+    updateMarkers(); // Update markers after filter change
+}
+
+function updateCatagoryFilters(filter) {
+    const allCheckbox = document.querySelector('.filter-checkbox[data-filter="all"]');
+    const otherCheckboxes = Array.from(document.querySelectorAll('.filter-checkbox'))
+        .filter(checkbox => checkbox.getAttribute('data-filter') !== 'all');
+
+    if (filter === 'all') {
+        if (allCheckbox.checked) {
+            // "all" is checked, check all other checkboxes
+            otherCheckboxes.forEach(checkbox => {
+                checkbox.checked = true;
+                const otherFilter = checkbox.getAttribute('data-filter');
+                if (!activeFilters.includes(otherFilter)) {
+                    activeFilters.push(otherFilter);
+                }
+            });
+        } else {
+            // "all" is unchecked, uncheck all other checkboxes
+            activeFilters = [];
+            activeLocTypes = [];
+            markers.forEach(marker => map.removeLayer(marker));
+            otherCheckboxes.forEach(checkbox => checkbox.checked = false);
+        }
+    } else {
+        const index = activeFilters.indexOf(filter);
+        if (index > -1) {
+            activeFilters.splice(index, 1);
+        } else {
+            activeFilters.push(filter);
+        }
+
+        // Uncheck "all" if any other filter is checked
+        if (activeFilters.length > 0) {
+            allCheckbox.checked = false;
+        } else if (activeFilters.length === 0) {
+            // If no other filters are active, re-enable "all"
+            allCheckbox.checked = true;
+        }
+    }
+}
+
+    
+    function checkVisibility() {
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
+    const container = document.querySelector('.new-filter-container');
+    const buttons = document.querySelectorAll('.new-filter-container .filter-btn');
+
+    buttons.forEach(button => {
+        const rect = button.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+
+        // Calculate center positions
+        const buttonCenterX = rect.left + rect.width / 2;
+        const containerCenterX = containerRect.left + containerRect.width / 2;
+
+        const isVisible = (
+            rect.top < viewportHeight &&
+            rect.bottom > 0 &&
+            rect.left < viewportWidth &&
+            rect.right > 0
+        );
+
+        if (isVisible && Math.abs(containerCenterX - buttonCenterX) < rect.width / 2) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    });
+}
 
     function centerOnHover() {
         const container = document.querySelector('.new-filter-container');
@@ -954,6 +937,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const button = event.target;
                 const rect = button.getBoundingClientRect();
                 const containerRect = container.getBoundingClientRect();
+
+                // Calculate scroll position to center the hovered button
                 const scrollLeft = button.offsetLeft - (containerRect.width / 2) + (button.offsetWidth / 2);
 
                 container.scrollTo({
@@ -964,135 +949,80 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Filter button functionality
-    buttons.forEach(button => {
-        button.addEventListener('click', () => {
-            const filterType = button.getAttribute('data-filter');
-
-            // Show/hide layers based on button click
-            if (map.hasLayer(yourLayer)) {
-                map.removeLayer(yourLayer); // Adjust this line for your layer logic
-            } else {
-                map.addLayer(yourLayer); // Adjust this line for your layer logic
-            }
-
-            buttons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-        });
-    });
-
-    // Checkbox functionality
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', () => {
-            const filterType = checkbox.getAttribute('data-filter');
-
-            // Show/hide layers based on checkbox selection
-            if (checkbox.checked) {
-                map.addLayer(yourCheckboxLayer); // Adjust this line for your checkbox layer
-            } else {
-                map.removeLayer(yourCheckboxLayer); // Adjust this line for your checkbox layer
-            }
-
-            // Uncheck "All" checkbox if any individual checkbox is unchecked
-            if (!checkbox.checked) {
-                allCheckbox.checked = false;
-            }
-
-            // Check "All" checkbox if all individual checkboxes are checked
-            if (Array.from(checkboxes).every(cb => cb.checked)) {
-                allCheckbox.checked = true; // Check "All" if all are checked
-            }
-        });
-    });
-
-    // "All" checkbox functionality
-    allCheckbox.addEventListener('change', () => {
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = allCheckbox.checked; // Check/uncheck all checkboxes
-
-            // Show/hide layers based on "All" checkbox state
-            if (allCheckbox.checked) {
-                map.addLayer(yourCheckboxLayer); // Show the layers if "All" is checked
-            } else {
-                map.removeLayer(yourCheckboxLayer); // Hide the layers if "All" is unchecked
-            }
-        });
-    });
-
     // Run on page load and on scroll
     checkVisibility();
     window.addEventListener('scroll', checkVisibility);
     window.addEventListener('resize', checkVisibility);
     centerOnHover();
-    
-    // Pop-up handling
-    window.onload = function() {
-        const popup = document.getElementById('patch-popup');
-        const closeBtn = document.querySelector('.popup .close');
-
-        popup.style.display = 'flex';
-
-        closeBtn.onclick = function() {
-            popup.style.display = 'none';
-        };
-
-        window.onclick = function(event) {
-            if (event.target === popup) {
-                popup.style.display = 'none';
-            }
-        };
-    };
-
-    // Scroll animation handling
-    function handleScroll() {
-        const container = document.querySelector('.new-filter-container');
-        const rect = container.getBoundingClientRect();
-
-        if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
-            container.classList.add('slide-in');
-            container.classList.remove('slide-out');
-        } else {
-            container.classList.add('slide-out');
-            container.classList.remove('slide-in');
-        }
-    }
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
 });
 
-// Additional functionalities
+
+
+
+// Optional: If you still need to handle scroll for filter-checkbox-btn
+const container = document.querySelector('.new-filter-container');
+const items = document.querySelectorAll('.new-filter-container .filter-checkbox-btn');
+
+container.addEventListener('scroll', () => {
+    const containerRect = container.getBoundingClientRect();
+    
+    items.forEach(item => {
+        const itemRect = item.getBoundingClientRect();
+        const itemCenter = itemRect.left + itemRect.width / 2;
+        const containerCenter = containerRect.left + containerRect.width / 2;
+
+        if (Math.abs(containerCenter - itemCenter) < itemRect.width / 2) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+});
+// Contoh JavaScript untuk menambahkan kelas animasi saat elemen muncul atau menghilang
+function handleScroll() {
+    const container = document.querySelector('.new-filter-container');
+    const rect = container.getBoundingClientRect();
+    
+    if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
+        container.classList.add('slide-in');
+        container.classList.remove('slide-out');
+    } else {
+        container.classList.add('slide-out');
+        container.classList.remove('slide-in');
+    }
+}
+
+// Tambahkan event listener untuk scroll
+window.addEventListener('scroll', handleScroll);
+// Jalankan fungsi saat halaman dimuat
+handleScroll();
+
 document.getElementById('zoomBtn').addEventListener('click', function() {
     var fullscreenImage = document.getElementById('fullscreen-image');
     fullscreenImage.style.display = 'flex';
     
-    // Display fullscreen image
+    // Menampilkan gambar fullscreen
     fullscreenImage.innerHTML = '<img src="icons/space.png" alt="Space Image" />';
     
-    // Start zoom out and shift right animation
+    // Memulai animasi zoom out dan geser ke kanan
     setTimeout(function() {
-        fullscreenImage.querySelector('img').style.transform = 'scale(1) translateX(-25%)'; // End image 20% to the right
-    }, 10); // Slight delay for transition
+        fullscreenImage.querySelector('img').style.transform = 'scale(1) translateX(-25%)'; // Gambar berakhir 20% ke kanan
+    }, 10); // Sedikit delay agar transisi berjalan
     
-    // Redirect after 2 seconds
+    // Setelah 2 detik, redirect ke link
     setTimeout(function() {
         window.location.href = 'https://bangonegaming.com/pegasus/index.html';
-    }, 2000); // Redirect after 2 seconds
+    }, 2000); // Redirect setelah 2 detik
 });
-
 document.getElementById("hildeBtn").onclick = function () {
     window.location.href = "https://bangonegaming.com/hilde/index.html";
-};
-
+  };
 const closeBtn = document.getElementById('closeOverlayBtn');
-const overlay = document.getElementById('trakteerOverlay');
+  const overlay = document.getElementById('trakteerOverlay');
 
-// Add event listener for close button
-closeBtn.addEventListener('click', function() {
-    overlay.style.display = 'none'; // Hide overlay when close button is clicked
-});
-
-// You can add additional functionalities here
-</script>
-</body>
-</html>
+  // Menambahkan event listener untuk tombol close
+  closeBtn.addEventListener('click', function() {
+    // Sembunyikan overlay ketika tombol close diklik
+    overlay.style.display = 'none';
+  });
+  
