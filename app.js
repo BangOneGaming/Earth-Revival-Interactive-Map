@@ -3689,52 +3689,8 @@ document.getElementById("hildeBtn").onclick = function () {
     window.location.href = "https://bangonegaming.com/hilde/index.html";
 };
 
-// Fungsi untuk menyembunyikan iklan di kontainer bawah
-function hideAd() {
-    const adsContainer = document.getElementById('ads-container');
-    if (adsContainer) {
-        adsContainer.style.display = 'none';
-    } else {
-        console.error('Element ads-container not found.');
-    }
-}
-
-// Fungsi untuk menampilkan popup iklan
-function showAdPopup() {
-    const adPopup = document.getElementById('ad-popup');
-    if (adPopup) {
-        adPopup.style.display = 'block';
-
-        // Muat ulang iklan AdSense jika elemen belum dimuat sebelumnya
-        const popupAd = document.getElementById('popup-ad');
-        if (popupAd && !popupAd.hasAttribute('data-loaded')) {
-            try {
-                (adsbygoogle = window.adsbygoogle || []).push({});
-                popupAd.setAttribute('data-loaded', 'true');
-            } catch (e) {
-                console.error('Error loading AdSense ad:', e);
-            }
-        }
-    } else {
-        console.error('Element ad-popup not found.');
-    }
-}
-
-// Fungsi untuk menyembunyikan popup iklan
-function hideAdPopup() {
-    const adPopup = document.getElementById('ad-popup');
-    if (adPopup) {
-        adPopup.style.display = 'none';
-    } else {
-        console.error('Element ad-popup not found.');
-    }
-}
-
-// Menampilkan iklan setelah halaman selesai dimuat
 document.addEventListener('DOMContentLoaded', () => {
-    showAdPopup();
-
-    // Muat iklan di bagian bawah peta jika elemen tersedia
+    // Memuat iklan di kontainer bawah
     const mapAd = document.getElementById('map-ad');
     if (mapAd && !mapAd.hasAttribute('data-loaded')) {
         try {
@@ -3746,4 +3702,39 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (!mapAd) {
         console.error('Element map-ad not found.');
     }
+
+    // Memuat iklan hanya setelah interaksi pengguna
+    let userInteracted = false;
+    const handleUserInteraction = () => {
+        if (!userInteracted) {
+            userInteracted = true;
+
+            const adPopup = document.getElementById('ad-popup');
+            if (adPopup) {
+                adPopup.style.display = 'block'; // Tampilkan popup
+
+                const popupAd = document.getElementById('popup-ad');
+                if (popupAd && !popupAd.hasAttribute('data-loaded')) {
+                    try {
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                        popupAd.setAttribute('data-loaded', 'true');
+                    } catch (e) {
+                        console.error('Error loading AdSense ad:', e);
+                    }
+                }
+            }
+        }
+    };
+
+    // Tambahkan event listener untuk interaksi pengguna
+    document.addEventListener('scroll', handleUserInteraction, { once: true });
+    document.addEventListener('click', handleUserInteraction, { once: true });
+
+    // Menutup popup
+    document.getElementById('close-popup-btn').addEventListener('click', () => {
+        const adPopup = document.getElementById('ad-popup');
+        if (adPopup) {
+            adPopup.style.display = 'none';
+        }
+    });
 });
