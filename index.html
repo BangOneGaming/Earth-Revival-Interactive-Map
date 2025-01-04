@@ -60,9 +60,12 @@
 
 </head>
 <body>
-<!-- Kontainer iklan di bagian bawah peta -->
+<!-- Kontainer iklan -->
 <div id="ads-container">
-    <button class="close-btn" onclick="hideAd()">X</button>
+    <!-- Tombol untuk menutup iklan di map -->
+    <button class="close-btn">X</button>
+
+    <!-- Iklan pada map -->
     <ins id="map-ad" class="adsbygoogle"
          style="display:block; width: 100%; height: auto;"
          data-ad-client="ca-pub-8582564022805467"
@@ -198,6 +201,9 @@
     <div class="filter-btn" data-filter="loc_type4" style="background-image: url('icons/eden.png');">Edengate</div>
     <div class="filter-btn" data-filter="loc_type3" style="background-image: url('icons/ragon.png');">Ragon Snowy Peak</div>
     <div class="filter-btn" data-filter="loc_type6" style="background-image: url('icons/kepler.png');">Kepler Harbour</div>
+    <div class="filter-btn" data-filter="loc_type7" style="background-image: url('icons/darksundale.png');">Sundale Haven<br>(Mirror World)</div>
+    <div class="filter-btn" data-filter="loc_type8" style="background-image: url('icons/darkgobi.png');">Howling Gobi<br>(Mirror World)</div>
+    <div class="filter-btn" data-filter="loc_type9" style="background-image: url('icons/darkeden.png');">Edengate<br>(Mirror World)</div>
     <div class="filter-btn" id="zoomBtn" style="background-image: url('icons/space.png');">Pegasus<br><b>(Go to Space)</b></div>
     <div class="filter-btn" style="background-image: url('icons/hilde.png');" id="hildeBtn">Hilde</div>
 </div>
@@ -579,7 +585,10 @@
 
 <!-- Popup Iklan -->
 <div id="ad-popup" class="ad-popup" style="display: none;">
+    <!-- Tombol untuk menutup popup -->
     <button id="close-popup-btn" class="close-btn">✖</button>
+
+    <!-- Konten popup -->
     <div class="ad-content">
         <ins id="popup-ad" class="adsbygoogle"
              style="display:block; width: 100%; height: auto;"
@@ -589,8 +598,6 @@
              data-full-width-responsive="true"></ins>
     </div>
 </div>
-
-
 
 <div id="map" class="hidden"></div>
 
@@ -605,6 +612,7 @@
   eruda.init();
 </script>
 <script src="category.js"></script>
+<script src="adsense.js?v=3.7"></script>
 <script src="app.js?v=3.7"></script>
 </body>
 

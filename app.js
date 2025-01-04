@@ -2932,51 +2932,58 @@ document.querySelectorAll('.new-filter-container .filter-btn').forEach(button =>
             // Clear all previous markers and mini-map overlays
             clearAllMarks(); // Remove markers from the main map
 
-
             // Add the new filter to activeLocTypes and show markers based on the filter
             activeLocTypes.push(filterKey);
             showMarkers();
 
-            let miniMapKey;
+            let miniMapKey, zoomLevel = 7; // Default zoom level
             switch (filterKey) {
                 case 'loc_type2': miniMapKey = 'djhg'; break;
                 case 'loc_type5': miniMapKey = 'jjgb'; break;
                 case 'loc_type4': miniMapKey = 'ydc'; break;
                 case 'loc_type3': miniMapKey = 'lgxs'; break;
                 case 'loc_type6': miniMapKey = 'kplg'; break;
+                case 'loc_type7': 
+                    miniMapKey = 'sundale'; 
+                    zoomLevel = 9; // Higher zoom for Sundale Haven
+                    break;
+                case 'loc_type8': 
+                    miniMapKey = 'howlingoasis'; 
+                    zoomLevel = 9; // Higher zoom for Howling Oasis
+                    break;
+                case 'loc_type9': 
+                    miniMapKey = 'edengate'; 
+                    zoomLevel = 9; // Highest zoom for Edengate Starlit Avenue
+                    break;
                 default: miniMapKey = null;
             }
 
             if (miniMapKey && mini_map_type.hasOwnProperty(miniMapKey)) {
-                // If there is an active mini-map different from the current one, clear old markers
                 if (activeMiniMapKey !== miniMapKey) {
-                    clearMiniMapMarkers(); // Clear old mini-map markers
-                    activeMiniMapKey = miniMapKey; // Update the active mini-map key
+                    clearMiniMapMarkers(); 
+                    activeMiniMapKey = miniMapKey; 
                 }
 
-                // Clear all active overlays
                 activeOverlays.forEach(overlay => overlay.remove());
                 activeOverlays = [];
 
-                // Add new overlay
                 const info = mini_map_type[miniMapKey];
                 const imageBounds = getImageBounds(info.map_position);
                 const historicalOverlay = L.imageOverlay(info.type.default.map_url, imageBounds);
                 historicalOverlay.addTo(map);
                 activeOverlays.push(historicalOverlay);
 
-                // Add new markers to the mini-map
                 addMarkersForMiniMap(miniMapKey);
 
-                // Center the map on the new bounds
-                centerMapOnBounds(imageBounds);
+                centerMapOnBounds(imageBounds, zoomLevel);
             }
 
-            // Hide the filter container after selecting a filter
             document.querySelector('.new-filter-container').style.display = 'none';
         }, 1000); // Delay 1 second
     });
 });
+
+
 
 // Function to get image bounds from map positions
 function getImageBounds(mapPosition) {
@@ -3354,7 +3361,7 @@ function onLocTypeChange(newLocType) {
 
 
 // Function to center the map on the given bounds
-function centerMapOnBounds(imageBounds) {
+function centerMapOnBounds(imageBounds, zoomLevel = 7) {
     // Close any open popups at the very start
     map.closePopup();
  
@@ -3364,7 +3371,7 @@ function centerMapOnBounds(imageBounds) {
     const newCenter = [midLat, midLng - offsetLng];
 
     // Step 1: Zoom out to level 4
-    map.setView(map.getCenter(), 4, { animate: true, duration: 5 }); // 2 seconds for zoom out
+    map.setView(map.getCenter(), 4, { animate: true, duration: 2 });
 
     // Disable hover effect during zoom out
     const newFiltersContainer = document.querySelector('.toggle-new-filters-container');
@@ -3375,15 +3382,14 @@ function centerMapOnBounds(imageBounds) {
     // Step 2: Wait for zoom out to complete, then move to new center
     setTimeout(() => {
         // Move to new center
-        map.setView(newCenter, map.getZoom(), { animate: true, duration: 1 }); // Stay at current zoom level
+        map.setView(newCenter, map.getZoom(), { animate: true, duration: 1 });
 
-        // Step 3: After moving, zoom in to level 7
+        // Step 3: After moving, zoom in to specified level
         setTimeout(() => {
-            map.setView(newCenter, 7, { animate: true, duration: 5 }); // 2 seconds for zoom in
+            map.setView(newCenter, zoomLevel, { animate: true, duration: 1 });
             updateMarkers(); // Ensure filters are applied after markers are cleared
-
         }, 500); // Wait for half a second before zooming in
-    }, 1000); // Wait for 2.5 seconds for the zoom out to finish
+    }, 1000); // Wait for 2 seconds for the zoom out to finish
 }
 
 
@@ -3690,51 +3696,40 @@ document.getElementById("hildeBtn").onclick = function () {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Memuat iklan di kontainer bawah
-    const mapAd = document.getElementById('map-ad');
-    if (mapAd && !mapAd.hasAttribute('data-loaded')) {
-        try {
-            (adsbygoogle = window.adsbygoogle || []).push({});
-            mapAd.setAttribute('data-loaded', 'true');
-        } catch (e) {
-            console.error('Error loading AdSense ad:', e);
-        }
-    } else if (!mapAd) {
-        console.error('Element map-ad not found.');
+    if (!window.adManager) {
+        console.error('[AdSense] AdSenseManager is not initialized.');
+        return;
     }
 
-    // Memuat iklan hanya setelah interaksi pengguna
+    // Tampilkan iklan map setelah inisialisasi halaman
+    window.adManager.showMapAd();
+
+    // Tampilkan iklan popup hanya setelah ada interaksi pengguna
     let userInteracted = false;
     const handleUserInteraction = () => {
         if (!userInteracted) {
             userInteracted = true;
-
-            const adPopup = document.getElementById('ad-popup');
-            if (adPopup) {
-                adPopup.style.display = 'block'; // Tampilkan popup
-
-                const popupAd = document.getElementById('popup-ad');
-                if (popupAd && !popupAd.hasAttribute('data-loaded')) {
-                    try {
-                        (adsbygoogle = window.adsbygoogle || []).push({});
-                        popupAd.setAttribute('data-loaded', 'true');
-                    } catch (e) {
-                        console.error('Error loading AdSense ad:', e);
-                    }
-                }
-            }
+            window.adManager.showPopupAd();
         }
     };
 
-    // Tambahkan event listener untuk interaksi pengguna
+    // Event listener untuk interaksi pengguna (scroll atau klik)
     document.addEventListener('scroll', handleUserInteraction, { once: true });
     document.addEventListener('click', handleUserInteraction, { once: true });
 
-    // Menutup popup
-    document.getElementById('close-popup-btn').addEventListener('click', () => {
-        const adPopup = document.getElementById('ad-popup');
-        if (adPopup) {
-            adPopup.style.display = 'none';
-        }
-    });
+    // Menutup popup iklan
+    const closePopupBtn = document.getElementById('close-popup-btn');
+    if (closePopupBtn) {
+        closePopupBtn.addEventListener('click', () => {
+            window.adManager.hidePopupAd();
+        });
+    }
+
+    // Menutup map ad
+    const closeMapBtn = document.querySelector('.close-btn');
+    if (closeMapBtn) {
+        closeMapBtn.addEventListener('click', () => {
+            window.adManager.hideMapAd();
+        });
+    }
 });
