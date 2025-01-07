@@ -154,16 +154,15 @@ mini_map_type = {
             }
         }
     },
-"mini_map_type": {
     "sundale": {
         "key": "sundale",
         "name": "Sundale Haven",
-        "loc_position": "61.084541,-78.648648", // Pindahkan loc_position ke level utama
-        "map_position": [
-            "60.684541,-79.448648",
-            "61.484541,-78.048648"
-        ],
         "main": {
+            "loc_position": "61.084541,-78.648648",
+            "map_position": [
+                "60.684541,-79.448648",
+                "61.484541,-78.048648"
+            ],
             "map_url": "minimap/SundaleHaven.png"
         },
         "secondary": {
@@ -178,12 +177,12 @@ mini_map_type = {
     "howlingoasis": {
         "key": "howlingoasis",
         "name": "Howling Oasis",
-        "loc_position": "60.228814,-72.623773", // Pindahkan loc_position ke level utama
-        "map_position": [
-            "59.828814,-73.323773",
-            "60.628814,-72.023773"
-        ],
         "main": {
+            "loc_position": "60.228814,-72.623773",
+            "map_position": [
+                "59.828814,-73.323773",
+                "60.628814,-72.023773"
+            ],
             "map_url": "minimap/HowlingOasis.png"
         },
         "secondary": {
@@ -198,12 +197,12 @@ mini_map_type = {
     "edengate": {
         "key": "edengate",
         "name": "Edengate Starlit Avenue",
-        "loc_position": "62.855017,-75.129870", // Pindahkan loc_position ke level utama
-        "map_position": [
-            "62.455017,-75.829870",
-            "63.255017,-74.429870"
-        ],
         "main": {
+            "loc_position": "62.855017,-75.129870",
+            "map_position": [
+                "62.455017,-75.829870",
+                "63.255017,-74.429870"
+            ],
             "map_url": "minimap/EdengateStarlitAvenue.png"
         },
         "secondary": {
