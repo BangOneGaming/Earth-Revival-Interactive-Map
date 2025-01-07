@@ -204,6 +204,21 @@ const categoryCounts = {
         "zone": { max: 0, current: 0, icon: categoryIcons.zone },
         "fishing": { max: 0, current: 0, icon: categoryIcons.fishing },
         "scenery": { max: 0, current: 0, icon: categoryIcons.scenery }
+    },
+    "7": {  
+        "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
+        "training": { max: 0, current: 0, icon: categoryIcons.training },
+        "scenery": { max: 0, current: 0, icon: categoryIcons.scenery }
+    },
+    "8": {  
+        "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
+        "training": { max: 0, current: 0, icon: categoryIcons.training },
+        "scenery": { max: 0, current: 0, icon: categoryIcons.scenery }
+    },
+    "9": {  
+        "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
+        "training": { max: 0, current: 0, icon: categoryIcons.training },
+        "scenery": { max: 0, current: 0, icon: categoryIcons.scenery }
     }
 };
 
@@ -244,9 +259,13 @@ const categoryNames = {
 
 // Map loc_type IDs to their names
 const locTypeNames = {
-    "2": "Sundale Valley",
-    "5": "Howling Gobi",
+    "2": "Sundale",
+    "5": "Howling",
     "4": "Edengate",
     "3": "Ragon Snowy Peak",
-    "6": "Kepler Harbour"
+    "6": "Kepler Harbour",
+    "7": "Mirror World Sundale Valley",
+    "8": "Mirror World Howling Gobi",
+    "9": "Mirror World Edengate"
 };
+

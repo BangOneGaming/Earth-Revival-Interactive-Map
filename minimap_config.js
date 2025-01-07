@@ -1,4 +1,4 @@
-mini_map_type = ({
+mini_map_type = {
     "kplg": {
         "key": "kplg",
         "name": "开普勒港",
@@ -7,17 +7,25 @@ mini_map_type = ({
             "59.6559382230236,-73.44578154183048",
             "61.87698036412892,-68.90668251678562"
         ],
+        "main": {
+            "loc_position": "60.020255784855685,-72.74265654183048",
+            "map_position": [
+                "59.6559382230236,-73.44578154183048",
+                "61.87698036412892,-68.90668251678562"
+            ],
+            "map_url": "minimap/kepler.jpg" // Ganti dengan URL gambar yang sesuai
+        },
         "type": {
             "lgxsmax": {
                 "key": "lgxsmax",
                 "name": "查看开普勒港",
-                "map_url": "minimap/gray.jpg",
+                "map_url": "minimap/kepler.jpg",
                 "list_url": "//img.71acg.net/sykb~bbs/default/20220926/153230255335"
             },
             "default": {
                 "key": "default",
                 "name": "离开开普勒港",
-                "map_url": "minimap/gray.jpg",
+                "map_url": "minimap/kepler.jpg",
                 "list_url": "//img.71acg.net/sykb~bbs/default/20220926/1532307116136"
             }
         }
@@ -30,6 +38,14 @@ mini_map_type = ({
             "62.14902445619595,-85.0038521154421",
             "64.3585886633811,-79.72840931448046"
         ],
+        "main": {
+            "loc_position": "63.32397357847518,-85.3499214513796",
+            "map_position": [
+                "62.14902445619595,-85.0038521154421",
+                "64.3585886633811,-79.72840931448046"
+            ],
+            "map_url": "minimap/snow.png" // Ganti dengan URL gambar yang sesuai
+        },
         "type": {
             "lgxsmax": {
                 "key": "lgxsmax",
@@ -53,6 +69,14 @@ mini_map_type = ({
             "60.106180410746894,-74.71122686439067",
             "62.28604160194144,-69.70146123939067"
         ],
+        "main": {
+            "loc_position": "60.949350766893566,-75.51322881751567",
+            "map_position": [
+                "60.106180410746894,-74.71122686439067",
+                "62.28604160194144,-69.70146123939067"
+            ],
+            "map_url": "minimap/jjgb.png" // Ganti dengan URL gambar yang sesuai
+        },
         "type": {
             "jjgbmax": {
                 "key": "jjgbmax",
@@ -76,6 +100,14 @@ mini_map_type = ({
             "62.20827198867709,-76.38143283096524",
             "64.34629915115639,-71.73421603409024"
         ],
+        "main": {
+            "loc_position": "63.09646657519391,-76.55721408096524",
+            "map_position": [
+                "62.20827198867709,-76.38143283096524",
+                "64.34629915115639,-71.73421603409024"
+            ],
+            "map_url": "minimap/city.png" // Ganti dengan URL gambar yang sesuai
+        },
         "type": {
             "ydcmax": {
                 "key": "ydcmax",
@@ -99,6 +131,14 @@ mini_map_type = ({
             "60.94940501746118,-79.61915334601848",
             "63.10546651877847,-75.13906657529837"
         ],
+        "main": {
+            "loc_position": "62.61279396708508,-80.03557752209741",
+            "map_position": [
+                "60.94940501746118,-79.61915334601848",
+                "63.10546651877847,-75.13906657529837"
+            ],
+            "map_url": "minimap/dj.png" // Ganti dengan URL gambar yang sesuai
+        },
         "type": {
             "djhgmax": {
                 "key": "djhgmax",
@@ -113,5 +153,66 @@ mini_map_type = ({
                 "list_url": "//img.71acg.net/sykb~bbs/default/20220926/1532307116136"
             }
         }
+    },
+"mini_map_type": {
+    "sundale": {
+        "key": "sundale",
+        "name": "Sundale Haven",
+        "loc_position": "61.084541,-78.648648", // Pindahkan loc_position ke level utama
+        "map_position": [
+            "60.684541,-79.448648",
+            "61.484541,-78.048648"
+        ],
+        "main": {
+            "map_url": "minimap/SundaleHaven.png"
+        },
+        "secondary": {
+            "loc_position": "62.61279396708508,-80.03557752209741",
+            "map_position": [
+                "60.94940501746118,-79.61915334601848",
+                "63.10546651877847,-75.13906657529837"
+            ],
+            "map_url": "minimap/dj.png"
+        }
+    },
+    "howlingoasis": {
+        "key": "howlingoasis",
+        "name": "Howling Oasis",
+        "loc_position": "60.228814,-72.623773", // Pindahkan loc_position ke level utama
+        "map_position": [
+            "59.828814,-73.323773",
+            "60.628814,-72.023773"
+        ],
+        "main": {
+            "map_url": "minimap/HowlingOasis.png"
+        },
+        "secondary": {
+            "loc_position": "60.949350766893566,-75.51322881751567",
+            "map_position": [
+                "60.106180410746894,-74.71122686439067",
+                "62.28604160194144,-69.70146123939067"
+            ],
+            "map_url": "minimap/jjgb.png"
+        }
+    },
+    "edengate": {
+        "key": "edengate",
+        "name": "Edengate Starlit Avenue",
+        "loc_position": "62.855017,-75.129870", // Pindahkan loc_position ke level utama
+        "map_position": [
+            "62.455017,-75.829870",
+            "63.255017,-74.429870"
+        ],
+        "main": {
+            "map_url": "minimap/EdengateStarlitAvenue.png"
+        },
+        "secondary": {
+            "loc_position": "63.09646657519391,-76.55721408096524",
+            "map_position": [
+                "62.20827198867709,-76.38143283096524",
+                "64.34629915115639,-71.73421603409024"
+            ],
+            "map_url": "minimap/city.png"
+        }
     }
-})
+};

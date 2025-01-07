@@ -204,13 +204,25 @@ function preloadBase64Images() {
 
 
     // Memuat marker minimap
-    function loadMiniMapMarkers() {
-        let miniMapLoaded = 0;
-        for (const key in mini_map_type) {
-            if (mini_map_type.hasOwnProperty(key)) {
-                const info = mini_map_type[key];
-                const loc_position = info.loc_position.split(",");
-                const marker = L.marker([parseFloat(loc_position[0]), parseFloat(loc_position[1])], {
+function loadMiniMapMarkers() {
+    let miniMapLoaded = 0;
+    for (const key in mini_map_type) {
+        if (mini_map_type.hasOwnProperty(key)) {
+            const info = mini_map_type[key];
+            
+            // Cek apakah loc_position ada di level utama atau dalam main/secondary
+            let loc_position = info.loc_position;
+            if (!loc_position && info.main && info.main.loc_position) {
+                loc_position = info.main.loc_position; // Cek dalam main
+            }
+            if (!loc_position && info.secondary && info.secondary.loc_position) {
+                loc_position = info.secondary.loc_position; // Cek dalam secondary
+            }
+            
+            // Pastikan loc_position valid
+            if (loc_position && typeof loc_position === 'string' && loc_position.includes(',')) {
+                const positionArray = loc_position.split(",");
+                const marker = L.marker([parseFloat(positionArray[0]), parseFloat(positionArray[1])], {
                     icon: L.icon({
                         iconUrl: 'null',  // Menyembunyikan ikon sementara
                         iconSize: [1, 1]  // Marker kecil atau tidak terlihat
@@ -225,8 +237,18 @@ function preloadBase64Images() {
                 let miniMapProgress = (miniMapLoaded / totalMiniMapMarkers) * 50; // Setengah progres untuk marker
                 loadedMiniMapMarkers = miniMapLoaded;  // Update jumlah marker yang dimuat
                 totalProgress = miniMapProgress + (loadedMiniMapImages / totalMiniMapImages) * 50; // Gabungkan progres marker dan gambar
+            } else {
+                console.error('Invalid or missing loc_position for key:', key);
             }
         }
+    }
+}
+
+
+    // Memulai pemuatan
+    function initMiniMap() {
+        loadMiniMapMarkers();  // Memuat marker minimap
+        loadMinimapImages();   // Memuat gambar minimap
     }
 
     // Memuat gambar minimap
@@ -964,6 +986,7 @@ document.getElementById("markerForm").addEventListener("submit", async function 
     }, 7000);
 
     // Ambil data form
+    const markerIdInput = document.getElementById("markerId").value.trim();
     const nameMark = document.getElementById("nameMark").value;
     const category = document.getElementById("category").value;
     const locType = document.getElementById("locType").value;
@@ -1002,10 +1025,9 @@ const lng = savedLng ? savedLng.toString() : '[]';  // Jika savedLng tidak ada, 
             console.error("Failed to load existing data:", response.statusText);
         }
 
-        // Generate ID baru
+        // Gunakan ID dari input atau buat ID baru jika input kosong
         const existingIds = Object.keys(existingData).map(Number);
-        const newId = (Math.max(...existingIds, 0) + 1).toString();
-
+        const newId = markerIdInput || (Math.max(...existingIds, 0) + 1).toString();
         // Construct the new entry
         const newEntry = {
             [newId]: {
@@ -1182,9 +1204,49 @@ function updateCategoryOptions() {
                 { value: "28", text: "Ingredients", icon_url: "icons/ingredients.png" },
             ];
             break;
-
-        default:
+        case '7':
+            categoryOptions = [
+                { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
+                { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
+                { value: "3", text: "Zone Commission", icon_url: "icons/icon_zone.png" },
+                { value: "7", text: "Limited Time Training", icon_url: "icons/icon_train.png" },
+                { value: "8", text: "Scenery", icon_url: "icons/icon_scenery.png" },
+                { value: "27", text: "Old World Treasure", icon_url: "icons/default.png" },
+            ];
             break;
+        case '8':
+            categoryOptions = [
+                { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
+                { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
+                { value: "3", text: "Zone Commission", icon_url: "icons/icon_zone.png" },
+                { value: "7", text: "Limited Time Training", icon_url: "icons/icon_train.png" },
+                { value: "8", text: "Scenery", icon_url: "icons/icon_scenery.png" },
+                { value: "27", text: "Old World Treasure", icon_url: "icons/default.png" },
+            ];
+            break;
+        case '9':
+            categoryOptions = [
+                { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
+                { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
+                { value: "3", text: "Zone Commission", icon_url: "icons/icon_zone.png" },
+                { value: "7", text: "Limited Time Training", icon_url: "icons/icon_train.png" },
+                { value: "8", text: "Scenery", icon_url: "icons/icon_scenery.png" },
+                { value: "27", text: "Old World Treasure", icon_url: "icons/default.png" },
+            ];
+            break;
+
+ default:
+    categoryOptions = [
+                { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
+                { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
+                { value: "3", text: "Zone Commission", icon_url: "icons/icon_zone.png" },
+                { value: "7", text: "Limited Time Training", icon_url: "icons/icon_train.png" },
+                { value: "8", text: "Scenery", icon_url: "icons/icon_scenery.png" },
+                { value: "27", text: "Old World Treasure", icon_url: "icons/default.png" },
+
+    ];
+    break;
+
     }
 
     // Add new options to the select element
@@ -1263,15 +1325,28 @@ function updateNameMark() {
     const category = document.getElementById("category").value;
     const locType = document.getElementById("locType").value;
 
+    console.log("Category:", category);
+    console.log("LocType:", locType);
+
     if (category && locType) {
         const categoryName = categoryNames[category];
         const locTypeName = locTypeNames[locType];
-        document.getElementById("nameMark").value = `${categoryName} - ${locTypeName}`;
-        document.getElementById("nameMark").style.display = "block"; // Show the name mark input
+
+        console.log("Category Name:", categoryName);
+        console.log("LocType Name:", locTypeName);
+
+        if (categoryName && locTypeName) {
+            document.getElementById("nameMark").value = `${categoryName} - ${locTypeName}`;
+            document.getElementById("nameMark").style.display = "block";
+        } else {
+            console.error("Category Name or LocType Name is undefined.");
+            document.getElementById("nameMark").style.display = "none";
+        }
     } else {
-        document.getElementById("nameMark").style.display = "none"; // Hide if not selected
+        document.getElementById("nameMark").style.display = "none";
     }
 }
+
 
 // Add event listeners to update name mark on change
 document.getElementById("category").addEventListener("change", updateNameMark);
@@ -1363,7 +1438,10 @@ function submitReport(markerId, lat, lng, categoryId, nameEn, locType) {
         "3": "Ragon Snowy Peak",
         "4": "Edengate",
         "5": "Howling Gobi",
-        "6": "Kepler Harbour"
+        "6": "Kepler Harbour", 
+        "7": "Mirror World Sundale Valley", 
+        "8": "Mirror World Howling Gobi", 
+        "9": "Mirror World Edengate"
     };
 
 const categoryMap = {
@@ -1642,7 +1720,7 @@ if (imageLink) {
                 ${imageInfoContent} <!-- Gambar dan tombol Show Image ditambahkan di sini -->
                 ${showImageButton} <!-- Tombol Show Image ditambahkan di sini -->
 
-                ${showYsId ? `<p class="popup-ys-id">YS ID: ${location.ys_id}</p>` : ''}
+                ${showYsId ? `<p class="popup-ys-id">Contribution By: ${location.ys_id}</p>` : ''}
                 <button class="reportButton" data-id="${key}" style="background: none; border: none; color: red; font-size: 12px; cursor: pointer; pointer-events: auto;">Report</button>
                 ${!imageInfoContent ? `<button class="uploadImageButton" onclick="openImageFormPopup('${key}')" style="background: none; border: none; color: #FFD700; font-size: 12px; cursor: pointer; pointer-events: auto;"><b>Upload Screenshot Location</b></button>` : ''}
             </div>
@@ -2928,6 +3006,16 @@ document.querySelectorAll('.new-filter-container .filter-btn').forEach(button =>
     button.addEventListener('click', () => {
         setTimeout(() => {
             const filterKey = button.getAttribute('data-filter');
+            const miniMapConfig = {
+                'loc_type2': { miniMapKey: 'djhg', zoomLevel: 7 },
+                'loc_type5': { miniMapKey: 'jjgb', zoomLevel: 7 },
+                'loc_type4': { miniMapKey: 'ydc', zoomLevel: 7 },
+                'loc_type3': { miniMapKey: 'lgxs', zoomLevel: 7 },
+                'loc_type6': { miniMapKey: 'kplg', zoomLevel: 7 },
+                'loc_type7': { miniMapKey: 'sundale', zoomLevel: 9 },
+                'loc_type8': { miniMapKey: 'howlingoasis', zoomLevel: 9 },
+                'loc_type9': { miniMapKey: 'edengate', zoomLevel: 9 }
+            };
 
             // Clear all previous markers and mini-map overlays
             clearAllMarks(); // Remove markers from the main map
@@ -2936,48 +3024,49 @@ document.querySelectorAll('.new-filter-container .filter-btn').forEach(button =>
             activeLocTypes.push(filterKey);
             showMarkers();
 
-            let miniMapKey, zoomLevel = 7; // Default zoom level
-            switch (filterKey) {
-                case 'loc_type2': miniMapKey = 'djhg'; break;
-                case 'loc_type5': miniMapKey = 'jjgb'; break;
-                case 'loc_type4': miniMapKey = 'ydc'; break;
-                case 'loc_type3': miniMapKey = 'lgxs'; break;
-                case 'loc_type6': miniMapKey = 'kplg'; break;
-                case 'loc_type7': 
-                    miniMapKey = 'sundale'; 
-                    zoomLevel = 9; // Higher zoom for Sundale Haven
-                    break;
-                case 'loc_type8': 
-                    miniMapKey = 'howlingoasis'; 
-                    zoomLevel = 9; // Higher zoom for Howling Oasis
-                    break;
-                case 'loc_type9': 
-                    miniMapKey = 'edengate'; 
-                    zoomLevel = 9; // Highest zoom for Edengate Starlit Avenue
-                    break;
-                default: miniMapKey = null;
-            }
+            const { miniMapKey, zoomLevel = 7 } = miniMapConfig[filterKey] || {};
 
             if (miniMapKey && mini_map_type.hasOwnProperty(miniMapKey)) {
+                // If there is an active mini-map different from the current one, clear old markers
                 if (activeMiniMapKey !== miniMapKey) {
-                    clearMiniMapMarkers(); 
-                    activeMiniMapKey = miniMapKey; 
+                    clearMiniMapMarkers(); // Clear old mini-map markers
+                    activeMiniMapKey = miniMapKey; // Update the active mini-map key
                 }
 
+                // Clear all active overlays
                 activeOverlays.forEach(overlay => overlay.remove());
                 activeOverlays = [];
 
                 const info = mini_map_type[miniMapKey];
-                const imageBounds = getImageBounds(info.map_position);
-                const historicalOverlay = L.imageOverlay(info.type.default.map_url, imageBounds);
-                historicalOverlay.addTo(map);
-                activeOverlays.push(historicalOverlay);
 
+                 // Check if there's a secondary map
+                if (info.secondary) {
+                    const imageBoundsSecondary = getImageBounds(info.secondary.map_position);
+                    const historicalOverlaySecondary = L.imageOverlay(info.secondary.map_url, imageBoundsSecondary);
+                    historicalOverlaySecondary.addTo(map);
+                    activeOverlays.push(historicalOverlaySecondary);
+                }
+                
+                // Check if there's a main map
+                if (info.main) {
+                    const imageBoundsMain = getImageBounds(info.main.map_position);
+                    const historicalOverlayMain = L.imageOverlay(info.main.map_url, imageBoundsMain);
+                    historicalOverlayMain.addTo(map);
+                    activeOverlays.push(historicalOverlayMain);
+
+                    // Center map on the main bounds
+                    centerMapOnBounds(imageBoundsMain);
+                }
+
+                // Add new markers to the mini-map
                 addMarkersForMiniMap(miniMapKey);
+console.log(info.main);
+console.log(info.secondary);
+console.log(zoomLevel);
 
-                centerMapOnBounds(imageBounds, zoomLevel);
             }
 
+            // Hide the filter container after selecting a filter
             document.querySelector('.new-filter-container').style.display = 'none';
         }, 1000); // Delay 1 second
     });
@@ -2985,8 +3074,12 @@ document.querySelectorAll('.new-filter-container .filter-btn').forEach(button =>
 
 
 
-// Function to get image bounds from map positions
+
 function getImageBounds(mapPosition) {
+    if (!mapPosition || !Array.isArray(mapPosition) || mapPosition.length !== 2) {
+        console.error("Invalid map position:", mapPosition);
+        return [[0, 0], [0, 0]]; // Nilai default jika map_position tidak valid
+    }
     return [
         [
             parseFloat(mapPosition[0].split(",")[0]),
@@ -2998,6 +3091,7 @@ function getImageBounds(mapPosition) {
         ]
     ];
 }
+
 let currentLocType = null; // Menyimpan loc_type saat ini
 
 document.querySelectorAll('.loc-type-button').forEach(button => {

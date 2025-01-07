@@ -474,7 +474,8 @@
 <div class="submit-marker-form" style="display: none;">
     <h2>Submit Marker</h2>
     <form id="markerForm">
-
+    <label for="markerId">Marker ID (optional):</label>
+    <input type="text" id="markerId" placeholder="Leave blank for auto-generated ID">
         <label for="locType">Which Map?:</label>
         <select id="locType" name="locType" required>
             <option value="">Select The Map</option>
@@ -483,6 +484,9 @@
             <option value="4">Edengate</option>
             <option value="3">Ragon Snowy Peak</option>
             <option value="6">Kepler Harbour</option>
+            <option value="7">Mirror World Sundale Valley</option>
+            <option value="8">Mirror World Howling Gobi</option>
+            <option value="9">Mirror World Edengate</option>
         </select>
         
 <div style="margin-top: 10px;">
@@ -525,6 +529,7 @@
 
 
 <form id="submitMarkerForm">
+
     <label for="nameMark" class="hidden">Name Mark:</label>
     <input type="text" id="nameMark" name="nameMark" class="hidden" required placeholder="REQUIREMENT" style="color: white;">
 
