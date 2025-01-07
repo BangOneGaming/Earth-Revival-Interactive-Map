@@ -210,16 +210,13 @@ function loadMiniMapMarkers() {
         if (mini_map_type.hasOwnProperty(key)) {
             const info = mini_map_type[key];
             
-            // Cek apakah loc_position ada di level utama atau dalam main/secondary
-            let loc_position = info.loc_position;
-            if (!loc_position && info.main && info.main.loc_position) {
-                loc_position = info.main.loc_position; // Cek dalam main
-            }
-            if (!loc_position && info.secondary && info.secondary.loc_position) {
-                loc_position = info.secondary.loc_position; // Cek dalam secondary
-            }
+            // Periksa loc_position baik di main atau secondary
+            const mainLoc = info.main ? info.main.loc_position : null;
+            const secondaryLoc = info.secondary ? info.secondary.loc_position : null;
             
-            // Pastikan loc_position valid
+            // Tentukan loc_position yang valid
+            const loc_position = mainLoc || secondaryLoc;
+            
             if (loc_position && typeof loc_position === 'string' && loc_position.includes(',')) {
                 const positionArray = loc_position.split(",");
                 const marker = L.marker([parseFloat(positionArray[0]), parseFloat(positionArray[1])], {
@@ -245,11 +242,7 @@ function loadMiniMapMarkers() {
 }
 
 
-    // Memulai pemuatan
-    function initMiniMap() {
-        loadMiniMapMarkers();  // Memuat marker minimap
-        loadMinimapImages();   // Memuat gambar minimap
-    }
+
 
     // Memuat gambar minimap
     function loadMinimapImages() {
@@ -1720,7 +1713,7 @@ if (imageLink) {
                 ${imageInfoContent} <!-- Gambar dan tombol Show Image ditambahkan di sini -->
                 ${showImageButton} <!-- Tombol Show Image ditambahkan di sini -->
 
-                ${showYsId ? `<p class="popup-ys-id">Contribution By: ${location.ys_id}</p>` : ''}
+                ${showYsId ? `<p class="popup-ys-id"> Contribution By: ${location.ys_id}</p>` : ''}
                 <button class="reportButton" data-id="${key}" style="background: none; border: none; color: red; font-size: 12px; cursor: pointer; pointer-events: auto;">Report</button>
                 ${!imageInfoContent ? `<button class="uploadImageButton" onclick="openImageFormPopup('${key}')" style="background: none; border: none; color: #FFD700; font-size: 12px; cursor: pointer; pointer-events: auto;"><b>Upload Screenshot Location</b></button>` : ''}
             </div>
