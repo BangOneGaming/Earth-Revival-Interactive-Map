@@ -2721,13 +2721,14 @@ function getCategoryFromMarker(marker) {
     if (iconUrl.includes('icon_train.png')) return 'training';
     if (iconUrl.includes('icon_scenery.png')) return 'scenery';
     if (iconUrl.includes('icon_resource.png')) return 'resource';
-    if (iconUrl.includes('icon_scrap.png')) return 'scrap'; // Scrap
-    if (iconUrl.includes('icon_stone.png')) return 'material'; // Wood
-    if (iconUrl.includes('icon_wood.png')) return 'material'; // Stone
-    if (iconUrl.includes('icon_fiber.png')) return 'material'; // Fiber
-    
-    return null; // Category not found
+    if (iconUrl.includes('icon_scrap.png')) return 'scrap';
+    if (iconUrl.includes('icon_stone.png')) return 'material';
+    if (iconUrl.includes('icon_wood.png')) return 'material';
+    if (iconUrl.includes('icon_fiber.png')) return 'material';
+
+    return 'default'; // Gunakan kategori default
 }
+
 
 
 // Function to get icon URL based on category ID
@@ -2755,7 +2756,8 @@ function getIconUrl(categoryId) {
         case "24": return "icons/icon_rarestone.png"; // Rare Stone
         case "25": return "icons/icon_rarewastes.png"; // Rare Wastes
         case "26": return "icons/icon_rarewood.png"; // Rare Wood
-        default: return "icons/default_icon.png"; // Default icon if no match
+        case "default": // Tambahkan kategori default
+        default: return "icons/default_icon.png"; // Default icon
     }
 }
 
@@ -3587,27 +3589,38 @@ function clearAllMarks() {
 // Function to check if the marker's category matches the active filters
 function isCategoryMatch(marker) {
     if (activeFilters.includes('all')) return true;
+
     const category = marker.options.category;
-return (activeFilters.includes('treasure') && category === '2') ||
-       (activeFilters.includes('teleport') && category === '1') ||
-       (activeFilters.includes('fishing') && ['9', '10', '11', '12', '13', '14'].includes(category)) ||
-       (activeFilters.includes('zone') && category === '3') ||
-       (activeFilters.includes('scrap') && category === '6') ||
-       (activeFilters.includes('training') && category === '7') ||
-       (activeFilters.includes('scenery') && category === '8') ||
-       (activeFilters.includes('fiber') && category === '17') ||
-       (activeFilters.includes('resin') && ['21', '16', '18'].includes(category)) ||
-       (activeFilters.includes('clay') && ['22', '15', '18'].includes(category)) ||
-       (activeFilters.includes('wood') && category === '16') ||
-       (activeFilters.includes('stone') && category === '15') ||
-       (activeFilters.includes('resource') && category === '18') ||
-       (activeFilters.includes('scrap2') && category === '19') ||
-       (activeFilters.includes('scrap3') && category === '20') ||
-       (activeFilters.includes('rarewood1') && category === '23') ||
-       (activeFilters.includes('rarestone') && category === '24') ||
-       (activeFilters.includes('rarewastes') && category === '25') ||
-       (activeFilters.includes('rarewood2') && category === '26');
+
+    // Cek kategori yang sesuai dengan filter
+    if (
+        (activeFilters.includes('treasure') && category === '2') ||
+        (activeFilters.includes('teleport') && category === '1') ||
+        (activeFilters.includes('fishing') && ['9', '10', '11', '12', '13', '14'].includes(category)) ||
+        (activeFilters.includes('zone') && category === '3') ||
+        (activeFilters.includes('scrap') && category === '6') ||
+        (activeFilters.includes('training') && category === '7') ||
+        (activeFilters.includes('scenery') && category === '8') ||
+        (activeFilters.includes('fiber') && category === '17') ||
+        (activeFilters.includes('resin') && ['21', '16', '18'].includes(category)) ||
+        (activeFilters.includes('clay') && ['22', '15', '18'].includes(category)) ||
+        (activeFilters.includes('wood') && category === '16') ||
+        (activeFilters.includes('stone') && category === '15') ||
+        (activeFilters.includes('resource') && category === '18') ||
+        (activeFilters.includes('scrap2') && category === '19') ||
+        (activeFilters.includes('scrap3') && category === '20') ||
+        (activeFilters.includes('rarewood1') && category === '23') ||
+        (activeFilters.includes('rarestone') && category === '24') ||
+        (activeFilters.includes('rarewastes') && category === '25') ||
+        (activeFilters.includes('rarewood2') && category === '26')
+    ) {
+        return true;
+    }
+
+    // Jika tidak ada kecocokan, gunakan default icon
+    return activeFilters.includes('all'); // Tetap tampilkan jika mode 'all' aktif
 }
+
 document.addEventListener('DOMContentLoaded', () => {
     const buttons = document.querySelectorAll('.new-filter-container .filter-btn');
 
@@ -3790,27 +3803,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Tampilkan iklan map setelah inisialisasi halaman
     window.adManager.showMapAd();
-
-    // Tampilkan iklan popup hanya setelah ada interaksi pengguna
-    let userInteracted = false;
-    const handleUserInteraction = () => {
-        if (!userInteracted) {
-            userInteracted = true;
-            window.adManager.showPopupAd();
-        }
-    };
-
-    // Event listener untuk interaksi pengguna (scroll atau klik)
-    document.addEventListener('scroll', handleUserInteraction, { once: true });
-    document.addEventListener('click', handleUserInteraction, { once: true });
-
-    // Menutup popup iklan
-    const closePopupBtn = document.getElementById('close-popup-btn');
-    if (closePopupBtn) {
-        closePopupBtn.addEventListener('click', () => {
-            window.adManager.hidePopupAd();
-        });
-    }
 
     // Menutup map ad
     const closeMapBtn = document.querySelector('.close-btn');
