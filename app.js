@@ -57,7 +57,19 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("Elemen tidak ditemukan!");
         return;
     }
+    const privacyPopup = document.getElementById("privacy-popup");
+    const closePopupButton = privacyPopup.querySelector(".close-popup");
 
+    // Show the privacy popup during the preload process
+    setTimeout(() => {
+        privacyPopup.style.display = "flex"; // Show the popup
+    }, 3000); // Adjust the timing as needed (e.g., after 3 seconds)
+
+    // Close the popup when the button is clicked
+    closePopupButton.addEventListener("click", () => {
+        privacyPopup.style.display = "none";
+    });
+    
     let totalProgress = 0;  // Total progress bar
     const totalMiniMapMarkers = Object.keys(mini_map_type).length; // Jumlah marker minimap
     let totalMiniMapImages = 0;
@@ -2706,6 +2718,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Function to get category from marker
+// Function to get category from marker
 function getCategoryFromMarker(marker) {
     const iconUrl = marker.options.icon.options.iconUrl;
 
@@ -2729,37 +2742,37 @@ function getCategoryFromMarker(marker) {
     return 'default'; // Gunakan kategori default
 }
 
-
-
 // Function to get icon URL based on category ID
 function getIconUrl(categoryId) {
-    switch (categoryId) {
-        case "1": return "icons/icon_teleport.png"; // Teleport
-        case "2": return "icons/icon_treasure.png"; // Old World Treasure
-        case "3": return "icons/icon_zone.png"; // Zone
-        case "6":
-        case "19":
-        case "20": return "icons/icon_scrap.png"; // Scrap for all three categories
-        case "7": return "icons/icon_train.png"; // Training
-        case "8": return "icons/icon_scenery.png"; // Scenery
-        case "9":
-        case "10":
-        case "11":
-        case "12":
-        case "13":
-        case "14": return "icons/rare_fishing.png"; // Rare Fishing
-        case "15": return "icons/icon_stone.png"; // Stone
-        case "16": return "icons/icon_wood.png"; // Wood
-        case "17": return "icons/icon_fiber.png"; // Fiber
-        case "18": return "icons/icon_resource.png"; // Resource
-        case "23": return "icons/icon_rarewood.png"; // Rare Item
-        case "24": return "icons/icon_rarestone.png"; // Rare Stone
-        case "25": return "icons/icon_rarewastes.png"; // Rare Wastes
-        case "26": return "icons/icon_rarewood.png"; // Rare Wood
-        case "default": // Tambahkan kategori default
-        default: return "icons/default_icon.png"; // Default icon
-    }
+    const iconMap = {
+        "1": "icons/icon_teleport.png", // Teleport
+        "2": "icons/icon_treasure.png", // Old World Treasure
+        "3": "icons/icon_zone.png", // Zone
+        "6": "icons/icon_scrap.png", // Scrap
+        "7": "icons/icon_train.png", // Training
+        "8": "icons/icon_scenery.png", // Scenery
+        "9": "icons/rare_fishing.png", // Rare Fishing
+        "10": "icons/rare_fishing.png", // Rare Fishing
+        "11": "icons/rare_fishing.png", // Rare Fishing
+        "12": "icons/rare_fishing.png", // Rare Fishing
+        "13": "icons/rare_fishing.png", // Rare Fishing
+        "14": "icons/rare_fishing.png", // Rare Fishing
+        "15": "icons/icon_stone.png", // Stone
+        "16": "icons/icon_wood.png", // Wood
+        "17": "icons/icon_fiber.png", // Fiber
+        "18": "icons/icon_resource.png", // Resource
+        "19": "icons/icon_scrap.png", // Scrap
+        "20": "icons/icon_scrap.png", // Scrap
+        "23": "icons/icon_rarewood.png", // Rare Item
+        "24": "icons/icon_rarestone.png", // Rare Stone
+        "25": "icons/icon_rarewastes.png", // Rare Wastes
+        "26": "icons/icon_rarewood.png" // Rare Wood
+    };
+
+    // Gunakan icon default jika categoryId tidak ditemukan
+    return iconMap[categoryId] || "icons/icon_default.png";
 }
+
 
 
 
