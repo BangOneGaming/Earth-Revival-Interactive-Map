@@ -3009,74 +3009,105 @@ relevantMarkers.forEach(markerData => {
         updateCategoryCounts(marker.options.loc_type, marker.options.category, 0.5); // Asumsikan opasitas awal adalah 0.5
     });
 }
+// MiniMap Config
+const miniMapConfig = {
+    'loc_type2': { miniMapKey: 'djhg', name: 'Sundale Valley', zoomLevel: 7 },
+    'loc_type5': { miniMapKey: 'jjgb', name: 'Howling Gobi', zoomLevel: 7 },
+    'loc_type4': { miniMapKey: 'ydc', name: 'Edengate', zoomLevel: 7 },
+    'loc_type3': { miniMapKey: 'lgxs', name: 'Ragon Snowy Peak', zoomLevel: 7 },
+    'loc_type6': { miniMapKey: 'kplg', name: 'Kepler Harbour', zoomLevel: 7 },
+    'loc_type7': { miniMapKey: 'sundale', name: 'Sundale Haven', zoomLevel: 9 },
+    'loc_type8': { miniMapKey: 'howlingoasis', name: 'Howling Oasis', zoomLevel: 9 },
+    'loc_type9': { miniMapKey: 'edengate', name: 'Edengate Starlit Avenue', zoomLevel: 9 }
+};
+
+// Function to track events using Google Analytics
+function trackEvent(category, label, value) {
+    gtag('event', 'filter_clicked', {
+        'event_category': category,
+        'event_label': label,
+        'value': value
+    });
+    console.log('Event tracked:', { category, label, value });
+}
+
+// Function to track minimap page views
+function trackPageView(miniMapInfo) {
+    gtag('event', 'page_view', {
+        'page_title': miniMapInfo.name,
+        'page_location': window.location.href,
+        'page_path': `/minimap/${miniMapInfo.miniMapKey}`
+    });
+    console.log('Page view tracked:', {
+        title: miniMapInfo.name,
+        location: window.location.href,
+        path: `/minimap/${miniMapInfo.miniMapKey}`
+    });
+}
+
+// Function to handle minimap logic
+function updateMiniMap(filterKey) {
+    const { miniMapKey, zoomLevel = 7 } = miniMapConfig[filterKey] || {};
+    if (!miniMapKey || !mini_map_type.hasOwnProperty(miniMapKey)) return;
+
+    // Clear previous minimap markers and overlays
+    if (activeMiniMapKey !== miniMapKey) {
+        clearMiniMapMarkers();
+        activeMiniMapKey = miniMapKey;
+    }
+    activeOverlays.forEach(overlay => overlay.remove());
+    activeOverlays = [];
+
+    const info = mini_map_type[miniMapKey];
+
+    // Check if secondary overlay exists and add it
+    if (info.secondary) {
+        const imageBoundsSecondary = getImageBounds(info.secondary.map_position);
+        const secondaryOverlay = L.imageOverlay(info.secondary.map_url, imageBoundsSecondary);
+        secondaryOverlay.addTo(map);
+        activeOverlays.push(secondaryOverlay);  // Add to active overlays
+    }
+
+    // Check if main overlay exists and add it
+    if (info.main) {
+        const imageBoundsMain = getImageBounds(info.main.map_position);
+        const mainOverlay = L.imageOverlay(info.main.map_url, imageBoundsMain);
+        mainOverlay.addTo(map);
+        activeOverlays.push(mainOverlay);  // Add to active overlays
+        centerMapOnBounds(imageBoundsMain);  // Center the map on the main map bounds
+    }
+
+    // Add any markers related to the current minimap key
+    addMarkersForMiniMap(miniMapKey);
+    console.log('MiniMap updated:', { main: info.main, secondary: info.secondary, zoomLevel });
+}
+
 // Event listener for filter buttons
 document.querySelectorAll('.new-filter-container .filter-btn').forEach(button => {
     button.addEventListener('click', () => {
+        const filterKey = button.getAttribute('data-filter');
+        const locationName = button.innerText.trim();
+
+        // Track filter click event
+        trackEvent('Minimap Interaction', locationName, filterKey);
+
+        // Track page view
+        const miniMapInfo = miniMapConfig[filterKey];
+        if (miniMapInfo) trackPageView(miniMapInfo);
+
+        // Update minimap with a delay to ensure everything is rendered properly
         setTimeout(() => {
-            const filterKey = button.getAttribute('data-filter');
-            const miniMapConfig = {
-                'loc_type2': { miniMapKey: 'djhg', zoomLevel: 7 },
-                'loc_type5': { miniMapKey: 'jjgb', zoomLevel: 7 },
-                'loc_type4': { miniMapKey: 'ydc', zoomLevel: 7 },
-                'loc_type3': { miniMapKey: 'lgxs', zoomLevel: 7 },
-                'loc_type6': { miniMapKey: 'kplg', zoomLevel: 7 },
-                'loc_type7': { miniMapKey: 'sundale', zoomLevel: 9 },
-                'loc_type8': { miniMapKey: 'howlingoasis', zoomLevel: 9 },
-                'loc_type9': { miniMapKey: 'edengate', zoomLevel: 9 }
-            };
-
-            // Clear all previous markers and mini-map overlays
-            clearAllMarks(); // Remove markers from the main map
-
-            // Add the new filter to activeLocTypes and show markers based on the filter
+            // Clear previous markers and update the display
+            clearAllMarks();
             activeLocTypes.push(filterKey);
             showMarkers();
 
-            const { miniMapKey, zoomLevel = 7 } = miniMapConfig[filterKey] || {};
+            // Update the minimap with both main and secondary images
+            updateMiniMap(filterKey);
 
-            if (miniMapKey && mini_map_type.hasOwnProperty(miniMapKey)) {
-                // If there is an active mini-map different from the current one, clear old markers
-                if (activeMiniMapKey !== miniMapKey) {
-                    clearMiniMapMarkers(); // Clear old mini-map markers
-                    activeMiniMapKey = miniMapKey; // Update the active mini-map key
-                }
-
-                // Clear all active overlays
-                activeOverlays.forEach(overlay => overlay.remove());
-                activeOverlays = [];
-
-                const info = mini_map_type[miniMapKey];
-
-                 // Check if there's a secondary map
-                if (info.secondary) {
-                    const imageBoundsSecondary = getImageBounds(info.secondary.map_position);
-                    const historicalOverlaySecondary = L.imageOverlay(info.secondary.map_url, imageBoundsSecondary);
-                    historicalOverlaySecondary.addTo(map);
-                    activeOverlays.push(historicalOverlaySecondary);
-                }
-                
-                // Check if there's a main map
-                if (info.main) {
-                    const imageBoundsMain = getImageBounds(info.main.map_position);
-                    const historicalOverlayMain = L.imageOverlay(info.main.map_url, imageBoundsMain);
-                    historicalOverlayMain.addTo(map);
-                    activeOverlays.push(historicalOverlayMain);
-
-                    // Center map on the main bounds
-                    centerMapOnBounds(imageBoundsMain);
-                }
-
-                // Add new markers to the mini-map
-                addMarkersForMiniMap(miniMapKey);
-console.log(info.main);
-console.log(info.secondary);
-console.log(zoomLevel);
-
-            }
-
-            // Hide the filter container after selecting a filter
+            // Hide the filter container after selection
             document.querySelector('.new-filter-container').style.display = 'none';
-        }, 1000); // Delay 1 second
+        }, 1000);
     });
 });
 
