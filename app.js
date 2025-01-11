@@ -3022,6 +3022,7 @@ const miniMapConfig = {
 };
 
 // Store start times for each minimap
+// Store start times for each minimap
 let startTime = null;
 let timeSpent = 0;
 
@@ -3037,12 +3038,12 @@ function trackEvent(category, label, value) {
 
 // Function to track page view and duration
 function trackPageView(miniMapInfo) {
-    // If the user is already on a minimap, calculate the time spent
+    // Calculate and send the time spent on the previous minimap
     if (startTime !== null) {
         timeSpent = Math.floor((new Date() - startTime) / 1000); // Duration in seconds
         console.log(`User spent ${timeSpent} seconds on ${miniMapInfo.name}`);
         
-        // Track the page view event with the duration in Google Analytics
+        // Send event to Google Analytics
         gtag('event', 'page_view', {
             'page_title': miniMapInfo.name,
             'page_location': window.location.href,
@@ -3051,7 +3052,7 @@ function trackPageView(miniMapInfo) {
         });
     }
 
-    // Start tracking the time when a new minimap is loaded
+    // Start the timer for the new minimap
     startTime = new Date();
     console.log('Page view tracked:', {
         title: miniMapInfo.name,
@@ -3060,7 +3061,7 @@ function trackPageView(miniMapInfo) {
     });
 }
 
-// Function to handle minimap logic
+// Function to handle minimap updates
 function updateMiniMap(filterKey) {
     const { miniMapKey, zoomLevel = 7 } = miniMapConfig[filterKey] || {};
     if (!miniMapKey || !mini_map_type.hasOwnProperty(miniMapKey)) return;
@@ -3074,23 +3075,51 @@ function updateMiniMap(filterKey) {
     activeOverlays = [];
 
     const info = mini_map_type[miniMapKey];
+
+    // Tambahkan overlay gambar sekunder dengan efek kegelapan (brightness)
     if (info.secondary) {
         const imageBoundsSecondary = getImageBounds(info.secondary.map_position);
+
+        // Gambar sekunder dengan filter untuk membuatnya gelap
         const secondaryOverlay = L.imageOverlay(info.secondary.map_url, imageBoundsSecondary);
         secondaryOverlay.addTo(map);
+        secondaryOverlay.getElement().style.filter = 'brightness(50%)';  // Menurunkan brightness menjadi 50% untuk efek gelap
         activeOverlays.push(secondaryOverlay);
     }
+
+    // Tambahkan overlay gambar utama (main)
     if (info.main) {
         const imageBoundsMain = getImageBounds(info.main.map_position);
+
+        // Pastikan gambar utama berada di atas semuanya
         const mainOverlay = L.imageOverlay(info.main.map_url, imageBoundsMain);
         mainOverlay.addTo(map);
         activeOverlays.push(mainOverlay);
+
+        // Pusatkan tampilan pada gambar utama
         centerMapOnBounds(imageBoundsMain);
     }
 
+    // Tambahkan marker untuk minimap
     addMarkersForMiniMap(miniMapKey);
+
     console.log('MiniMap updated:', { main: info.main, secondary: info.secondary, zoomLevel });
 }
+
+
+
+// Track time spent before user leaves the page
+window.addEventListener('beforeunload', () => {
+    if (startTime !== null) {
+        timeSpent = Math.floor((new Date() - startTime) / 1000);
+        console.log(`User spent ${timeSpent} seconds before leaving the page.`);
+        gtag('event', 'page_exit', {
+            'page_title': document.title,
+            'page_location': window.location.href,
+            'duration': timeSpent
+        });
+    }
+});
 
 // Event listener for filter buttons
 document.querySelectorAll('.new-filter-container .filter-btn').forEach(button => {
@@ -3101,7 +3130,7 @@ document.querySelectorAll('.new-filter-container .filter-btn').forEach(button =>
         // Track filter click event
         trackEvent('Minimap Interaction', locationName, filterKey);
 
-        // Track page view and duration
+        // Track page view and duration for the selected minimap
         const miniMapInfo = miniMapConfig[filterKey];
         if (miniMapInfo) trackPageView(miniMapInfo);
 
@@ -3117,7 +3146,6 @@ document.querySelectorAll('.new-filter-container .filter-btn').forEach(button =>
         }, 1000);
     });
 });
-
 
 
 function getImageBounds(mapPosition) {
