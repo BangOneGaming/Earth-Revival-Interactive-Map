@@ -3021,6 +3021,10 @@ const miniMapConfig = {
     'loc_type9': { miniMapKey: 'edengate', name: 'Edengate Starlit Avenue', zoomLevel: 9 }
 };
 
+// Store start times for each minimap
+let startTime = null;
+let timeSpent = 0;
+
 // Function to track events using Google Analytics
 function trackEvent(category, label, value) {
     gtag('event', 'filter_clicked', {
@@ -3031,13 +3035,24 @@ function trackEvent(category, label, value) {
     console.log('Event tracked:', { category, label, value });
 }
 
-// Function to track minimap page views
+// Function to track page view and duration
 function trackPageView(miniMapInfo) {
-    gtag('event', 'page_view', {
-        'page_title': miniMapInfo.name,
-        'page_location': window.location.href,
-        'page_path': `/minimap/${miniMapInfo.miniMapKey}`
-    });
+    // If the user is already on a minimap, calculate the time spent
+    if (startTime !== null) {
+        timeSpent = Math.floor((new Date() - startTime) / 1000); // Duration in seconds
+        console.log(`User spent ${timeSpent} seconds on ${miniMapInfo.name}`);
+        
+        // Track the page view event with the duration in Google Analytics
+        gtag('event', 'page_view', {
+            'page_title': miniMapInfo.name,
+            'page_location': window.location.href,
+            'page_path': `/minimap/${miniMapInfo.miniMapKey}`,
+            'duration': timeSpent
+        });
+    }
+
+    // Start tracking the time when a new minimap is loaded
+    startTime = new Date();
     console.log('Page view tracked:', {
         title: miniMapInfo.name,
         location: window.location.href,
@@ -3059,25 +3074,20 @@ function updateMiniMap(filterKey) {
     activeOverlays = [];
 
     const info = mini_map_type[miniMapKey];
-
-    // Check if secondary overlay exists and add it
     if (info.secondary) {
         const imageBoundsSecondary = getImageBounds(info.secondary.map_position);
         const secondaryOverlay = L.imageOverlay(info.secondary.map_url, imageBoundsSecondary);
         secondaryOverlay.addTo(map);
-        activeOverlays.push(secondaryOverlay);  // Add to active overlays
+        activeOverlays.push(secondaryOverlay);
     }
-
-    // Check if main overlay exists and add it
     if (info.main) {
         const imageBoundsMain = getImageBounds(info.main.map_position);
         const mainOverlay = L.imageOverlay(info.main.map_url, imageBoundsMain);
         mainOverlay.addTo(map);
-        activeOverlays.push(mainOverlay);  // Add to active overlays
-        centerMapOnBounds(imageBoundsMain);  // Center the map on the main map bounds
+        activeOverlays.push(mainOverlay);
+        centerMapOnBounds(imageBoundsMain);
     }
 
-    // Add any markers related to the current minimap key
     addMarkersForMiniMap(miniMapKey);
     console.log('MiniMap updated:', { main: info.main, secondary: info.secondary, zoomLevel });
 }
@@ -3091,26 +3101,22 @@ document.querySelectorAll('.new-filter-container .filter-btn').forEach(button =>
         // Track filter click event
         trackEvent('Minimap Interaction', locationName, filterKey);
 
-        // Track page view
+        // Track page view and duration
         const miniMapInfo = miniMapConfig[filterKey];
         if (miniMapInfo) trackPageView(miniMapInfo);
 
-        // Update minimap with a delay to ensure everything is rendered properly
+        // Update minimap
         setTimeout(() => {
-            // Clear previous markers and update the display
             clearAllMarks();
             activeLocTypes.push(filterKey);
             showMarkers();
-
-            // Update the minimap with both main and secondary images
             updateMiniMap(filterKey);
 
-            // Hide the filter container after selection
+            // Hide the filter container
             document.querySelector('.new-filter-container').style.display = 'none';
         }, 1000);
     });
 });
-
 
 
 
