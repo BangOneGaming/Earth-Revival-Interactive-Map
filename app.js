@@ -3890,3 +3890,44 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+// Ambil elemen peta dan tombol fullscreen
+const mapContainer = document.getElementById('mapContainer');
+const fullscreenButton = document.getElementById('fullscreenButton');
+
+// Fungsi untuk memasukkan peta ke fullscreen
+function enterFullscreen() {
+    if (mapContainer.requestFullscreen) {
+        mapContainer.requestFullscreen();
+    } else if (mapContainer.mozRequestFullScreen) { // Firefox
+        mapContainer.mozRequestFullScreen();
+    } else if (mapContainer.webkitRequestFullscreen) { // Chrome, Safari, Opera
+        mapContainer.webkitRequestFullscreen();
+    } else if (mapContainer.msRequestFullscreen) { // IE/Edge
+        mapContainer.msRequestFullscreen();
+    }
+}
+
+// Fungsi untuk keluar dari fullscreen
+function exitFullscreen() {
+    if (document.exitFullscreen) {
+        document.exitFullscreen();
+    } else if (document.mozCancelFullScreen) { // Firefox
+        document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) { // Chrome, Safari, Opera
+        document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) { // IE/Edge
+        document.msExitFullscreen();
+    }
+}
+
+// Event listener untuk tombol fullscreen
+fullscreenButton.addEventListener('click', () => {
+    // Cek jika sudah dalam mode fullscreen
+    if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+        // Jika sudah fullscreen, keluar dari fullscreen
+        exitFullscreen();
+    } else {
+        // Masuk fullscreen
+        enterFullscreen();
+    }
+});

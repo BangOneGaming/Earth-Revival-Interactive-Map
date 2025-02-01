@@ -35,7 +35,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js/minified/introjs.min.css">
     <script src="https://cdn.jsdelivr.net/npm/intro.js/minified/intro.min.js"></script>
 
-    <link href="app.css?v=4.0" rel="stylesheet" type="text/css">
+    <link href="app.css?v=4.1" rel="stylesheet" type="text/css">
 
     <!-- Leaflet for maps -->
 <!-- Import Leaflet -->
@@ -114,7 +114,18 @@
 </div>
 
 
+<!-- Container untuk peta -->
+<div id="mapContainer">
     <div id="map"></div>
+<!-- Tombol untuk fullscreen dengan SVG icon -->
+<button id="fullscreenButton">
+    <svg fill="#000000" height="30px" width="30px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 384.97 384.97" xml:space="preserve">
+        <g id="SVGRepo_iconCarrier"> 
+            <path d="M372.939,216.545c-6.123,0-12.03,5.269-12.03,12.03v132.333H24.061V24.061h132.333c6.388,0,12.03-5.642,12.03-12.03 S162.409,0,156.394,0H24.061C10.767,0,0,10.767,0,24.061v336.848c0,13.293,10.767,24.061,24.061,24.061h336.848 c13.293,0,24.061-10.767,24.061-24.061V228.395C384.97,221.731,380.085,216.545,372.939,216.545z"></path>
+            <path d="M372.939,0H252.636c-6.641,0-12.03,5.39-12.03,12.03s5.39,12.03,12.03,12.03h91.382L99.635,268.432 c-4.668,4.668-4.668,12.235,0,16.903c4.668,4.668,12.235,4.668,16.891,0L360.909,40.951v91.382c0,6.641,5.39,12.03,12.03,12.03 s12.03-5.39,12.03-12.03V12.03l0,0C384.97,5.558,379.412,0,372.939,0z"></path>
+        </g>
+    </svg>
+</button>
   <div class="trakteer-overlay" id="trakteerOverlay">
   <button class="close-btn" id="closeOverlayBtn">&times;</button> <!-- Tombol close dengan simbol "×" -->
   <iframe class="trakteer-frame" src="https://stream.trakteer.id/top-supporter-transitional.html?ts_font=default&ts_theme=transitional&ts_sortby=nominal&ts_customsubtitle=Donatur&key=trstream-bm2DcuTwpuXomRzGOBqD&timestamp=1726331187"></iframe>
@@ -681,8 +692,18 @@
         </form>
     </div>
     
+    <h4>Earth Revival Interactive Map</h4>
+    <p>Welcome to the <strong>Earth Revival Guide Map</strong>! Our goal is to create the most comprehensive resource for players exploring the world of Earth Revival. However, this map is still in development and requires more information to be fully complete.</p>
 
-<div id="map" class="hidden"></div>
+    <p>This map is still a work in progress and requires more information to be fully accurate. Some markers may be incomplete or incorrect.</p>
+    <p>If you notice any missing or incorrect markers, you can contribute by using the available tools:</p>
+    <ul>
+        <li><strong>Report Issues:</strong> Click on any marker and use the report option to notify us of errors.</li>
+        <li><strong>Send Marker:</strong> Use the "Send Marker" option at the top corner of the map to add missing locations.</li>
+        <li><strong>Upload Images:</strong> Enhance the map by uploading relevant images directly from each marker’s info panel.</li>
+    </ul>
+    <p>Your contributions help make this guide better for everyone. Thank you for your support!</p>
+</div>
 
 </div>
 <script src="minimap_config.js"></script>
@@ -695,7 +716,7 @@
   eruda.init();
 </script>
 <script src="category.js"></script>
-<script src="adsense.js?v=4.0"></script>
+<script src="adsense.js?v=4.1"></script>
 <script src="app.js?v=4.0"></script>
 </body>
 

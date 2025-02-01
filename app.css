@@ -6,7 +6,12 @@ body, html, #root, .App {
 overflow: hidden;
   font-family: 'Roboto', sans-serif;
 }
-
+body {
+    background-color: rgba(10, 28, 61, 0.95);
+    color: white;
+    overflow: auto; /* Mengizinkan halaman untuk di-scroll */
+    height: 100%; /* Pastikan body bisa di-scroll */
+}
 /* CSS Animasi untuk Main Overlay dengan Efek Bounce */
 @keyframes bounceIn {
     0% {
@@ -32,7 +37,7 @@ overflow: hidden;
 /* Privacy and Policy Pop-up Styles */
 #privacy-popup {
     display: none; /* Default hidden */
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -361,17 +366,51 @@ overflow: hidden;
     margin-top: 5px;
 }
 
-/* Map container */
-#map {
-  background-color: black;
-  height: 100vh;
-  width: 100%;
-  position: relative;
-  z-index: 600;
+/* Container untuk peta */
+#mapContainer {
+    position: relative;
+    width: 90%;
+    height: 700px; /* Tinggi peta yang default */
+    border: 1px solid #ccc;
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
 }
+
+/* Tombol Fullscreen dengan posisi absolut */
+#fullscreenButton {
+    position: absolute;
+    bottom: 50px;
+    right: 20px;
+    padding: 10px;
+    background-color: #02a0c5;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+#fullscreenButton:hover {
+    background-color: white;
+}
+
+/* Peta dalam container */
+#map {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+
+
 /* Styles for the report form container */
 /* Styles for the report form container */
 #reportFormContainer {
+position: absolute;
     width: 50%;
     position: fixed;
     top: 50%;
@@ -1215,7 +1254,7 @@ pointer-events: auto;
     display: none !important;
 }
 .donate-container {
-    position: fixed;
+    position: absolute;
     top: 40px;
     right: 40px;
     z-index: 1000; /* Pastikan berada di atas konten lain */
@@ -1355,6 +1394,8 @@ pointer-events: auto;
 }
 
 .new-filter-container {
+    z-index:900;
+        position: absolute;
   top: 80px; /* Posisi dari atas */
   left: 70px; /* Posisi dari kiri */
   height: 120px; /* Tinggi */
@@ -1436,6 +1477,7 @@ pointer-events: auto;
 
 /* New Filter Container Styles */
 .new-filter-container {
+    position: absolute;
   display: flex;
   justify-content: flex-start; /* Align buttons from left */
   gap: 200px; /* Increased gap between buttons */
@@ -1492,7 +1534,7 @@ pointer-events: auto;
 
 /* CSS untuk collect-container */
 .collect-container {
-    position: fixed;
+    position: absolute;
     top: 70px; /* Jarak dari atas */
     right: -250px; /* Tempatkan di luar layar sebelah kanan */
     width: 210px; /* Lebar container */
@@ -1547,7 +1589,7 @@ h5 {
     right: -2px; /* Tampilkan container */
 }
 .collect-tip-container {
-    position: fixed; /* Fixed positioning to keep it in view */
+    position: relative; /* Fixed positioning to keep it in view */
     top: 215px;
     left: 10px; /* Position from the left */
     transform: translateY(-50%); /* Adjust for centering */
@@ -1956,9 +1998,9 @@ h5 {
     right: 41px; /* Jarak dari sisi kanan */
 }
 .collect-container {
-    position: fixed;
+    position: absolute;
     top: 70px; /* Jarak dari atas */
-    right: -250px; /* Tempatkan di luar layar sebelah kanan */
+    right: -450px; /* Tempatkan di luar layar sebelah kanan */
     width: 120px; /* Lebar container */
     max-height: calc(100vh - 70px - 200px); /* Batas tinggi penuh dikurangi top dan jarak scroll ke atas */
     padding: 1px;
@@ -2032,7 +2074,7 @@ h5 {
 .new-filter-container {
     display: flex;
     flex-wrap: nowrap;
-    width: 100vw; /* Lebar viewport */
+    width: 100%; /* Lebar viewport */
     height: 450px; /* Tinggi container yang lebih besar untuk menampung tombol yang lebih besar */
     padding: 90px 20px; /* Tambahkan padding kiri dan kanan untuk ruang ekstra */
     justify-content: flex-start; /* Posisikan tombol dari kiri */
@@ -2044,11 +2086,10 @@ h5 {
     overflow-y: hidden; /* Sembunyikan scroll vertikal */
     scroll-snap-type: x mandatory; /* Aktifkan scroll snapping */
     box-sizing: border-box;
-    position: fixed; /* Posisikan container relatif terhadap viewport */
+    position: absolute; /* Posisikan container relatif terhadap viewport */
     top: 50%; /* Pusatkan container secara vertikal */
     left: 50%; /* Pusatkan container secara horizontal */
     transform: translate(-50%, -50%); /* Pusatkan container dengan benar */
-    z-index: 1000; /* Pastikan container berada di atas elemen lain */
     opacity: 0; /* Mulai dengan opacity 0 */
     transition: opacity 0.5s ease; /* Efek transisi untuk opacity */
 }
