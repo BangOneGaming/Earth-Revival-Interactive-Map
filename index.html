@@ -117,6 +117,7 @@
 <!-- Container untuk peta -->
 <div id="mapContainer">
     <div id="map"></div>
+    
 <!-- Tombol untuk fullscreen dengan SVG icon -->
 <button id="fullscreenButton">
     <svg fill="#000000" height="30px" width="30px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 384.97 384.97" xml:space="preserve">
@@ -226,7 +227,7 @@
     <div class="filter-btn" data-filter="loc_type8" style="background-image: url('icons/darkgobi.png');">Howling Gobi<br>(Mirror World)</div>
     <div class="filter-btn" data-filter="loc_type9" style="background-image: url('icons/darkeden.png');">Edengate<br>(Mirror World)</div>
     <div class="filter-btn" id="zoomBtn" style="background-image: url('icons/space.png');">Pegasus<br> <b>(Go to Space)</b></div>
-    <div class="filter-btn" style="background-image: url('icons/hilde.png');" id="hildeBtn">Hilde</div>
+    <div class="filter-btn" data-filter="loc_type10" style="background-image: url('icons/hilde.png');">Hilde</div>
 </div>
 
 <div class="count-container">
@@ -459,7 +460,36 @@
         <img src="icons/icon_resource.png" alt="Resource" class="count-icon">
         <span class="count-text">0/0</span>
     </div>
+    </div>
+<!-- Loc_type 10 (Mirror World Ragon Snowy Peak) -->
+<div id="loc-type-10">
+    <h4>Hilde</h4>
+    <div id="count-treasure-loc10" class="count-item">
+        <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-training-loc10" class="count-item">
+        <img src="icons/icon_train.png" alt="Training" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-zone-loc10" class="count-item">
+        <img src="icons/icon_zone.png" alt="Zone" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-fishing-loc10" class="count-item">
+        <img src="icons/icon_fishing.png" alt="Fishing" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-scenery-loc10" class="count-item">
+        <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-resource-loc10" class="count-item">
+        <img src="icons/icon_resource.png" alt="Resource" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
 </div>
+
 
 </div>
 
@@ -594,6 +624,7 @@
             <option value="7">Mirror World Sundale Valley</option>
             <option value="8">Mirror World Howling Gobi</option>
             <option value="9">Mirror World Edengate</option>
+            <option value="10">Hilde</option>
         </select>
         
 <div style="margin-top: 10px;">
@@ -691,7 +722,9 @@
             <button type="button" class="cancel" id="cancelReportBtn">Cancel</button>
         </form>
     </div>
-    
+
+
+
     <h4>Earth Revival Interactive Map</h4>
     <p>Welcome to the <strong>Earth Revival Guide Map</strong>! Our goal is to create the most comprehensive resource for players exploring the world of Earth Revival. However, this map is still in development and requires more information to be fully complete.</p>
 
@@ -705,16 +738,15 @@
     <p>Your contributions help make this guide better for everyone. Thank you for your support!</p>
 </div>
 
-</div>
+
 <script src="minimap_config.js"></script>
 <!-- Import leaflet-animatedmarker -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-animatedmarker/0.0.2/leaflet.animatedmarker.min.js"></script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467"
      crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>
-  eruda.init();
-</script>
+<script>eruda.init();</script>
+
 <script src="category.js"></script>
 <script src="adsense.js?v=4.1"></script>
 <script src="app.js?v=4.0"></script>

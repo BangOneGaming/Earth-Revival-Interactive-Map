@@ -252,6 +252,34 @@ body {
         transform: translateY(-15px);
     }
 }
+.teleport-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.teleport-icon {
+  width: 32px;
+  height: 32px;
+  filter: drop-shadow(0 0 5px white);
+}
+
+.teleport-indicator {
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;  /* Ukuran segitiga lebih kecil */
+  border-right: 6px solid transparent; /* Ukuran segitiga lebih kecil */
+  border-top: 8px solid white;           /* Segitiga mengarah ke bawah */
+  margin-bottom: 4px;
+  animation: bounce 1s infinite;
+  filter: drop-shadow(0 0 3px white);
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
 
 /* Gambar pada preloader */
 #preloader img {

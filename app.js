@@ -7,6 +7,10 @@ let jsonData = {};
 let holdTimeout;
 let map; // Declare map at a broader scope
 let markerVisibility = {};
+let activeMiniMapMarkers = []; // Array for storing active mini-map markers
+let activeOverlays = [];
+let activeMiniMapKey = null; // Variable for storing the active mini-map key
+
 
  
 
@@ -256,35 +260,65 @@ function loadMiniMapMarkers() {
 
 
 
-    // Memuat gambar minimap
-    function loadMinimapImages() {
-        for (const key in mini_map_type) {
-            if (mini_map_type.hasOwnProperty(key)) {
-                const mapType = mini_map_type[key].type;
-                for (const typeKey in mapType) {
-                    if (mapType.hasOwnProperty(typeKey)) {
-                        const mapUrl = mapType[typeKey].map_url;
-                        totalMiniMapImages++;
+// Memuat gambar minimap (termasuk secondary)
+function loadMinimapImages() {
+    for (const key in mini_map_type) {
+        if (mini_map_type.hasOwnProperty(key)) {
+            const mapData = mini_map_type[key];
 
-                        const minimapImage = new Image();
-                        minimapImage.src = mapUrl;
+            // Memuat gambar minimap utama
+            const mainMapUrl = mapData.main.map_url;
+            totalMiniMapImages++;
 
-                        minimapImage.onload = function() {
-                            loadedMiniMapImages++;
-                            let imageProgress = (loadedMiniMapImages / totalMiniMapImages) * 50; // Setengah progres untuk gambar
-                            totalProgress = (loadedMiniMapMarkers / totalMiniMapMarkers) * 50 + imageProgress; // Gabungkan progres marker dan gambar minimap
+            const mainMinimapImage = new Image();
+            mainMinimapImage.src = mainMapUrl;
 
-                            updateLoadingBar();
-                        };
+            mainMinimapImage.onload = function () {
+                loadedMiniMapImages++;
+                let imageProgress = (loadedMiniMapImages / totalMiniMapImages) * 50;
+                totalProgress = (loadedMiniMapMarkers / totalMiniMapMarkers) * 50 + imageProgress;
+                updateLoadingBar();
 
-                        minimapImage.onerror = function() {
-                            console.error("Gagal memuat gambar minimap.");
-                        };
-                    }
-                }
+                console.log(`Gambar minimap utama untuk ${key} berhasil dimuat.`);
+            };
+
+            mainMinimapImage.onerror = function () {
+                console.error(`Gagal memuat gambar minimap utama untuk ${key}.`);
+            };
+
+            // Periksa dan muat gambar secondary jika ada
+            if (Array.isArray(mapData.secondary)) {
+                console.log(`Memuat gambar secondary untuk ${key}`);
+
+                mapData.secondary.forEach((sec) => {
+                    const secondaryMapUrl = sec.map_url;
+                    totalMiniMapImages++;
+
+                    const secondaryMinimapImage = new Image();
+                    secondaryMinimapImage.src = secondaryMapUrl;
+
+                    secondaryMinimapImage.onload = function () {
+                        loadedMiniMapImages++;
+                        let imageProgress = (loadedMiniMapImages / totalMiniMapImages) * 50;
+                        totalProgress = (loadedMiniMapMarkers / totalMiniMapMarkers) * 50 + imageProgress;
+                        updateLoadingBar();
+
+                        console.log(`Gambar secondary minimap untuk ${key} - ${sec.key} berhasil dimuat.`);
+                    };
+
+                    secondaryMinimapImage.onerror = function () {
+                        console.error(`Gagal memuat gambar secondary minimap untuk ${key} - ${sec.key}.`);
+                    };
+                });
+            } else {
+                console.log(`Tidak ada secondary minimap untuk ${key}`);
             }
         }
     }
+}
+
+
+
 
     // Memulai pemuatan
     function initMiniMap() {
@@ -400,68 +434,80 @@ function fetchBase64Images(updatedId = null) {
         });
 }
 
+
+const isTeleportMap = activeMiniMapKey === "hilde";
+
 function addMarkersToMap() {
-    markers = []; // Reset markers array setiap kali fungsi dipanggil
+    markers = []; // Reset markers array
 
     for (const key in jsonData) {
-        if (jsonData.hasOwnProperty(key)) {
-            const location = jsonData[key];
+        if (!jsonData.hasOwnProperty(key)) continue;
 
-            // Validasi latitude dan longitude
-            if (!location.lat || !location.lng) {
-                console.error(`Location ${key} is missing lat/lng.`);
+        const location = jsonData[key];
+
+        if (!location.lat || !location.lng) {
+            console.error(`Location ${key} is missing lat/lng.`);
+            continue;
+        }
+
+        const index = location.index;
+
+        // === FILTER KHUSUS UNTUK HILDE ===
+        if (activeMiniMapKey === 'hilde') {
+            if (activeHildeSecondaryIndex) {
+                // Saat teleport aktif, hanya tampilkan marker dengan index sesuai
+                if (parseInt(index) !== activeHildeSecondaryIndex) continue;
+            } else {
+                // Saat teleport TIDAK aktif, hanya tampilkan marker tanpa index
+                if (index !== undefined && index !== null) continue;
+            }
+        } else {
+            // MiniMap lain: skip marker dengan index = 0
+            if (index === 0) {
+                console.log(`[SKIP] Marker with index 0, name: ${location.en_name}`);
                 continue;
             }
-
-            const latLng = [parseFloat(location.lat), parseFloat(location.lng)];
-            const iconUrl = getIconUrl(location.category_id);
-            const initialOpacity = loadMarkerOpacity(key) || 1.0;
-
-            // Buat marker Leaflet
-            const marker = L.marker(latLng, {
-                icon: L.icon({
-                    iconUrl: iconUrl,
-                    iconSize: [32, 32],
-                    iconAnchor: [16, 32],
-                }),
-                opacity: initialOpacity,
-            });
-
-            // Ambil gambar dari URL jika ada, atau gunakan Base64 dari cache
-            const imageLink = location.image_info || base64ImageCache[key] || '';
-
-            marker.options.loc_type = location.loc_type || 'Unknown';
-            marker.options.category = location.category_id || 'Unknown';
-            marker.options.id = location.id || key;
-            marker.options.en_name = location.en_name || 'Unknown';
-            marker.options.ys_id = location.ys_id || 'Unknown';
-            marker.options.image_info = imageLink;
-
-            // Simpan marker ke array markers
-            markers.push(marker);
-
-            // Setup interaksi marker
-            setupMarkerInteractions(marker, location, key);
-
-            // Tambahkan marker ke peta
-            marker.addTo(map);
-
-            // Terapkan animasi bounceIn
-            const iconElement = marker._icon;
-            iconElement.classList.add('bounceIn');
-
-            // Update kategori
-            updateCategoryCounts(location.loc_type, location.category_id, initialOpacity);
         }
+
+        const latLng = [parseFloat(location.lat), parseFloat(location.lng)];
+        const iconUrl = getIconUrl(location.category_id);
+        const initialOpacity = loadMarkerOpacity(key) || 1.0;
+
+        const marker = L.marker(latLng, {
+            icon: L.icon({
+                iconUrl: iconUrl,
+                iconSize: [32, 32],
+                iconAnchor: [16, 32],
+            }),
+            opacity: initialOpacity,
+        });
+
+        marker.options.loc_type = location.loc_type || 'Unknown';
+        marker.options.category = location.category_id || 'Unknown';
+        marker.options.id = location.id || key;
+        marker.options.en_name = location.en_name || 'Unknown';
+        marker.options.ys_id = location.ys_id || 'Unknown';
+        marker.options.image_info = location.image_info || base64ImageCache[key] || '';
+        if (index !== undefined && index !== null) {
+    marker.options.index = parseInt(index);
+}
+
+        markers.push(marker);
+
+        setupMarkerInteractions(marker, location, key);
+        marker.addTo(map);
+
+        const iconElement = marker._icon;
+        iconElement.classList.add('bounceIn');
+
+        updateCategoryCounts(location.loc_type, location.category_id, initialOpacity);
     }
 
-    // Hitung jumlah maksimum setelah semua marker ditambahkan
     calculateMaxCounts();
-
-    // Sembunyikan marker awal dan update tampilan kategori
     hideMarkers();
     updateCategoryDisplay();
 }
+
 
 
 function calculateMaxCounts() {
@@ -1230,6 +1276,16 @@ function updateCategoryOptions() {
             ];
             break;
         case '9':
+            categoryOptions = [
+                { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
+                { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
+                { value: "3", text: "Zone Commission", icon_url: "icons/icon_zone.png" },
+                { value: "7", text: "Limited Time Training", icon_url: "icons/icon_train.png" },
+                { value: "8", text: "Scenery", icon_url: "icons/icon_scenery.png" },
+                { value: "27", text: "Old World Treasure", icon_url: "icons/default.png" },
+            ];
+            break;
+        case '10':
             categoryOptions = [
                 { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
                 { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
@@ -2934,10 +2990,6 @@ toggleFilterContainer.addEventListener('click', () => {
         filterContainer.style.display === 'none' || filterContainer.style.display === '' ? 'flex' : 'none';
 });
 
-let activeMiniMapMarkers = []; // Array for storing active mini-map markers
-let activeOverlays = [];
-let activeMiniMapKey = null; // Variable for storing the active mini-map key
-
 
 
 // Function to update the active filters (location types or categories)
@@ -2979,17 +3031,26 @@ function addMarkersForMiniMap(miniMapKey) {
         return;
     }
 
-    // Clear previous mini-map markers before adding new ones
     clearMiniMapMarkers();
 
     const relevantMarkers = mini_map_type[miniMapKey].markers || [];
-    
+
     if (!Array.isArray(relevantMarkers)) {
         console.error('Relevant markers is not an array:', relevantMarkers);
         return;
     }
 
-relevantMarkers.forEach(markerData => {
+    relevantMarkers.forEach(markerData => {
+        // Jika loc_type10 dan map hilde, skip marker yang punya properti 'index'
+        if (
+            miniMapKey === "hilde" &&
+            activeLocTypes.includes('loc_type10') &&
+            'index' in markerData
+        ) {
+            console.log(`SKIP marker with index at lat: ${markerData.lat}, lng: ${markerData.lng}, index: ${markerData.index}`);
+            return;
+        }
+
         const latLng = [parseFloat(markerData.lat), parseFloat(markerData.lng)];
         const marker = L.marker(latLng, {
             icon: L.icon({
@@ -2997,18 +3058,20 @@ relevantMarkers.forEach(markerData => {
                 iconSize: [50, 50]
             }),
             options: {
-                category: markerData.category_id, // Pastikan ini diisi dengan benar
-                loc_type: miniMapKey // Pastikan ini sesuai dengan loc_type
+                category: markerData.category_id,
+                loc_type: miniMapKey
             }
         });
 
         marker.addTo(map);
         activeMiniMapMarkers.push(marker);
 
-        // Update counts untuk marker yang ditambahkan
-        updateCategoryCounts(marker.options.loc_type, marker.options.category, 0.5); // Asumsikan opasitas awal adalah 0.5
+        updateCategoryCounts(marker.options.loc_type, marker.options.category, 0.5);
     });
 }
+
+
+
 // MiniMap Config
 const miniMapConfig = {
     'loc_type2': { miniMapKey: 'djhg', name: 'Sundale Valley', zoomLevel: 7 },
@@ -3018,8 +3081,10 @@ const miniMapConfig = {
     'loc_type6': { miniMapKey: 'kplg', name: 'Kepler Harbour', zoomLevel: 7 },
     'loc_type7': { miniMapKey: 'sundale', name: 'Sundale Haven', zoomLevel: 9 },
     'loc_type8': { miniMapKey: 'howlingoasis', name: 'Howling Oasis', zoomLevel: 9 },
-    'loc_type9': { miniMapKey: 'edengate', name: 'Edengate Starlit Avenue', zoomLevel: 9 }
+    'loc_type9': { miniMapKey: 'edengate', name: 'Edengate Starlit Avenue', zoomLevel: 9 },
+    'loc_type10': { miniMapKey: 'hilde', name: 'Hilde', zoomLevel: 7 } // Baru ditambahkan
 };
+
 
 // Store start times for each minimap
 // Store start times for each minimap
@@ -3060,52 +3125,164 @@ function trackPageView(miniMapInfo) {
         path: `/minimap/${miniMapInfo.miniMapKey}`
     });
 }
+let secondaryOverlayGroup = [];
+let showSecondary = false;
+let teleportButtonOverlays = [];
+let activeHildeSecondaryIndex = null; // Simpan index yang sedang ditampilkan
+let mainOverlayHilde = null; // Referensi overlay utama Hilde
 
-// Function to handle minimap updates
 function updateMiniMap(filterKey) {
-    const { miniMapKey, zoomLevel = 7 } = miniMapConfig[filterKey] || {};
-    if (!miniMapKey || !mini_map_type.hasOwnProperty(miniMapKey)) return;
+  const { miniMapKey, zoomLevel = 7 } = miniMapConfig[filterKey] || {};
+  if (!miniMapKey || !mini_map_type.hasOwnProperty(miniMapKey)) return;
 
-    // Clear previous minimap markers and overlays
-    if (activeMiniMapKey !== miniMapKey) {
-        clearMiniMapMarkers();
-        activeMiniMapKey = miniMapKey;
+  if (activeMiniMapKey !== miniMapKey) {
+    clearMiniMapMarkers();
+    activeMiniMapKey = miniMapKey;
+  }
+
+  // Reset jika bukan Hilde
+  if (miniMapKey !== "hilde") {
+    secondaryOverlayGroup.forEach(o => o.remove());
+    secondaryOverlayGroup = [];
+    teleportButtonOverlays.forEach(o => o.remove());
+    teleportButtonOverlays = [];
+    activeHildeSecondaryIndex = null;
+    mainOverlayHilde = null;
+  }
+
+  // Bersihkan overlay lama
+  activeOverlays.forEach(overlay => overlay.remove());
+  activeOverlays = [];
+  secondaryOverlayGroup = [];
+
+  const info = mini_map_type[miniMapKey];
+
+  // Tambahkan main overlay
+  if (info.main) {
+    const imageBoundsMain = getImageBounds(info.main.map_position);
+    const mainOverlay = L.imageOverlay(info.main.map_url, imageBoundsMain).addTo(map);
+
+    // Pastikan brightness 100% jika tidak ada secondary
+    if (miniMapKey === "hilde") {
+      mainOverlay.getElement().style.filter = 'brightness(100%)';
+      mainOverlayHilde = mainOverlay;
+    } else if (info.secondary) {
+      mainOverlay.getElement().style.filter = 'brightness(50%)'; // Jika memiliki secondary
+    } else {
+      mainOverlay.getElement().style.filter = 'brightness(100%)'; // Jika tidak ada secondary
     }
-    activeOverlays.forEach(overlay => overlay.remove());
-    activeOverlays = [];
 
-    const info = mini_map_type[miniMapKey];
+    activeOverlays.push(mainOverlay);
+    centerMapOnBounds(imageBoundsMain);
+  }
 
-    // Tambahkan overlay gambar sekunder dengan efek kegelapan (brightness)
-    if (info.secondary) {
-        const imageBoundsSecondary = getImageBounds(info.secondary.map_position);
+  // Tambahkan secondary (selain Hilde)
+  if (miniMapKey !== "hilde" && info.secondary) {
+    const secondaryList = Array.isArray(info.secondary) ? info.secondary : [info.secondary];
+    secondaryList.forEach(sec => {
+      if (!sec.map_position) return;
 
-        // Gambar sekunder dengan filter untuk membuatnya gelap
-        const secondaryOverlay = L.imageOverlay(info.secondary.map_url, imageBoundsSecondary);
-        secondaryOverlay.addTo(map);
-        secondaryOverlay.getElement().style.filter = 'brightness(50%)';  // Menurunkan brightness menjadi 50% untuk efek gelap
-        activeOverlays.push(secondaryOverlay);
-    }
+      const imageBoundsSecondary = getImageBounds(sec.map_position);
+      const secondaryOverlay = L.imageOverlay(sec.map_url, imageBoundsSecondary).addTo(map);
 
-    // Tambahkan overlay gambar utama (main)
-    if (info.main) {
-        const imageBoundsMain = getImageBounds(info.main.map_position);
+      const element = secondaryOverlay.getElement();
+      if (element) {
+        element.style.filter = 'drop-shadow(0 0 6px white)';
+        element.style.zIndex = 300;
+      }
 
-        // Pastikan gambar utama berada di atas semuanya
-        const mainOverlay = L.imageOverlay(info.main.map_url, imageBoundsMain);
-        mainOverlay.addTo(map);
-        activeOverlays.push(mainOverlay);
+      activeOverlays.push(secondaryOverlay);
+      secondaryOverlayGroup.push(secondaryOverlay);
+    });
+  }
 
-        // Pusatkan tampilan pada gambar utama
-        centerMapOnBounds(imageBoundsMain);
-    }
+  // Teleport khusus Hilde
+  if (miniMapKey === "hilde") {
+    addTeleportButtons();
+  }
 
-    // Tambahkan marker untuk minimap
-    addMarkersForMiniMap(miniMapKey);
-
-    console.log('MiniMap updated:', { main: info.main, secondary: info.secondary, zoomLevel });
+  addMarkersForMiniMap(miniMapKey);
+  console.log('MiniMap updated:', { main: info.main, secondary: info.secondary, zoomLevel });
 }
 
+function showHildeMap(index) {
+  // Jika klik index yang sama, toggle OFF
+  if (activeHildeSecondaryIndex === index) {
+    secondaryOverlayGroup.forEach(o => o.remove());
+    secondaryOverlayGroup = [];
+    activeHildeSecondaryIndex = null;
+
+    if (mainOverlayHilde?.getElement()) {
+      mainOverlayHilde.getElement().style.filter = 'brightness(100%)';
+    }
+
+    updateMarkers(); // Tambahan di sini
+
+    return;
+}
+
+
+  // Ganti brightness utama jadi 50%
+  if (mainOverlayHilde?.getElement()) {
+    mainOverlayHilde.getElement().style.filter = 'brightness(50%)';
+  }
+
+  // Hapus secondary sebelumnya
+  secondaryOverlayGroup.forEach(o => o.remove());
+  secondaryOverlayGroup = [];
+
+  const hilde = mini_map_type["hilde"];
+  const selectedSecondary = hilde.secondary[index - 1];
+  if (!selectedSecondary || !selectedSecondary.map_position) return;
+
+  const bounds = getImageBounds(selectedSecondary.map_position);
+  const overlay = L.imageOverlay(selectedSecondary.map_url, bounds).addTo(map);
+  const element = overlay.getElement();
+  if (element) {
+    element.style.filter = 'drop-shadow(0 0 6px white)';
+    element.style.zIndex = 300;
+  }
+
+  secondaryOverlayGroup.push(overlay);
+  activeHildeSecondaryIndex = index;
+  updateMarkers();
+}
+
+function addTeleportButtons() {
+  const buttons = mini_map_type.hilde.teleportButtons;
+  if (!buttons) return;
+
+  teleportButtonOverlays.forEach(marker => map.removeLayer(marker));
+  teleportButtonOverlays = [];
+
+  // Tambahkan marker teleport
+  buttons.forEach(({ index, lat, lng }) => {
+    const html = `
+      <div class="teleport-wrapper">
+        <div class="teleport-indicator"></div>
+        <img src="icons/teleport.png" class="teleport-icon" />
+      </div>
+    `;
+
+    const icon = L.divIcon({
+      html,
+      className: '', // Biarkan kosong, semua dihandle via HTML
+      iconSize: [40, 60],
+      iconAnchor: [20, 40]
+    });
+
+    const marker = L.marker([lat, lng], {
+      icon,
+      interactive: true
+    }).addTo(map);
+
+    marker.on('click', () => {
+      showHildeMap(index);
+    });
+
+    teleportButtonOverlays.push(marker);
+  });
+}
 
 
 // Track time spent before user leaves the page
@@ -3637,14 +3814,43 @@ function updateMarkers() {
         const categoryMatch = isCategoryMatch(marker);
         const locTypeMatch = activeLocTypes.length === 0 || activeLocTypes.includes(`loc_type${marker.options.loc_type}`);
 
-        if (locTypeMatch && categoryMatch) {
+        let indexMatch = false;
+
+        if (activeMiniMapKey === 'hilde') {
+            if ('index' in marker.options) {
+                const markerIndex = parseInt(marker.options.index);
+
+                // Saat teleport aktif → tampilkan hanya jika index cocok
+                if (activeHildeSecondaryIndex !== null) {
+                    indexMatch = markerIndex === activeHildeSecondaryIndex;
+                } else {
+                    // Teleport belum aktif → sembunyikan marker dengan index
+                    indexMatch = false;
+                }
+            } else {
+                // Marker tanpa index hanya tampil saat teleport belum aktif
+                indexMatch = activeHildeSecondaryIndex === null;
+            }
+        } else {
+            // Minimap selain Hilde → semua marker dianggap cocok
+            indexMatch = true;
+        }
+
+        if (locTypeMatch && categoryMatch && indexMatch) {
             marker.addTo(map);
+
+            // Debug log
+            if ('index' in marker.options) {
+                console.log(`[SHOW] Marker with index: ${marker.options.index}, name: ${marker.options.en_name}`);
+            }
         } else {
             map.removeLayer(marker);
         }
     });
+
     updateCategoryDisplay();
 }
+
 
 
 // Function to clear all markers from the map
@@ -3869,9 +4075,6 @@ document.getElementById('zoomBtn').addEventListener('click', function() {
     }, 2000); // Redirect after 2 seconds
 });
 
-document.getElementById("hildeBtn").onclick = function () {
-    window.location.href = "https://bangonegaming.com/hilde/index.html";
-};
 
 document.addEventListener('DOMContentLoaded', () => {
     if (!window.adManager) {
