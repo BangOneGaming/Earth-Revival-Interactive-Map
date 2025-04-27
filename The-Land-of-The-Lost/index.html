@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Peta Leaflet dengan Tiler</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="contributionmarker.css">
+
+</head>
+<body>
+<!-- Di dalam <body>, sebelum <div id="map"> -->
+<div id="loader">
+    <div class="spinner"></div>
+    <div id="loading-text">0%</div>
+</div>
+<div id="map" style="display: none;"></div>
+<!-- Floating Modal for Marker Contribution -->
+<div id="markerContributionModal" style="display: none;">
+    <div id="markerContributionContent">
+        <span id="closeMarkerContribution">&times;</span>
+        <!-- Form akan dimasukkan lewat JavaScript -->
+    </div>
+</div>
+<div id="loadingSpinner" style="display:none;position:fixed;top:10px;left:50%;transform:translateX(-50%);background:white;padding:10px;border:1px solid #ccc;z-index:9999;">
+  Loading markers...
+</div>
+
+<div id="filter-container">
+    <label>
+        <input type="checkbox" id="filter-treasure" checked>
+        <img src="https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_treasure.png" alt="Treasure Icon">
+        <span class="filter-text">Treasure</span>
+    </label><br>
+    <label>
+        <input type="checkbox" id="filter-train" checked>
+        <img src="https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_train.png" alt="Train Icon">
+        <span class="filter-text">Train</span>
+    </label><br>
+    <label>
+        <input type="checkbox" id="filter-zone" checked>
+        <img src="https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_zone.png" alt="Zone Icon">
+        <span class="filter-text">Zone</span>
+    </label><br>
+    <label>
+        <input type="checkbox" id="filter-scenery" checked>
+        <img src="https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_scenery.png" alt="Scenery Icon">
+        <span class="filter-text">Scenery</span>
+    </label><br>
+    <label>
+        <input type="checkbox" id="filter-resource" checked>
+        <img src="https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_resource.png" alt="Resource Icon">
+        <span class="filter-text">Resource</span>
+    </label><br>
+</div>
+
+
+
+    <!-- Leaflet Library -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Preload Script -->
+<script src="preload.js"></script>
+
+<script src="app.js"></script>
+<script src="dev_tools.js"></script>
+
+    <!-- Debug Console (Eruda) -->
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>eruda.init();</script>
+</body>
+</html>
