@@ -1,11 +1,16 @@
 let currentTempMarker = null;
 let lastMarkerId = 0; // Kamu harus load nilai ini dari data existing nanti
 
+let clickTimeout = null;  // Variable untuk menyimpan timeout
+let touchTimeout = null;  // Untuk menunggu tap lama
+let isTouching = false;   // Untuk menandakan apakah sedang menahan layar
+
 function createDevToolsPanel(map) {
     const mapContainer = document.getElementById('map');
-
+    
     const panel = document.createElement('div');
     panel.className = 'dev-tools-panel';
+    panel.style.display = 'none'; // Panel disembunyikan awalnya
 
     const addMarkerBtn = document.createElement('button');
     addMarkerBtn.innerHTML = 'Add Marker';
@@ -17,65 +22,110 @@ function createDevToolsPanel(map) {
     confirmMarkerBtn.style.display = 'none'; // awalnya sembunyi
 
     addMarkerBtn.onclick = function () {
-    console.log('[AddMarker] Button clicked');
+        console.log('[AddMarker] Button clicked');
 
-    // Cek apakah sudah ada marker aktif
-    if (currentTempMarker) {
-        console.log('[AddMarker] Marker already exists, skipping creation');
-        alert("Please confirm or cancel the current marker first!");
-        return; // Jangan lanjut buat marker baru
-    }
+        // Cek apakah sudah ada marker aktif
+        if (currentTempMarker) {
+            console.log('[AddMarker] Marker already exists, skipping creation');
+            alert("Please confirm or cancel the current marker first!");
+            return; // Jangan lanjut buat marker baru
+        }
 
-    ensureLastMarkerIdUpToDate().then(() => {
-        const teleportIcon = L.icon({
-            iconUrl: 'https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_default.png',
-            iconSize: [50, 50],
-            iconAnchor: [25, 50]
-        });
+        ensureLastMarkerIdUpToDate().then(() => {
+            const teleportIcon = L.icon({
+                iconUrl: 'https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_default.png',
+                iconSize: [50, 50],
+                iconAnchor: [25, 50]
+            });
 
-        const marker = L.marker(map.getCenter(), { icon: teleportIcon, draggable: true }).addTo(map);
-        currentTempMarker = marker;
+            const marker = L.marker(map.getCenter(), { icon: teleportIcon, draggable: true }).addTo(map);
+            currentTempMarker = marker;
 
-        confirmMarkerBtn.style.display = 'none';
-        addMarkerBtn.style.display = 'none'; // Hide Add Marker button
-
-        console.log('[AddMarker] Marker created at:', marker.getLatLng());
-
-        marker.on('dragstart', function () {
-            console.log('[Marker] Drag started');
             confirmMarkerBtn.style.display = 'none';
+            addMarkerBtn.style.display = 'none'; // Hide Add Marker button
+
+            console.log('[AddMarker] Marker created at:', marker.getLatLng());
+
+            marker.on('dragstart', function () {
+                console.log('[Marker] Drag started');
+                confirmMarkerBtn.style.display = 'none';
+            });
+
+            marker.on('dragend', function () {
+                const markerPosition = marker.getLatLng();
+                map.setView(markerPosition, map.getZoom());
+                confirmMarkerBtn.style.display = 'inline-block';
+                console.log('[Marker] Drag ended at:', markerPosition);
+                console.log('[ConfirmButton] Shown');
+            });
         });
+    };
 
-        marker.on('dragend', function () {
-            const markerPosition = marker.getLatLng();
-            map.setView(markerPosition, map.getZoom());
-            confirmMarkerBtn.style.display = 'inline-block';
-            console.log('[Marker] Drag ended at:', markerPosition);
-            console.log('[ConfirmButton] Shown');
-        });
-    });
-};
-
-
-
-confirmMarkerBtn.onclick = function () {
-    if (currentTempMarker) {
-        console.log('[ConfirmMarker] Button clicked');
-        openMarkerContributionModal(currentTempMarker, map); // <-- kasih map di sini
-        confirmMarkerBtn.style.display = 'none';
-    } else {
-        console.log('[ConfirmMarker] No marker to confirm!');
-        alert("Please add a marker first!");
-    }
-};
-
+    confirmMarkerBtn.onclick = function () {
+        if (currentTempMarker) {
+            console.log('[ConfirmMarker] Button clicked');
+            openMarkerContributionModal(currentTempMarker, map); // <-- kasih map di sini
+            confirmMarkerBtn.style.display = 'none';
+        } else {
+            console.log('[ConfirmMarker] No marker to confirm!');
+            alert("Please add a marker first!");
+        }
+    };
 
     panel.appendChild(addMarkerBtn);
     panel.appendChild(confirmMarkerBtn);
 
     mapContainer.appendChild(panel);
-}
 
+    // Event listener untuk mendeteksi klik dan menunggu 5 detik sebelum menampilkan panel
+mapContainer.addEventListener('mousedown', function () {
+    clickTimeout = setTimeout(function () {
+        console.log("Long press detected, showing panel");
+        panel.style.display = 'block';
+    }, 5000);  // 5 detik
+});
+
+mapContainer.addEventListener('mouseup', function () {
+    clearTimeout(clickTimeout);  // Batalkan timeout jika pengguna melepaskan sebelum 5 detik
+});
+
+
+mapContainer.addEventListener('touchstart', function(e) {
+    // Batalkan timeout sebelumnya jika ada
+    if (touchTimeout) {
+        clearTimeout(touchTimeout);
+    }
+
+    // Tandai bahwa sedang menekan layar
+    isTouching = true;
+
+    // Set timeout untuk menangani tap lama (5 detik)
+    touchTimeout = setTimeout(function() {
+        if (isTouching) {
+            // Tampilkan panel setelah 5 detik
+            panel.style.display = 'block';
+        }
+    }, 5000);  // 5000 ms = 5 detik
+});
+
+mapContainer.addEventListener('touchend', function() {
+    // Jika layar dilepaskan, reset status
+    isTouching = false;
+    if (touchTimeout) {
+        clearTimeout(touchTimeout);
+    }
+});
+
+mapContainer.addEventListener('touchmove', function() {
+    // Batalkan tap lama jika layar digeser
+    if (touchTimeout) {
+        clearTimeout(touchTimeout);
+    }
+    isTouching = false;  // Reset jika ada pergerakan
+});
+
+
+}
 
 function createMarkerForm(marker, map) {
     const form = document.createElement('form');

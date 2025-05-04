@@ -2,8 +2,9 @@ const isPreloadEnabled = true;
 
 let map; // Global map
 let markersData = {}; // Sekarang bentuk object, bukan array
-
 if (isPreloadEnabled) {
+    console.log('[Preload] Memulai preloadTilesPromise dan fetchMarkersPromise...');
+    
     Promise.all([
         preloadTilesPromise(),
         fetchMarkersPromise()
@@ -11,35 +12,16 @@ if (isPreloadEnabled) {
         initMap();
         createDevToolsPanel(map);
 
-        // Tambahkan semua marker setelah preload dan fetch selesai
         markers.forEach(markerData => {
             addMarkerToMap(markerData);
         });
 
-        // Preload images
-        highZoomList.forEach(({ z, x, y }) => {
-            const img = new Image();
-            img.src = `statics/yuan_${z}_${x}_${y}.webp`;
-        });
-    }).catch(error => {
-        console.error('Error during preload or fetch:', error);
-    });
-} else {
-    initMap();
-    createDevToolsPanel(map);
-    fetchMarkersAndAddToMap();   
-}
+        // Setelah map siap, baru preload highZoomList
 
-// Preload Tiles, sekarang dibuat jadi Promise
-function preloadTilesPromise() {
-    return new Promise((resolve, reject) => {
-        preloadTiles((highZoomList) => {
-            if (highZoomList) {
-                resolve(highZoomList);
-            } else {
-                reject('Failed to preload tiles.');
-            }
-        });
+    }).catch(error => {
+        console.error('=== ERROR DETAIL ===', error);
+        document.getElementById('loading-text').textContent = 'Failed to load data. Please try again later.';
+        document.getElementById('loader').style.display = 'none';
     });
 }
 
@@ -298,7 +280,7 @@ const mapBounds = L.latLngBounds(southWest, northEast);
         zoomControl: false
     }).setView(init_position, 6);
 
-    const tileLayer = L.tileLayer('statics/yuan_{z}_{x}_{y}.webp', {
+    const tileLayer = L.tileLayer('https://bangonegaming.polar-app.org/ER_Mars/statics/yuan_{z}_{x}_{y}.webp', {
         tileSize: 256,
         minZoom: 6,
         maxZoom: 9,

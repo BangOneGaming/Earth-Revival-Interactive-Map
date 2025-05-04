@@ -17,7 +17,6 @@ function preloadTiles(callbackAfterLowZoom) {
     }
 
     const tileList = [];
-    const highZoomList = [];
     const iconUrls = [
         'https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_default.png',
         'https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_treasure.png',
@@ -27,8 +26,18 @@ function preloadTiles(callbackAfterLowZoom) {
         'https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_resource.png'
     ];
 
-    // Generate the tile list
-    for (let z = 6; z <= 9; z++) {
+    // Check image existence before loading
+    async function imageExists(url) {
+        try {
+            const response = await fetch(url, { method: 'HEAD' });
+            return response.ok;
+        } catch (error) {
+            console.warn(`Error checking image existence: ${url}`);
+            return false;
+        }
+    }
+
+    for (let z = 6; z <= 6; z++) { // hanya zoom 6 yang diprioritaskan
         const xStart = lng2tile(bounds.lngMin, z);
         const xEnd = lng2tile(bounds.lngMax, z);
         const yStart = lat2tile(bounds.latMax, z);
@@ -36,22 +45,20 @@ function preloadTiles(callbackAfterLowZoom) {
 
         for (let x = xStart; x <= xEnd; x++) {
             for (let y = yStart; y <= yEnd; y++) {
-                if (z <= 7) {
-                    tileList.push({ z, x, y });
-                } else {
-                    highZoomList.push({ z, x, y });
-                }
+                tileList.push({ z, x, y });
             }
         }
     }
 
+    const allPreloadList = [...tileList.map(tile => `statics/yuan_${tile.z}_${tile.x}_${tile.y}.webp`), ...iconUrls];
     let loadedCount = 0;
-    const totalTiles = tileList.length + iconUrls.length; // total including icons
+    const totalTiles = allPreloadList.length;
     const loadingText = document.getElementById('loading-text');
+    const failedUrls = [];
+    const startTime = Date.now(); // Mencatat waktu mulai preload
 
     function updateLoadingText() {
         const percent = Math.floor((loadedCount / totalTiles) * 100);
-        // Teks deskriptif berdasarkan persentase
         let phase = 'Starting';
         if (percent < 20) phase = 'Initializing map';
         else if (percent < 40) phase = 'Loading terrain';
@@ -61,63 +68,80 @@ function preloadTiles(callbackAfterLowZoom) {
         else phase = 'Ready';
 
         loadingText.textContent = `${phase}... ${percent}%`;
+
+        // Log phase progress
+        console.log(`${phase}... ${percent}%`);
     }
 
-    // Timeout untuk mendeteksi jika loading stuck
-    const loadingTimeout = setTimeout(() => {
-        console.error('Loading stuck! Something went wrong.');
-        loadingText.textContent = 'Error during loading. Please try again later.';
-        document.getElementById('loader').style.display = 'none';
-    }, 10000); // Timeout setelah 10 detik
+    function onLoadOrError(url, success) {
+        loadedCount++;
+        if (!success) {
+            failedUrls.push(url);
+            console.warn(`Gagal load gambar: ${url}`);
+        } else {
+            console.log(`Berhasil load gambar: ${url}`);
+        }
 
-    // Preload tiles
-    tileList.forEach(({ z, x, y }) => {
-        const img = new Image();
-        img.onload = img.onerror = () => {
-            loadedCount++;
-            updateLoadingText();
+        updateLoadingText();
 
+        // Memastikan loader tidak ditutup lebih cepat dari 2 detik
+        const elapsedTime = Date.now() - startTime;
+        if (elapsedTime < 2000) {
+            setTimeout(() => {
+                if (loadedCount === totalTiles) {
+                    if (failedUrls.length > 0) {
+                        console.warn(`Beberapa gambar gagal di-load (${failedUrls.length}):`, failedUrls);
+                    }
+                    console.log("Preload selesai untuk zoom 6 + icons");
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('map').style.display = 'block';
+                    if (callbackAfterLowZoom) callbackAfterLowZoom();
+                }
+            }, 2000 - elapsedTime); // Menunggu sampai 2 detik jika waktu belum tercapai
+        } else {
             if (loadedCount === totalTiles) {
-                clearTimeout(loadingTimeout); // Selesaikan timeout jika loading selesai
-                console.log("Preload selesai untuk zoom 6 & 7");
+                if (failedUrls.length > 0) {
+                    console.warn(`Beberapa gambar gagal di-load (${failedUrls.length}):`, failedUrls);
+                }
+                console.log("Preload selesai untuk zoom 6 + icons");
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('map').style.display = 'block';
-                if (callbackAfterLowZoom) callbackAfterLowZoom(highZoomList);
+                if (callbackAfterLowZoom) callbackAfterLowZoom();
             }
-        };
+        }
+    }
 
-        img.src = `statics/yuan_${z}_${x}_${y}.webp`;
-    });
+    // Memeriksa gambar satu per satu sebelum dimuat
+    async function preloadImages() {
+        for (const url of allPreloadList) {
+            const exists = await imageExists(url);
+            if (exists) {
+                const img = new Image();
+                console.log(`Mulai load gambar: ${url}`);
 
-    // Preload icons
-    iconUrls.forEach(url => {
-        const img = new Image();
-        img.onload = img.onerror = () => {
-            loadedCount++;
-            updateLoadingText();
-        };
-        img.src = url;
-    });
+                img.onload = () => onLoadOrError(url, true);
+                img.onerror = () => onLoadOrError(url, false);
+                img.src = url;
+            } else {
+                console.warn(`Gambar tidak ditemukan: ${url}`);
+                onLoadOrError(url, false);
+            }
+        }
+    }
+
+    // Mulai proses preload
+    console.log("Memulai preload untuk tiles dan icons...");
+    preloadImages();
 }
 
-Promise.all([
-    preloadTilesPromise(),
-    fetchMarkersPromise(),
-    preloadIcons()
-]).then(([highZoomList, markers]) => {
-    initMap();
-    createDevToolsPanel(map);
 
-    markers.forEach(markerData => {
-        addMarkerToMap(markerData);
-    });
 
-    // Preload tiles untuk zoom 8 & 9
-    highZoomList.forEach(({ z, x, y }) => {
-        const img = new Image();
-        img.src = `statics/yuan_${z}_${x}_${y}.webp`;
+
+// Memanggil preload untuk zoom 6, baru load zoom lebih tinggi jika diperlukan
+function preloadTilesPromise() {
+    return new Promise((resolve, reject) => {
+        preloadTiles(() => {
+            resolve('Preload zoom 6 selesai.');
+        });
     });
-}).catch(error => {
-    console.error('Error during preload or fetch:', error);
-    document.getElementById('loading-text').textContent = 'Failed to load data. Please try again later.';
-});
+}
