@@ -586,10 +586,10 @@ function initMap() {
     }).setView([parseFloat(center_position[0]), parseFloat(center_position[1])], 6);
 
     // Menambahkan tile layer
-    const tileLayer = L.tileLayer('statics/yuan_{z}_{x}_{y}.png', {
+    const tileLayer = L.tileLayer('https://bangonegaming.polar-app.org/ER_Earth/statics/yuan_{z}_{x}_{y}.webp', {
         tileSize: 256,
         minZoom: 6,
-        maxZoom: 9,
+        maxZoom: 11,
         noWrap: true,
         bounds: mapBounds,
         zoomFilter: function(coords, zoom) {
@@ -600,7 +600,7 @@ function initMap() {
         },
         getTileUrl: function(coords) {
             return this.options.zoomFilter(coords, coords.z)
-                ? `statics/yuan_${coords.z}_${coords.x}_${coords.y}.png`
+                ? `https://bangonegaming.polar-app.org/ER_Earth/statics/yuan_${coords.z}_${coords.x}_${coords.y}.webp`
                 : '';
         }
     }).addTo(map);
@@ -662,6 +662,7 @@ function showMarkers() {
 function getCategoryName(categoryId) {
     switch (categoryId) {
         case "1": return "teleport"; // Atur nama kategori untuk ID 1
+        case "29": return "bird"; // Atur nama kategori untuk ID 1
         case "2": return "treasure";
         case "3": return "zone";
         case "7": return "training";
@@ -1149,6 +1150,7 @@ function updateCategoryOptions() {
         case '2':
             categoryOptions = [
                 { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
+                { value: "29", text: "Bird", icon_url: "" },
                 { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
                 { value: "3", text: "Zone Commission", icon_url: "icons/icon_zone.png" },
                 { value: "7", text: "Limited Time Training", icon_url: "icons/icon_train.png" },
@@ -1171,6 +1173,7 @@ function updateCategoryOptions() {
         case '5':
             categoryOptions = [
                 { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
+                { value: "29", text: "Bird", icon_url: "" },
                 { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
                 { value: "3", text: "Zone Commission", icon_url: "icons/icon_zone.png" },
                 { value: "7", text: "Limited Time Training", icon_url: "icons/icon_train.png" },
@@ -1193,6 +1196,7 @@ function updateCategoryOptions() {
         case '4':
             categoryOptions = [
                 { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
+                { value: "29", text: "Bird", icon_url: "" },
                 { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
                 { value: "3", text: "Zone Commission", icon_url: "icons/icon_zone.png" },
                 { value: "7", text: "Limited Time Training", icon_url: "icons/icon_train.png" },
@@ -1215,6 +1219,7 @@ function updateCategoryOptions() {
         case '3':
             categoryOptions = [
                 { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
+                { value: "29", text: "Bird", icon_url: "" },
                 { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
                 { value: "3", text: "Zone Commission", icon_url: "icons/icon_zone.png" },
                 { value: "7", text: "Limited Time Training", icon_url: "icons/icon_train.png" },
@@ -1236,6 +1241,7 @@ function updateCategoryOptions() {
         case '6':
             categoryOptions = [
                 { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
+                { value: "29", text: "Bird", icon_url: "" },
                 { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
                 { value: "3", text: "Zone Commission", icon_url: "icons/icon_zone.png" },
                 { value: "7", text: "Limited Time Training", icon_url: "icons/icon_train.png" },
@@ -1258,6 +1264,7 @@ function updateCategoryOptions() {
         case '7':
             categoryOptions = [
                 { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
+                { value: "29", text: "Bird", icon_url: "" },
                 { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
                 { value: "3", text: "Zone Commission", icon_url: "icons/icon_zone.png" },
                 { value: "7", text: "Limited Time Training", icon_url: "icons/icon_train.png" },
@@ -1268,6 +1275,7 @@ function updateCategoryOptions() {
         case '8':
             categoryOptions = [
                 { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
+                { value: "29", text: "Bird", icon_url: "" },
                 { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
                 { value: "3", text: "Zone Commission", icon_url: "icons/icon_zone.png" },
                 { value: "7", text: "Limited Time Training", icon_url: "icons/icon_train.png" },
@@ -1278,6 +1286,7 @@ function updateCategoryOptions() {
         case '9':
             categoryOptions = [
                 { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
+                { value: "29", text: "Bird", icon_url: "" },
                 { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
                 { value: "3", text: "Zone Commission", icon_url: "icons/icon_zone.png" },
                 { value: "7", text: "Limited Time Training", icon_url: "icons/icon_train.png" },
@@ -1288,6 +1297,7 @@ function updateCategoryOptions() {
         case '10':
             categoryOptions = [
                 { value: "1", text: "Teleport", icon_url: "icons/icon_teleport.png" },
+                { value: "29", text: "Bird", icon_url: "" },
                 { value: "2", text: "Treasure Hunt", icon_url: "icons/icon_treasure.png" },
                 { value: "3", text: "Zone Commission", icon_url: "icons/icon_zone.png" },
                 { value: "7", text: "Limited Time Training", icon_url: "icons/icon_train.png" },
@@ -1507,6 +1517,7 @@ function submitReport(markerId, lat, lng, categoryId, nameEn, locType) {
 
 const categoryMap = {
     "1": "Teleport",
+    "29": "Bird",
     "2": "Treasure",
     "3": "Zone",
     "6": "Scrap",
@@ -3204,8 +3215,13 @@ function updateMiniMap(filterKey) {
   addMarkersForMiniMap(miniMapKey);
   console.log('MiniMap updated:', { main: info.main, secondary: info.secondary, zoomLevel });
 }
+let activeFloorIndex = 1;
+
+let activeDropdownMarker = null; // Variabel untuk menyimpan marker dropdown yang aktif
 
 function showHildeMap(index) {
+  console.log(`showHildeMap terpanggil dengan index ${index}`);
+
   // Jika klik index yang sama, toggle OFF
   if (activeHildeSecondaryIndex === index) {
     secondaryOverlayGroup.forEach(o => o.remove());
@@ -3216,18 +3232,21 @@ function showHildeMap(index) {
       mainOverlayHilde.getElement().style.filter = 'brightness(100%)';
     }
 
-    updateMarkers(); // Tambahan di sini
+    // Hapus dropdown jika ada
+    if (activeDropdownMarker) {
+      map.removeLayer(activeDropdownMarker);
+      activeDropdownMarker = null;
+    }
 
+    removeDropdown();
+    updateMarkers();
     return;
-}
+  }
 
-
-  // Ganti brightness utama jadi 50%
   if (mainOverlayHilde?.getElement()) {
     mainOverlayHilde.getElement().style.filter = 'brightness(50%)';
   }
 
-  // Hapus secondary sebelumnya
   secondaryOverlayGroup.forEach(o => o.remove());
   secondaryOverlayGroup = [];
 
@@ -3245,8 +3264,83 @@ function showHildeMap(index) {
 
   secondaryOverlayGroup.push(overlay);
   activeHildeSecondaryIndex = index;
+
+  // Cari info teleport (posisi marker tombol teleport)
+  const teleportInfo = mini_map_type.hilde.teleportButtons.find(t => t.index === index);
+  if (teleportInfo) {
+    map.setView([teleportInfo.lat, teleportInfo.lng], 10);
+  }
+
+  // Tampilkan dropdown hanya jika ada floors dan teleportInfo
+  if (selectedSecondary.floors && selectedSecondary.floors.length > 1 && teleportInfo) {
+    console.log(`Menampilkan ikon dropdown chfloor.webp untuk index ${index}`);
+
+    // Hapus dropdown jika ada
+    if (activeDropdownMarker) {
+      map.removeLayer(activeDropdownMarker);
+    }
+
+    const dropdownMarker = L.marker([teleportInfo.lat - 0.0070, teleportInfo.lng + 0.0030], { // Atur posisi sesuai kebutuhan
+      icon: L.divIcon({
+        className: 'custom-dropdown-icon',
+        html: `
+          <div class="floor-button-wrapper" style="position: relative;">
+            <img src="icons/chfloor.webp" class="floor-icon" style="width: 25px; height: 25px; cursor: pointer;" />
+            <div class="floor-popup" style="display: none; position: absolute; top: 45px; left: 0; background: rgba(19, 39, 96, 0.613); border-radius: 10px; border: 2px solid #889dcb; padding: 7px; z-index: 9999; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; gap: 4px;">
+          </div>
+        `,
+        iconSize: [40, 40], // Sesuaikan ukuran gambar ikon dropdown
+        iconAnchor: [0, 0], // Pastikan anchor berada tepat di posisi marker
+      })
+    }).addTo(map);
+
+    activeDropdownMarker = dropdownMarker; // Menyimpan marker aktif
+
+    const dropdownElement = dropdownMarker.getElement();
+    const wrapper = dropdownElement.querySelector('.floor-button-wrapper');
+    const icon = wrapper.querySelector('.floor-icon');
+    const popup = wrapper.querySelector('.floor-popup');
+
+    icon.addEventListener('click', () => {
+      if (popup.style.display === 'block') {
+        popup.style.display = 'none';
+        return;
+      }
+
+      // Kosongkan dan isi ulang popup
+      popup.innerHTML = '';
+      selectedSecondary.floors.forEach((f, i) => {
+        const btn = document.createElement('div');
+        btn.textContent = f.name || `FLOOR ${i + 1}`;
+        btn.style.cssText = 'cursor:pointer; padding:3px 10px; margin:2px 0; background: rgba(10, 28, 61, 0.883); border-radius:3px; color: white; font-size: 10px; font-family: "Arial", sans-serif;';
+
+        btn.addEventListener('click', () => {
+          showFloorOnSecondary(index, i);
+          popup.style.display = 'none';
+        });
+        popup.appendChild(btn);
+      });
+
+      popup.style.display = 'block';
+    });
+  }
+
   updateMarkers();
 }
+
+
+
+function removeDropdown() {
+  teleportButtonOverlays = teleportButtonOverlays.filter(el => {
+    if (el instanceof HTMLElement && el.classList.contains('dropdown-icon-wrapper')) {
+      el.remove();
+      return false;
+    }
+    return true;
+  });
+  console.log("Dropdown removed");
+}
+
 
 function addTeleportButtons() {
   const buttons = mini_map_type.hilde.teleportButtons;
@@ -3255,7 +3349,6 @@ function addTeleportButtons() {
   teleportButtonOverlays.forEach(marker => map.removeLayer(marker));
   teleportButtonOverlays = [];
 
-  // Tambahkan marker teleport
   buttons.forEach(({ index, lat, lng }) => {
     const html = `
       <div class="teleport-wrapper">
@@ -3266,9 +3359,9 @@ function addTeleportButtons() {
 
     const icon = L.divIcon({
       html,
-      className: '', // Biarkan kosong, semua dihandle via HTML
-      iconSize: [40, 60],
-      iconAnchor: [20, 40]
+      className: '',
+      iconSize: [40, 40],
+      iconAnchor: [20, 20]
     });
 
     const marker = L.marker([lat, lng], {
@@ -3277,13 +3370,37 @@ function addTeleportButtons() {
     }).addTo(map);
 
     marker.on('click', () => {
-      showHildeMap(index);
+      console.log(`Teleport clicked: index ${index}`);
+      showHildeMap(index); // Menampilkan secondary dan dropdown lantai
     });
 
     teleportButtonOverlays.push(marker);
   });
 }
 
+function showFloorOnSecondary(index, floorIndex) {
+  const hilde = mini_map_type["hilde"];
+  const secondary = hilde.secondary.find(s => s.index === index);
+  if (!secondary || !secondary.floors || !secondary.floors[floorIndex]) return;
+
+  const selectedFloor = secondary.floors[floorIndex];
+  const bounds = getImageBounds(selectedFloor.map_position);
+
+  // Hapus secondary overlay sebelumnya
+  secondaryOverlayGroup.forEach(o => o.remove());
+  secondaryOverlayGroup = [];
+
+  // Tambahkan overlay baru
+  const overlay = L.imageOverlay(selectedFloor.map_url, bounds).addTo(map);
+  const element = overlay.getElement();
+  if (element) {
+    element.style.filter = 'drop-shadow(0 0 6px white)';
+    element.style.zIndex = 300;
+  }
+
+  secondaryOverlayGroup.push(overlay);
+  updateMarkers();
+}
 
 // Track time spent before user leaves the page
 window.addEventListener('beforeunload', () => {
@@ -3880,6 +3997,7 @@ function isCategoryMatch(marker) {
     if (
         (activeFilters.includes('treasure') && category === '2') ||
         (activeFilters.includes('teleport') && category === '1') ||
+        (activeFilters.includes('bird') && category === '29') ||
         (activeFilters.includes('fishing') && ['9', '10', '11', '12', '13', '14'].includes(category)) ||
         (activeFilters.includes('zone') && category === '3') ||
         (activeFilters.includes('scrap') && category === '6') ||

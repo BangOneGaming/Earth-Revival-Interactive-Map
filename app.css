@@ -252,6 +252,26 @@ body {
         transform: translateY(-15px);
     }
 }
+#teleport-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex; /* Supaya anak-anaknya dalam satu baris */
+  align-items: center;
+  gap: 8px; /* Jarak antara teleport dan dropdown */
+  z-index: 500;
+}
+
+.map-dropdown {
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 4px;
+  background: white;
+  border: 1px solid #aaa;
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+
 .teleport-wrapper {
   position: relative;
   display: flex;
@@ -268,9 +288,9 @@ body {
 .teleport-indicator {
   width: 0;
   height: 0;
-  border-left: 6px solid transparent;  /* Ukuran segitiga lebih kecil */
-  border-right: 6px solid transparent; /* Ukuran segitiga lebih kecil */
-  border-top: 8px solid white;           /* Segitiga mengarah ke bawah */
+  border-left: 6px solid transparent;  
+  border-right: 6px solid transparent;
+  border-top: 8px solid white;           
   margin-bottom: 4px;
   animation: bounce 1s infinite;
   filter: drop-shadow(0 0 3px white);

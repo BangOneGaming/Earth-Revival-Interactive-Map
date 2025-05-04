@@ -219,6 +219,11 @@ const categoryCounts = {
         "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
         "training": { max: 0, current: 0, icon: categoryIcons.training },
         "scenery": { max: 0, current: 0, icon: categoryIcons.scenery }
+    },
+    "10": {  
+        "treasure": { max: 0, current: 0, icon: categoryIcons.treasure },
+        "training": { max: 0, current: 0, icon: categoryIcons.training },
+        "scenery": { max: 0, current: 0, icon: categoryIcons.scenery }
     }
 };
 
@@ -230,6 +235,7 @@ const fishingCategories = [9, 10, 11, 12, 13, 14]; // Combine fishing categories
 // Map category IDs to their names
 const categoryNames = {
     "1": "Teleport",
+    "29": "Bird",
     "2": "Treasure Hunt",
     "3": "Zone Commission",
     "7": "Limited Time Training",
@@ -266,6 +272,7 @@ const locTypeNames = {
     "6": "Kepler Harbour",
     "7": "Mirror World Sundale Valley",
     "8": "Mirror World Howling Gobi",
-    "9": "Mirror World Edengate"
+    "9": "Mirror World Edengate",
+    "10": "Hilde"
 };
 

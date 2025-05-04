@@ -228,7 +228,11 @@
     <div class="filter-btn" data-filter="loc_type9" style="background-image: url('icons/darkeden.png');">Edengate<br>(Mirror World)</div>
     <div class="filter-btn" id="zoomBtn" style="background-image: url('icons/space.png');">Pegasus<br> <b>(Go to Space)</b></div>
     <div class="filter-btn" data-filter="loc_type10" style="background-image: url('icons/hilde.png');">Hilde</div>
+    <div class="filter-btn" onclick="location.href='/The-Land-of-The-Lost/index.html'" style="background-image: url('icons/landlost.png');">
+        The Land of The Lost <br> (Underdevelopment)
+    </div>
 </div>
+
 
 <div class="count-container">
 
@@ -511,6 +515,10 @@
         <input type="checkbox" class="filter-checkbox" data-filter="treasure">
         <img src="icons/icon_treasure.png" alt="Treasure"> Treasure
     </label>
+        <label class="filter-checkbox-btn">
+        <input type="checkbox" class="filter-checkbox" data-filter="bird">
+        <img src="icons/icon_default.png" alt="Bird"> Treasure
+    </label>
     <label class="filter-checkbox-btn">
         <input type="checkbox" class="filter-checkbox" data-filter="fishing">
         <img src="icons/icon_fishing.png" alt="Fishing"> Fishing
@@ -636,6 +644,7 @@
 <select id="category" name="category" required>
     <option value="">Select Category</option>
     <option value="1">Teleport</option>
+            <option value="29">Bird</option>
     <option value="2">Treasure Hunt</option>
     <option value="3">Zone Commission</option>
     <option value="7">Limited Time Training</option>
@@ -749,7 +758,7 @@
 
 <script src="category.js"></script>
 <script src="adsense.js?v=4.2"></script>
-<script src="app.js?v=4.2"></script>
+<script src="app.js?v=4.4"></script>
 </body>
 
 
