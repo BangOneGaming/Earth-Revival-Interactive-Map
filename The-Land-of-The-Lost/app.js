@@ -3,8 +3,6 @@ const isPreloadEnabled = true;
 let map; // Global map
 let markersData = {}; // Sekarang bentuk object, bukan array
 if (isPreloadEnabled) {
-    console.log('[Preload] Memulai preloadTilesPromise dan fetchMarkersPromise...');
-    
     Promise.all([
         preloadTilesPromise(),
         fetchMarkersPromise()
@@ -16,7 +14,6 @@ if (isPreloadEnabled) {
             addMarkerToMap(markerData);
         });
 
-        // Setelah map siap, baru preload highZoomList
 
     }).catch(error => {
         console.error('=== ERROR DETAIL ===', error);
@@ -25,7 +22,6 @@ if (isPreloadEnabled) {
     });
 }
 
-// Fetch markers, sekarang dibuat Promise
 function fetchMarkersPromise() {
     return fetch('https://autumn-dream-8c07.square-spon.workers.dev/thelandofthelost')
         .then(response => response.json())
@@ -40,27 +36,18 @@ function fetchMarkersPromise() {
         });
 }
 
-// Ini tetap ada kalau kamu mau dipakai di mode isPreloadEnabled = false
 function fetchMarkersAndAddToMap() {
-    console.log('[FetchMarkers] fetchMarkersAndAddToMap() dipanggil - mulai fetch dan refresh marker.');
-
     fetch('https://autumn-dream-8c07.square-spon.workers.dev/thelandofthelost')
         .then(response => response.json())
         .then(data => {
-            console.log('[FetchMarkers] Loaded marker data:', data);
-
             if (Array.isArray(data)) {
-                console.log('[FetchMarkers] Data adalah array. Menambahkan semua marker...');
                 data.forEach(markerData => {
                     addMarkerToMap(markerData);
                 });
             } else if (typeof data === 'object' && data !== null) {
-                console.log('[FetchMarkers] Data adalah object. Menambahkan semua marker...');
                 Object.keys(data).forEach(key => {
                     addMarkerToMap(data[key]);
                 });
-            } else {
-                console.error('[FetchMarkers] Invalid marker data format:', data);
             }
         })
         .catch(error => {
@@ -68,21 +55,14 @@ function fetchMarkersAndAddToMap() {
         });
 }
 
-
-// Listen for changes on checkboxes
 document.querySelectorAll('#filter-container input[type="checkbox"]').forEach((checkbox) => {
     checkbox.addEventListener('change', () => {
-        console.log(`Checkbox Changed: ${checkbox.id}, Checked: ${checkbox.checked}`);
         filterMarkers();
     });
 });
 
-// Function to filter markers based on the selected checkboxes
 function filterMarkers() {
     const filteredCategoryIds = [];
-
-    // Periksa status checkbox dan masukkan kategori yang dicentang ke filteredCategoryIds
-    console.log("Checking checkbox states...");
 
     const categoryMapping = {
         'filter-treasure': 2,
@@ -93,48 +73,32 @@ function filterMarkers() {
     };
 
     document.querySelectorAll('#filter-container input[type="checkbox"]').forEach((checkbox) => {
-        console.log(`Checkbox ID: ${checkbox.id}, Checked: ${checkbox.checked}`);  // Log status checkbox
         if (checkbox.checked) {
-            // Mengambil kategori ID menggunakan pemetaan
             const categoryId = categoryMapping[checkbox.id];
-            console.log(`Adding Category ID: ${categoryId}`);  // Log kategori yang ditambahkan
             if (categoryId && !isNaN(categoryId)) {
-                filteredCategoryIds.push(categoryId);  // Tambahkan kategori yang dicentang
+                filteredCategoryIds.push(categoryId);
             }
         }
     });
 
-    console.log('Filtered Category IDs after checkbox check:', filteredCategoryIds);  // Log setelah checkbox diperiksa
-
-    // Jika tidak ada kategori yang dicentang, tampilkan semua marker
     if (filteredCategoryIds.length === 0) {
-        console.log('No categories selected, showing all markers');
-        // Menampilkan semua marker
         Object.values(markersData).forEach((markerData) => {
             const marker = markerData.marker;
             if (!map.hasLayer(marker)) {
-                console.log(`[filterMarkers] Adding marker ID: ${markerData.id} to map.`);
                 marker.addTo(map);
             }
         });
     } else {
-        // Menyaring marker berdasarkan kategori yang dicentang
-        console.log("Filtering markers based on selected categories...");
         Object.values(markersData).forEach((markerData) => {
             const marker = markerData.marker;
             const categoryId = parseInt(markerData.category_id);
 
-            console.log(`Marker ID: ${markerData.id}, Category ID: ${categoryId}`);  // Log ID dan kategori marker
-            // Menampilkan marker jika kategori ada dalam filteredCategoryIds
             if (filteredCategoryIds.includes(categoryId)) {
                 if (!map.hasLayer(marker)) {
-                    console.log(`[filterMarkers] Adding marker ID: ${markerData.id} to map.`);
                     marker.addTo(map);
                 }
             } else {
-                // Menyembunyikan marker jika kategori tidak ada dalam filteredCategoryIds
                 if (map.hasLayer(marker)) {
-                    console.log(`[filterMarkers] Removing marker ID: ${markerData.id} from map.`);
                     marker.removeFrom(map);
                 }
             }
@@ -142,7 +106,6 @@ function filterMarkers() {
     }
 }
 
-// Modify addMarkerToMap to save the actual marker object in markersData
 function addMarkerToMap(markerData) {
     const { id, ys_id, lat, lng, category_id, name, en_name, desc } = markerData;
 
@@ -173,80 +136,60 @@ function addMarkerToMap(markerData) {
         iconAnchor: [16, 32],
         popupAnchor: [0, -32]
     });
+const rawDesc = desc ? desc.replace(/\(\s*[^,]+,\s*[^\)]+\s*\)/, '').trim() : '';
+const displayDesc = (rawDesc && rawDesc !== '0' && rawDesc !== '.') ? rawDesc : '';
 
-    // Create marker
-// Ekstrak Y dan Z dari deskripsi
-// Ekstrak Y dan Z dari deskripsi menggunakan regex
-const regex = /\(([^,]+),\s*([^\)]+)\)/;
-const descMatch = desc && regex.exec(desc);
-const coordinateY = descMatch ? descMatch[1] : '';  // Koordinat Y
-const coordinateZ = descMatch ? descMatch[2] : '';  // Koordinat Z
+    const regex = /\(([^,]+),\s*([^\)]+)\)/;
+    const descMatch = desc && regex.exec(desc);
+    const coordinateY = descMatch ? descMatch[1] : '';
+    const coordinateZ = descMatch ? descMatch[2] : '';
 
-// Menambahkan marker dengan opacity default 1
-const marker = L.marker([parseFloat(lat), parseFloat(lng)], {
+ const marker = L.marker([parseFloat(lat), parseFloat(lng)], {
     icon: customIcon,
-    opacity: 1  // Mengatur opacity default ke 1
+    opacity: 1
 }).bindPopup(`
 <div class="leaflet-popup-content" style="z-index: 9999;">
     <h4>${en_name || name}</h4>
-    
-    <!-- Menampilkan Description hanya jika desc tidak kosong -->
-    ${desc && !descMatch ? `<p><strong>Description:</strong> <br>${desc}</p>` : ''}
-    
+${displayDesc && displayDesc !== '0' && displayDesc !== '.' ? `<p><strong>Description:</strong> <br>${displayDesc}</p>` : ''}
     <p><strong>ID:</strong> ${id}</p>
-    
-    <!-- Menampilkan Koordinat Y dan Z secara terpisah -->
     ${coordinateY && coordinateZ ? `<p><strong>Coordinates:</strong> (${coordinateY}, ${coordinateZ})</p>` : ''}
-    
-    <!-- Menampilkan Ys ID jika ada -->
-    ${ys_id ? `
-        <p><strong>Contribution By:</strong> ${ys_id}</p>
-    ` : ''}
-    
-    <!-- Ekstrak (Y, Z) dari desc menggunakan regex untuk tombol copy -->
+    ${ys_id ? `<p><strong>Contribution By:</strong> ${ys_id}</p>` : ''}
     ${coordinateY && coordinateZ ? `
     <div class="copy-buttons">
         <button class="copyButton" onclick="copyCoordinate('Y', '${coordinateY}', '${id}')">Copy Y</button>
         <button class="copyButton" onclick="copyCoordinate('Z', '${coordinateZ}', '${id}')">Copy Z</button>
     </div>
     ` : ''}
-    
     <div class="copy-feedback" id="copyFeedback-${id}">
         <span class="feedback-icon">&#x2714;</span> Coordinate copied!
     </div>
 </div>
 `);
 
-// Menangani event contextmenu (klik kanan) untuk toggle opacity
-marker.on('contextmenu', (e) => {
-    // Dapatkan opacity marker saat ini, default ke 1 jika tidak ada
-    const currentOpacity = marker.options.opacity || 1.0;
 
-    // Toggle opacity antara 1.0 dan 0.5
-    const newOpacity = currentOpacity === 1.0 ? 0.5 : 1.0;
-    marker.setOpacity(newOpacity);
-});
+    marker.on('contextmenu', (e) => {
+        const currentOpacity = marker.options.opacity || 1.0;
+        const newOpacity = currentOpacity === 1.0 ? 0.5 : 1.0;
+        marker.setOpacity(newOpacity);
+    });
 
-// Menyimpan data marker dalam objek markersData
-markersData[id] = {
-    id: id,
-    ys_id: ys_id,
-    lat: parseFloat(lat),
-    lng: parseFloat(lng),
-    category_id: category_id,
-    name: name,
-    en_name: en_name || name,
-    desc: desc || 'No description',
-    coordinateY: coordinateY,
-    coordinateZ: coordinateZ,
-    marker: marker
-};
+    markersData[id] = {
+        id: id,
+        ys_id: ys_id,
+        lat: parseFloat(lat),
+        lng: parseFloat(lng),
+        category_id: category_id,
+        name: name,
+        en_name: en_name || name,
+        desc: desc || 'No description',
+        coordinateY: coordinateY,
+        coordinateZ: coordinateZ
+        
+    };
 
-// Menambahkan marker ke peta
-marker.addTo(map);
-console.log(`[AddMarker] Marker ID: ${id}, Category ID: ${category_id}`);
+    marker.addTo(map);
 }
-// Fungsi untuk menyalin koordinat
+
 function copyCoordinate(type, coordinate, markerId) {
     navigator.clipboard.writeText(coordinate).then(() => {
         const feedback = document.getElementById(`copyFeedback-${markerId}`);

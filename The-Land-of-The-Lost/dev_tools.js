@@ -5,6 +5,8 @@ let clickTimeout = null;  // Variable untuk menyimpan timeout
 let touchTimeout = null;  // Untuk menunggu tap lama
 let isTouching = false;   // Untuk menandakan apakah sedang menahan layar
 
+
+
 function createDevToolsPanel(map) {
     const mapContainer = document.getElementById('map');
     
@@ -21,6 +23,77 @@ function createDevToolsPanel(map) {
     confirmMarkerBtn.className = 'dev-tools-button';
     confirmMarkerBtn.style.display = 'none'; // awalnya sembunyi
 
+    const showJsonBtn = document.createElement('button');
+    showJsonBtn.innerHTML = 'Show JSON';
+    showJsonBtn.className = 'dev-tools-button';
+
+    const jsonTextArea = document.createElement('textarea');
+    jsonTextArea.className = 'json-text-area';
+    jsonTextArea.style.width = '300px';
+    jsonTextArea.style.height = '200px';
+    jsonTextArea.style.display = 'none'; // Awalnya sembunyikan textarea
+
+showJsonBtn.onclick = function () {
+    const overlay = document.createElement('div');
+    overlay.className = 'json-modal-overlay';
+
+    const modal = document.createElement('div');
+    modal.className = 'json-modal-content';
+
+    const textarea = document.createElement('textarea');
+    textarea.className = 'json-text-area';
+    textarea.value = JSON.stringify(markersData, null, 2);
+
+    const saveBtn = document.createElement('button');
+    saveBtn.innerText = 'Save & Send';
+    saveBtn.style.marginRight = '10px';
+
+    const closeBtn = document.createElement('button');
+    closeBtn.innerText = 'Cancel';
+
+saveBtn.onclick = function () {
+    try {
+        const updatedData = JSON.parse(textarea.value);
+        fetch('https://autumn-dream-8c07.square-spon.workers.dev/thelandofthelost', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedData)
+        }).then(response => {
+            if (response.ok) {
+                alert('Data berhasil dikirim!');
+                markersData = updatedData;
+                document.body.removeChild(overlay);
+
+                // Delay sebelum memanggil ulang data
+                setTimeout(() => {
+                    fetchMarkersAndAddToMap();
+                }, 2000); // 2 detik
+            } else {
+                alert('Gagal mengirim data ke server. Status: ' + response.status);
+            }
+        }).catch(error => {
+            alert('Error: ' + error.message);
+        });
+    } catch (e) {
+        alert('Format JSON tidak valid!');
+    }
+};
+
+
+    closeBtn.onclick = function () {
+        document.body.removeChild(overlay);
+    };
+
+    modal.appendChild(textarea);
+    modal.appendChild(saveBtn);
+    modal.appendChild(closeBtn);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+};
+
+
     addMarkerBtn.onclick = function () {
         console.log('[AddMarker] Button clicked');
 
@@ -34,12 +107,24 @@ function createDevToolsPanel(map) {
         ensureLastMarkerIdUpToDate().then(() => {
             const teleportIcon = L.icon({
                 iconUrl: 'https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_default.png',
-                iconSize: [50, 50],
-                iconAnchor: [25, 50]
+                iconSize: [32, 32],
+                iconAnchor: [16, 32],
             });
 
             const marker = L.marker(map.getCenter(), { icon: teleportIcon, draggable: true }).addTo(map);
             currentTempMarker = marker;
+
+            // Tentukan ID berdasarkan urutan
+            const newMarkerId = lastMarkerId + 1;
+            lastMarkerId = newMarkerId;  // Update lastMarkerId
+
+            // Simpan data marker ke dalam markersData
+            markersData[newMarkerId] = {
+                id: newMarkerId,
+                lat: marker.getLatLng().lat,
+                lng: marker.getLatLng().lng,
+                iconUrl: 'https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_default.png'
+            };
 
             confirmMarkerBtn.style.display = 'none';
             addMarkerBtn.style.display = 'none'; // Hide Add Marker button
@@ -74,64 +159,65 @@ function createDevToolsPanel(map) {
 
     panel.appendChild(addMarkerBtn);
     panel.appendChild(confirmMarkerBtn);
+    panel.appendChild(showJsonBtn);
 
     mapContainer.appendChild(panel);
 
     // Event listener untuk mendeteksi klik dan menunggu 5 detik sebelum menampilkan panel
-mapContainer.addEventListener('mousedown', function () {
-    clickTimeout = setTimeout(function () {
-        console.log("Long press detected, showing panel");
-        panel.style.display = 'block';
-    }, 5000);  // 5 detik
-});
-
-mapContainer.addEventListener('mouseup', function () {
-    clearTimeout(clickTimeout);  // Batalkan timeout jika pengguna melepaskan sebelum 5 detik
-});
-
-
-mapContainer.addEventListener('touchstart', function(e) {
-    // Batalkan timeout sebelumnya jika ada
-    if (touchTimeout) {
-        clearTimeout(touchTimeout);
-    }
-
-    // Tandai bahwa sedang menekan layar
-    isTouching = true;
-
-    // Set timeout untuk menangani tap lama (5 detik)
-    touchTimeout = setTimeout(function() {
-        if (isTouching) {
-            // Tampilkan panel setelah 5 detik
+    mapContainer.addEventListener('mousedown', function () {
+        clickTimeout = setTimeout(function () {
+            console.log("Long press detected, showing panel");
             panel.style.display = 'block';
+        }, 5000);  // 5 detik
+    });
+
+    mapContainer.addEventListener('mouseup', function () {
+        clearTimeout(clickTimeout);  // Batalkan timeout jika pengguna melepaskan sebelum 5 detik
+    });
+
+
+
+
+    mapContainer.addEventListener('touchstart', function(e) {
+        // Batalkan timeout sebelumnya jika ada
+        if (touchTimeout) {
+            clearTimeout(touchTimeout);
         }
-    }, 5000);  // 5000 ms = 5 detik
-});
 
-mapContainer.addEventListener('touchend', function() {
-    // Jika layar dilepaskan, reset status
-    isTouching = false;
-    if (touchTimeout) {
-        clearTimeout(touchTimeout);
-    }
-});
+        // Tandai bahwa sedang menekan layar
+        isTouching = true;
 
-mapContainer.addEventListener('touchmove', function() {
-    // Batalkan tap lama jika layar digeser
-    if (touchTimeout) {
-        clearTimeout(touchTimeout);
-    }
-    isTouching = false;  // Reset jika ada pergerakan
-});
+        // Set timeout untuk menangani tap lama (5 detik)
+        touchTimeout = setTimeout(function() {
+            if (isTouching) {
+                // Tampilkan panel setelah 5 detik
+                panel.style.display = 'block';
+            }
+        }, 5000);  // 5000 ms = 5 detik
+    });
 
+    mapContainer.addEventListener('touchend', function() {
+        // Jika layar dilepaskan, reset status
+        isTouching = false;
+        if (touchTimeout) {
+            clearTimeout(touchTimeout);
+        }
+    });
 
+    mapContainer.addEventListener('touchmove', function() {
+        // Batalkan tap lama jika layar digeser
+        if (touchTimeout) {
+            clearTimeout(touchTimeout);
+        }
+        isTouching = false;  // Reset jika ada pergerakan
+    });
 }
 
 function createMarkerForm(marker, map) {
     const form = document.createElement('form');
     form.id = 'marker_contribution';
 
-    lastMarkerId++;
+    
     const latlng = marker.getLatLng();
     console.log('[CreateMarkerForm] Creating form for marker at:', latlng);
 
@@ -285,7 +371,7 @@ form.onsubmit = function (e) {
 
         setTimeout(() => {
             fetchMarkersAndAddToMap();
-        }, 1000); // 1000 ms = 1 detik
+        }, 2000); // 1000 ms = 1 detik
     }).catch((error) => {
         console.error('Error:', error);
         closeMarkerContributionModal();
@@ -310,16 +396,13 @@ function showAddMarkerButton() {
 }
 
 function ensureLastMarkerIdUpToDate() {
-    return fetchExistingData().then(existingData => {
-        if (!existingData || Object.keys(existingData).length === 0) {
-            lastMarkerId = 0;
-        } else {
-            const ids = Object.keys(existingData).map(id => parseInt(id, 10));
-            lastMarkerId = Math.max(...ids);
-        }
-        console.log('[Sync] lastMarkerId updated to:', lastMarkerId);
+    return new Promise(resolve => {
+        // Asumsikan kita akan mengambil nilai terakhir dari markersData
+        lastMarkerId = Object.keys(markersData).length ? Math.max(...Object.keys(markersData).map(Number)) : 0;
+        resolve();
     });
 }
+
 
 // Ambil data yang sudah ada
 function fetchExistingData() {
@@ -342,14 +425,17 @@ function mergeData(existingData, newData) {
 
 // Kirim data gabungan ke server
 function sendDataToServer(mergedData) {
+    // Remove any circular references before serializing the object
+    const cleanedData = cleanCircularReferences(mergedData);
+
     fetch('https://autumn-dream-8c07.square-spon.workers.dev/thelandofthelost', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(mergedData),
+        body: JSON.stringify(cleanedData), // use the cleaned data
     })
-    .then(response => response.text()) // <- ini fix nya
+    .then(response => response.text())
     .then(data => {
         console.log('Success:', data);
         alert('Data successfully saved!');
@@ -360,7 +446,20 @@ function sendDataToServer(mergedData) {
     });
 }
 
-
+// Function to clean circular references from the data
+function cleanCircularReferences(obj) {
+    const seen = new Set();
+    function cleaner(key, value) {
+        if (typeof value === 'object' && value !== null) {
+            if (seen.has(value)) {
+                return; // avoid circular reference
+            }
+            seen.add(value);
+        }
+        return value;
+    }
+    return JSON.parse(JSON.stringify(obj, cleaner));
+}
 
 
 
