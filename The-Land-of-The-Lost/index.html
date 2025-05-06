@@ -27,32 +27,44 @@
   Loading markers...
 </div>
 
+<button id="toggle-filter-btn">
+    <img src="https://earthrevivalinteractivemaps.bangonegaming.com/icons/toggle_btn.png" alt="Toggle Filter">
+</button>
+
 <div id="filter-container">
     <label>
         <input type="checkbox" id="filter-treasure" checked>
         <img src="https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_treasure.png" alt="Treasure Icon">
-        <span class="filter-text">Treasure</span>
+        <span class="filter-text">Treasure <span class="filter-count" data-category="2">0/0</span></span>
     </label><br>
     <label>
         <input type="checkbox" id="filter-train" checked>
         <img src="https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_train.png" alt="Train Icon">
-        <span class="filter-text">Train</span>
+        <span class="filter-text">Train <span class="filter-count" data-category="3">0/0</span></span>
     </label><br>
     <label>
         <input type="checkbox" id="filter-zone" checked>
         <img src="https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_zone.png" alt="Zone Icon">
-        <span class="filter-text">Zone</span>
+        <span class="filter-text">Zone <span class="filter-count" data-category="4">0/0</span></span>
     </label><br>
     <label>
         <input type="checkbox" id="filter-scenery" checked>
         <img src="https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_scenery.png" alt="Scenery Icon">
-        <span class="filter-text">Scenery</span>
+        <span class="filter-text">Scenery <span class="filter-count" data-category="5">0/0</span></span>
     </label><br>
     <label>
         <input type="checkbox" id="filter-resource" checked>
         <img src="https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_resource.png" alt="Resource Icon">
-        <span class="filter-text">Resource</span>
+        <span class="filter-text">Resource <span class="filter-count" data-category="6">0/0</span></span>
     </label><br>
+</div>
+
+<div id="uploadModal" style="display:none; position:fixed; top:30%; left:50%; transform:translate(-50%, -50%); background:white; border:1px solid #ccc; padding:20px; z-index:99999;">
+    <h3 id="uploadTitle">Upload Image</h3>
+    <input type="file" id="uploadInput" accept="image/*" />
+    <br><br>
+    <button onclick="submitUpload()">Submit</button>
+    <button onclick="closeUploadPopup()">Cancel</button>
 </div>
 
 

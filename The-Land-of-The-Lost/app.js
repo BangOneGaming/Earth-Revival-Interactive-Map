@@ -1,7 +1,10 @@
 const isPreloadEnabled = true;
 
 let map; // Global map
-let markersData = {}; // Sekarang bentuk object, bukan array
+let markersData = {};       // Data asli dari marker
+let leafletMarkers = {};    // Objek Leaflet marker
+let categoryCounts = {}; // { 2: { total: 0, hidden: 0 }, ... }
+
 if (isPreloadEnabled) {
     Promise.all([
         preloadTilesPromise(),
@@ -12,6 +15,8 @@ if (isPreloadEnabled) {
 
         markers.forEach(markerData => {
             addMarkerToMap(markerData);
+            updateFilterCounts();
+            
         });
 
 
@@ -81,33 +86,47 @@ function filterMarkers() {
         }
     });
 
-    if (filteredCategoryIds.length === 0) {
-        Object.values(markersData).forEach((markerData) => {
-            const marker = markerData.marker;
+    Object.entries(markersData).forEach(([id, markerData]) => {
+        const marker = leafletMarkers[id];
+        const categoryId = parseInt(markerData.category_id);
+
+        if (!marker) return; // safety check
+
+        if (filteredCategoryIds.length === 0 || filteredCategoryIds.includes(categoryId)) {
             if (!map.hasLayer(marker)) {
                 marker.addTo(map);
             }
-        });
-    } else {
-        Object.values(markersData).forEach((markerData) => {
-            const marker = markerData.marker;
-            const categoryId = parseInt(markerData.category_id);
-
-            if (filteredCategoryIds.includes(categoryId)) {
-                if (!map.hasLayer(marker)) {
-                    marker.addTo(map);
-                }
-            } else {
-                if (map.hasLayer(marker)) {
-                    marker.removeFrom(map);
-                }
+        } else {
+            if (map.hasLayer(marker)) {
+                marker.removeFrom(map);
+                updateFilterCounts();
+                
             }
-        });
-    }
+        }
+    });
 }
 
+    // Function to show image and hide the button
+    function showImage(id) {
+        // Show the image
+        document.getElementById(`img-${id}`).style.display = 'block';
+        
+        // Hide the "Show Image" button
+        document.getElementById(`showImageBtn-${id}`).style.display = 'none';
+        
+        // Optionally, you can hide the upload button after image is shown
+        document.getElementById(`uploadImageBtn-${id}`).style.display = 'none';
+    }
+
+    // Function to handle image upload (dummy function for now)
+    function uploadImage(id) {
+        alert('Upload functionality is not implemented yet for this marker.');
+    }
+
+
+
 function addMarkerToMap(markerData) {
-    const { id, ys_id, lat, lng, category_id, name, en_name, desc } = markerData;
+    const { id, ys_id, lat, lng, category_id, name, en_name, desc, image_info } = markerData;
 
     let iconUrl = '';
     switch (parseInt(category_id)) {
@@ -136,42 +155,82 @@ function addMarkerToMap(markerData) {
         iconAnchor: [16, 32],
         popupAnchor: [0, -32]
     });
-const rawDesc = desc ? desc.replace(/\(\s*[^,]+,\s*[^\)]+\s*\)/, '').trim() : '';
-const displayDesc = (rawDesc && rawDesc !== '0' && rawDesc !== '.') ? rawDesc : '';
+
+    const rawDesc = desc ? desc.replace(/\(\s*[^,]+,\s*[^\)]+\s*\)/, '').trim() : '';
+    const displayDesc = (rawDesc && rawDesc !== '0' && rawDesc !== '.') ? rawDesc : '';
 
     const regex = /\(([^,]+),\s*([^\)]+)\)/;
     const descMatch = desc && regex.exec(desc);
     const coordinateY = descMatch ? descMatch[1] : '';
     const coordinateZ = descMatch ? descMatch[2] : '';
 
- const marker = L.marker([parseFloat(lat), parseFloat(lng)], {
-    icon: customIcon,
-    opacity: 1
-}).bindPopup(`
-<div class="leaflet-popup-content" style="z-index: 9999;">
-    <h4>${en_name || name}</h4>
-${displayDesc && displayDesc !== '0' && displayDesc !== '.' ? `<p><strong>Description:</strong> <br>${displayDesc}</p>` : ''}
-    <p><strong>ID:</strong> ${id}</p>
-    ${coordinateY && coordinateZ ? `<p><strong>Coordinates:</strong> (${coordinateY}, ${coordinateZ})</p>` : ''}
-    ${ys_id ? `<p><strong>Contribution By:</strong> ${ys_id}</p>` : ''}
-    ${coordinateY && coordinateZ ? `
-    <div class="copy-buttons">
-        <button class="copyButton" onclick="copyCoordinate('Y', '${coordinateY}', '${id}')">Copy Y</button>
-        <button class="copyButton" onclick="copyCoordinate('Z', '${coordinateZ}', '${id}')">Copy Z</button>
-    </div>
-    ` : ''}
-    <div class="copy-feedback" id="copyFeedback-${id}">
-        <span class="feedback-icon">&#x2714;</span> Coordinate copied!
-    </div>
-</div>
-`);
+    // Ambil opacity tersimpan (jika ada)
+    const savedOpacities = JSON.parse(localStorage.getItem('markerOpacities') || '{}');
+    const savedOpacity = savedOpacities[id] !== undefined ? savedOpacities[id] : 1;
 
+    const marker = L.marker([parseFloat(lat), parseFloat(lng)], {
+        icon: customIcon,
+        opacity: savedOpacity
+    }).bindPopup(`
+        <div class="leaflet-popup-content" style="z-index: 9999;">
+            <h4>${en_name || name}</h4>
+            ${displayDesc && displayDesc !== '0' && displayDesc !== '.' ? `<p><strong>Description:</strong> <br>${displayDesc}</p>` : ''}
+            <p><strong>ID:</strong> ${id}</p>
+            
+            ${coordinateY && coordinateZ ? `<p><strong>Coordinates:</strong> (${coordinateY}, ${coordinateZ})</p>` : ''}
+            ${ys_id ? `<p><strong>Contribution By:</strong> ${ys_id}</p>` : ''}
+            
+            ${coordinateY && coordinateZ ? `
+            <div class="copy-buttons">
+                <button class="copyButton" onclick="copyCoordinate('Y', '${coordinateY}', '${id}')">Copy Y</button>
+                <button class="copyButton" onclick="copyCoordinate('Z', '${coordinateZ}', '${id}')">Copy Z</button>
+            </div>
+            ` : ''}
+            
+${image_info && isValidImageURL(image_info) ? `
+    <div>
+        <button id="showImageBtn-${id}" class="copyButton" onclick="showImage('${id}')" style="color: blue;">Show Image</button>
+        <img id="img-${id}" src="${image_info}" style="display:none; max-width: 100%; margin-top: 10px; border-radius: 8px;" />
+    </div>
+` : `
+    <div>
+        <button class="copyButton" style="color: orange;" onclick="openUploadPopup('${id}')">Upload Image</button>
+    </div>
+`}
+
+            
+            <div class="copy-feedback" id="copyFeedback-${id}">
+                <span class="feedback-icon">&#x2714;</span> Coordinate copied!
+            </div>
+        </div>
+    `);
 
     marker.on('contextmenu', (e) => {
         const currentOpacity = marker.options.opacity || 1.0;
         const newOpacity = currentOpacity === 1.0 ? 0.5 : 1.0;
         marker.setOpacity(newOpacity);
+        saveMarkerOpacity(id, newOpacity); // simpan ke localStorage
+        updateFilterCounts();
     });
+
+    function saveMarkerOpacity(markerId, opacity) {
+        const stored = JSON.parse(localStorage.getItem('markerOpacities') || '{}');
+        stored[markerId] = opacity;
+        localStorage.setItem('markerOpacities', JSON.stringify(stored));
+    }
+
+    // Function to check if the image URL is valid
+    function isValidImageURL(url) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(true);
+            img.onerror = () => reject(false);
+            img.src = url;
+        });
+    }
+
+
+
 
     markersData[id] = {
         id: id,
@@ -183,9 +242,13 @@ ${displayDesc && displayDesc !== '0' && displayDesc !== '.' ? `<p><strong>Descri
         en_name: en_name || name,
         desc: desc || 'No description',
         coordinateY: coordinateY,
-        coordinateZ: coordinateZ
-        
+        coordinateZ: coordinateZ,
+        image_info: image_info || null // Menambahkan image_info
     };
+leafletMarkers[id] = marker;
+const catId = parseInt(category_id);
+if (!categoryCounts[catId]) categoryCounts[catId] = { total: 0, hidden: 0 };
+categoryCounts[catId].total++;
 
     marker.addTo(map);
 }
@@ -301,3 +364,125 @@ function clearMarkersFromMap() {
     markersData = {}; // Kosongkan object markersData
 }
 
+//toggle Filter container 
+  const toggleBtn = document.getElementById('toggle-filter-btn');
+  const filterContainer = document.getElementById('filter-container');
+
+  toggleBtn.addEventListener('click', () => {
+      if (filterContainer.style.display === 'none') {
+          filterContainer.style.display = 'flex';
+      } else {
+          filterContainer.style.display = 'none';
+      }
+  });
+  
+//Count container 
+function updateFilterCounts() {
+    // Reset semua count
+    Object.keys(categoryCounts).forEach(catId => {
+        categoryCounts[catId].hidden = 0;
+        categoryCounts[catId].total = 0;
+    });
+
+    Object.entries(markersData).forEach(([id, markerData]) => {
+        const marker = leafletMarkers[id];
+        const catId = parseInt(markerData.category_id);
+
+        if (marker) {
+            categoryCounts[catId].total++;
+            // Jika opacity 1, dianggap "hidden"
+            if (marker.options.opacity === 1) {
+                categoryCounts[catId].hidden++;
+            }
+        }
+    });
+
+    // Update tampilan counter di UI
+    document.querySelectorAll('.filter-count').forEach(span => {
+        const catId = span.getAttribute('data-category');
+        const counts = categoryCounts[catId];
+        if (counts) {
+            const visible = counts.total - counts.hidden;
+            span.textContent = `${visible}/${counts.total}`;
+        }
+    });
+}
+
+
+function updateCategoryCounts() {
+    const counts = {
+        2: { active: 0, total: 0 }, // Treasure
+        3: { active: 0, total: 0 }, // Train
+        4: { active: 0, total: 0 }, // Zone
+        5: { active: 0, total: 0 }, // Scenery
+        6: { active: 0, total: 0 }, // Resource
+    };
+
+    allMarkers.forEach(marker => {
+        const cat = marker.category_id;
+        if (counts[cat]) {
+            counts[cat].total++;
+            if (map.hasLayer(marker.leafletMarker)) {
+                counts[cat].active++;
+            }
+        }
+    });
+
+    document.querySelectorAll('.filter-count').forEach(span => {
+        const category = parseInt(span.dataset.category);
+        if (counts[category]) {
+            span.textContent = `${counts[category].active}/${counts[category].total}`;
+        }
+    });
+}
+
+
+
+let currentUploadId = null;
+
+function openUploadPopup(id) {
+    currentUploadId = id;
+    document.getElementById('uploadTitle').textContent = 'Upload Image for ID: ' + id;
+    document.getElementById('uploadModal').style.display = 'block';
+}
+
+function closeUploadPopup() {
+    document.getElementById('uploadModal').style.display = 'none';
+    currentUploadId = null;
+}
+
+async function submitUpload() {
+    const fileInput = document.getElementById('uploadInput');
+    if (!fileInput.files[0] || !currentUploadId) return;
+
+    const file = fileInput.files[0];
+    const fileName = `${currentUploadId}.webp`;
+    const uploadUrl = `https://bangonegaming.polar-app.org/ER_Earth/photos/${fileName}`;
+
+    const formData = new FormData();
+    formData.append('file', file, fileName);
+
+    try {
+        await fetch(uploadUrl, {
+            method: 'POST',
+            body: formData
+        });
+
+        const imageUrl = uploadUrl;
+        // Update marker data
+        markersData[currentUploadId] = markersData[currentUploadId] || {};
+        markersData[currentUploadId].image_info = imageUrl;
+
+        // Kirim ke endpoint eksternal
+        await fetch('https://autumn-dream-8c07.square-spon.workers.dev/thelandofthelost', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(markersData)
+        });
+
+        alert('Upload successful!');
+        closeUploadPopup();
+    } catch (e) {
+        alert('Upload failed: ' + e.message);
+    }
+}
