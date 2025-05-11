@@ -187,18 +187,18 @@ h4 {
       btn.appendChild(text);
 
       // Posisi dan ukuran tombol sesuai jenis overlay
-      if (type === 'earth') {
-        if (isPortrait) {
-          btn.style.left = '16.87vw';
-          btn.style.top = '39.26vh';
-          btn.style.width = '322px';
-          btn.style.height = '322px';
-        } else {
-          btn.style.left = '33.78vw';
-          btn.style.top = '20.39vh';
-          btn.style.width = '389px';
-          btn.style.height = '389px';
-        }
+if (type === 'earth') {
+  if (isPortrait) {
+    btn.style.left   = '16.87vw';
+    btn.style.top    = '39.26vh';
+    btn.style.width  = '28vh';   // sebelumnya '322px'
+    btn.style.height = '28vh';   // sebelumnya '322px'
+  } else {
+    btn.style.left   = '33.78vw';
+    btn.style.top    = '20.39vh';
+    btn.style.width  = '389px';
+    btn.style.height = '389px';
+  }
       } else if (type === 'mars') {
         if (isPortrait) {
           btn.style.left = '2.70vw';
