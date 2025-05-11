@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earth Revival Interactive Maps</title>
+    <meta name="description" content="A complete interactive map for exploration in Earth Revival. Includes Treasure Hunt, Limited Time Training, Scenery, and Fishing Spots in various locations such as Sundale Valley, Howling Gobi, Edengate, Ragon Snowy Peak, Kepler Harbour, Pegasus, and Hilde. Discover your adventure today!">
+    <meta name="keywords" content="Earth Revival, interactive maps,map Earth Revival, treasure locations, training zones, fishing spots, zone markers, old world treasure, earth revival guide, map features, gaming guide">
+
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Earth Revival Interactive Maps"/>
+    <meta property="og:description" content="A complete interactive map for exploration in Earth Revival."/>
+    <meta property="og:image" content="https://raw.githubusercontent.com/BangOneGaming/Earth-Revival-Interactive-Map/main/tittle.png"/>
+    <meta property="og:image:width" content="1200"/>
+    <meta property="og:image:height" content="630"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="https://your-website.com"/>
+
+    <!-- Twitter Card tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Earth Revival Interactive Maps">
+    <meta name="twitter:description" content="A complete interactive map for exploration in Earth Revival.">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/BangOneGaming/Earth-Revival-Interactive-Map/main/tittle.png">
+    
+    <!-- Favicon and other assets -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/icons/favicon-16x16.png" sizes="16x16" type="image/png">
+    <link rel="icon" href="/icons/favicon-32x32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="/icons/favicon-48x48.png" sizes="48x48" type="image/png">
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js/minified/introjs.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/intro.js/minified/intro.min.js"></script>
+
+    <link href="app.css?v=4.2" rel="stylesheet" type="text/css">
+
+    <!-- Leaflet for maps -->
+<!-- Import Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<!-- Memuat pustaka Leaflet.js -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<!-- Memuat pustaka AnimatedMarker -->
+<script src="https://cdn.jsdelivr.net/npm/leaflet-bounce-marker@0.1.0/src/index.min.js"></script>
+
+
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XV19ZR4EBT"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-XV19ZR4EBT');
+    </script>
+
+</head>
+<body>
+<!-- Kontainer iklan -->
+<div id="ads-container">
+    <!-- Tombol untuk menutup iklan di map -->
+    <button class="close-btn">X</button>
+
+    <!-- Iklan pada map -->
+    <ins id="map-ad" class="adsbygoogle"
+         style="display:block; width: 100%; height: auto;"
+         data-ad-client="ca-pub-8582564022805467"
+         data-ad-slot="1368580738"
+         data-ad-format="horizontal"
+         data-full-width-responsive="false"></ins>
+</div>
+
+<div id="privacy-popup">
+    <div class="popup-content">
+        <p><h4>We Value Your Privacy!</h4></p>
+        <p>Your trust is important to us, and we are committed to protecting your personal data. Please take a moment to review our <a href="privacy.html" class="privacy-link" target="_blank" style="color: #00BFFF; font-weight: bold;">Privacy Policy</a> and <a href="policy.html" class="privacy-link" target="_blank" style="color: #00BFFF; font-weight: bold;">Terms of Service</a> to better understand how we handle your information.</p>
+        <p>By continuing to use our website, you agree to these terms. If you have any questions, feel free to reach out to us.</p>
+        <button class="close-popup">Got it!</button>
+    </div>
+</div>
+
+
+
+<div id="patch-popup" class="popup">
+    <div class="popup-content">
+        <span class="close">&times;</span>
+
+<h4>PATCH UPDATE</h4>
+<p>VERSION 6.0 - JANUARY 2025</p>
+<p><span style="font-weight: bold; color: #FFD700;">Thank you</span> for your continued support and valuable contributions! Your feedback on the <span style="color: orange;">Marker Report</span> and <span style="color: #FFD700;">loading optimizations</span> has helped improve the experience for everyone.</p>
+<ul>
+    <li>Optimized <span style="color: orange;"><b>ADS DISPLAY</b></span> for better user experience</li>
+    <li>Improved <span style="color: #FFD700;">LOADING TIMES</span> for a smoother experience</li>
+    <li>New Map: <span style="color: #FF6347;"><b>Mirror World</b></span> added, explore for Sundale Valley, Howling Gobi, Edengate in Mirror World!</li>
+</ul>
+
+        <!-- Tombol Trakteer -->
+        <a href="https://trakteer.id/BangOneGaming/tip" target="_blank" class="donate-btn">TRAKTEER <br><span style="color: yellow;">Donate</span></br></a>
+        <p><span style="color: white;">👇 You Can Donate Via Paypal 👇</span></p>
+        <!-- Menambahkan tombol PayPal di sini -->
+        <div class="paypal-button">
+            <a href="https://www.paypal.me/IrvanNazmudin" target="_blank">
+                <img src="icons/paypal.png" alt="PayPal">
+            </a>
+        </div>
+<img src="icons/Sad.png" alt="Icon">
+<h2><span style="color: white;">Thank You for Your Donations</span></h2>
+<p>Please <b><span style="color: green;">DONATE</span></b>, I Need Support to Cover Server Costs</p>
+    </div>
+</div>
+
+
+<!-- Container untuk peta -->
+<div id="mapContainer">
+    <div id="map"></div>
+    
+<!-- Tombol untuk fullscreen dengan SVG icon -->
+<button id="fullscreenButton">
+    <svg fill="#000000" height="30px" width="30px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 384.97 384.97" xml:space="preserve">
+        <g id="SVGRepo_iconCarrier"> 
+            <path d="M372.939,216.545c-6.123,0-12.03,5.269-12.03,12.03v132.333H24.061V24.061h132.333c6.388,0,12.03-5.642,12.03-12.03 S162.409,0,156.394,0H24.061C10.767,0,0,10.767,0,24.061v336.848c0,13.293,10.767,24.061,24.061,24.061h336.848 c13.293,0,24.061-10.767,24.061-24.061V228.395C384.97,221.731,380.085,216.545,372.939,216.545z"></path>
+            <path d="M372.939,0H252.636c-6.641,0-12.03,5.39-12.03,12.03s5.39,12.03,12.03,12.03h91.382L99.635,268.432 c-4.668,4.668-4.668,12.235,0,16.903c4.668,4.668,12.235,4.668,16.891,0L360.909,40.951v91.382c0,6.641,5.39,12.03,12.03,12.03 s12.03-5.39,12.03-12.03V12.03l0,0C384.97,5.558,379.412,0,372.939,0z"></path>
+        </g>
+    </svg>
+</button>
+  <div class="trakteer-overlay" id="trakteerOverlay">
+  <button class="close-btn" id="closeOverlayBtn">&times;</button> <!-- Tombol close dengan simbol "×" -->
+  <iframe class="trakteer-frame" src="https://stream.trakteer.id/top-supporter-transitional.html?ts_font=default&ts_theme=transitional&ts_sortby=nominal&ts_customsubtitle=Donatur&key=trstream-bm2DcuTwpuXomRzGOBqD&timestamp=1726331187"></iframe>
+</div>
+
+<div id="preloader">
+    <img src="icons/bangone.png" alt="Loading...">
+    <div id="loading-bar-container">
+        <div id="loading-bar">
+            <div id="loading-text">Loading... 0%</div>
+        </div>
+    </div>
+    <p class="preloader-text" id="preloader-text">Loading markers, tiles, and UI components...</p>
+    <!-- Gambar Baru di Bawah Teks Preload -->
+<!-- Gambar Baru di Bawah Teks Preload -->
+<div id="image-info-preload">
+    <img id="dynamic-image" src="icons/icon_default.png" alt="Additional Image">
+</div>
+<!-- Tombol PayPal di Preloader -->
+    <div style="text-align: center; margin-top: 5px;">
+        <p style="color: white;">Support Us via PayPal</p>
+        <a href="https://www.paypal.me/IrvanNazmudin" target="_blank">
+            <img src="icons/paypal.png" alt="PayPal" style="width: 200px; height: auto;">
+        </a>
+    </div>
+
+    <!-- Menambahkan teks "Contact Me" di atas ikon -->
+    <h5 style="text-align: center; margin-top: 5px;">Contact Me</h5>
+    
+    <!-- Ikon Media Sosial -->
+    <div id="social-icons" style="margin-top: 5px; display: flex; justify-content: center;">
+        <a href="https://youtube.com/@bangonegaming6596?si=YE4ShL6FsNHjc1Un" target="_blank" style="margin: 0 10px;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" alt="YouTube" style="width: 40px; height: auto;">
+        </a>
+        <a href="https://www.tiktok.com/@bangonegaming97?_t=8qxkzA0qteR&_r=1" target="_blank" style="margin: 0 10px;">
+            <img src="https://cdn4.iconfinder.com/data/icons/social-media-flat-7/64/Social-media_Tiktok-1024.png" alt="TikTok" style="width: 40px; height: auto;">
+        </a>
+        <a href="https://discord.gg/earth-revival-845962679885627402" target="_blank" style="margin: 0 10px;">
+            <img src="https://cdn0.iconfinder.com/data/icons/free-social-media-set/24/discord-1024.png" alt="Discord" style="width: 40px; height: auto;">
+        </a>
+    </div>
+</div>
+
+
+        <!-- Donate Container -->
+        <div class="donate-container">
+        <a href="https://trakteer.id/BangOneGaming/tip" target="_blank" class="donate-btn">Donate Here</a>
+    </div>
+<!-- Collect Tooltip Setup -->
+<div class="collect-tip-container">
+    <div id="toggle-collect" class="collect-toggle">
+        <img src="icons/collect.png" alt="Toggle Collect" />
+    </div>
+    <div id="tip-for-collect" class="collect-tooltip">This Still<br>Under Development</div>
+</div>
+
+<div id="toggle-count" class="toggle-count-container hover">
+    <img src="icons/count_toggle.png" alt="Toggle Count" onclick="toggleLocTypes()">
+</div>
+
+
+<!-- Legend and filters toggle buttons -->
+<div id="toggle-legend" class="toggle-legend-container">
+    <img src="icons/toggle_btn.png" alt="Toggle Legend">
+</div>
+<div id="toggle-filters" class="toggle-new-filters-container">
+    <img src="icons/new_filter-btn.png" alt="Toggle Filters">
+</div>
+<button id="reset-opacity" title="Reset Opacity">
+    <img src="icons/reset.png" alt="Reset Icon">
+</button>
+
+<!-- New Homepage Button -->
+<div id="homepage-button" class="homepage-button-container">
+    <a href="https://bangonegaming.com/" target="_blank" title="Homepage">
+        <img src="icons/home.png" alt="Homepage">
+    </a>
+</div>
+
+<!-- Confirmation Reset Opacity -->
+<div id="confirm-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <p>Are you sure you want to reset the opacity of all markers?</p>
+        <button id="confirm-yes" class="modal-button">Yes</button>
+        <button id="confirm-no" class="modal-button">No</button>
+    </div>
+</div>
+
+
+<!-- New filter container for mark -->
+<div class="new-filter-container">
+    <div class="filter-btn" data-filter="loc_type2" style="background-image: url('icons/sundale.png');">Sundale Valley</div>
+    <div class="filter-btn" data-filter="loc_type5" style="background-image: url('icons/howling.png');">Howling Gobi</div>
+    <div class="filter-btn" data-filter="loc_type4" style="background-image: url('icons/eden.png');">Edengate</div>
+    <div class="filter-btn" data-filter="loc_type3" style="background-image: url('icons/ragon.png');">Ragon Snowy Peak</div>
+    <div class="filter-btn" data-filter="loc_type6" style="background-image: url('icons/kepler.png');">Kepler Harbour</div>
+    <div class="filter-btn" data-filter="loc_type7" style="background-image: url('icons/darksundale.png');">Sundale Haven<br>(Mirror World)</div>
+    <div class="filter-btn" data-filter="loc_type8" style="background-image: url('icons/darkgobi.png');">Howling Gobi<br>(Mirror World)</div>
+    <div class="filter-btn" data-filter="loc_type9" style="background-image: url('icons/darkeden.png');">Edengate<br>(Mirror World)</div>
+    <div class="filter-btn" id="zoomBtn" style="background-image: url('icons/space.png');">Pegasus<br> <b>(Go to Space)</b></div>
+    <div class="filter-btn" data-filter="loc_type10" style="background-image: url('icons/hilde.png');">Hilde</div>
+    <div class="filter-btn" onclick="location.href='/The-Land-of-The-Lost/index.html'" style="background-image: url('icons/landlost.png');">
+        The Land of The Lost <br> (Underdevelopment)
+    </div>
+</div>
+
+
+<div class="count-container">
+
+    <!-- Loc_type 2 (Sundale Valley) -->
+    <div id="loc-type-2">
+        <h4>Sundale Valley</h4>
+        <div id="count-treasure-loc2" class="count-item">
+            <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
+            <span class="count-text">0/0</span> <!-- Only the count is displayed -->
+        </div>
+        <div id="count-training-loc2" class="count-item">
+            <img src="icons/icon_train.png" alt="Training" class="count-icon">
+            <span class="count-text">0/0</span>
+        </div>
+        <div id="count-zone-loc2" class="count-item">
+            <img src="icons/icon_zone.png" alt="Zone" class="count-icon">
+            <span class="count-text">0/0</span>
+        </div>
+        <div id="count-fishing-loc2" class="count-item">
+            <img src="icons/icon_fishing.png" alt="Fishing" class="count-icon">
+            <span class="count-text">0/0</span>
+        </div>
+        <div id="count-scenery-loc2" class="count-item">
+            <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
+            <span class="count-text">0/0</span>
+        </div>
+        <div id="count-resource-loc2" class="count-item">
+            <img src="icons/icon_resource.png" alt="Resource" class="count-icon">
+            <span class="count-text" id="resource-count-2">0/0</span>
+        </div>               
+    </div>
+
+    <!-- Loc_type 5 (Howling Gobi) -->
+    <div id="loc-type-5">
+        <h4>Howling Gobi</h4>
+        <div id="count-treasure-loc5" class="count-item">
+            <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
+            <span class="count-text">0/0</span>
+        </div>
+        <div id="count-training-loc5" class="count-item">
+            <img src="icons/icon_train.png" alt="Training" class="count-icon">
+            <span class="count-text">0/0</span>
+        </div>
+        <div id="count-zone-loc5" class="count-item">
+            <img src="icons/icon_zone.png" alt="Zone" class="count-icon">
+            <span class="count-text">0/0</span>
+        </div>
+        <div id="count-fishing-loc5" class="count-item">
+            <img src="icons/icon_fishing.png" alt="Fishing" class="count-icon">
+            <span class="count-text">0/0</span>
+        </div>
+        <div id="count-scenery-loc5" class="count-item">
+            <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
+            <span class="count-text">0/0</span>
+        </div>
+        <div id="count-resource-loc5" class="count-item">
+            <img src="icons/icon_resource.png" alt="Resource" class="count-icon">
+            <span class="count-text" id="resource-count-5">0/0</span>
+        </div>               
+        </div>
+   <!-- Loc_type 3 (Ragon Snowy Peak) -->
+    <div id="loc-type-3">
+        <h4>Ragon Snowy Peak</h4>
+        <div id="count-treasure-loc3" class="count-item">
+            <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
+            <span class="count-text" id="treasure-count-3">0/0</span>
+        </div>
+        <div id="count-training-loc3" class="count-item">
+            <img src="icons/icon_train.png" alt="Training" class="count-icon">
+            <span class="count-text" id="training-count-3">0/0</span>
+        </div>
+        <div id="count-zone-loc3" class="count-item">
+            <img src="icons/icon_zone.png" alt="Zone" class="count-icon">
+            <span class="count-text" id="zone-count-3">0/0</span>
+        </div>
+        <div id="count-fishing-loc3" class="count-item">
+            <img src="icons/icon_fishing.png" alt="Fishing" class="count-icon">
+            <span class="count-text" id="fishing-count-3">0/0</span>
+        </div>
+        <div id="count-scenery-loc3" class="count-item">
+            <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
+            <span class="count-text" id="scenery-count-3">0/0</span>
+        </div>
+        <div id="count-resource-loc3" class="count-item">
+            <img src="icons/icon_resource.png" alt="Resource" class="count-icon">
+            <span class="count-text" id="resource-count-3">0/0</span>
+        </div>               
+    </div>
+
+    <!-- Loc_type 4 (Edengate) -->
+    <div id="loc-type-4">
+        <h4>Edengate</h4>
+        <div id="count-treasure-loc4" class="count-item">
+            <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
+            <span class="count-text" id="treasure-count-4">0/0</span>
+        </div>
+        <div id="count-training-loc4" class="count-item">
+            <img src="icons/icon_train.png" alt="Training" class="count-icon">
+            <span class="count-text" id="training-count-4">0/0</span>
+        </div>
+        <div id="count-zone-loc4" class="count-item">
+            <img src="icons/icon_zone.png" alt="Zone" class="count-icon">
+            <span class="count-text" id="zone-count-4">0/0</span>
+        </div>
+        <div id="count-fishing-loc4" class="count-item">
+            <img src="icons/icon_fishing.png" alt="Fishing" class="count-icon">
+            <span class="count-text" id="fishing-count-4">0/0</span>
+        </div>
+        <div id="count-scenery-loc4" class="count-item">
+            <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
+            <span class="count-text" id="scenery-count-4">0/0</span>
+        </div>
+        <div id="count-resource-loc4" class="count-item">
+            <img src="icons/icon_resource.png" alt="Resource" class="count-icon">
+            <span class="count-text" id="resource-count-4">0/0</span>
+        </div>        
+    </div>
+
+    <!-- Loc_type 6 (Kepler Harbour) -->
+    <div id="loc-type-6">
+        <h4>Kepler Harbour</h4>
+        <div id="count-treasure-loc6" class="count-item">
+            <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
+            <span class="count-text" id="treasure-count-6">0/0</span>
+        </div>
+        <div id="count-training-loc6" class="count-item">
+            <img src="icons/icon_train.png" alt="Training" class="count-icon">
+            <span class="count-text" id="training-count-6">0/0</span>
+        </div>
+        <div id="count-zone-loc6" class="count-item">
+            <img src="icons/icon_zone.png" alt="Zone" class="count-icon">
+            <span class="count-text" id="zone-count-6">0/0</span>
+        </div>
+        <div id="count-fishing-loc6" class="count-item">
+            <img src="icons/icon_fishing.png" alt="Fishing" class="count-icon">
+            <span class="count-text" id="fishing-count-6">0/0</span>
+        </div>
+        <div id="count-scenery-loc6" class="count-item">
+            <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
+            <span class="count-text" id="scenery-count-6">0/0</span>
+        </div>
+        <div id="count-resource-loc6" class="count-item">
+            <img src="icons/icon_resource.png" alt="Resource" class="count-icon">
+            <span class="count-text" id="resource-count-6">0/0</span>
+        </div>
+    </div>
+<!-- Loc_type 7 (Mirror World Sundale Valley) -->
+<div id="loc-type-7">
+    <h4>Mirror World Sundale Valley</h4>
+    <div id="count-treasure-loc7" class="count-item">
+        <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-training-loc7" class="count-item">
+        <img src="icons/icon_train.png" alt="Training" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-zone-loc7" class="count-item">
+        <img src="icons/icon_zone.png" alt="Zone" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-fishing-loc7" class="count-item">
+        <img src="icons/icon_fishing.png" alt="Fishing" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-scenery-loc7" class="count-item">
+        <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-resource-loc7" class="count-item">
+        <img src="icons/icon_resource.png" alt="Resource" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+</div>
+
+<!-- Loc_type 8 (Mirror World Howling Gobi) -->
+<div id="loc-type-8">
+    <h4>Mirror World Howling Gobi</h4>
+    <div id="count-treasure-loc8" class="count-item">
+        <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-training-loc8" class="count-item">
+        <img src="icons/icon_train.png" alt="Training" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-zone-loc8" class="count-item">
+        <img src="icons/icon_zone.png" alt="Zone" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-fishing-loc8" class="count-item">
+        <img src="icons/icon_fishing.png" alt="Fishing" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-scenery-loc8" class="count-item">
+        <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-resource-loc8" class="count-item">
+        <img src="icons/icon_resource.png" alt="Resource" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+</div>
+
+<!-- Loc_type 9 (Mirror World Edengate) -->
+<div id="loc-type-9">
+    <h4>Mirror World Edengate</h4>
+    <div id="count-treasure-loc9" class="count-item">
+        <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-training-loc9" class="count-item">
+        <img src="icons/icon_train.png" alt="Training" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-zone-loc9" class="count-item">
+        <img src="icons/icon_zone.png" alt="Zone" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-fishing-loc9" class="count-item">
+        <img src="icons/icon_fishing.png" alt="Fishing" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-scenery-loc9" class="count-item">
+        <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-resource-loc9" class="count-item">
+        <img src="icons/icon_resource.png" alt="Resource" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    </div>
+<!-- Loc_type 10 (Mirror World Ragon Snowy Peak) -->
+<div id="loc-type-10">
+    <h4>Hilde</h4>
+    <div id="count-treasure-loc10" class="count-item">
+        <img src="icons/icon_treasure.png" alt="Treasure" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-training-loc10" class="count-item">
+        <img src="icons/icon_train.png" alt="Training" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-zone-loc10" class="count-item">
+        <img src="icons/icon_zone.png" alt="Zone" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-fishing-loc10" class="count-item">
+        <img src="icons/icon_fishing.png" alt="Fishing" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-scenery-loc10" class="count-item">
+        <img src="icons/icon_scenery.png" alt="Scenery" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+    <div id="count-resource-loc10" class="count-item">
+        <img src="icons/icon_resource.png" alt="Resource" class="count-icon">
+        <span class="count-text">0/0</span>
+    </div>
+</div>
+
+
+</div>
+
+
+
+<!-- Container untuk gambar fullscreen -->
+<div id="fullscreen-image"></div>
+
+<!-- Logo -->
+<img src="statics/tittle_er.png" alt="Logo" id="logo" />
+
+<!-- Filter buttons -->
+<div class="filter-container">
+    <label class="filter-checkbox-btn">
+        <input type="checkbox" class="filter-checkbox" data-filter="all">
+        <img src="icons/here.png" alt="all"> all
+    </label>
+    <label class="filter-checkbox-btn">
+        <input type="checkbox" class="filter-checkbox" data-filter="treasure">
+        <img src="icons/icon_treasure.png" alt="Treasure"> Treasure
+    </label>
+        <label class="filter-checkbox-btn">
+        <input type="checkbox" class="filter-checkbox" data-filter="bird">
+        <img src="icons/icon_default.png" alt="Bird"> Treasure
+    </label>
+    <label class="filter-checkbox-btn">
+        <input type="checkbox" class="filter-checkbox" data-filter="fishing">
+        <img src="icons/icon_fishing.png" alt="Fishing"> Fishing
+    </label>
+    <label class="filter-checkbox-btn">
+        <input type="checkbox" class="filter-checkbox" data-filter="zone">
+        <img src="icons/icon_zone.png" alt="Zone"> Zone
+    </label>
+    <label class="filter-checkbox-btn">
+        <input type="checkbox" class="filter-checkbox" data-filter="training">
+        <img src="icons/icon_train.png" alt="Training"> Training
+    </label>
+    <label class="filter-checkbox-btn">
+        <input type="checkbox" class="filter-checkbox" data-filter="scenery">
+        <img src="icons/icon_scenery.png" alt="Scenery"> Scenery
+    </label>
+    <label class="filter-checkbox-btn">
+        <input type="checkbox" class="filter-checkbox" data-filter="resource">
+        <img src="icons/icon_resource.png" alt="Resource"> Resource
+    </label>
+</div>
+
+<div id="collect-container" class="collect-container">
+    <h1 id="main-title">Collectible Materials</h1> <!-- Main title -->
+    <h3>Collectible</h3> <!-- Subheading -->
+        
+    <div class="collect-item">
+        <button id="toggle-material">
+            <img src="icons/material.png" alt="Material Icon" class="icon"><b>Resource</b><span class="arrow"><</span>
+        </button>
+    </div>
+    
+    <div id="material-group" style="display: none;">
+        <div class="collect-item">
+            <button id="toggle-wood">
+                <img src="icons/wood.png" alt="Wood Icon" class="icon"> Tree <span class="arrow"><</span>
+            </button>
+            </div>
+            <div class="checkbox-filters" id="wood-filters" style="display: none;">
+                <!-- Checkbox for wood will be added dynamically here -->
+            </div>
+        
+        <div class="collect-item">
+            <button id="toggle-stone">
+                <img src="icons/stone.png" alt="Stone Icon" class="icon"> Stone <span class="arrow"><</span>
+            </button>
+            </div>
+            <div class="checkbox-filters" id="stone-filters" style="display: none;">
+                <!-- Checkbox for stone will be added dynamically here -->
+            </div>
+        
+        <div class="collect-item">
+            <button id="toggle-fiber">
+                <img src="icons/fiber.png" alt="Fiber Icon" class="icon"> Shrub <span class="arrow"><</span>
+            </button>
+            </div>
+            <div class="checkbox-filters" id="fiber-filters" style="display: none;">
+                <!-- Checkbox for fiber will be added dynamically here -->
+            </div>
+        
+        <div class="collect-item">
+            <button id="toggle-scrap">
+                <img src="icons/scrap.png" alt="Scrap Icon" class="icon"> Wastes <span class="arrow"><</span>
+            </button>
+            </div>
+            <div class="checkbox-filters" id="scrap-filters" style="display: none;">
+                <!-- Checkbox for scrap will be added dynamically here -->
+            </div>
+        
+</div>
+    <div class="collect-item">
+        <button id="toggle-ingredients">
+            <img src="icons/ingredients.png" alt="Ingredients Icon" class="icon"><b>Ingredients</b><span class="arrow"><</span>
+        </button>
+        </div>
+        <div class="checkbox-filters" id="ingredients-filters" style="display: none;">
+            <!-- Checkbox for ingredients will be added dynamically here -->
+        </div>
+   
+        <div class="collect-item">         
+            <div class="checkbox-filters" id="rare-filters" style="display: none;"><b>Special Resource</b>
+                <!-- Checkbox for rare will be added dynamically here -->
+            </div>
+        </div>
+    <div class="collect-item">
+        <button id="toggle-oldworld">
+            <b>Old World Treasure (On Going)</b> <span class="arrow"><</span>
+        </button>
+        </div>
+        <div class="checkbox-filters" id="oldworld-filters" style="display: none;">
+            <!-- Checkbox for old world treasure will be added dynamically here -->
+        </div>
+    </div>
+    </div>
+<div id="statusMessage"></div>
+</div>
+<!-- Form HTML -->
+<div class="submit-marker-form" style="display: none;">
+    <h2>Submit Marker</h2>
+    <form id="markerForm">
+    <label for="markerId">Marker ID (optional):</label>
+    <input type="text" id="markerId" placeholder="Leave blank for auto-generated ID">
+        <label for="locType">Which Map?:</label>
+        <select id="locType" name="locType" required>
+            <option value="">Select The Map</option>
+            <option value="2">Sundale Valley</option>
+            <option value="5">Howling Gobi</option>
+            <option value="4">Edengate</option>
+            <option value="3">Ragon Snowy Peak</option>
+            <option value="6">Kepler Harbour</option>
+            <option value="7">Mirror World Sundale Valley</option>
+            <option value="8">Mirror World Howling Gobi</option>
+            <option value="9">Mirror World Edengate</option>
+            <option value="10">Hilde</option>
+        </select>
+        
+<div style="margin-top: 10px;">
+    <label for="category" style="display: flex; align-items: center;">
+        Category:
+        <img id="categoryIcon" src="" alt="Category Icon" style="display:none; width: 20px; height: 20px; margin-left: 10px; padding: 3px; background-color: rgba(10, 28, 61, 0.883); border-radius: 3px; border: 1px solid #889dcb;" />
+    </label>
+</div>
+<select id="category" name="category" required>
+    <option value="">Select Category</option>
+    <option value="1">Teleport</option>
+            <option value="29">Bird</option>
+    <option value="2">Treasure Hunt</option>
+    <option value="3">Zone Commission</option>
+    <option value="7">Limited Time Training</option>
+    <option value="8">Scenery</option>
+    <option value="9">Fishing 1</option>
+    <option value="10">Fishing 2</option>
+    <option value="11">Fishing 3</option>
+    <option value="12">Fishing 4</option>
+    <option value="13">Fishing 5</option>
+    <option value="14">Fishing 6</option>
+    <option value="15">Stone</option>
+    <option value="16">Wood</option>
+    <option value="17">Fiber</option>
+    <option value="18">Resource Chest</option>
+    <option value="6">Scrap</option>
+    <option value="19">Scrap 2</option>
+    <option value="20">Scrap 3</option>
+    <option value="21">Resin</option>
+    <option value="22">Clay</option>
+    <option value="23">Rare Wood 1</option>
+    <option value="24">Rare Stone</option>
+    <option value="25">Rare Wastes</option>
+    <option value="26">Rare Wood 2 Kepler Harbour</option>
+    <option value="27">Old World Treasure</option>
+    <option value="28">Ingredient</option>
+</select>
+
+
+
+
+<form id="submitMarkerForm">
+
+    <label for="nameMark" class="hidden">Name Mark:</label>
+    <input type="text" id="nameMark" name="nameMark" class="hidden" required placeholder="REQUIREMENT" style="color: white;">
+
+    <label id="oldWorldTreasureLabel" class="hidden">Old World Treasure:</label>
+    <input id="oldWorldTreasureInput" class="hidden" type="text" placeholder="Enter Old World Treasure Name" style="color: white;">
+
+    <label id="ingredientsNameLabel" class="hidden">Ingredients Name:</label>
+    <input id="ingredientsNameInput" class="hidden" type="text" placeholder="Enter Ingredients Name" style="color: white;">
+
+    <label for="description">Explain or Give A Clue:</label>
+    <textarea id="description" name="description" rows="4" required></textarea>
+
+    <label for="yCoordinates">Y Coordinates:</label>
+    <input type="text" id="yCoordinates" name="yCoordinates" required>
+
+    <label for="zCoordinates">Z Coordinates:</label>
+    <input type="text" id="zCoordinates" name="zCoordinates" required>
+
+    <label for="imageUpload"> [Click to Send Image]<br>(Optional, But Needed):</label>
+    <input type="file" id="imageUpload" name="imageUpload" accept="image/*">
+    <!-- Placeholder for the image preview -->
+    <div id="imagePreviewContainer"></div>
+    
+    <label for="ysId">Your In Game Name (For Showing Your Name in Marker):</label>
+    <input type="text" id="ysId" name="ysId" placeholder="NAME/SERVER" style="color: white;">
+
+    <button type="submit">Send to BangOne Gaming</button>
+</form>
+
+</div>
+
+<div id="statusMessage" style="display: none; margin-top: 10px;"></div>
+<div id="submit-container">
+    <div id="tooltip">Here You Can<br>Add Your Own Mark</div>
+    <button id="submit-marker-button">Send Your Marker</button>
+</div>
+
+    <div id="reportFormContainer"style="display: none;">
+        <h3>Report Error</h3>
+        <form id="reportForm">
+            <label for="reportId">ID MARK:</label>
+            <input type="text" id="reportId" name="reportId" readonly style="width: 15%;"><br>
+
+            <label for="num1">Correct Coordinate:</label>
+            <input type="number" id="num1" name="num1" min="0" step="1" required style="width: 45%; margin-right: 10px;"> 
+            <input type="number" id="num2" name="num2" min="0" step="1" required style="width: 45%;"><br>
+
+            <label for="errorDescription">Error Description (Name Map):</label>
+            <textarea id="errorDescription" name="errorDescription" rows="4" placeholder="UID/YOUR NAME/DESCRIPTION"></textarea><br>
+
+            <button type="button" id="submitReportBtn">Submit Report</button>
+            <button type="button" class="cancel" id="cancelReportBtn">Cancel</button>
+        </form>
+    </div>
+
+
+
+    <h4>Earth Revival Interactive Map</h4>
+    <p>Welcome to the <strong>Earth Revival Guide Map</strong>! Our goal is to create the most comprehensive resource for players exploring the world of Earth Revival. However, this map is still in development and requires more information to be fully complete.</p>
+
+    <p>This map is still a work in progress and requires more information to be fully accurate. Some markers may be incomplete or incorrect.</p>
+    <p>If you notice any missing or incorrect markers, you can contribute by using the available tools:</p>
+    <ul>
+        <li><strong>Report Issues:</strong> Click on any marker and use the report option to notify us of errors.</li>
+        <li><strong>Send Marker:</strong> Use the "Send Marker" option at the top corner of the map to add missing locations.</li>
+        <li><strong>Upload Images:</strong> Enhance the map by uploading relevant images directly from each marker’s info panel.</li>
+    </ul>
+    <p>Your contributions help make this guide better for everyone. Thank you for your support!</p>
+</div>
+
+
+<script src="minimap_config.js"></script>
+<!-- Import leaflet-animatedmarker -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-animatedmarker/0.0.2/leaflet.animatedmarker.min.js"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467"
+     crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>eruda.init();</script>
+
+<script src="category.js"></script>
+<script src="adsense.js?v=4.2"></script>
+<script src="app.js?v=4.4"></script>
+</body>
+
+
+</html>
