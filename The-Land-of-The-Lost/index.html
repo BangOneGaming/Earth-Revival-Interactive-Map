@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="app.css">
 <link rel="stylesheet" href="contributionmarker.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+     crossorigin="anonymous"></script>
 
 </head>
 <body>
@@ -26,6 +28,10 @@
 <div id="loadingSpinner" style="display:none;position:fixed;top:10px;left:50%;transform:translateX(-50%);background:white;padding:10px;border:1px solid #ccc;z-index:9999;">
   Loading markers...
 </div>
+
+<button id="home-map-btn" onclick="location.href='/index.html'">
+    <img src="https://earthrevivalinteractivemaps.bangonegaming.com/icons/new_filter-btn.png" alt="Home Map">
+</button>
 
 <button id="toggle-filter-btn">
     <img src="https://earthrevivalinteractivemaps.bangonegaming.com/icons/toggle_btn.png" alt="Toggle Filter">
@@ -67,7 +73,24 @@
     <button onclick="closeUploadPopup()">Cancel</button>
 </div>
 
+<!-- Iklan sticky bawah dengan background hitam transparan dan bisa ditutup -->
+<div id="ad-container" style="position:fixed; bottom:0; left:0; width:100%; background: rgba(0,0,0,0.3); z-index:9999;">
+  <div style="position: relative; max-width: 100%; margin: auto; background: rgba(0, 0, 0, 0.3); padding: 10px 40px 10px 10px;">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-8582564022805467"
+         data-ad-slot="1368580738"
+         data-ad-format="horizontal"
+         data-full-width-responsive="true"></ins>
+    <!-- Tombol close -->
+    <button onclick="document.getElementById('ad-container').style.display='none'" 
+            style="position:absolute; top:5px; right:5px; background:none; color:white; border:none; font-size:24px; font-weight:bold; cursor:pointer; z-index:10000;">×</button>
+  </div>
+</div>
 
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
 
     <!-- Leaflet Library -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -75,11 +98,13 @@
 <!-- Preload Script -->
 <script src="preload.js"></script>
 
-<script src="app.js"></script>
+<script>
+  // Muat app.js dengan query unik supaya selalu fresh
+  const script = document.createElement('script');
+  script.src = 'app.js?v=' + Date.now();
+  document.body.appendChild(script);
+</script>
 <script src="dev_tools.js"></script>
 
-    <!-- Debug Console (Eruda) -->
-    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    <script>eruda.init();</script>
 </body>
 </html>
