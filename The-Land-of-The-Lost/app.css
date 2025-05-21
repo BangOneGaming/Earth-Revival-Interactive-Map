@@ -145,3 +145,23 @@ h4 {
     color: orange;
     font-size: 20px
     }
+    
+    @media (max-width: 768px) {
+  #ad-container {
+    padding: 0;
+  }
+
+  #ad-container > div {
+    padding: 6px 10px 6px 10px;
+  }
+
+  #ad-container ins.adsbygoogle {
+    height: 60px !important;
+  }
+
+  #ad-container button {
+    font-size: 18px;
+    top: 2px;
+    right: 2px;
+  }
+}
