@@ -128,26 +128,26 @@ function filterMarkers() {
 function addMarkerToMap(markerData) {
     const { id, ys_id, lat, lng, category_id, name, en_name, desc, image_info } = markerData;
 
-    let iconUrl = '';
-    switch (parseInt(category_id)) {
-        case 2:
-            iconUrl = 'https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_treasure.png';
-            break;
-        case 3:
-            iconUrl = 'https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_train.png';
-            break;
-        case 4:
-            iconUrl = 'https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_zone.png';
-            break;
-        case 5:
-            iconUrl = 'https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_scenery.png';
-            break;
-        case 6:
-            iconUrl = 'https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_resource.png';
-            break;
-        default:
-            return;
-    }
+let iconUrl = '';
+switch (parseInt(category_id)) {
+    case 2:
+        iconUrl = '../icons/icon_treasure.png';
+        break;
+    case 3:
+        iconUrl = '../icons/icon_train.png';
+        break;
+    case 4:
+        iconUrl = '../icons/icon_zone.png';
+        break;
+    case 5:
+        iconUrl = '../icons/icon_scenery.png';
+        break;
+    case 6:
+        iconUrl = '../icons/icon_resource.png';
+        break;
+    default:
+        return;
+}
 
     const customIcon = L.icon({
         iconUrl: iconUrl,
