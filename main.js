@@ -59,7 +59,8 @@ function openTab(event, tabId) {
     // Hide all tab content
     const tabContents = document.querySelectorAll('.tab-content');
     tabContents.forEach((content) => {
-        content.style.display = 'none';
+        content.style.display = 'none'; // Menyembunyikan semua konten tab
+        content.classList.remove('active'); // Menghapus class active dari semua tab konten
         console.log(`Tab dengan ID "${content.id}" disembunyikan.`);
     });
 
@@ -73,9 +74,10 @@ function openTab(event, tabId) {
     const selectedTab = document.getElementById(tabId);
     if (selectedTab) {
         console.log(`Tab ditemukan: ${tabId}`);
-        selectedTab.style.display = 'block';
+        selectedTab.style.display = 'block'; // Tampilkan tab yang dipilih
+        selectedTab.classList.add('active'); // Tambahkan class active ke tab yang dipilih
+        event.currentTarget.classList.add('active'); // Tambahkan class active ke tombol tab yang dipilih
         console.log(`Tab dengan ID "${tabId}" ditampilkan.`);
-        event.currentTarget.classList.add('active');
     } else {
         console.error(`Tab dengan ID "${tabId}" tidak ditemukan.`);
     }

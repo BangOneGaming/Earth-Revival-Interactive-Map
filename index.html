@@ -75,7 +75,7 @@
 
 <!-- Tab Navigation Buttons -->
 <div class="tab-buttons">
-    <button class="tab-button active" onclick="openTab(event, 'intro')"
+    <button class="tab-button" onclick="openTab(event, 'intro')"
         data-intro="Map Information and Download Link."
         data-step="1">
         <div class="tab-content-wrapper">
@@ -84,7 +84,7 @@
         </div>
     </button>
 
-    <button class="tab-button" onclick="openTab(event, 'maps')"
+    <button class="tab-button active" onclick="openTab(event, 'maps')"
         data-intro="Explore the entire map freely. Discover treasures and other hidden items."
         data-step="2">
         <div class="tab-content-wrapper">
@@ -127,7 +127,7 @@
 
 
 <!-- Intro Tab Content -->
-<div id="intro" class="tab-content" style="display: block;">
+<div id="intro" class="tab-content" style="display: none;">
 
     <section class="download-section">
         <div class="game-info">
@@ -349,7 +349,9 @@
    
 
 <!-- Map Exploration Content -->
-<div id="maps" class="tab-content" style="display:none; position: relative;">
+<div id="maps" class="tab-content" style="position: relative; display: block;">
+
+
     <h2>Explore the Map</h2>
 
     <!-- Iframe preview -->
@@ -943,21 +945,18 @@
     <footer>
         <div class="footer-content">
             <p>&copy; 2024 BangOne Gaming. All rights reserved.</p>
-            <p><a href="privacy.html">Privacy Policy</a></p>
+            <p><a href="Privacy.html">Privacy Policy</a></p>
         </div>
     </footer>
 <div class="cookie-notification">
     <p>This website uses cookies to enhance your experience. By continuing, you agree to our use of cookies.</p>
     <button onclick="acceptCookies()">Accept</button>
-    <a href="privacy.html">Learn more</a>
+    <a href="Privacy.html">Learn more</a>
 </div>
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467"
      crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>
-  eruda.init();
-</script>
+
     <script src="main.js?t=<?=time()?>"></script>
     
 </body>
