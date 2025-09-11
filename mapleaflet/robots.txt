@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://earth-revival-interactive-map.pages.dev/sitemap.xml

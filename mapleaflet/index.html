@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earth Revival Interactive Maps</title>
+    <meta name="description" content="A complete interactive map for exploration in Earth Revival. Includes Treasure Hunt, Limited Time Training, Scenery, and Fishing Spots in various locations such as Sundale Valley, Howling Gobi, Edengate, Ragon Snowy Peak, Kepler Harbour, Pegasus, The Lanf of The Lost and Hilde. Discover your adventure today!">
+    <meta name="keywords" content="Earth Revival, interactive maps,map Earth Revival, treasure locations, training zones, fishing spots, zone markers, old world treasure, earth revival guide, map features, gaming guide">
+
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Earth Revival Interactive Maps"/>
+    <meta property="og:description" content="A complete interactive map for exploration in Earth Revival."/>
+
+    <meta property="og:image" content="https://raw.githubusercontent.com/BangOneGaming/Earth-Revival-Interactive-Map/main/tittle.png"/>
+    <meta property="og:image:width" content="1200"/>
+    <meta property="og:image:height" content="630"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="https://your-website.com"/>
+
+    <!-- Twitter Card tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Earth Revival Interactive Maps">
+    <meta name="twitter:description" content="A complete interactive map for exploration in Earth Revival.">
+<meta name="google-site-verification" content="Kc8xcFRY2VFooEOA4ylGU68pU06pP1M1X9KWX0RyWzg" />
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/BangOneGaming/Earth-Revival-Interactive-Map/main/tittle.png">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467"
+     crossorigin="anonymous" data-adbreak-test="on"></script>
+<meta name="google-adsense-account" content="ca-pub-8582564022805467">
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({
+         google_ad_client: "ca-pub-8582564022805467",
+         enable_page_level_ads: true
+     });
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-image: url('background.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
+    }
+
+    .title-banner {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60vw;
+      max-width: 800px;
+      z-index: 10;
+      pointer-events: none;
+      display: none; /* default disembunyikan */
+    }
+
+    .overlay-btn {
+      position: absolute;
+      background: transparent;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      animation: neonPulse 2s infinite ease-in-out;
+      animation-play-state: running;
+      text-align: center; /* Agar teks berada di tengah */
+      display: flex;
+      flex-direction: column; /* Menempatkan gambar dan teks secara vertikal */
+      justify-content: center; /* Menyusun konten di tengah tombol */
+    }
+
+    .overlay-btn img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    /* Neon color masing-masing tombol */
+    .overlay-btn.earth { --neon-color: skyblue; }
+    .overlay-btn.mars { --neon-color: orange; }
+    .overlay-btn.pegasus { --neon-color: white; }
+
+    /* Animasi denyut neon */
+    @keyframes neonPulse {
+      0%, 100% { filter: drop-shadow(0 0 0 transparent); }
+      50% { filter: drop-shadow(0 0 12px var(--neon-color)); }
+    }
+
+    /* Hentikan animasi saat hover atau active */
+    .overlay-btn:hover,
+    .overlay-btn.active {
+      animation-play-state: paused;
+    }
+
+    /* Neon solid saat hover atau aktif */
+    .overlay-btn:hover img,
+    .overlay-btn.active img {
+      filter: drop-shadow(0 0 12px var(--neon-color));
+    }
+h4 {
+  font-family: 'Lato', sans-serif;
+  font-weight: 400; /* tipis */
+  color: orange;
+  font-size: 33px;
+  margin: 0;
+}
+
+    
+
+
+.top-right-label {
+  position: absolute;
+  top: 13px;
+  left: 135px;
+  z-index: 100;
+}
+
+    /* Teks yang muncul saat hover */
+.overlay-btn .overlay-text {
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  background-color: rgba(19, 39, 96, 0.613); /* biru gelap transparan */
+  border-radius: 8px;
+  border: 2px solid #889dcb;
+  width: auto;
+  max-width: 90%;
+  text-align: center;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  text-shadow: 0 0 10px var(--neon-color), 0 0 20px var(--neon-color);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  pointer-events: none;
+  z-index: 1;
+}
+
+
+.overlay-btn:hover .overlay-text {
+  opacity: 1;
+}
+
+
+    @media (orientation: portrait) {
+      body {
+        background-image: url('portrait_background.jpg');
+      }
+      .title-banner {
+        display: block;
+      }
+      .top-right-label {
+  position: absolute;
+  top: 20px;
+  left: 30px;
+  z-index: 100;
+}
+  #ad-container {
+    display: none;
+  }
+    }
+  </style>
+</head>
+<body>
+
+  <img src="statics/tittle_er.png" alt="Title" class="title-banner" />
+<div class="top-right-label">
+  <h4>World Map</h4>
+</div>
+
+  <script>
+    const overlayData = {
+      earth: {
+        src: 'earth.png',
+        url: 'earth.html',
+        class: 'earth',
+        name: 'Earth'
+      },
+      mars: {
+        src: 'mars.png',
+        url: 'The-Land-of-The-Lost/index.html',
+        class: 'mars',
+        name: 'Mars'
+      },
+      pegasus: {
+        src: 'pegasus.png',
+        url: 'https://BANGONEGAMING.com/pegasus',
+        class: 'pegasus',
+        name: 'Pegasus'
+      }
+    };
+
+    function createOverlay(type) {
+      const { src, url, class: cls, name } = overlayData[type];
+      const isPortrait = window.innerWidth < window.innerHeight;
+
+      const btn = document.createElement('button');
+      btn.className = `overlay-btn ${cls}`;
+      btn.onclick = () => window.location.href = url;
+
+      const img = document.createElement('img');
+      img.src = src;
+
+      // Teks yang akan muncul saat hover
+      const text = document.createElement('span');
+      text.className = 'overlay-text';
+      text.textContent = name; // Nama seperti 'Earth', 'Mars', 'Pegasus'
+
+      btn.appendChild(img);
+      btn.appendChild(text);
+
+      // Posisi dan ukuran tombol sesuai jenis overlay
+if (type === 'earth') {
+  if (isPortrait) {
+    btn.style.left   = '17.87vw';
+    btn.style.top    = '38.26vh';
+    btn.style.width  = '28vh';   // sebelumnya '322px'
+    btn.style.height = '28vh';   // sebelumnya '322px'
+  } else {
+    btn.style.left   = '33.78vw';
+    btn.style.top    = '18.39vh';
+    btn.style.width  = '32.46vw';   // 389px
+    btn.style.height = '77.02vh';   // 389px
+  }
+      } else if (type === 'mars') {
+        if (isPortrait) {
+          btn.style.left = '2.70vw';
+          btn.style.top = '43.14vh';
+          btn.style.width = '24.44vw';
+          btn.style.height = '12.72vh';
+        } else {
+          btn.style.left = '26.90vw';
+          btn.style.top = '32.30vh';
+    btn.style.width  = '12.56vw';   // 389px
+    btn.style.height = '30.02vh';   // 389px
+        }
+      } else if (type === 'pegasus') {
+        if (isPortrait) {
+          btn.style.left = '58.33vw';
+          btn.style.top = '36.27vh';
+          btn.style.width = '47.67vw';
+          btn.style.height = '23.43vh';
+        } else {
+    btn.style.left   = '56.20vw';   // 645px
+    btn.style.top    = '8.70vh';    // 57px
+    btn.style.width  = '27.00vw';   // 322px
+    btn.style.height = '69.00vh';   // 322px
+        }
+      }
+
+      document.body.appendChild(btn);
+    }
+
+    function loadOverlays() {
+      ['earth', 'pegasus', 'mars'].forEach(type => createOverlay(type));
+    }
+
+    window.onload = loadOverlays;
+
+    let lastOrientation = window.innerWidth < window.innerHeight ? 'portrait' : 'landscape';
+    window.addEventListener('resize', () => {
+      const currentOrientation = window.innerWidth < window.innerHeight ? 'portrait' : 'landscape';
+      if (currentOrientation !== lastOrientation) {
+        lastOrientation = currentOrientation;
+        document.querySelectorAll('.overlay-btn').forEach(el => el.remove());
+        loadOverlays();
+      }
+    });
+  </script>
+<!-- Iklan sticky bawah dengan background hitam transparan dan bisa ditutup -->
+<div id="ad-container" style="position:fixed; bottom:0; left:0; width:100%; background: rgba(0,0,0,0.3); z-index:9999;">
+  <div style="position: relative; max-width: 100%; margin: auto; background: rgba(0, 0, 0, 0.3); padding: 10px 40px 10px 10px;">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-8582564022805467"
+         data-ad-slot="1368580738"
+         data-ad-format="horizontal"
+         data-full-width-responsive="true"></ins>
+    <!-- Tombol close -->
+    <button onclick="document.getElementById('ad-container').style.display='none'" 
+            style="position:absolute; top:5px; right:5px; background:none; color:white; border:none; font-size:24px; font-weight:bold; cursor:pointer; z-index:10000;">×</button>
+  </div>
+</div>
+
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+</body>
+</html>

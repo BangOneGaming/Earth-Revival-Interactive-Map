@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="google-adsense-account" content="ca-pub-8582564022805467">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Resep</title>
+    <style>
+        /* CSS untuk tampilan dan animasi */
+        .recipe-container {
+            position: relative;
+            width: 300px;
+            margin-bottom: 20px;
+        }
+
+        .recipe-image {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .recipe-info {
+            position: absolute;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: right 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        .recipe-container.show-info .recipe-info {
+            right: 0;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Daftar Resep</h1>
+    <div id="recipes-container"></div>
+
+    <script>
+        // Memuat file JSON
+        fetch('resep.json')
+            .then(response => response.json())
+            .then(jsonData => {
+                const container = document.getElementById('recipes-container');
+                
+                jsonData.forEach(recipe => {
+                    if (recipe["Recipes Food"]) {
+                        const recipeContainer = document.createElement('div');
+                        recipeContainer.classList.add('recipe-container');
+
+                        const img = document.createElement('img');
+                        img.src = recipe["food image"];
+                        img.alt = recipe["Recipes Food"];
+                        img.classList.add('recipe-image');
+                        img.onclick = function() { toggleInfo(this) };
+
+                        const infoDiv = document.createElement('div');
+                        infoDiv.classList.add('recipe-info');
+                        infoDiv.innerHTML = `
+                            <h3>${recipe["Recipes Food"]}</h3>
+                            <p><strong>Bahan-bahan:</strong> ${recipe["The Ingredient"]}</p>
+                            <p><strong>Effect Buff:</strong> ${recipe["The Effect"]}</p>
+                        `;
+
+                        recipeContainer.appendChild(img);
+                        recipeContainer.appendChild(infoDiv);
+                        container.appendChild(recipeContainer);
+                    }
+                });
+            });
+
+        function toggleInfo(imageElement) {
+            const container = imageElement.parentElement;
+            container.classList.toggle('show-info');
+        }
+    </script>
+
+</body>
+</html>

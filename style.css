@@ -1,0 +1,2749 @@
+/* Reset default styling */
+body, p {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Background transparan untuk body */
+body {
+    background: transparent;
+    color: white;
+    overflow: auto; /* Mengizinkan halaman untuk di-scroll */
+    height: 100%; /* Pastikan body bisa di-scroll */
+}
+
+/* Preloader Style */
+.preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent ;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Loader Animasi */
+.loader {
+    border: 8px solid #f3f3f3; /* Light gray */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Video Background */
+.video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -1;
+}
+
+/* Gambar sebagai fallback */
+.image-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+}
+
+/* Kustomisasi warna tooltip */
+.introjs-tooltip {
+    background-color: rgba(10, 28, 61, 0.95) !important;
+    border: 2px solid #02a0c5 !important;
+    border-radius: 8px;
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    padding: 5px;
+}
+
+/* Warna teks tooltip */
+.introjs-tooltiptext {
+    color: #ffffff !important;
+}
+
+/* Warna highlight elemen yang ditandai */
+.introjs-helperLayer {
+    opacity: 0.6 !important;
+}
+
+/* Tampilan border pada elemen yang disorot */
+.introjs-highlightElement {
+    border: 2px solid #02a0c5;
+    border-radius: 5px;
+}
+
+/* Hilangkan tombol default */
+.introjs-skipbutton,
+.introjs-prevbutton,
+.introjs-nextbutton {
+    display: none !important;
+}
+/* Gaya untuk pop-up dengan skala lebih kecil tanpa memengaruhi konten */
+#tiktok-popup {
+  display: none;
+  position: fixed;
+  top: 7%;
+  left: -350px; /* Pop-up tersembunyi di luar layar kiri */
+  width: 350px; /* Tetap mempertahankan ukuran asli untuk konten */
+  max-width: 100%;
+  height: auto;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  z-index: 1000;
+  transform: scale(1.2); /* Skala pop-up dikurangi menjadi 80% */
+  transform-origin: top left; /* Titik referensi transformasi */
+  transition: left 0.5s ease, transform 0.3s ease;
+  z-index: 1000;
+  flex-direction: column; /* Menata elemen secara vertikal */
+  display: flex;
+}
+#popup-text {
+    text-align: center;
+  margin-bottom: 4px; /* Jarak antara teks dan video */
+}
+
+#popup-text h3 {
+  font-size: 1.5em;
+  margin: 0;
+}
+
+#popup-text p {
+  font-size: 1em;
+  color: black;
+}
+#tiktok-container {
+max-height: 100%;
+max-width: 100%;
+  transform: scale(1); /* Ukuran default */
+  transform-origin: center;
+}
+
+#tiktok-popup #close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 100px;
+  color: red; /* Warna merah untuk tombol */
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
+  font-weight: bold;
+}
+
+iframe {
+  width: 100%;
+  height: 100% !important;
+  aspect-ratio: 9 / 16; /* Menentukan rasio aspek vertikal 9:16 */
+}
+
+
+
+
+/* Container for the tabs */
+.tab-container {
+    width: 100%;
+    max-width: 400px;
+    z-index: 1;
+    margin: 0 auto;
+    background-color: rgba(10, 28, 61, 0.95);
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Tab button container with horizontal scrolling */
+.tab-buttons {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #889dcb;
+}
+
+/* Individual tab button styles */
+.tab-button {
+    flex: 0 0 150px;
+    padding: 10px;
+    font-size: 8px;
+    text-align: center;
+    background: rgba(19, 39, 96, 0.7);
+    border: none;
+    outline: none;
+    transition: background 0.3s;
+    margin: 2px;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+}
+
+/* Wrapper untuk konten gambar dan teks */
+.tab-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: 100%;
+}
+
+/* Mengatur gambar di tengah */
+.tab-button img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    margin-bottom: 5px;
+    transition: filter 0.3s; /* Menambahkan transisi pada filter */
+}
+
+/* Ukuran khusus untuk cook.png */
+.tab-button img[src*="cook.png"] {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 30px;
+    filter: brightness(0.9);
+}
+
+/* Teks di tengah bawah gambar (kecuali cook) */
+.tab-text {
+    position: absolute;
+    bottom: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    color: #fff;
+    text-align: center;
+    width: 100%;
+}
+
+/* Teks untuk tombol Recipe */
+.recipe-text {
+    font-size: 12px;
+    color: #fff;
+    margin-top: -38px;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Active tab button style */
+.tab-button.active {
+    background: #02a0c5;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Efek gambar lebih cerah pada tombol aktif */
+.tab-button.active img {
+    filter: brightness(1.5); /* Menambahkan efek lebih cerah */
+}
+
+/* Tab content container */
+.tab-content {
+    display: none;
+    padding: 20px;
+}
+
+/* Active tab content */
+.tab-content.active {
+    display: block;
+}
+
+.tab-content h3 {
+    text-align: center;
+    font-family: 'Lato', sans-serif;
+    font-size: 20px;
+    color: orange;
+    margin-bottom: 20px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif; /* Menggunakan Poppins untuk elemen header */
+    color: Orange;
+    font-weight: 100;
+}
+h5 {
+    font-size: 13px;
+    position: sticky;
+    height: 30px;
+    text-align: center;
+    top: 2px; /* Menjaga posisi elemen tetap di atas saat scroll */
+    background-color: black;
+    z-index: 10; /* Menjamin bahwa teks tetap di atas elemen lain */
+}
+
+
+
+/* Container styling */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: rgba(19, 39, 96, 0.613);
+    border: 2px solid #889dcb;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* Header styling */
+header {
+    background: url('images/header.png') no-repeat center center;
+    background-size: cover;
+    color: white;
+    padding: 20px 0px;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+}
+
+/* Title image styling */
+.title-image {
+    width: 60%;
+    max-width: 600px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+/* Subtitle styling */
+header h2.guide-label {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5em;
+    color: white;
+    border: 2px solid #02a0c5;
+    padding: 5px 15px;
+    border-radius: 15px;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+/* Intro section styling */
+.intro {
+    margin: 20px;
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.intro strong {
+    color: #02a0c5;
+}
+
+/* Additional information styling */
+.additional-info {
+    margin-top: 15px;
+    font-style: italic;
+    color: #c3d5f7; /* Lighter color for better readability */
+}
+.download-section {
+    position: relative;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 15px;
+    color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.scrollable-container {
+    overflow-x: auto; /* Enable horizontal scrolling */
+    padding-bottom: 5px;
+}
+
+.game-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.game-icon {
+    width: 170px;
+    height: 170px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.game-details {
+    width: max-content; /* Allow horizontal scroll for game details */
+    text-align: left;
+    line-height: 1.4;
+}
+
+.game-name {
+    font-family: 'Lato', sans-serif;
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 5px;
+}
+
+.platform-logos {
+    display: flex;
+    gap: 15px;
+    margin: 10px 0;
+}
+
+.platform-logo {
+    width: 32px;
+    height: 32px;
+}
+
+.platform-sizes {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0;
+}
+
+.platform-size {
+    font-size: 0.7em;
+    color: #ffffff;
+    margin: 1px 0;
+}
+
+.download-button {
+    background-color: #02a0c5;
+    color: #ffffff;
+    padding: 12px 40px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1em;
+    transition: background-color 0.3s;
+    display: inline-block;
+}
+
+.download-button:hover {
+    background-color: #028c9a;
+}
+
+/* Button styling */
+.container button {
+    margin-top: 20px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.container button:hover {
+    border: 1px solid #02a0c5;
+}
+
+.map-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 50px; /* Increase spacing between buttons */
+    align-items: center;
+    margin-top: 20px;
+    padding: 0 20px; /* Add horizontal padding to the container */
+}
+
+.map-btn {
+    position: relative;
+    border: 2px solid #889dcb;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    background: none;
+    width: 100%; /* Make button width responsive to fill container */
+    max-width: 800px; /* Set a maximum width for larger buttons */
+    padding: 0; /* Remove default padding */
+    box-sizing: border-box; /* Ensure padding is included in the width calculation */
+}
+
+.map-btn img {
+    width: 100%; /* Make image fill the button width */
+    height: auto; /* Maintain the aspect ratio of the image */
+    display: block;
+}
+
+.map-title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%; /* Fill the width of the button */
+    background-color: rgba(10, 18, 44, 0.5); /* Text background color */
+    color: white; /* Text color */
+    font-size: 18px;
+    text-align: center;
+    padding: 8px 0; /* Padding for the title */
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s ease; /* Smooth transition for visibility */
+}
+
+/* Animation keyframes */
+@keyframes fadeInZoom {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* Add animation class */
+.map-title.visible {
+    opacity: 1; /* Show when visible */
+    animation: fadeInZoom 0.5s ease; /* Apply the fade-in zoom animation */
+}
+
+/* Button hover effects */
+.map-btn:hover .map-title {
+    opacity: 0; /* Hide text on hover */
+}
+
+.map-btn:hover {
+    transform: scale(1.05);
+    border-color: #02a0c5;
+}
+.map-btn {
+    transition: transform 0.3s ease, border-color 0.3s ease; /* Smooth transition */
+}
+
+/* Button enlarges when it's centered in the viewport */
+.map-btn.active {
+    transform: scale(1.1); /* Increase size */
+    border: 2px solid #02a0c5;
+}
+
+.map-info {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 100px; /* Space between each map section */
+}
+
+.map-description {
+    padding: 1.5rem;
+    background-color: rgba(19, 39, 96, 0.613);
+    border: 1px solid #889dcb;
+    border-radius: 8px;
+    position: relative;
+}
+
+.map-header {
+    position: relative;
+    width: fit-content;
+}
+
+.map-icon {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.map-header h2 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center the title */
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 50; /* Thinner font weight */
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    text-align: center;
+}
+
+
+.map-description p {
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    margin: 0.5rem 0;
+}
+
+ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-top: 0.5rem;
+}
+
+ul li {
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+}
+
+.resource-icon {
+    width: 1.2em;
+    height: 1.2em;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+strong {
+    color: #02a0c5;
+}
+
+
+/* Fish List Container */
+.fish-list {
+    margin: 20px 0;
+    padding: 15px; /* Added padding for spacing */
+    background-color: rgba(30, 44, 80, 0.8); /* Slightly different background */
+    border-radius: 8px;
+    border: 2px solid #889dcb;
+}
+
+/* Individual Fish Item */
+.fish-item {
+    display: flex;
+    flex-direction: column; /* Stack title and description */
+    padding: 15px; /* Padding around each item */
+    margin: 10px 0;
+    background-color: rgba(19, 39, 96, 0.7); /* Background for each fish item */
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
+}
+
+/* Hover effect for fish items */
+.fish-item:hover {
+    background-color: rgba(2, 160, 197, 0.5); /* Change color on hover */
+    transform: scale(1.02); /* Slight scale effect on hover */
+}
+
+/* Fish Item Heading */
+.fish-item h3 {
+   font-family: 'Poppins', sans-serif;
+    color: #02a0c5; /* Highlight color for fish names */
+    font-size: 1.5em; /* Increase font size for headings */
+    margin-bottom: 5px; /* Space below the heading */
+}
+
+/* Fish Item Paragraph */
+.fish-item p {
+    color: white; /* Text color */
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1em; /* Slightly larger for readability */
+    margin: 0; /* Remove default margin */
+}
+
+/* Strong text inside fish item */
+.fish-item p strong {
+    color: #ffd700; /* Gold color for emphasis on levels */
+}
+
+/* Additional List Styles */
+.fish-list h2 {
+    color: Orange; /* Color for the title */
+   font-family: 'Poppins', sans-serif;
+    text-align: center; /* Center align the title */
+    margin-bottom: 15px; /* Space below title */
+    font-size: 2em; /* Adjust font size as needed */
+}
+
+footer {
+    background-color: #0a1c3d;
+    color: #ffffff;
+    padding: 20px;
+    text-align: center;
+    margin-top: 40px;
+    border-top: 1px solid #02a0c5;
+}
+
+footer p {
+    margin: 5px 0;
+}
+
+footer a {
+    color: #02a0c5;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+.cookie-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    background-color: rgba(10, 28, 61, 0.95);
+    color: white;
+    padding: 15px 20px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+    z-index: 1000;
+    font-family: Arial, sans-serif;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.cookie-notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.cookie-notification p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.cookie-notification a {
+    display: inline-block;
+    margin-top: 10px;
+    color: #02a0c5;
+    text-decoration: underline;
+}
+
+.cookie-notification button {
+    margin-top: 10px;
+    background-color: #02a0c5;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.cookie-notification button:hover {
+    background-color: #008bb5;
+}
+
+/* Main container for video and playlist */
+.video-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    padding: 20px;
+}
+
+.large-video {
+   position: relative;
+    top: 50%; /* Tempatkan elemen di tengah secara vertikal */
+    left: 50%; /* Tempatkan elemen di tengah secara horizontal */
+    transform: translate(-50%); /* Menarik elemen ke tengah dengan menggeser setengah dari ukurannya */
+    width: 100%;
+    max-width: 900px; /* Batasi lebar maksimum */
+    height: 0;
+    padding-bottom: 56.25%; /* Maintain 16:9 aspect ratio */
+    background-color: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    margin-bottom: 15px;
+}
+
+/* Video iframe styling */
+#video-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 8px;
+}
+
+/* Video description box */
+#video-description {
+    padding: 10px;
+    color: #fff;
+    font-size: 1rem;
+    text-align: center;
+    background-color: #2c3e50;
+    border-radius: 0 0 8px 8px;
+    margin-top: -8px;
+}
+
+/* Playlist section title */
+.playlist-title {
+    width: 100%;
+    text-align: center;
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    background-color: #192641;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* Pembungkus Playlist */
+.playlist-container-wrapper {
+    width: 100%;
+    overflow-x: auto; /* Aktifkan scroll horizontal */
+    overflow-y: hidden; /* Sembunyikan scroll vertikal */
+    white-space: nowrap; /* Mencegah item turun ke baris baru */
+    padding-bottom: 10px; /* Agar scrollbar tidak menutupi item */
+}
+
+/* Kontainer Playlist */
+.playlist-container {
+    display: flex;
+    flex-wrap: nowrap; /* Susun item secara horizontal */
+    gap: 50px;
+    padding: 10px 0;
+    scroll-behavior: smooth;
+}
+
+/* Custom scrollbar untuk Webkit */
+.playlist-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.playlist-container::-webkit-scrollbar-thumb {
+    background-color: #02a0c5;
+    border-radius: 10px;
+}
+
+.playlist-container::-webkit-scrollbar-track {
+    background-color: #192641;
+    border-radius: 10px;
+}
+
+/* Item Playlist */
+.playlist-item {
+    width: 500px;
+    cursor: pointer;
+    text-align: center;
+    background-color: #192641;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Efek Hover pada Item Playlist */
+.playlist-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* Playlist item title styling */
+.playlist-item h3 {
+    color: #fff;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+/* Container for Recipes */
+#recipe-container {
+    display: flex; /* Align recipes in a row */
+    flex-wrap: wrap; /* Allow wrapping to the next line if needed */
+    gap: 50px; /* Space between each recipe */
+}
+
+/* Individual Recipe Item */
+.recipe {
+    padding-right: 5px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background-color: rgba(19, 39, 96, 0.7);
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+
+/* Image Container */
+.image-container {
+    flex-shrink: 0;
+}
+
+/* Recipe Image with hover effect */
+.recipe-image {
+    width: 100px;
+    height: auto;
+    border-radius: 5px;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.3s, border 0.3s;
+}
+
+/* Show border on hover */
+.recipe-image:hover {
+    border: 4px solid #02a0c5;
+    transform: scale(1);
+}
+
+/* Toggled-off border state when clicked */
+.recipe-image.no-border {
+    border: none;
+}
+
+
+/* Info Container for Title and Description */
+.info-container {
+    flex-grow: 1;
+    color: white;
+    font-family: 'Lato', sans-serif;
+}
+
+/* Recipe Title */
+.recipe h3 {
+    font-family: 'Lato', sans-serif;
+    color: #02a0c5;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+    margin-top: -1px;
+}
+
+/* Recipe Effect and Ingredients */
+.recipe p {
+    font-size: 12px;
+    margin: 2px 0;
+}
+
+.ingredients {
+    display: grid;
+    grid-template-columns: repeat(2, auto); /* Kolom menyesuaikan ukuran konten */
+    gap: 11px; /* Jarak antar item */
+    padding-left: 10px; /* Mengurangi padding samping */
+    margin-top: 5px;
+}
+
+.ingredients li {
+    padding-right: 10px;
+    font-weight: bold;
+    margin-bottom: 3px; /* Mengurangi jarak antar item */
+}
+#search-input {
+    width: 50%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: 1px solid #889dcb;
+    font-size: 1em;
+}
+
+.add-recipe-btn {
+    width: 100px;
+    height: 250px;
+    font-size: 1.5em; /* Match font size to the recipe titles */
+    color: #02a0c5; /* Match the recipe title color */
+    background: none; /* No background */
+    border: 2px solid #889dcb;
+    cursor: pointer; /* Pointer cursor for clickable */
+    padding: 10px; /* Padding for better click area */
+    transition: transform 0.3s, color 0.3s; /* Transition for hover effects */
+}
+
+.add-recipe-btn:hover {
+    color: orange; /* Change color on hover for feedback */
+    transform: scale(1.1); /* Slightly enlarge on hover */
+}
+
+
+.cooking {
+    padding: 20px;
+    background-color: rgba(30, 44, 80, 0.8);
+    border-radius: 8px;
+    border: 2px solid #889dcb;
+    margin-top: 20px;
+    
+}
+
+.cooking h2 {
+    color: orange;
+    font-family: 'Lato', sans-serif;
+    text-align: center;
+    font-size: 2em;
+    margin-bottom: 5px;
+}
+
+#cooking-search-input {
+    width: 50%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: 1px solid #889dcb;
+    font-size: 1em;
+}
+
+#cooking-container {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center;
+    padding: 10px;
+    max-height: 700px; /* Sesuaikan tinggi sesuai kebutuhan */
+    overflow-y: auto; /* Mengaktifkan scroll secara vertikal */
+}
+
+.name-image-container {
+    display: flex;
+    flex-direction: column; /* Atur item dalam kolom */
+    align-items: center; /* Pusatkan elemen secara horizontal */
+}
+
+.recipe-name {
+    margin-bottom: 10px; /* Spasi antara nama dan gambar */
+}
+
+.image-container {
+    display: flex;
+    justify-content: center; /* Pusatkan gambar secara horizontal */
+}
+
+.cooking-recipe-image {
+    max-width: 100%; /* Pastikan gambar tidak lebih besar dari kontainer */
+    height: auto; /* Menjaga aspek rasio */
+}
+
+
+.cooking-item {
+    display: flex;
+    flex-direction: column; /* Stack image and text */
+    align-items: center; /* Center align all items */
+    background-color: rgba(19, 39, 96, 0.7);
+    border-radius: 5px;
+    border: 2px solid #889dcb;
+    margin: 10px 0;
+    padding: 10px;
+    transition: background-color 0.3s;
+    width: 80%;
+}
+
+.info-container {
+    color: white;
+    font-family: 'Lato', sans-serif;
+    margin-top: 10px;
+    width: 100%; /* Ensure full width */
+    text-align: left; /* Align text to the left for readability */
+}
+
+.info-container h3 {
+    color: #02a0c5;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    text-align: center; /* Center the recipe name */
+}
+
+.recipe-effect, .recipe-special-effect, .recipe-surprise-effect {
+    display: flex; /* Use flexbox to align labels and values */
+    justify-content: space-between; /* Space between label and value */
+    margin: 5px 0; /* Margin for spacing */
+}
+
+.ingredients {
+    list-style-type: none; /* Remove default list styling */
+    padding: 0; /* Remove padding */
+    margin-top: 10px;
+}
+
+.ingredients li {
+    display: inline; /* Display ingredients in a single line */
+    margin-right: 10px; /* Add spacing between ingredients */
+    color: #ffffff; /* Adjust ingredient color */
+}
+/* Styles for the effects container */
+.effects-container {
+    display: flex;
+    flex-direction: column; /* Stack effects vertically */
+    color: white; /* Text color */
+    width: 100%; /* Ensure full width */
+}
+
+/* Common styling for effect paragraphs */
+.effect, .special-effect, .surprise-effect, .contribute {
+    display: flex; /* Use flex to align label and value */
+    justify-content: space-between; /* Space between label and value */
+    margin: 5px 0; /* Add margin for spacing */
+}
+
+/* Flex style for span elements in effect and contribute */
+.effect span, .special-effect span, .surprise-effect span, .contribute span {
+    flex: 1; /* Allow labels and values to take equal space */
+}
+
+/* Gold color for labels */
+.effect strong, .special-effect strong, .surprise-effect strong {
+    color: orange; /* Gold color for labels */
+    text-align: left; /* Align labels to the left */
+}
+
+/* Distinct styling for the contribute section */
+.contribute strong {
+    color: #02a0c5; /* Different color for the label */
+}
+
+.contribute span {
+    color: white; /* Maintain white color for the value */
+}
+
+#add-cooking-button {
+    width: 70%;
+    height: 400px;
+    font-size: 1.5em; /* Match font size to the recipe titles */
+    color: #889dcb; /* Match the recipe title color */
+    background: none; /* No background */
+    border: 2px solid #889dcb;
+    cursor: pointer; /* Pointer cursor for clickable */
+    padding: 25px; /* Padding for better click area */
+    transition: transform 0.3s, color 0.3s; /* Transition for hover effects */
+}
+
+#add-cooking-button:hover {
+    border: 2px solid #02a0c5;
+    color: #02a0c5;
+}
+
+
+/* Pop-up Form Styling */
+.popup-form {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+/* Form Container Styling */
+#add-recipe-form {
+  max-width: 300px;
+  padding: 20px;
+  margin: 50px;
+  border-radius: 8px;
+  background-color: rgba(19, 39, 96, 0.9);
+  color: #fff;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  font-family: Arial, sans-serif;
+      border: 1px solid #889dcb;
+}
+
+/* Header for the Form */
+#add-recipe-form h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  color: #ffd700;
+}
+
+/* Label Styling */
+#add-recipe-form label {
+  font-weight: bold;
+  margin-top: 15px;
+  display: block;
+  color: #dcdcdc;
+}
+
+/* Input Field Styles */
+#add-recipe-form input[type="text"] {
+  max-width: 300px; /* Limit width */
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+/* Ingredients Grid Layout */
+.ingredients-inputs {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 5px;
+  margin-bottom: 5px;
+
+}
+
+.ingredients-inputs input {
+  padding: 5px;
+  width: 40%;
+  max-width: 20px; /* Limit width for grid items */
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+/* Form Button Styles */
+#add-recipe-form .submit-btn {
+  background-color: #02a0c5;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  width: 100%;
+  margin-top: 10px;
+  max-width: 300px; /* Limit width */
+}
+
+#add-recipe-form .submit-btn:hover {
+  background-color: #028c9a;
+}
+/* Pop-up Form Styling */
+#cooking-popup-form {
+  display: none; /* Default hidden */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  justify-content: center;
+  align-items: center;
+}
+
+/* Form Container Styling */
+#add-cooking-form {
+  max-width: 300px;                /* Maximum width of the form */
+  padding: 20px;                   /* Internal padding */
+  margin: 70px auto;               /* Center the form with auto margin on sides */
+  border-radius: 8px;              /* Rounded corners */
+  background-color: rgba(19, 39, 96, 0.9); /* Semi-transparent background */
+  color: #fff;                     /* Text color */
+  position: relative;               /* Positioning context */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Shadow effect */
+  font-family: Arial, sans-serif;   /* Font style */
+  border: 1px solid #889dcb;       /* Border color */
+  overflow-y: auto;                 /* Enable vertical scrolling */
+  max-height: 80vh;                /* Maximum height for scrolling */
+}
+
+
+/* Header for the Form */
+#add-cooking-form h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  color: #ffd700;
+}
+
+/* Label Styling */
+#add-cooking-form label {
+  font-weight: bold;
+  margin-top: 15px;
+  display: block;
+  color: #dcdcdc;
+}
+
+/* Input Field Styles */
+#add-cooking-form input[type="text"],
+#add-cooking-form input[type="file"] {
+  max-width: 300px; /* Limit width */
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+/* Ingredients Grid Layout */
+.ingredients-inputs {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.ingredients-inputs input {
+  padding: 5px;
+  width: 60%;
+  max-width: 20px; /* Limit width for grid items */
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+/* Form Button Styles */
+#add-cooking-form .submit-btn {
+  background-color: #02a0c5;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  width: 100%;
+  height: 150px;
+  margin-top: 10px;
+  max-width: 300px; /* Limit width */
+}
+
+#add-cooking-form .submit-btn:hover {
+  background-color: #028c9a;
+}
+#survival-guide {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: rgba(30, 44, 80, 0.8);
+    color: #ffffff; /* Consistent text color */
+    position: relative; /* Added for the mask */
+    overflow: hidden; /* Prevent content overflow */
+}
+
+/* Gradient mask to fade edges */
+#survival-guide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(to right, rgba(30, 44, 80, 0.8), rgba(30, 44, 80, 0) 20%, rgba(30, 44, 80, 0) 80%, rgba(30, 44, 80, 0.8));
+    pointer-events: none; /* Allow interaction with buttons beneath */
+    z-index: 1; /* Ensure it is above the background but below buttons */
+}
+
+/* Gradient untuk sisi kiri */
+#survival-guide::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0; /* Posisikan di sisi kiri */
+    width: 20%; /* Lebar area gradient kiri */
+    height: 100%;
+    background: linear-gradient(to right, rgba(30, 44, 80, 0.8), rgba(30, 44, 80, 0)); /* Gradient kiri */
+    z-index: 2; /* Di atas konten utama */
+}
+
+/* Gradient untuk sisi kanan */
+#survival-guide::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0; /* Posisikan di sisi kanan */
+    width: 20%; /* Lebar area gradient kanan */
+    height: 100%;
+    background: linear-gradient(to left, rgba(30, 44, 80, 0), rgba(30, 44, 80, 0.8)); /* Gradient kanan */
+    z-index: 2; /* Di atas konten utama */
+}
+
+#survival-guide h2 {
+    color: white;
+    font-family: 'Lato', sans-serif;
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Horizontal Scrollable Container */
+.guide-buttons {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    padding: 70px 350px; /* Top and bottom 20px, left and right 100px */
+    gap: 100px;
+    scroll-snap-type: x mandatory;
+    height: 300px; /* Height of the section */
+    z-index: 3; /* Ensure buttons are above gradient */
+}
+
+/* Ensure buttons are visible against the gradient */
+.guide-button {
+    position: relative; /* For label positioning */
+    flex: 0 0 auto; /* Prevent wrapping */
+    border: 2px solid #889dcb; /* Consistent border color */
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease, border-color 0.3s ease; /* Smooth transition */
+    background: none; /* Make the button transparent initially */
+    max-width: 500px; /* Set a maximum width for the button */
+    padding: 0; /* Remove default padding */
+    box-sizing: border-box; /* Ensure padding is included in the width calculation */
+}
+
+/* Image styling */
+.guide-button img {
+    width: 100%; /* Make image fill the button width */
+    height: 100%; /* Maintain the aspect ratio of the image */
+    display: block;
+}
+
+/* Label styling */
+.guide-label {
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(2, 160, 197, 1); /* New transparent background color */
+    color: #ffffff; /* Label text color */
+    padding: 5px 70px;
+    border-radius: 5px;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s ease; /* Smooth transition for visibility */
+    font-size: 0.9em;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Show label when button is active */
+.guide-button.active .guide-label {
+    opacity: 1; /* Show when visible */
+}
+
+/* Button hover effects */
+.guide-button:hover {
+    transform: scale(1.45); /* Slightly enlarge the button on hover */
+    border-color: #02a0c5; /* Change border color on hover */
+}
+
+/* Button enlarges when it's centered in the viewport */
+.guide-button.active {
+    transform: scale(1.41); /* Increase size */
+    border: 5px solid #02a0c5; /* Highlight the active button */
+}
+
+/* Hide scrollbar */
+.guide-buttons::-webkit-scrollbar {
+    display: none;
+}
+
+/* Modal styles */
+.modal {
+    display: none; /* Hide modal by default */
+    position: fixed; /* Fixed position to cover the whole screen */
+    z-index: 50; /* Sit on top of other content */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+}
+
+/* Modal content box */
+.modal-content {
+    z-index: 50px;
+    display:flax;
+    align-items: center;  /* Menjaga modal konten tetap terpusat */
+    background: rgba(19, 39, 96, 0.7); /* Background sedikit lebih gelap */
+    margin: 5% auto;
+    margin-bottom: 30%
+    padding: 20px;
+    border: 1px solid #888;
+}
+
+/* Tombol Close Modal */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: #ff4d4d;
+}
+
+#openModalBtn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Lebar mengikuti lebar container */
+    padding: 50px 50px; /* Padding atas bawah 50px, kiri kanan 0px */
+    height: 60vw; /* Tinggi tombol 100px */
+    background: rgba(19, 39, 96, 0.7);
+    border: 2px solid #889dcb;
+    border-radius: 5px;
+    font-size: 30px; /* Ukuran font untuk tanda "+" */
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    box-sizing: border-box;
+    position: relative;
+}
+
+#openModalBtn:before {
+    content: "+"; /* Tanda plus */
+    color: #889dcb; /* Warna teks tanda + */
+    font-size: 40px; /* Ukuran font tanda + */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Posisikan di tengah-tengah tombol */
+}
+/* Visitor Poster Layout */
+#visitor-poster-content {
+    display: flex;
+    flex-direction: column;  /* Membuat elemen-elemen di dalamnya ditampilkan secara vertikal */
+    gap: 20px; /* Menambahkan jarak antara kontainer */
+}
+
+/* Visitor Battleware Set */
+.visitor-battleware-set {
+    width: 93%;
+    text-align: left;
+    margin: 10px;
+    padding: 15px;
+    background: rgba(19, 39, 96, 0.7);
+    border-radius: 10px;
+    border: 2px solid #889dcb;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Weapon and Core Styling */
+.visitor-battleware-item,
+.visitor-core-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 28, 61, 0.883);
+    padding: 5px;
+    border-radius: 10px;
+    width: 100%; /* Mengubah lebar menjadi 100% */
+    max-height: 310px;
+    overflow: hidden;
+}
+
+
+.visitor-battleware-item img, .visitor-core-item img {
+    width: 100%;
+    height: auto;
+    max-height: 310px;
+    max-width: 100%;
+    border-radius: 5px;
+}
+
+.visitor-weapon-name {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    font-size: 16px;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Mod Container */
+.visitor-mod-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Mengatur jarak antar mod */
+    justify-content: flex-start;
+}
+
+
+/* Styling untuk setiap mod-item */
+.visitor-mod-item {
+    display: inline-flex;  /* Membuat item berjajar secara horizontal */
+    background-color: rgba(10, 28, 61, 0.883);
+    color: white;
+    border: 1px solid #889dcb;
+    border-radius: 5px;
+    text-align: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+    padding: 0;
+    align-items: center;
+    margin: 0;
+    position: relative;
+    width: 31%;  /* Membuat 4 item per baris */
+    max-width: 40%;
+    overflow: hidden;
+    box-sizing: border-box;  /* Pastikan padding dan border dimasukkan dalam perhitungan lebar */
+}
+
+/* Gambar dalam mod-item */
+.visitor-mod-item img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Container Header (Frame, Username, Deskripsi) */
+.visitor-header-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+/* Container untuk Username dan Frame */
+.visitor-text-container {
+    display: flex;
+    align-items: center; /* Menyelaraskan elemen-elemen di dalam container secara vertikal */
+    justify-content: center;
+    flex-direction: column;
+    text-align: center; /* Menyelaraskan teks di tengah */
+}
+
+/* Styling untuk Username */
+.visitor-username {
+    font-family: 'Lato', sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: #d0e7ff;
+    margin-top: 10px; /* Memberikan sedikit jarak atas agar tidak terlalu dekat dengan frame */
+    margin-bottom: 5px;
+}
+
+/* Styling untuk Frame */
+.visitor-profile-frame {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #889dcb;
+    display: flex;
+    justify-content: center; /* Menyelaraskan frame di tengah */
+    align-items: center;
+    margin-bottom: 5px; /* Memberikan jarak antara frame dan deskripsi */
+}
+
+/* Styling untuk Deskripsi */
+.visitor-description {
+    font-size: 14px;
+    font-family: 'Lato', sans-serif;
+    color: #d0d7ff;
+    line-height: 1.5;
+    background: rgba(10, 28, 61, 0.5);
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
+    min-height: 100px; /* Tinggi default deskripsi */
+    border-left: 4px solid #4db8ff;
+    overflow-y: auto; /* Menambahkan scrollbar jika teks terlalu panjang */
+}
+.visitor-build-header-container {
+    width: 100%;
+    padding: 10px 0;
+    border-bottom: 1px solid orange;
+    margin-bottom: 15px;
+}
+
+.visitor-build-name-header {
+    font-size: 1.8em;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    margin: 0;
+    color: white;
+}
+
+/* Pastikan kontainer di sekitar tombol memiliki display flex */
+.button-container {
+    display: flex;
+    justify-content: center; /* Untuk memusatkan tombol secara horizontal */
+    align-items: center;     /* Untuk memusatkan tombol secara vertikal */
+    width: 100%;             /* Pastikan kontainer mengambil seluruh lebar */
+    height: 100%;            /* Pastikan kontainer mengambil seluruh tinggi */
+    position: absolute;      /* Memungkinkan penempatan di tengah */
+    bottom: 0; 
+    right: 0;
+}
+
+/* Styling untuk Tombol Link Video */
+.visitor-video-button {
+    display: inline-block;
+    font-size: 15px;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #4db8ff;
+    padding: 10px 20px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.visitor-video-button:hover {
+    background-color: #69c0ff;
+}
+
+.visitor-video-button:active {
+    transform: scale(0.95);
+}
+
+
+
+/* Battleware container styling */
+#battleware-container {
+    padding: 3px;
+    background: #1f2a47; /* Dark background for the whole container */
+    border-radius: 15px;
+    max-height: 70vh; /* Maksimum tinggi kontainer, disesuaikan agar modal tidak terlalu tinggi */
+    overflow-y: auto; /* Mengaktifkan scroll vertikal jika konten melebihi tinggi kontainer */
+}
+/* Weapon selection section styling */
+#weapon-selection {
+    text-align: center;
+    margin: 10px;
+    background: rgba(19, 39, 96, 0.8); /* Slightly transparent background */
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #889dcb; /* Light border around the weapon section */
+}
+
+.weapon-list {
+    display: flex;
+    flex-wrap: nowrap; /* No line breaks */
+    gap: 15px;
+    justify-content: flex-start;
+    overflow-x: auto; /* Horizontal scroll */
+    padding: 10px;
+    white-space: nowrap; /* Prevent wrapping */
+    scrollbar-width: thin; /* Thin scrollbar in Firefox */
+    scrollbar-color: #889dcb rgba(10, 28, 61, 0.883);
+}
+
+.weapon-list::-webkit-scrollbar {
+    height: 10px; /* Scrollbar height */
+}
+
+.weapon-list::-webkit-scrollbar-thumb {
+    background-color: #889dcb; /* Thumb color */
+    border-radius: 10px;
+}
+
+.weapon-item {
+    cursor: pointer;
+    display: inline-block;
+    border-radius: 8px;
+    padding: 10px;
+    background: rgba(10, 28, 61, 0.883);
+    color: white;
+    border: 2px solid #889dcb; /* Border for each weapon item */
+    transition: transform 0.2s;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.weapon-item:hover {
+    background: rgba(19, 39, 96, 0.8); /* Warna latar belakang ketika senjata dipilih */
+    border: 2px solid #02a0c5; /* Ganti border untuk menandakan senjata yang dipilih */
+}
+.weapon-item.active {
+    background: rgba(19, 39, 96, 0.8); /* Warna latar belakang ketika senjata dipilih */
+    border: 2px solid #02a0c5; /* Ganti border untuk menandakan senjata yang dipilih */
+}
+
+.weapon-item img {
+    width: 200px;
+    height: auto;
+    border-radius: 5px;
+}
+
+.weapon-item p {
+    margin-top: 8px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+}
+
+//* Battleware container styling */
+#battleware-container {
+    padding: 3px;
+    background: #1f2a47; /* Dark background for the whole container */
+    border-radius: 15px;
+    max-height: 70vh; /* Maksimum tinggi kontainer, disesuaikan agar modal tidak terlalu tinggi */
+    overflow-y: auto; /* Mengaktifkan scroll vertikal jika konten melebihi tinggi kontainer */
+}
+/* Weapon selection section styling */
+#weapon-selection {
+    text-align: center;
+    margin: 20px;
+    background: rgba(19, 39, 96, 0.8); /* Slightly transparent background */
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #889dcb; /* Light border around the weapon section */
+}
+
+.weapon-list {
+    display: flex;
+    flex-wrap: nowrap; /* No line breaks */
+    gap: 15px;
+    justify-content: flex-start;
+    overflow-x: auto; /* Horizontal scroll */
+    padding: 10px;
+    white-space: nowrap; /* Prevent wrapping */
+    scrollbar-width: thin; /* Thin scrollbar in Firefox */
+    scrollbar-color: #889dcb rgba(10, 28, 61, 0.883);
+}
+
+.weapon-list::-webkit-scrollbar {
+    height: 10px; /* Scrollbar height */
+}
+
+.weapon-list::-webkit-scrollbar-thumb {
+    background-color: #889dcb; /* Thumb color */
+    border-radius: 10px;
+}
+
+.weapon-item {
+    cursor: pointer;
+    display: inline-block;
+    border-radius: 8px;
+    padding: 10px;
+    background: rgba(10, 28, 61, 0.883);
+    color: white;
+    border: 2px solid #889dcb; /* Border for each weapon item */
+    transition: transform 0.2s;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.weapon-item:hover {
+    background: rgba(19, 39, 96, 0.8); /* Warna latar belakang ketika senjata dipilih */
+    border: 2px solid #02a0c5; /* Ganti border untuk menandakan senjata yang dipilih */
+}
+.weapon-item.active {
+    background: rgba(19, 39, 96, 0.8); /* Warna latar belakang ketika senjata dipilih */
+    border: 2px solid #02a0c5; /* Ganti border untuk menandakan senjata yang dipilih */
+}
+
+.weapon-item img {
+    width: 200px;
+    height: auto;
+    border-radius: 5px;
+}
+
+.weapon-item p {
+    margin-top: 8px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+}
+
+/* Battleware content layout */
+#battleware-content {
+    display: flex; /* Gunakan flexbox untuk menata elemen-elemen secara horizontal */
+    justify-content: space-between; /* Memberi jarak antar elemen */
+    gap: 20px; /* Jarak antar my-battleware-set dan library-battleware */
+    padding: 20px;
+}
+
+/* My Battleware Set */
+#my-battleware-set {
+    width: 100%; /* Lebar lebih besar untuk my-battleware-set */
+    text-align: left;
+    margin: 20px 10px;
+    padding: 15px;
+    background: rgba(19, 39, 96, 0.7); /* Background sedikit lebih gelap */
+    border-radius: 10px;
+    border: 2px solid #889dcb; /* Border di sekitar battleware set */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-wrap: wrap; /* Biarkan item membungkus saat perlu */
+    gap: 10px;
+}
+
+
+/* Styling untuk weapon dan core placeholder */
+.placeholder {
+    position: relative; /* Agar teks dapat diposisikan secara absolut */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 28, 61, 0.883);
+    color: white;
+    border: 1px solid #889dcb;
+    border-radius: 10px;
+    padding: 0;
+    margin-bottom: 20px;
+    width: 100%; /* Menyesuaikan lebar container */
+    box-sizing: border-box;
+    text-align: center;
+    overflow: hidden; /* Agar gambar tidak meluap */
+}
+
+/* Gambar di dalam placeholder */
+.placeholder-img {
+    opacity: 0; /* Membuat gambar semi-transparan agar teks lebih terlihat */
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
+/* Teks di tengah gambar */
+.placeholder-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Memberikan efek bayangan agar lebih terlihat */
+}
+
+/* Styling untuk mod placeholders */
+#mod-placeholders {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: space-between;
+}
+
+/* Styling untuk tiap mod placeholder */
+.mod-placeholder {
+    position: relative; /* Agar teks "?" bisa diposisikan relatif terhadap placeholder */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 28, 61, 0.883);
+    border-radius: 10px;
+    padding: 0;
+    width: 30%; /* Lebar mod setiap item 30% dari container */
+    box-sizing: border-box;
+    text-align: center;
+    overflow: hidden;
+}
+
+/* Gambar dalam mod placeholder */
+.mod-placeholder img {
+    opacity: 0;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
+/* Styling teks "?" di tengah gambar */
+.question-mark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    z-index: 1;
+}
+
+
+/* Styling untuk item senjata atau mod yang dipilih dalam battleware-set */
+.battleware-set-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    background-color: rgba(10, 28, 61, 0.883); /* Background untuk item yang dipilih */
+    padding: 5px;
+    border-radius: 8px;
+    position: relative;
+    max-width: 100%;
+    justify-content: center;
+    
+}
+
+/* Gambar dalam senjata yang dipilih (besar) */
+.battleware-set-item img {
+    width: auto;
+    height: auto;
+    max-height: 310px; /* Membatasi tinggi gambar senjata */
+    max-width: 100%; /* Memastikan gambar tidak meluap */
+    border-radius: 5px;
+    display: block;
+    margin: 0 auto;
+}
+
+
+/* Nama item di dalam gambar (di pojok kiri bawah) */
+.battleware-set-item .weapon-name {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    padding: 5px;
+    border-radius: 5px;
+}
+
+/* Styling tombol hapus untuk senjata */
+.battleware-set-item .remove-button {
+    position: absolute;
+    top: 50%; /* Tengah vertikal */
+    left: 50%; /* Tengah horizontal */
+    transform: translate(-50%, -50%);
+    background-color: rgba(231, 76, 60, 0.8);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    display: none;
+    transition: opacity 0.3s ease;
+}
+
+.battleware-set-item:hover .remove-button {
+    display: block;
+}
+
+
+/* Styling untuk item mod yang dipilih */
+.selected-mod-item {
+    display: inline-flex;
+    cursor: pointer;
+    background-color: rgba(10, 28, 61, 0.883);
+    color: white;
+    border: 1px solid #889dcb;
+    border-radius: 5px;
+    text-align: center;
+    transition: transform 0.2s;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+    padding: 0;
+    overflow: hidden;
+    align-items: center;
+    margin: 0;
+    position: relative; /* Agar tombol hapus bisa diposisikan relatif terhadap mod */
+}
+
+/* Gambar dalam mod yang dipilih */
+.selected-mod-item img {
+    width: 280px;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    padding: 0;
+}
+
+
+/* Styling tombol hapus untuk mod (di pojok kanan atas) */
+.selected-mod-item .remove-button {
+    position: absolute;
+    top: -20px; /* Sesuaikan dengan jarak agar lebih rapi */
+    right: -1px;  /* Agar tombol berada sedikit keluar dari elemen mod */
+    background-color: rgba(231, 76, 60, 1);
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 50%; /* Membuat tombol bulat */
+    width: 17px;  /* Ukuran tombol X */
+    height: 17px; /* Ukuran tombol X */
+    font-size: 9px; /* Ukuran font lebih besar untuk tombol X */
+    cursor: pointer;
+    display: block; /* Pastikan tombol selalu tampil */
+    transition: opacity 0.3s ease;
+}
+
+
+/* Menampilkan tombol hapus saat item mod dihover */
+.selected-mod-item:hover .remove-button {
+    display: block;
+}
+
+/* Efek zoom saat item mod dihover */
+.selected-mod-item:hover {
+    transform: scale(1.01);
+}
+/* Styling untuk item core yang dipilih */
+.selected-core-item {
+    width: 100%; /* Menyesuaikan lebar dengan kontainer */
+    border: 2px solid #889dcb; /* Border di sekitar core */
+    display: flex; /* Memungkinkan gambar dan konten lainnya di dalam item untuk sejajar */
+    justify-content: center; /* Menempatkan gambar di tengah */
+    align-items: center; /* Vertikal tengah */
+    padding: 10px;
+    position: relative;
+}
+
+/* Gambar dalam core yang dipilih */
+.selected-core-item img {
+    width: 100%; /* Memastikan gambar memenuhi lebar container */
+    height: auto; /* Menjaga proporsi gambar */
+    object-fit: cover; /* Menyesuaikan gambar agar tetap dalam container tanpa pemotongan */
+    border-radius: 5px;
+    display: block;
+    margin: 0 auto;
+}
+/* Styling tombol hapus untuk core */
+.selected-core-item .remove-button {
+    position: absolute;
+    top: -20px; /* Jarak dari atas */
+    right: -1px; /* Jarak dari kanan */
+    background-color: rgba(231, 76, 60, 1);
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 50%; /* Membuat tombol bulat */
+    width: 17px;
+    height: 17px;
+    font-size: 9px;
+    cursor: pointer;
+    display: block;
+    transition: opacity 0.3s ease;
+}
+
+/* Menampilkan tombol hapus saat core di-hover */
+.selected-core-item:hover .remove-button {
+    display: block;
+}
+
+
+.close-btn {
+    cursor: pointer;
+    font-size: 24px;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+#corePopup {
+    position: fixed;
+    bottom: 5%;
+    left: 5%;
+    width: 90vw;
+    background: rgba(19, 39, 96, 0.7); /* Background sedikit lebih gelap */
+    border: 2px solid #000;
+    z-index: 2000;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-wrap: wrap; /* Membuat item wrap ke baris baru jika tidak muat */
+    justify-content: flex-start;
+    align-items: flex-start;
+    overflow-y: auto;
+    max-height: 90vh;
+    gap: 10px; /* Jarak antar item */
+}
+
+#corePopup {
+    position: fixed;
+    bottom: 5%;
+    left: 5%;
+    width: 90vw;
+    background-color: rgba(19, 39, 96, 0.9);
+    border: 2px solid #000;
+    z-index: 2000;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-wrap: wrap; /* Membuat item wrap ke baris baru jika tidak muat */
+    justify-content: flex-start;
+    align-items: flex-start;
+    overflow-y: auto; /* Scroll vertikal untuk konten yang banyak */
+    max-height: 90vh;
+    gap: 15px; /* Jarak antar item */
+}
+
+/* Styling untuk item di dalam #corePopup */
+#corePopup .mod-item {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    padding: 10px;
+    background-color: rgba(10, 28, 61, 0.883);
+    color: white;
+    border: 1px solid #889dcb;
+    border-radius: 8px;
+    width: 100%; /* Lebar item (3 item per baris jika memungkinkan) */
+    max-width: 410px; /* Batas lebar maksimal untuk item */
+    height: auto;
+    text-align: center;
+    transition: transform 0.2s, background-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+/* Gambar dalam item mod */
+#corePopup .mod-item img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+/* Efek hover pada item mod */
+#corePopup .mod-item:hover {
+    transform: scale(1.05);
+    background-color: rgba(2, 160, 197, 0.8);
+}
+
+/* Efek item aktif */
+#corePopup .mod-item.active {
+    border: 2px solid #02a0c5;
+    background-color: #02a0c5;
+    box-shadow: 0 0 20px rgba(2, 160, 197, 0.7);
+    transition: all 0.3s ease;
+}
+
+/* Efek gambar item aktif */
+#corePopup .mod-item.active img {
+    filter: contrast(1.5);
+}
+
+
+/* Styling untuk library-popup agar selebar layar */
+#library-popup {
+    margin-top: 40%;
+    position: fixed;
+    bottom: 8%;
+    border: 3px solid #02a0c5;
+    left: 5%; /* Posisi mulai dari kiri layar */
+    width: 90vw; /* Lebar penuh layar */
+    height: 30%; /* Sesuaikan tinggi sesuai kebutuhan */
+    background: rgba(19, 39, 96, 0.7); /* Background sedikit lebih gelap */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.3s ease;
+    overflow-y: auto; /* Scroll vertikal */
+}
+/* Gaya untuk konten dalam library-popup */
+#library-popup .library-popup-content {
+    background: rgba(19, 39, 96, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%; /* Lebar penuh kontainer */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    position: relative;
+    overflow-y: auto;
+    max-height: 40vh; /* Membatasi tinggi konten agar tidak melebihi layar */
+}
+
+/* Tombol tutup untuk pop-up */
+#library-popup .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Judul dalam pop-up */
+#library-popup .core-popup-content h5 {
+    color: white;
+    font-size: 1.2em;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Konten item mod berjajar ke samping */
+#library-popup .library-popup-content,
+#core-battleware .core-content {
+    display: flex;
+    flex-wrap: wrap; /* Membuat item wrap ke baris baru */
+    justify-content: flex-start;
+    gap: 20px;
+    width: 100%; /* Mengisi lebar penuh */
+    overflow-y: auto; /* Scroll vertikal jika konten melebihi tinggi */
+}
+
+/* Item mod dalam library dan core */
+#library-popup .library-popup-content .mod-item,
+#core-battleware .core-content .mod-item {
+    display: flex;
+    cursor: pointer;
+    padding: 0;
+    background-color: rgba(10, 28, 61, 0.883);
+    color: white;
+    border: 1px solid #889dcb;
+    border-radius: 8px;
+    text-align: center;
+    transition: transform 0.2s, background-color 0.3s ease;
+    overflow: hidden;
+    position: relative;
+    width: 20%; /* Mengatur lebar item agar bisa berjajar ke samping (sekitar 4 item per baris) */
+    height: auto;
+    align-items: stretch;
+}
+
+/* Gambar dalam item mod */
+#library-popup .library-popup-content .mod-item img,
+#core-battleware .core-content .mod-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+/* Efek hover pada item mod */
+#library-popup .library-popup-content .mod-item:hover,
+#core-battleware .core-content .mod-item:hover {
+    transform: scale(1.05);
+    background-color: rgba(2, 160, 197, 0.8);
+}
+
+/* Efek border putih untuk item mod yang aktif */
+#library-popup .library-popup-content .mod-item.active,
+#core-battleware .core-content .mod-item.active,
+.selected-weapon-img.active {
+    border: 2px solid white; /* Border putih */
+    box-shadow: 0 0 5px white; /* Efek bayangan ringan */
+}
+
+/* Gambar mod atau core yang aktif dengan kontras lebih tinggi */
+#library-popup .library-popup-content .mod-item.active img,
+#core-battleware .core-content .mod-item.active img {
+    filter: contrast(1.5);
+}
+
+
+
+/* Tombol Next di bawah pop-up */
+#library-popup #nextToModBtn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #02a0c5;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    width: 100%;
+    text-align: center;
+}
+
+/* Efek hover pada tombol Next */
+#library-popup #nextToModBtn:hover {
+    background-color: #0280a5;
+}
+
+/* Styling core battleware agar selebar layar */
+#core-battleware {
+    width: 100vw; /* Lebar penuh layar */
+    max-height: 40vh; /* Membatasi tinggi maksimal */
+    height: auto;
+    padding: 10px;
+    overflow-y: auto;
+    background: rgba(19, 39, 96, 0.7);
+    border-radius: 10px;
+    border: 2px solid #889dcb;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-wrap: wrap; /* Membuat item wrap ke baris baru */
+    justify-content: flex-start;
+    gap: 15px;
+}
+
+/* Konten dalam core battleware */
+.core-content {
+    display: flex;
+    flex-wrap: wrap; /* Membuat item wrap ke baris baru */
+    justify-content: flex-start; /* Menjaga item agar tetap rata kiri */
+    gap: 15px; /* Memberikan jarak antar item */
+    width: 100%;
+    overflow-y: auto; /* Scroll vertikal */
+}
+/* Pop-up styling */
+.username-data {
+    display: none; /* Sembunyikan pop-up di awal */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semitransparent background */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.username-data .popup-content {
+    background-color: #2c3e50; /* Konsisten dengan tema warna */
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 500px;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.username-data h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.username-data form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.username-data label {
+    font-size: 14px;
+}
+
+.username-data input, .username-data select, .username-data textarea {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #34495e;
+    background-color: #34495e;
+    color: white;
+}
+
+.username-data button {
+    background-color: #0280a5; /* Konsisten dengan warna tema */
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.username-data button:hover {
+    background-color: #16a085; /* Efek hover */
+}
+#frame-selection {
+    display: flex;
+    gap: 10px;
+}
+
+.frame-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+input[type="radio"] {
+    display: none; /* Menyembunyikan checkbox/radio input */
+}
+
+input[type="radio"]:checked + .frame-image {
+    border: 2px solid #0280a5; /* Menandai gambar yang dipilih */
+}
+
+
+@media (max-width: 480px) {
+    #survival-guide h2 {
+        font-size: 1.6em;
+    }
+    .guide-buttons {
+        height: 250px; /* Adjust height for smallest screens */
+        padding: 70px 70px; /* Top and bottom 20px, left and right 100px */
+        gap: 50px;
+    }
+}
+/* Make the layout responsive */
+@media (max-width: 1024px) {
+    /* For tablet and smaller screens */
+    .large-video {
+        width: 80%;
+        height: auto;
+        padding-bottom: 56.25%; /* Maintain aspect ratio */
+    }
+
+    .playlist-container {
+        gap: 40px;
+    }
+
+
+
+@media (max-width: 768px) {
+    /* Battleware container styling for mobile */
+    #battleware-container {
+        padding: 3px;
+        background: #1f2a47;
+        border-radius: 15px;
+        max-width: 95vw;
+        max-height: 60vh; /* Adjust the height for mobile */
+        overflow-y: visible; /* Disable vertical scroll */
+        overflow-x: auto; /* Horizontal scroll for mobile */
+    }
+  #tiktok-popup {
+    top: 2%;
+    width: 410px; /* Lebar pop-up lebih kecil untuk tablet dan mobile */
+    left: -410px; /* Sesuaikan posisi tersembunyi */
+    padding: 10px; /* Padding lebih kecil */
+    transform: scale(0.75); /* Skala pop-up lebih kecil */
+  }
+
+  #tiktok-container {
+    width: 100%; /* Pastikan lebar kontainer menyesuaikan dengan baik */
+    height: 100%; /* Tinggi konten menyesuaikan */
+    transform: scale(1); /* Tidak ada perubahan pada konten */
+  }
+
+
+
+.tab-button {
+    flex: 0 0 70px; /* Make each tab button have a fixed width of 150px */
+}
+/* Teks di tengah bawah gambar (kecuali cook) */
+.tab-text {
+    font-size: 6px;
+}
+/* Mengatur gambar di tengah */
+.tab-button img {
+    width: 50px;
+    height: 50px;
+}
+
+/* Ukuran khusus untuk cook.png */
+.tab-button img[src*="cook.png"] {
+    width: 25px;
+    height: 25px;
+}
+/* Teks untuk tombol Recipe */
+.recipe-text {
+    font-size: 6px;
+    color: #fff;
+    margin-top: -30px;
+}
+.modal-content {
+
+    margin: auto;
+    margin-bottom: 2px;
+    padding: 1px;
+    border: 1px solid #888;
+}
+    
+#my-battleware-set {
+    width: 100%; /* Lebar lebih besar untuk my-battleware-set */
+    text-align: left;
+    margin: 5px;
+}
+/* Weapon selection section styling */
+#weapon-selection {
+    max-height: 200px;
+    text-align: center;
+    margin: 10px;
+    background: rgba(19, 39, 96, 0.8); /* Slightly transparent background */
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #889dcb; /* Light border around the weapon section */
+    display: flex;
+    flex-direction: column;  /* Organize senjata secara vertikal */
+    gap: 20px;  /* Memberikan jarak antar senjata */
+    align-items: center;  /* Center konten secara horizontal */
+}
+
+/* List senjata yang lebih rapi */
+.weapon-list {
+    display: flex;
+    flex-wrap: wrap; /* Membuat senjata membungkus ke bawah jika tidak muat */
+    justify-content: space-between; /* Rata kiri dan kanan antar senjata */
+    gap: 15px;  /* Memberikan jarak antar senjata */
+    padding: 10px;
+    width: 100%; /* Menjamin lebar penuh kontainer */
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #889dcb rgba(10, 28, 61, 0.883);
+}
+
+/* Styling untuk item senjata */
+.weapon-item {
+    cursor: pointer;
+    display: inline-block;
+    border-radius: 8px;
+    padding: 10px;
+    background: rgba(10, 28, 61, 0.883);
+    color: white;
+    border: 2px solid #889dcb;
+    transition: transform 0.2s;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+    width: 45%; /* Menjamin setiap item memiliki lebar yang sesuai dalam grid */
+    max-width: 200px; /* Lebar maksimal untuk setiap item senjata */
+    box-sizing: border-box; /* Memastikan padding dan border tidak mempengaruhi ukuran elemen */
+}
+
+.weapon-item img {
+    width: 100%;  /* Gambar mengisi 100% lebar item senjata */
+    height: auto; /* Menjaga proporsi gambar */
+    object-fit: contain; /* Gambar tetap proporsional tanpa terdistorsi */
+    border-radius: 5px;
+}
+
+.weapon-item p {
+    margin-top: 8px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+}
+
+
+    /* My Battleware Set adjustments for mobile */
+    #my-battleware-set {
+        display: flex;
+        flex-wrap: wrap; /* Wrap the items in two rows */
+        gap: 10px;
+        width: 100%;
+    }
+
+    .battleware-set-item {
+        width: 100%; /* 2 items per row */
+        display: inline-block;
+    }
+
+    .battleware-set-item img {
+        width: auto;
+        height: auto;
+    }
+    .battleware-set-item .weapon-name {
+        font-size: 12px;
+    }
+        
+    /* Remove excess space for selected-mod-item */
+    .selected-mod-item {
+        height: 30px;
+        width: auro; /* Two items per row */
+        padding: 5px;
+        margin: 5px;
+        background-color: rgba(10, 28, 61, 0.883);
+        display: inline-block;
+    }
+    .selected-mod-item img {
+        width: auto;
+        height: 100%;
+    }
+    
+    /* Adjust remove button in selected-mod-item */
+    .selected-mod-item .remove-button {
+        top: -10px;
+        right: -10px;
+        width: 20px;  /* Adjust the size */
+        height: 20px;
+    }
+    
+.visitor-mod-item {
+    width: 28%;  /* Membuat 4 item per baris */
+    max-width: 100%;
+    height: auto;
+    max-height: 25px;
+}
+.visitor-mod-item img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+
+
+    #corePopup {
+        position: fixed;
+        bottom: 2%;
+        left: 2%;
+        width: 96vw; /* Lebar hampir penuh layar */
+        padding: 10px;
+        max-height: 85vh; /* Tinggi maksimal 85% dari layar */
+        gap: 10px; /* Jarak antar item lebih kecil */
+    }
+
+    /* Item mod dalam corePopup */
+    #corePopup .mod-item {
+        width: 45%; /* Lebar sekitar setengah layar (2 item per baris) */
+        max-width: none; /* Menghapus batas maksimal lebar */
+        padding: 5px;
+        border-radius: 5px;
+    }
+
+    /* Gambar dalam item mod */
+    #corePopup .mod-item img {
+        border-radius: 3px;
+    }
+
+    /* Tombol Next di bawah pop-up */
+    #library-popup #nextToModBtn {
+        margin-top: 10px;
+        padding: 8px 15px;
+        font-size: 0.9em;
+    }
+
+    /* Pop-up library pada layar kecil */
+    #library-popup {
+        width: 100vw;
+        height: 40%; /* Sedikit lebih tinggi pada layar kecil */
+        margin-top: 100%;
+        padding: 0;
+        left:-5px;
+    }
+
+    /* Konten library dan core battleware */
+    #library-popup .library-popup-content,
+    #core-battleware .core-content {
+        gap: 10px;
+        justify-content: center; /* Pusatkan item pada layar kecil */
+    }
+
+    /* Item mod dalam library dan core battleware */
+    #library-popup .library-popup-content .mod-item,
+    #core-battleware .core-content .mod-item {
+        width: 20%; /* 2 item per baris pada layar kecil */
+        padding: 5px;
+        max-height: 20vh;
+    }
+
+    /* Pop-up core battleware */
+    #core-battleware {
+        padding: 5px;
+        max-height: 45vh;
+    }
+}
+
+@media (max-width: 480px) {
+  #tiktok-popup {
+    top: 2%;
+    z-index: 8888;
+    width: 400px; /* Lebar pop-up lebih kecil lagi */
+    left: -400px; /* Sesuaikan posisi tersembunyi */
+    padding: 8px; /* Padding lebih kecil */
+    transform: scale(0.320); /* Skala lebih kecil pada ponsel */
+  }
+
+  #tiktok-container {
+    width: 100%; /* Pastikan lebar kontainer menyesuaikan dengan baik */
+    height: 100%; /* Tinggi konten menyesuaikan */
+    transform: scale(1); /* Tidak ada perubahan pada konten */
+  }
+#tiktok-popup #close-btn {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  z-index: 10;
+  font-size: 20px;
+  color: red; /* Warna merah untuk tombol */
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
+  font-weight: bold;
+}
+}
+.food-list-recipes {
+    padding: 20px;
+    background-color: rgba(30, 44, 80, 0.8);
+    border-radius: 8px;
+    border: 2px solid #889dcb;
+    margin-top: 20px;
+}
+
+.food-list-recipes h2 {
+    color: orange;
+    font-family: 'Lato', sans-serif;
+    text-align: center;
+    font-size: 2em;
+    margin-bottom: 5px;
+}

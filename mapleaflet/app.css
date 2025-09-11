@@ -1,0 +1,2306 @@
+/* App.css */
+body, html, #root, .App {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+overflow: hidden;
+  font-family: 'Roboto', sans-serif;
+}
+body {
+    background-color: rgba(10, 28, 61, 0.95);
+    color: white;
+    overflow: auto; /* Mengizinkan halaman untuk di-scroll */
+    height: 100%; /* Pastikan body bisa di-scroll */
+}
+/* CSS Animasi untuk Main Overlay dengan Efek Bounce */
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.animate-main-overlay {
+    animation: bounceIn 1s ease-in-out;
+}
+
+/* Privacy and Policy Pop-up Styles */
+#privacy-popup {
+    display: none; /* Default hidden */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+    z-index: 1001; /* Make sure it appears on top of everything else */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Popup Content */
+#privacy-popup .popup-content {
+    background-color: rgba(19, 39, 96, 0.613); /* Same background color as count container */
+    color: white;
+    padding: 20px;
+    border: 2px solid #889dcb;
+    border-radius: 10px;
+    text-align: center;
+    width: 80%;
+    max-width: 400px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+    font-family: Arial, sans-serif;
+}
+
+/* Link to Privacy and Policy */
+#privacy-popup .privacy-link {
+    color: #FFD700; /* Gold color */
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#privacy-popup .privacy-link:hover {
+    text-decoration: underline;
+}
+
+/* Got it Button */
+#privacy-popup .close-popup {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #00BFFF; /* Sky Blue */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#privacy-popup .close-popup:hover {
+    background-color: #1E90FF; /* Darker sky blue on hover */
+}
+
+
+
+/* Popup Iklan */
+#ad-popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px; /* Menambah ukuran maksimal */
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    z-index: 1000;
+    text-align: center;
+}
+
+.ad-content {
+    margin-top: 10px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(255, 0, 0, 0.8);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 16px;
+}
+
+.close-btn:hover {
+    background-color: rgba(255, 0, 0, 1);
+}
+
+#ads-container {
+    background-color: rgba(0, 0, 0, 0.7); /* Latar belakang semi-transparan */
+    position: fixed;
+    bottom: 0; /* Ditempatkan di bagian bawah layar */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: 100%; /* Lebar penuh layar */
+    max-width: 768px; /* Maksimal lebar di desktop */
+    height: 60px; /* Tinggi banner lebih kecil */
+    padding: 5px 10px;
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.adsbygoogle {
+    width: 100%;
+    max-height: 50px; /* Batas tinggi maksimal iklan */
+    object-fit: contain; /* Menyesuaikan konten iklan */
+}
+
+#ads-container .close-btn {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+}
+
+#ads-container .close-btn:hover {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+
+#ads-container .close-btn:hover {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+
+/* Atur background hitam untuk tile yang gagal dimuat */
+.leaflet-tile-container img[src="statics/error-tile.png"] {
+    background-color: black;
+}
+
+/* Loading bar container */
+#loading-bar-container {
+    width: 80%;
+    height: 10px;
+    background-color: #ddd;
+    border-radius: 25px;
+    border: 2px solid #889dcb;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+/* Loading bar itself */
+#loading-bar {
+    width: 0%;
+    height: 30px;
+    background-color: #00aaff;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif;
+    transition: width 0.5s ease; /* Smooth transition for loading bar */
+}
+
+/* Text inside the loading bar */
+#loading-text {
+    font-size: 16px;
+    color: white; /* Text color inside the bar */
+}
+
+/* Adjust existing #loading for positioning */
+#loading {
+    font-size: 16px;
+    color: #fff; /* Adjust color to white for better contrast */
+    margin-top: 10px;
+    font-family: 'Roboto', sans-serif;
+}
+
+
+/* CSS untuk preloader */
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('icons/background_landscape.png');
+    background-size: cover;
+    background-position: center;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Animasi Bounce untuk gambar preloader */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-30px);
+    }
+    60% {
+        transform: translateY(-15px);
+    }
+}
+#teleport-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex; /* Supaya anak-anaknya dalam satu baris */
+  align-items: center;
+  gap: 8px; /* Jarak antara teleport dan dropdown */
+  z-index: 500;
+}
+
+.map-dropdown {
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 4px;
+  background: white;
+  border: 1px solid #aaa;
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+
+.teleport-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.teleport-icon {
+  width: 32px;
+  height: 32px;
+  filter: drop-shadow(0 0 5px white);
+}
+
+.teleport-indicator {
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;  
+  border-right: 6px solid transparent;
+  border-top: 8px solid white;           
+  margin-bottom: 4px;
+  animation: bounce 1s infinite;
+  filter: drop-shadow(0 0 3px white);
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+/* Gambar pada preloader */
+#preloader img {
+    width: 200px;
+    height: auto;
+    margin-bottom: 20px;
+    animation: bounce 2s infinite; /* Animasi bounce untuk gambar preloader */
+}
+
+/* Animasi fade-in untuk teks preloader */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Teks pada preloader */
+.preloader-text {
+    font-size: 20px; /* Ukuran font */
+    color: #fff; /* Warna teks */
+    background: linear-gradient(to right, rgba(72, 144, 226, 0.8), rgba(255, 255, 255, 0.5)); 
+    padding: 10px 20px; 
+    border-radius: 8px; 
+    text-align: center;
+    font-family: 'Open Sans', Arial, sans-serif; /* Font family */
+    font-weight: bold; 
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); 
+    margin-top: 10px; 
+    animation: fadeIn 3s ease-in-out;
+}
+
+/* CSS untuk gambar dinamis */
+#image-info-preload {
+    margin:20px 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 300px; /* Tentukan tinggi container */
+}
+
+/* Gambar dinamis - Menghindari animasi bounce */
+#dynamic-image {
+    max-width:100%; /* Menghindari gambar terlalu lebar */
+    max-height: 120px; /* Menghindari gambar melebihi tinggi container */
+    width: auto;
+    height: auto;
+    object-fit: contain; /* Mengatur gambar agar sesuai dalam container tanpa distorsi */
+    border-radius: 8px; /* Memberikan sedikit border radius */
+    opacity: 0; /* Awalnya tersembunyi */
+    animation: none !important; /* Menghapus animasi bounce untuk gambar dinamis */
+}
+
+/* Animasi Bounce In untuk gambar dinamis */
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Animasi Bounce Out untuk gambar dinamis */
+@keyframes bounceOut {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+}
+
+/* Kelas animasi untuk gambar dinamis */
+.bounce-in {
+    animation: bounceIn 0.6s ease forwards;
+}
+
+.bounce-out {
+    animation: bounceOut 0.6s ease forwards;
+}
+
+/* Animasi fade out untuk gambar preloader saat selesai */
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Jika preloader selesai, hilangkan gambar dengan animasi fade */
+#preloader.fade-out img {
+    animation: fadeOut 1s forwards;
+}
+
+
+/* CSS untuk loading bar */
+#loading {
+    font-size: 16px;
+    color: #333;
+    margin-top: 5px;
+}
+
+/* Container untuk peta */
+#mapContainer {
+    position: relative;
+    width: 90%;
+    height: 700px; /* Tinggi peta yang default */
+    border: 1px solid #ccc;
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Tombol Fullscreen dengan posisi absolut */
+#fullscreenButton {
+    position: absolute;
+    bottom: 50px;
+    right: 20px;
+    padding: 10px;
+    background-color: #02a0c5;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+#fullscreenButton:hover {
+    background-color: white;
+}
+
+/* Peta dalam container */
+#map {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+
+
+/* Styles for the report form container */
+/* Styles for the report form container */
+#reportFormContainer {
+position: absolute;
+    width: 50%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 54, 95, 0.8);
+    padding: 20px;
+    border: 2px solid #889dcb;
+    z-index: 1000;
+    border-radius: 8px;
+    pointer-events: auto;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* Styles for form labels */
+#reportForm label {
+    display: block;
+    margin-bottom: 5px;
+    color: #ffffff; /* White text color */
+}
+
+/* Styles for form inputs */
+#reportForm input[type="text"],
+#reportForm input[type="number"],
+#reportForm textarea {
+    width: calc(100% - 22px); /* Adjust width to fit within container */
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #ffffff;
+}
+
+/* Styles for the submit button */
+#reportForm button#submitReportBtn {
+    background-color: #02a0c5;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* Styles for the cancel button */
+#reportForm button.cancel {
+    background-color: red;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 5px;
+}
+
+/* Hover effect for buttons */
+#reportForm button#submitReportBtn:hover,
+#reportForm button.cancel:hover {
+    opacity: 0.8;
+}
+
+#submit-container {
+    position: fixed;
+    top: 70px; /* Jarak dari atas */
+    right: 10px; /* Jarak dari sisi kanan */
+    display: flex;
+    align-items: center; /* Align items vertically */
+    gap: 10px; /* Jarak antara tooltip dan tombol */
+    z-index: 1200; /* Memastikan container berada di atas elemen lain */
+}
+
+#tooltip {
+    background-color: rgba(19, 39, 96, 0.613); /* Latar belakang tooltip */
+    color: white; /* Warna teks */
+    font-size: 12px; /* Ukuran font */
+    padding: 5px 10px; /* Padding untuk tooltip */
+    border-radius: 5px; /* Sudut membulat */
+    opacity: 0; /* Awalnya disembunyikan */
+    transition: opacity 0.3s; /* Efek fade-in */
+    white-space: nowrap; /* Mencegah teks terpotong */
+    position: relative; /* Untuk posisi panah */
+    border: 2px solid #889dcb; /* Warna border tooltip */
+    pointer-events: none;
+}
+
+/* Panah yang menunjukkan ke kanan */
+#tooltip::after {
+    content: ""; /* Konten kosong untuk panah */
+    position: absolute;
+    top: 50%; /* Vertikal di tengah tooltip */
+    left: 100%; /* Posisikan di sebelah kanan tooltip */
+    transform: translateY(-50%); /* Sesuaikan posisinya agar sejajar */
+    border-width: 8px; /* Ukuran panah */
+    border-style: solid;
+    border-color: transparent transparent transparent white; /* Panah berwarna putih */
+    margin-left: 2px; /* Sedikit jarak agar panah terlihat dari border */
+    
+}
+
+
+
+/* Gaya tombol */
+#submit-marker-button {
+    background-color: #02a0c5; /* Warna latar tombol */
+    border: none; /* Tanpa border */
+    border-radius: 15px; /* Sudut membulat */
+    color: white; /* Warna teks */
+    font-size: 20px; /* Ukuran font */
+    padding: 5px 10px; /* Padding tombol */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.3s; /* Transisi efek hover */
+}
+
+#submit-marker-button:hover {
+    background-color: rgba(2, 160, 197, 0.8); /* Warna lebih gelap saat hover */
+}
+
+#statusMessage {
+    position: absolute; /* Position it absolutely */
+    top: 50%; /* Distance from the top */
+    left:50%;
+    transform: translateX(-50%); /* Centering adjustment */
+    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+    border: 1px solid #ccc; /* Light border */
+    padding: 10px; /* Padding around the text */
+    z-index: 1800; /* Higher z-index to be above the map */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    display: none; /* Initially hidden */
+}
+
+/* Form Container */
+.submit-marker-form {
+    display: none; /* Hidden by default */
+    background-color: rgba(19, 39, 96, 0.613); /* Background color */
+    border: 2px solid #889dcb; /* Border color */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25); /* Shadow for depth */
+    padding: 20px; /* Padding for spacing */
+    max-width: 400px; /* Maximum width of the form */
+    max-height: 60vh; /* Maximum height of the form */
+    overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
+    margin: auto; /* Center the form */
+    font-family: 'Open Sans', Arial, sans-serif; /* Font family */
+    position: fixed; /* Fixed positioning for visibility */
+    top: 20%; /* Position from the top */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -20%); /* Center the form */
+    z-index: 1000; /* Ensure it appears above other content */
+}
+
+/* Form Title */
+.submit-marker-form h2 {
+    color: white; /* Title color */
+    text-align: center; /* Center the title */
+}
+
+/* Input Fields */
+.submit-marker-form label {
+    color: white; /* Label color */
+    display: block; /* Make labels block elements */
+    margin-bottom: 5px; /* Space below labels */
+    font-weight: bold; /* Bold labels */
+}
+
+.submit-marker-form input[type="text"],
+.submit-marker-form select,
+.submit-marker-form textarea {
+    width: auto; /* Full width */
+    padding: 10px; /* Padding for input */
+    margin-bottom: 15px; /* Space below inputs */
+    border: 1px solid #889dcb; /* Border color */
+    border-radius: 5px; /* Rounded corners */
+    background-color: rgba(10, 28, 61, 0.883); /* Background for input */
+    color: white; /* Text color */
+}
+
+/* Button within the form */
+.submit-marker-form button {
+    background-color: #02a0c5; /* Button color */
+    color: white; /* Text color for button */
+    padding: 10px 20px; /* Padding for button */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    font-size: 16px; /* Font size */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.submit-marker-form button:hover {
+    background-color: #02a0c5 /* Hover effect for button */
+    border: 1px solid  #02a0c5;
+}
+
+/* Image upload styling */
+.submit-marker-form input[type="file"] {
+    border: none; /* No border */
+    padding: 5px; /* Padding */
+    margin-bottom: 15px; /* Space below */
+    
+}
+/* Gaya default untuk label */
+label[for="imageUpload"] {
+    text-align: center;
+    color: #02a0c5; /* Warna teks default */
+    border: 2px solid #889dcb; /* Border default */
+    padding: 5px; /* Memberi sedikit ruang pada label */
+    cursor: pointer; /* Menunjukkan bahwa ini bisa diklik */
+    transition: border-color 0.3s, color 0.3s; /* Transisi untuk perubahan border dan warna */
+}
+
+/* Gaya saat label diklik (active) */
+label[for="imageUpload"]:active {
+    color: rgba (225,225,225, 0.8); /* Warna teks saat diklik */
+    border: 2px solid #02a0c5; /* Border saat diklik */
+}
+
+.hidden {
+    display: none;
+}
+
+.count-container {
+    position: absolute;
+    bottom: 50px;
+    left: 70px;
+    background: rgba(19, 39, 96, 0.613);
+    color: white;
+    border-radius: 10px;
+    border: 2px solid #889dcb;
+    padding: 7px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 1290;
+    font-family: Arial, sans-serif;
+    animation: bounceIn 0.6s ease; /* Animasi muncul */
+}
+
+.count-item {
+    display: inline-flex; /* Use inline-flex for horizontal alignment */
+    align-items: center;
+    background-color: rgba(10, 28, 61, 0.883);
+    color: #fff;
+    width: 100px;
+    border-radius: 8px;
+    padding: 1px 5px; /* Padding for better spacing */
+    font-size: 10px;
+    font-weight: bold;
+    margin-right: 4px; /* Space between items */
+}
+
+.count-icon {
+    width: 24px; /* Icon size */
+    height: 24px;
+    margin-right: 8px; /* Space between icon and count */
+}
+
+.count-text {
+    display: inline; /* Pastikan teks muncul */
+    font-size: 14px; /* Atur ukuran teks */
+    color: white;    /* Warna teks */
+}
+
+.count-container img {
+    display: inline-block; /* Pastikan gambar muncul */
+    vertical-align: middle; /* Agar sejalan dengan teks */
+}
+.count-container h4 {
+    font-size: 100px
+    color: orange;
+    font-family: 'Lato', sans-serif;
+    margin: 10px;
+}
+.count-container > div {
+    display: none; /* Sembunyikan semua loc-type pada awalnya */
+}
+/* Heading style for all loc_type sections */
+
+
+/* Toggle button styles */
+.toggle-count-container {
+    position: absolute;
+    top: 305px; /* Adjust position to center as needed */
+    left: 30px;
+    transform: translateX(-50%); /* Center horizontally */
+    width: 40px; /* Set width of the toggle button */
+    height: 40px; /* Set height of the toggle button */
+    background: url('icons/toggle_count.png') no-repeat center center; /* Use the toggle image */
+    background-size: contain; /* Make sure the image fits well */
+    cursor: pointer; /* Change cursor to pointer for better UX */
+    z-index: 1000; /* Make sure it's above other elements */
+}
+.toggle-count-container img {
+    width: 50px; /* Icon size */
+    height: 50px;
+    transition: filter 0.3s ease, border 0.3s ease; /* Smooth transition for filter and border only */
+    box-sizing: border-box; /* Ensures border stays within the image size */
+}
+
+.toggle-count-container.hover img {
+    filter: brightness(1.6); /* Increase brightness on hover */
+    border: 2px solid #02a0c5; /* Add border within image boundaries */
+}
+
+
+
+/* Reset Opacity Button Styles */
+#reset-opacity {
+    position: absolute; /* Position relative to parent */
+    top: 125px; /* Distance from the top */
+    left: 5px; /* Distance from the left */
+    background: none; /* No background */
+    border: none; /* No border */
+    cursor: pointer; /* Pointer cursor on hover */
+    padding: 5px; /* Padding around the image */
+    outline: none; /* Remove default outline */
+    transition: transform 0.2s; /* Transition for hover effect */
+    z-index: 1300; /* Ensure button is above other elements */
+}
+
+#reset-opacity img {
+    width: 50px; /* Size of the image */
+    height: 50px; /* Size of the image */
+    display: block; /* Remove space below the image */
+}
+
+#reset-opacity img:hover {
+    filter: brightness(1.6); /* Increase brightness */
+    border: 2px solid #02a0c5; /* Add border within image boundaries */
+}
+
+.modal {
+    display: none; /* Initially hidden */
+    position: fixed; /* Use fixed positioning to center the modal */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Offset by half its size */
+    background: rgba(19, 39, 96, 0.8); /* Background color */
+    color: white; /* Text color */
+    border-radius: 10px; /* Rounded corners */
+    border: 2px solid #889dcb; /* Border color */
+    padding: 20px; /* Padding inside modal */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25); /* Shadow for depth */
+    z-index: 1300; /* Ensure it appears above other elements */
+}
+
+.modal-content {
+    background: rgba(10, 28, 61, 0.883); /* Background for content area */
+    color: white; /* Text color */
+    border-radius: 10px; /* Rounded corners */
+    padding: 20px; /* Padding inside modal */
+    margin: 0; /* Reset margin */
+    width: auto; /* Automatic width based on content */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25); /* Shadow for depth */
+    animation: bounceIn 0.6s ease; /* Animation for showing modal */
+}
+
+/* Style for modal buttons */
+.modal-button {
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 5px 10px; /* Padding around buttons */
+    cursor: pointer; /* Pointer cursor on hover */
+    margin: 5px; /* Margin between buttons */
+    transition: background-color 0.3s; /* Smooth transition on hover */
+}
+/* Efek blur pada latar belakang modal */
+.modal.active {
+    backdrop-filter: blur(10px); /* Efek blur */
+}
+/* Specific styles for Yes button */
+#confirm-yes {
+    background-color: rgba(72, 144, 226, 0.8); /* Light blue */
+    color: white; /* Text color */
+}
+
+/* Specific styles for No button */
+#confirm-no {
+    background-color: red; /* Red color */
+    color: white; /* Text color */
+}
+
+.modal-button:hover {
+    opacity: 0.8; /* Slight transparency on hover for both buttons */
+}
+
+
+
+
+
+/* Pop-up background */
+/* Pop-up background */
+.popup {
+    display: none; /* Initially hidden */
+    position: fixed;
+    z-index: 1500; /* Ensure it's above all other content */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+/* Pop-up content */
+.popup-content {
+    background-color: rgb(10, 18, 44);
+    padding: 20px;
+    border-radius: 10px;
+    width: 500px;
+    max-width: 90%; /* Make sure it doesn't go beyond 90% of the screen on smaller devices */
+    box-shadow: 0px 2px 6px rgb(255, 255, 255);
+    color: rgb(255, 255, 255);
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    animation: bounceIn 0.6s ease; /* Animasi muncul */
+}
+
+/* Animasi untuk Garis Ekuator dengan Delay setelah Ikon Pusat */
+.equator-line {
+    opacity: 0;
+    animation: fadeIn 0.3s ease forwards;
+    animation-delay: 0.4s; /* Delay 1 detik setelah animasi ikon selesai (0.5 detik) */
+}
+
+/* Animasi untuk Garis Vertikal Atas (opacity tetap 0, tanpa animasi) */
+.equator-line.vertical.top {
+    animation: none;
+    opacity: 0;
+}
+
+/* Animasi Ukuran untuk Ikon Pusat */
+.center-icon {
+    animation: growIn 0.5s ease forwards;
+    transform: scale(0);
+}
+
+/* Definisi Animasi */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0.8;
+    }
+}
+
+@keyframes growIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+
+.leaflet-popup {
+    pointer-events: none;
+}
+   .showImageButton:hover {
+        background: rgba(2, 140, 154, 0.8);
+        color: #ffffff;
+pointer-events: auto;
+    }
+/* Leaflet popup content wrapper */
+.leaflet-popup-content-wrapper {
+    background: rgba(19, 39, 96, 0.613) !important; /* Same background as count container */
+    border: 2px solid #889dcb !important; /* Same border color */
+    border-radius: 10px !important; /* Rounded corners */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25) !important; /* Shadow for depth */
+    z-index: 1002 !important;
+    animation: bounceIn 0.6s ease; /* Animation for showing popup */
+    padding: 200px;
+    pointer-events: none;
+}
+
+/* Leaflet popup content */
+.leaflet-popup-content {
+    background: rgba(10, 28, 61, 0.883) !important; /* Ensure no white background */
+    color: white !important; /* Text color */
+    font-size: 14px; /* Font size */
+    border-radius: 10px;
+    font-family: 'Open Sans', Arial, sans-serif; /* Font family */
+    padding: 2px; /* Adjusted padding for better spacing */
+    z-index: -100 !important;
+    pointer-events: none;
+}
+
+/* Popup main title */
+.leaflet-popup-content .popup-name {
+    font-weight: bold; /* Bold font */
+    font-size: 30px; /* Title size */
+    color: white; /* Text color */
+    margin-bottom: 10px; /* Space below title */
+    padding: 5px; /* Padding around title */
+    pointer-events: none;
+}
+
+/* Popup description */
+.leaflet-popup-content .popup-desc {
+    font-size: 12px; /* Description size */
+    color: white; /* Text color */
+    pointer-events: none;
+}
+
+/* Additional separator inside popup */
+.separator {
+    border: none; /* No border */
+    margin: 10px 0; /* Space around separator */
+    pointer-events: none;
+}
+
+/* Thumbnail for popup */
+.popup-thumbnail {
+    position: relative; /* Position relative for play button */
+    display: inline-block; /* Inline block for layout */
+    pointer-events: none;
+}
+
+/* Play button inside popup */
+.popup-play-button {
+    position: absolute; /* Absolute positioning */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Offset to center */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    border-radius: 50%; /* Circular button */
+    padding: 8px; /* Padding for button */
+    pointer-events: auto; /* Allow interaction with the button */
+}
+/* Gaya untuk modal gambar */
+.image-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.image-modal-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+}
+
+.image-modal-img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 8px;
+    object-fit: contain;
+}
+
+    .image-modal-close {
+        font-size: 36px;
+        color: red; /* Warna merah */
+        position: absolute;
+        top: 3px;
+        right: 3px;
+        cursor: pointer;
+    }
+    .image-modal-close:hover {
+        color: darkred; /* Warna merah yang lebih gelap saat hover */
+    }
+
+.copyButton {
+    background: rgba(10, 28, 61, 0.883);
+    color: white;
+    border: 2px solid #889dcb;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin: 15px 0px 10px 0px; /* Lebih dekat ke deskripsi */
+    pointer-events: auto;
+}
+
+.copyButton:hover {
+    transform: scale(0.95);
+}
+
+.copyButton:active {
+    background-color: #028c9a;
+    transform: scale(0.95);
+}
+
+.copy-buttons {
+    display: row;
+    gap: 5px;
+    margin-top: -20px; /* Atur jarak antara deskripsi dan tombol */
+    margin-bottom: 5px;
+    pointer-events: auto;
+}
+.copy-feedback {
+    display: none; /* Sembunyikan secara default */
+    background-color: rgba(10, 28, 61, 0.883);
+    border: 2px solid #028c9a;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    position: absolute; /* Posisi relatif terhadap parent */
+    top: 50%; /* Atur posisi di atas tombol */
+    left: 50%; /* Posisikan di tengah */
+    transform: translateX(-50%); /* Sesuaikan posisi ke tengah */
+    transition: opacity 0.5s ease;
+    opacity: 0; /* Sembunyikan secara default */
+    z-index: 1300; /* Pastikan berada di atas elemen lain */
+    display: flex; /* Gunakan flex untuk menyusun ikon dan teks */
+    align-items: center; /* Rata tengah secara vertikal */
+}
+
+.feedback-icon {
+    width: 50px; /* Ukuran ikon */
+    height: 50px; /* Ukuran ikon */
+    margin-right: 5px; /* Spasi antara ikon dan teks */
+}
+
+.copy-feedback.show {
+    display: flex; /* Tampilkan dengan flex saat diperlukan */
+    opacity: 1; /* Tampilkan dengan efek transisi */
+}
+/* Custom border for marker */
+
+/* Popup Form Styles */
+.popup-form {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(19, 39, 96, 0.613);
+    color: white;
+    border-radius: 10px;
+    border: 2px solid #889dcb;
+    padding: 5px;
+    margin: 5px 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+    z-index: 1000;
+    font-family: Arial, sans-serif;
+}
+
+/* Header in the Form */
+.popup-form h6 {
+    color: orange;
+    font-family: 'Lato', sans-serif;
+    text-align: center;
+    z-index: 2000px;
+    font-size: 20px;
+}
+
+/* Label Styles */
+.popup-form label {
+    color: #ffffff;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Input Field Styles */
+.popup-form input[type="text"],
+.popup-form input[type="file"] {
+    padding: 8px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #889dcb;
+}
+
+
+#PreviewContainer .loading-indicator {
+    font-size: 16px;
+    color: #02a0c5;
+    font-weight: bold;
+}
+
+
+/* Submit Button Styles */
+.popup-form button {
+    background: #02a0c5;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+/* Hover Effect for Submit Button */
+.popup-form button:hover {
+    background: #028c9a;
+}
+/* Hide the preview container initially */
+#PreviewContainer {
+    display: none;
+    margin-top: 10px;
+    text-align: center;
+}
+
+/* Image Preview Styling */
+#PreviewContainer img {
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-top: 10px;
+}
+
+/* Drop Area Styles */
+#dropArea {
+    border: 2px dashed #aaa;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    color: #666;
+    font-size: 16px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+/* Highlight when dragging over the drop area */
+#dropArea.highlight {
+    background-color: #f0f8ff; /* Light blue background */
+    border-color: #4a90e2; /* Bright blue border */
+    color: #4a90e2;
+}
+
+/* Styling for text inside drop area */
+#dropArea p {
+    margin: 0;
+    color: inherit;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+    color: #4a90e2;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+/* Hide the file input as it's triggered programmatically */
+#imageUpload {
+    display: none;
+}
+
+
+/* Bounce-in animation */
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.5); /* Initial scale */
+        opacity: 0; /* Initial opacity */
+    }
+    50% {
+        transform: scale(1.1); /* Scale up */
+        opacity: 1; /* Full opacity */
+    }
+    100% {
+        transform: scale(1); /* Final scale */
+    }
+}
+
+#patch-popup {
+    display: none;/* Popup disembunyikan pada awalnya */
+    /* Gaya lainnya seperti posisi dan layout popup */
+}
+
+/* Close button */
+.popup .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.popup .close:hover,
+.popup .close:focus {
+    color: black;
+}
+
+/* Icon above the title */
+.popup-content img {
+    width: 180px; /* Adjust the size as needed */
+    height: auto; 
+    display: block; 
+    margin: 0 auto 10px; /* Center the icon and add margin below */
+}
+
+/* Donation button */
+.popup .donate-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #02a0c5; /* Blue background */
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.popup .donate-btn:hover {
+    background-color: #00cc00; /* Neon green on hover */
+    box-shadow: 0 0 20px rgba(0, 255, 0, 1), 0 0 30px rgba(0, 255, 0, 0.8); /* Neon glow effect */
+    transform: scale(1.05); /* Zoom effect on hover */
+}
+
+/* PayPal button */
+.popup-content .paypal-button {
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    margin-top: 10px; 
+    text-decoration: none; 
+    color: #fff; /* White text */
+}
+
+/* PayPal icon */
+.popup-content .paypal-button img {
+    width: auto; 
+    height: 40px; 
+    margin-right: 5px; 
+}
+
+
+/* CSS untuk menyembunyikan logo Google Maps */
+.gm-style-cc {
+    display: none !important;
+}
+.donate-container {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    z-index: 1000; /* Pastikan berada di atas konten lain */
+}
+
+.donate-btn {
+    display: inline-block;
+    padding: 5px 20px;
+    background-color: #02a0c5; /* Warna biru */
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+.donate-btn:hover {
+    background-color: #00cc00; /* Warna hijau neon saat hover */
+    box-shadow: 0 0 20px rgba(0, 255, 0, 1), 0 0 30px rgba(0, 255, 0, 0.8); /* Efek neon lebih terang saat hover */
+    transform: scale(1.05); /* Efek zoom saat hover */
+}
+.trakteer-overlay {
+  position: fixed;
+  bottom: 120px;
+  right: 120px;
+  width: 225px;
+  height: 265px;
+  z-index: 20;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease-in-out; /* Animasi geser */
+}
+
+
+.trakteer-frame {
+  width: 290%;
+  height: 290%;
+  transform: scale(0.6);
+  transform-origin: 0 0;
+  border: none;
+  display: block;
+}
+
+.close-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 20px;
+  height: 20px;
+  background: #ff5b5b;
+  border: none;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 30;
+}
+
+.close-btn:hover {
+  background: #ff1e1e;
+}
+
+.close-btn:hover {
+  background: #ff1e1e;
+}
+
+.homepage-button-container {
+    position: absolute; /* Use absolute positioning */
+    top: 275px; /* Center vertically */
+    left: 10px; /* Position from the left edge */
+    transform: translateY(-50%); /* Adjust to truly center vertically */
+    z-index: 900; /* Ensure it appears above the map */
+    cursor: pointer; /* Change cursor on hover */
+    transition: box-shadow 0.3s ease; /* Transition effect */
+}
+
+.homepage-button-container img {
+    width: 50px; /* Adjust width as needed */
+    height: 50px; /* Maintain aspect ratio */
+}
+
+.homepage-button-container:active {
+    filter: brightness(1.6); /* Increase brightness on hover */
+    border: 2px solid #02a0c5; /* Add border within image boundaries */
+}
+
+.toggle-legend-container, .toggle-new-filters-container {
+  position: absolute;
+  z-index: 1000;
+  cursor: pointer;
+  top: 10px; /* Position 10px from the top */
+  left: 10px;   /* Position 10px from the left */
+}
+
+.toggle-legend-container + .toggle-new-filters-container {
+  top: 70px; /* Stack the second button 60px above the first one */
+}
+
+.toggle-legend-container img,
+.toggle-new-filters-container img {
+    width: 50px;
+    height: 50px;
+}
+
+/* Keep hover effect when the class is applied */
+.toggle-legend-container.hover img,
+.toggle-new-filters-container.hover img {
+    filter: brightness(1.6); /* Increase brightness */
+    border: 2px solid #02a0c5; /* Add border within image boundaries */
+}
+
+
+.filter-container,
+.new-filter-container {
+  display: block; /* Tampilkan saat halaman dimuat */
+  position: absolute;
+  z-index: 1000;
+  gap: 10px;
+  background: rgba(19, 39, 96, 0.613);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+}
+
+.filter-container {
+  top: 10px; /* Posisi dari atas */
+  left: 60px; /* Posisi dari kiri */
+  width: auto; /* Lebar otomatis */
+  height: 20px; /* Tinggi */
+  display: flex; /* Menggunakan flexbox */
+  flex-direction: row; /* Konten dalam baris */
+  flex: 1; /* Membolehkan pertumbuhan */
+}
+
+.new-filter-container {
+    z-index:900;
+        position: absolute;
+  top: 80px; /* Posisi dari atas */
+  left: 70px; /* Posisi dari kiri */
+  height: 120px; /* Tinggi */
+  width: 90%; /* Lebar 90% dari elemen induk */
+  display: flex; /* Menggunakan flexbox */
+  flex-direction: row; /* Konten dalam baris */
+  flex: 1; /* Membolehkan pertumbuhan */
+  object-fit: cover; /* Mengatur gambar agar terpotong dengan baik (jika ada gambar) */
+}
+
+#fullscreen-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    overflow: hidden; /* Membatasi tampilan agar tidak ada bagian yang keluar */
+}
+
+#fullscreen-image img {
+    width: auto; /* Membiarkan gambar melebihi lebar layar jika perlu */
+    height: 100vh; /* Mengisi tinggi viewport */
+    object-fit: contain; /* Menjaga proporsi gambar */
+    transform: scale(3) translateX(0%)/* Mulai dengan zoom dan geser ke kanan */
+    transform-origin: center right; /* Zoom berasal dari tengah ke arah kanan */
+    transition: transform 2s ease; /* Transisi zoom dan geser */
+}
+
+@keyframes zoomOut {
+    from {
+        transform: scale(3);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+/* Gaya tombol */
+.new-filter-container .filter-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0; /* Hilangkan padding untuk menjaga konsistensi ukuran */
+  background-color: rgb(10, 18, 44);
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  box-shadow: 0px 2px 6px rgb(255, 255, 255);
+  color: rgb(255, 255, 255);
+  font-size: 30px;
+  font-weight: bold;
+  font-family: 'Lato', sans-serif;
+  text-transform: capitalize;
+  transition: background-color 0.3s ease;
+  text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.856);
+  width: 300px; /* Lebar tombol mengikuti lebar gambar */
+  height: 300px; /* Tinggi tombol mengikuti tinggi gambar */
+    background-size: cover;
+    background-position: center;
+  flex-shrink: 0; /* Mencegah tombol mengecil */
+  text-align: center;
+  overflow: hidden; /* Pastikan gambar tidak meluber keluar tombol */
+}
+
+/* Hover effect for buttons */
+.new-filter-container .filter-btn:hover {
+  background-color: rgba(72, 144, 226, 0.8);
+}
+
+/* Active button style */
+.new-filter-container .filter-btn.active {
+  background-color: #004D40;
+}
+
+/* New Filter Container Styles */
+.new-filter-container {
+    position: absolute;
+  display: flex;
+  justify-content: flex-start; /* Align buttons from left */
+  gap: 200px; /* Increased gap between buttons */
+  overflow-x: auto; /* Enable horizontal scrolling */
+  overflow-y: hidden; /* Hide vertical scroll */
+  padding: 0 300px; /* Add space equivalent to the size of one button on both sides */
+  width: 100vw; /* Full viewport width */
+  position: absolute;
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Exact centering */
+  z-index: 1000;
+  white-space: nowrap; /* Prevent wrapping of buttons */
+  background-color: rgba(255, 255, 255, 0); /* Transparent white background */
+  box-sizing: border-box;
+  flex-wrap: nowrap; /* Prevent wrapping of buttons */
+  height: auto; /* Height adjusts to the content */
+}
+
+/* Optional: Hide scrollbar */
+.new-filter-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Gambar di dalam tombol */
+.new-filter-container .filter-btn img {
+  width: auto; /* Lebar gambar mengikuti ukuran tombol */
+  height: auto; /* Tinggi gambar mengikuti ukuran gambar asli */
+  object-fit: cover; /* Pastikan gambar mengisi penuh tombol tanpa distorsi */
+  object-position: center; /* Pusatkan gambar dalam tombol */
+}
+
+/* Checkbox button styles */
+.filter-container .filter-checkbox-btn,
+.new-filter-container .filter-checkbox-btn {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background-color: rgba(10, 28, 61, 0.883);
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0px 2px 4px rgba(4, 26, 224, 0.15);
+  font-size: 0px;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect for checkbox buttons */
+.filter-container .filter-checkbox-btn:hover,
+.new-filter-container .filter-checkbox-btn:hover {
+  background-color: rgba(0, 76, 255, 0.455);
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.576);
+}
+
+
+/* CSS untuk collect-container */
+.collect-container {
+    position: absolute;
+    top: 70px; /* Jarak dari atas */
+    right: -250px; /* Tempatkan di luar layar sebelah kanan */
+    width: 210px; /* Lebar container */
+    height: 100vh; /* Batas tinggi penuh dikurangi top dan jarak scroll ke atas */
+    padding: 1px;
+    border-radius: 10px;
+    background: linear-gradient(to left, rgba(0, 54, 95, 0.8), rgba(0, 54, 95, 0)); /* Efek pudar ke kiri */
+    z-index: 1001;
+    border-top: 2px solid;
+    border-right: 2px solid;
+    border-bottom: 2px solid;
+    border-left: 0px;
+    border-image: linear-gradient(to left, #889dcb, rgba(136, 157, 203, 0)) 1; /* Efek pudar pada border */
+    transition: right 0.3s ease; /* Animasi sliding */
+    overflow-y: auto; /* Enable vertical scroll */
+    overflow-x: hidden; /* Sembunyikan item yang keluar secara horizontal */
+    padding-bottom: 200px; /* Tambahkan padding bottom untuk menciptakan ruang ekstra saat scroll */
+}
+
+/* Styling for the Main Title in orange */
+#main-title {
+    color: orange;
+    font-size: 25px;
+    text-align: right; /* Align text to the right like other elements */
+    margin-right: 5px; /* Match the spacing of other items */
+    padding-top: 5px; /* Add some spacing above the title */
+    font-family: 'Lato', sans-serif;
+    font-weight: bold;
+}
+h4 {
+    font-family: 'Lato', sans-serif;
+    font-weight: bold;
+    color: orange;
+    font-size: 20px
+    }
+
+/* Styling for the subheading in gray */
+h3 {
+    text-align: right; /* Align text to the right */
+    margin-right: 5px; /* Space from the edge */
+    color: grey; /* Same color */
+    font-size: 16px; /* Same size as other items */
+    font-weight: normal; /* Lighter font weight than main title */
+    padding: 10px 10px -5px 10px; /* Padding with no bottom padding */
+}
+h5 {
+    color: white;
+    font-size: 20px
+    }
+/* Saat container ditampilkan */
+.collect-container.active {
+    right: -2px; /* Tampilkan container */
+}
+.collect-tip-container {
+    position: relative; /* Fixed positioning to keep it in view */
+    top: 215px;
+    left: 10px; /* Position from the left */
+    transform: translateY(-50%); /* Adjust for centering */
+    display: flex; /* Use flexbox to align items */
+    align-items: center; /* Center items vertically */
+    z-index: 1000; /* Ensure it's above other elements */
+    gap: 10px; /* Space between items (optional) */
+}
+
+.collect-toggle {
+    position: relative;
+    z-index: 1500;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.collect-toggle img {
+    max-width: 100%;
+    max-height: 100%;
+    transition: filter 0.3s ease, border 0.3s ease;
+}
+
+/* Hover effect */
+.collect-toggle.hover-active img {
+    filter: brightness(1.6); /* Increase brightness */
+    border: 2px solid #02a0c5; /* Border within image boundaries */
+}
+
+.collect-tooltip { 
+    background-color: rgba(19, 39, 96, 0.613); /* Background color of the tool tips */
+    color: white; /* Text color */
+    font-size: 12px; /* Font size */
+    padding: 5px 10px; /* Padding for tool tips */
+    border-radius: 5px; /* Rounded corners */
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s; /* Fade-in effect */
+    white-space: nowrap; /* Prevent text wrapping */
+    position: relative; /* Position for the arrow */
+    border: 2px solid #889dcb; /* Border color for the tool tips */
+    pointer-events: none;
+}
+
+/* Arrow that points to the left */
+.collect-tooltip::after { 
+    content: ""; /* Empty content for the arrow */
+    position: absolute;
+    top: 50%; /* Vertically center the arrow */
+    left: -20%; /* Position the arrow to the left of the tool tips */
+    transform: translateY(-50%); /* Center align vertically */
+    border-width: 8px; /* Size of the arrow */
+    border-style: solid;
+    border-color: transparent #ffff transparent transparent; /* Arrow color pointing to the toggle */
+    margin-right: 2px; /* Space between the arrow and the tool tips */
+    z-index: 1700;
+    
+}
+
+/* Style untuk setiap item di dalam collect-container */
+.collect-item {
+    display: block; /* Pastikan item ditampilkan secara blok */
+    text-align: right; /* Align text to the right */
+    margin-right: 20px; /* Jarak dari tepi container */
+    margin-bottom: 5px;
+    color: #889dcb; /* Warna font */
+    font-size: 16px; /* Ukuran font */
+    font-weight: bold; /* Teks tebal */
+    padding: 10px; /* Padding item */
+    border-bottom: 1px solid rgba(136, 157, 203, 0.6); /* Garis bawah untuk tiap item */
+    transition: background 0.3s ease; /* Transisi background */
+    overflow: hidden; /* Sembunyikan konten yang melampaui batas item */
+    white-space: nowrap; /* Mencegah teks membungkus */
+    text-overflow: ellipsis; /* Tambahkan ellipsis untuk teks panjang yang terpotong */
+}
+
+/* Efek hover untuk item */
+.collect-item:hover {
+    background: rgba(136, 157, 203, 0.1); /* Sedikit efek hover dengan latar belakang */
+}
+
+/* Style untuk tombol di dalam collect-item */
+.collect-item button {
+    width: 100%;
+    background: none;
+    border: none;
+    color: white; /* Warna font sama dengan border */
+    font-size: 16px;
+    cursor: pointer;
+    text-align: right;
+    padding: 2px;
+}
+
+/* Style untuk checkbox dan filter */
+.checkbox-filters {
+    display: flex; /* Menggunakan flexbox untuk layout */
+    flex-direction: column; /* Mengatur arah flex menjadi kolom */
+    overflow-y: auto; /* Izinkan scroll vertikal */
+    overflow-x: auto; /* Izinkan scroll horizontal */
+    color: white; /* Warna font */
+    margin-right: 20px; /* Jarak antara checkbox dan tepi */
+    margin-top: 5px; /* Jarak di atas checkbox */
+    max-height: 150px; /* Batasi tinggi filters agar bisa di-scroll */
+    white-space: nowrap; /* Mencegah teks membungkus agar bisa scroll horizontal */
+}
+
+#material-group {
+    max-height: 300px; /* Batasi tinggi agar bisa di-scroll */
+    overflow-y: auto; /* Izinkan scroll vertikal */
+    margin-top: 5px; /* Jarak di atas jika diperlukan */
+    border-top: 1px solid rgba(136, 157, 203, 0.6); /* Garis pemisah jika diinginkan */
+    padding-right: 5px; /* Padding untuk ruang dalam */
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+/* Tombol aktif */
+.collect-item button.active {
+    background: linear-gradient(to left, rgba(135, 206, 235, 0.8), rgba(135, 206, 235, 0));
+    color: #ffffff; /* Warna teks untuk tombol aktif */
+}
+
+.checkbox-filters label {
+    margin-bottom: 5px; /* Jarak antara label */
+    display: flex; /* Menggunakan flexbox untuk tata letak label */
+    align-items: center; /* Menyelaraskan ikon dan teks secara vertikal */
+    white-space: nowrap; /* Mencegah teks membungkus */
+    overflow: hidden; /* Sembunyikan teks yang panjang */
+    text-overflow: ellipsis; /* Tambahkan ellipsis jika teks terlalu panjang */
+}
+
+.arrow {
+    margin-left: 8px; /* Jarak antara teks dan panah */
+    transition: transform 0.3s ease; /* Animasi transisi untuk rotasi panah */
+}
+
+/* Arrow pointing down when active */
+.collect-item.active .arrow {
+    transform: rotate(90deg); /* Putar 90 derajat */
+}
+
+/* CSS untuk mencegah scroll pada body */
+.no-scroll {
+    overflow: hidden; /* Mencegah scroll */
+}
+
+.icon {
+    width: 12px;  /* Lebar ikon */
+    height: 12px; /* Tinggi ikon */
+    object-fit: contain; /* Memastikan gambar tidak terdistorsi */
+}
+
+.material-icon {
+    width: 18px;  /* Ubah ukuran ikon menjadi 12px */
+    height: 18px; /* Ubah ukuran ikon menjadi 12px */
+    vertical-align: middle; /* Untuk memastikan ikon sejajar dengan teks */
+    margin-right: 4px; /* Menambahkan sedikit jarak antara ikon dan teks */
+}
+
+
+/* Logo */
+#logo {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 150px;
+  z-index: 1499;
+}
+.custom-marker-icon {
+    transform: translateY(-5px); /* Geser ikon ke atas 5px */
+}
+/* Overlay Background (Latar belakang yang gelap) */
+.introjs-overlay {
+    background-color: rgba(0, 0, 0, 0.7); /* Warna overlay dengan opacity */
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* Tooltip Container (Mengubah warna latar belakang menjadi putih) */
+.introjs-tooltip {
+    background-color: #ffffff !important; /* Warna putih */
+    color: #000000 !important; /* Warna teks hitam */
+    border-radius: 10px !important;
+    padding: 5px !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important; /* Efek bayangan */
+    font-family: 'Lato', sans-serif !important;
+    font-weight: bold !important;
+    max-width: 300px !important;
+    position: relative !important;
+}
+
+/* Tooltip Title (Judul) */
+.introjs-tooltip-title {
+    color: white !important; /* Warna teks hitam */
+    font-size: 18px !important;
+    text-align: center!important;
+    font-family: 'Lato', sans-serif;
+    font-weight: bold;
+    margin-bottom: 2px !important;
+}
+
+/* Tooltip Text (Konten teks) */
+.introjs-tooltiptext {
+    color: white !important; /* Warna teks hitam */
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    text-align: center!important;
+    font-family: 'Lato', sans-serif;
+    font-weight: bold;
+}
+/* Menghilangkan elemen step indicator */
+.introjs-progress, .introjs-bullets {
+    display: none !important;
+}
+
+/* Menghilangkan nomor langkah (misal: "1 of 4") */
+.introjs-helperNumberLayer {
+    display: none !important;
+}
+
+/* Arrow (Panah) */
+.introjs-arrow {
+    margin-bottom: 30px;
+    color: blue;
+    position: absolute; /* Menempatkan panah di luar container */
+    top: -40px; /* Menyesuaikan posisi panah lebih ke atas */
+    border-color: #333 transparent transparent transparent; /* Mengubah warna panah */
+    border-width: 10px; /* Ukuran panah */
+}
+
+/* Tooltip Buttons Container */
+.introjs-tooltipbuttons {
+    display: flex;
+    justify-content: center; /* Menempatkan tombol di tengah */
+    align-items: center; /* Menjaga tombol agar rata secara vertikal */
+    gap: 10px; /* Menambahkan jarak antara tombol */
+    margin-top: 10px; /* Jarak dengan konten atas */
+}
+
+/* Next Button */
+.introjs-nextbutton {
+    background-color: green;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.introjs-nextbutton:hover {
+    background-color: #45A049;
+}
+
+/* Previous Button */
+.introjs-prevbutton {
+    background-color: #2196F3;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.introjs-prevbutton:hover {
+    background-color: #1976D2;
+}
+
+/* Skip Button */
+.introjs-skipbutton {
+    background-color: transparent;
+    font-size: 13px;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+
+/* Done Button */
+.introjs-donebutton {
+    background-color: green;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.introjs-donebutton:hover {
+    background-color: #5E35B1;
+}
+
+/* Highlighted Element (Focus Element) */
+.introjs-helperLayer {
+    border-radius: 8px;
+    transition: border-color 0.3s;
+}
+
+/* Highlight Overlay Layer (Mengatur area fokus) */
+.introjs-fixParent {
+    z-index: 10000;
+    margin-bottom: 10px;
+}
+
+/* Tooltip Close Button (X Button) */
+.introjs-closeButton {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Custom Tooltip Class (Jika Anda menggunakan custom-tooltip) */
+.custom-tooltip {
+    background-color: rgba(19, 39, 96, 0.613)!important;
+    border: 2px solid #889dcb!important;/* Border color */
+    color: white !important; /* Warna teks hitam */
+    border-radius: 10px !important;
+    padding: 5px !important;
+}
+
+/* Custom Highlight Class */
+.custom-highlight {
+    padding: 0;
+    border: 1px solid white;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+.custom-highlight-copycoordinates {
+    padding: 0 115px 0 0;
+    border: 1px solid white;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+/* Panah yang dinamis mengikuti posisi fokus */
+.introjs-arrow.top {
+    top: -20px;
+    border-color: transparent transparent #333 transparent;
+}
+
+.introjs-arrow.right {
+    top: -15px;
+    border-color: transparent transparent transparent #333;
+}
+
+.introjs-arrow.bottom {
+    top: 20px;
+    border-color: #333 transparent transparent transparent;
+}
+
+.introjs-arrow.left {
+    top: -15px;
+    border-color: transparent #333 transparent transparent;
+}
+
+/* Mengatur ukuran font umum untuk semua elemen */
+.introjs-button,
+.introjs-tooltiptext {
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    #preloader {
+        background-image: url('icons/background_preload.png');
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+       
+    }
+.popup {
+    display: none; /* Initially hidden */
+    position: fixed;
+    z-index: 1500; /* Ensure it's above all other content */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+    max-width: 70vw; /* Maximum width of 70% of viewport width */
+    max-height: 90vh; /* Maximum height of 70% of viewport height */
+    overflow: auto; /* Adds scroll if content exceeds max size */
+    padding: 10px 25px 10px 10px; /* Top 10px, right 20px, bottom 10px, left 10px */
+    border-radius: 8px;
+}
+#submit-marker-button {
+    font-size: 8px; /* Ukuran font */
+}
+#submit-container {
+    top: 57px; /* Jarak dari atas */
+    right: 41px; /* Jarak dari sisi kanan */
+}
+.collect-container {
+    position: absolute;
+    top: 70px; /* Jarak dari atas */
+    right: -450px; /* Tempatkan di luar layar sebelah kanan */
+    width: 120px; /* Lebar container */
+    max-height: calc(100vh - 70px - 200px); /* Batas tinggi penuh dikurangi top dan jarak scroll ke atas */
+    padding: 1px;
+    font-size: 8px;
+    border-radius: 10px;
+    background: linear-gradient(to left, rgba(0, 54, 95, 0.8), rgba(0, 54, 95, 0)); /* Efek pudar ke kiri */
+    z-index: 1001;
+    border-top: 2px solid;
+    border-right: 2px solid;
+    border-bottom: 2px solid;
+    border-left: 0px;
+    border-image: linear-gradient(to left, #889dcb, rgba(136, 157, 203, 0)) 1; /* Efek pudar pada border */
+    transition: right 0.3s ease; /* Animasi sliding */
+    overflow-y: auto; /* Enable vertical scroll */
+    overflow-x: hidden; /* Sembunyikan item yang keluar secara horizontal */
+    padding-bottom: 200px; /* Tambahkan padding bottom untuk menciptakan ruang ekstra saat scroll */
+}
+
+    .collect-item {
+        font-size: 8px; /* Ubah ukuran font item menjadi 8px untuk mobile */
+    }
+
+    .collect-item button {
+        font-size: 8px; /* Ubah ukuran font tombol menjadi 8px untuk mobile */
+    }
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 40%;
+    max-width: 90%;
+    left: 70px;
+    top: 10px;
+    height: 80px;
+    padding: 0px;
+    flex-direction: row;
+    box-sizing: border-box;
+    gap: 1px;
+    border: 2px solid #889dcb;
+    animation: slide-right 0.5s ease-out;
+    overflow-x: auto; /* Allow horizontal scrolling */
+}
+
+
+    .filter-container .filter-checkbox-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: calc(50% - 1px);
+        padding: 0px;
+        font-size: 0px; /* Hide text */
+        height: 24px;
+        box-sizing: border-box;
+        margin: 0px;
+        flex-shrink: 1;
+        flex-grow: 0;
+    }
+
+    .filter-container .filter-checkbox-btn input[type="checkbox"] {
+        width: 14px;
+        height: 14px;
+    }
+
+    .filter-container .filter-checkbox-btn img {
+        width: 14px;
+        height: 14px;
+    }
+
+
+
+/* CSS untuk container dengan animasi slide */
+.new-filter-container {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%; /* Lebar viewport */
+    height: 450px; /* Tinggi container yang lebih besar untuk menampung tombol yang lebih besar */
+    padding: 90px 20px; /* Tambahkan padding kiri dan kanan untuk ruang ekstra */
+    justify-content: flex-start; /* Posisikan tombol dari kiri */
+    align-items: center; /* Pusatkan tombol secara vertikal */
+    gap: 60px; /* Jarak antar tombol */
+    border: none;
+    background: none;
+    overflow-x: auto; /* Aktifkan scroll horizontal */
+    overflow-y: hidden; /* Sembunyikan scroll vertikal */
+    scroll-snap-type: x mandatory; /* Aktifkan scroll snapping */
+    box-sizing: border-box;
+    position: absolute; /* Posisikan container relatif terhadap viewport */
+    top: 50%; /* Pusatkan container secara vertikal */
+    left: 50%; /* Pusatkan container secara horizontal */
+    transform: translate(-50%, -50%); /* Pusatkan container dengan benar */
+    opacity: 0; /* Mulai dengan opacity 0 */
+    transition: opacity 0.5s ease; /* Efek transisi untuk opacity */
+}
+
+/* Animasi muncul dari kanan */
+.new-filter-container.slide-in {
+    animation: slideIn 0.5s ease-out forwards; /* Animasi muncul */
+}
+
+/* Animasi hilang ke kiri */
+.new-filter-container.slide-out {
+    animation: slideOut 0.5s ease-in forwards; /* Animasi menghilang */
+}
+
+/* CSS untuk tombol */
+.new-filter-container .filter-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    box-sizing: border-box;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    width: 200px;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+    scroll-snap-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.new-filter-container .filter-btn:first-child {
+    margin-left: 200px; 
+    margin-right: 2px;
+}
+
+/* Persistent hover effect */
+.new-filter-container .filter-btn.hover-active {
+    transform: scale(1.5);
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
+}
+
+/* Regular hover effect */
+.new-filter-container .filter-btn:hover {
+    transform: scale(1.5);
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
+}
+
+
+.new-filter-container .filter-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease; /* Tambahkan transisi pada transform */
+}
+
+.new-filter-container .filter-btn .button-text {
+    display: block;
+    opacity: 1;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.9); /* Latar belakang semi-transparan untuk teks */
+    color: #fff;
+    padding: 2px 0; /* Padding untuk teks */
+    font-size: 16px; /* Ukuran font teks */
+    transition: opacity 0.3s ease; /* Efek transisi untuk opacity */
+}
+.new-filter-container .filter-btn:hover img {
+    transform: scale(1.2); /* Membesarkan gambar saat tombol dihover */
+}
+.new-filter-container .filter-btn:hover .button-text {
+    opacity: 0; /* Menghilangkan teks saat hover */
+}
+
+.new-filter-container::-webkit-scrollbar {
+    display: none; /* Sembunyikan scrollbar */
+}
+#reset-opacity {
+    position: absolute; /* Posisi absolut */
+    top: 125px; /* Jarak dari atas */
+    left: 5px; /* Jarak dari kanan */
+    background: none; /* Tanpa latar belakang */
+    border: none; /* Tanpa border */
+    cursor: pointer; /* Tunjukkan kursor pointer saat hover */
+    padding: 5px; /* Padding untuk memberi ruang di sekitar gambar */
+    outline: none; /* Hapus outline default */
+    transition: transform 0.2s; /* Tambahkan transisi untuk efek hover */
+    z-index: 900; /* Pastikan tombol berada di atas elemen lain */
+}
+.count-container {
+        position: absolute;
+        top: auto;  /* Menghilangkan properti top dari versi global */
+        left: 5px;  /* Posisi di sebelah kiri */
+        right: auto; /* Menghindari masalah dengan right jika ada */
+        bottom: 5px; /* Posisi di bawah */
+        background: rgba(19, 39, 96, 0.613);
+        color: white;
+        border-radius: 10px;
+        border: 2px solid #889dcb;
+        padding: 5px;
+        margin-right: 140px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+        display: flex;
+        flex-direction: row;
+        gap: 4px;
+        z-index: 1290;
+        font-family: Arial, sans-serif;
+        flex-wrap: nowrap;  /* Mencegah item berbaris ke bawah */
+        overflow-x: auto;   /* Menambahkan scroll horizontal jika item terlalu banyak */
+    }
+.count-container h4 {
+    color: orange;
+    font-family: 'Lato', sans-serif;
+    text-align: center;
+    margin: 10px;
+}
+.trakteer-overlay {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 125px;
+  height: 165px;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease-in-out; /* Animasi geser */
+}
+.trakteer-frame {
+  width: 290%;
+  height: 290%;
+  transform: scale(0.4);
+  transform-origin: 0 0;
+  border: none;
+  display: block;
+}
+/* Keyframes untuk animasi slide */
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translateX(-100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) translateX(0);
+    }
+
+
+@keyframes slideOut {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) translateX(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translateX(100%);
+    }
+}

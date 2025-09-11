@@ -1,0 +1,38 @@
+[
+  {
+    "Recipe Food": "The Bowl of Fried Rice",
+    "food image": "food_recipe (1).jpg",
+    "The Ingredient": "Rice, meat, vegetables",
+    "The Effect": "Fast Running"
+  },
+  {
+    "Recipe Food": "Spicy Stir-fried bamboo shoots",
+    "food image": "food_recipe (1).png",
+    "The Ingredient": "Bamboo Shoot, Chili, Meat",
+    "The Effect": "increase damage"
+  },
+  {
+    "Recipe Food": "Spicy Fried Bamboo Forest",
+    "food image": "food_recipe (2).png",
+    "The Ingredient": "",
+    "The Effect": ""
+  },
+  {
+    "Recipe Food": "Sour Black Wine",
+    "food image": "food_recipe (3).png",
+    "The Ingredient": "",
+    "The Effect": ""
+  },
+  {
+    "Recipe Food": "Sweet and Sour Pineapple Juice",
+    "food image": "food_recipe (5).png",
+    "The Ingredient": "",
+    "The Effect": ""
+  },
+  {
+    "Recipe Food": "Braised Mullet With Vegetables",
+    "food image": "food_recipe (6).png",
+    "The Ingredient": "",
+    "The Effect": ""
+  }
+]

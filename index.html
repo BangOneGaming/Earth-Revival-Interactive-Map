@@ -2,297 +2,963 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="google-adsense-account" content="ca-pub-8582564022805467">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Earth Revival Interactive Maps</title>
-    <meta name="description" content="A complete interactive map for exploration in Earth Revival. Includes Treasure Hunt, Limited Time Training, Scenery, and Fishing Spots in various locations such as Sundale Valley, Howling Gobi, Edengate, Ragon Snowy Peak, Kepler Harbour, Pegasus, The Lanf of The Lost and Hilde. Discover your adventure today!">
-    <meta name="keywords" content="Earth Revival, interactive maps,map Earth Revival, treasure locations, training zones, fishing spots, zone markers, old world treasure, earth revival guide, map features, gaming guide">
+    <meta property="og:image" content="https://raw.githubusercontent.com/BangOneGaming/Earth-Revival-Interactive-Map/main/tittle.png" />
+    <meta name="google-site-verification" content="Ix3dO38-z_FWaZ-DWBk7kaoGb7I9MaAzrtqd-LvZLqw" />    
+    <meta name="keywords" content="Earth Revival Game Download Link, Download Earth Revival, interactive maps, game guide, treasure hunts, limited time events, gold fish, food recipes, relics, old world treasures, Sundale Valley, Howling Gobi, Edengate, Ragon Snowy Peak, Kepler Harbour, Pegasus, Hilde, Battleware Build">
+    <meta name="description" content="Explore the ultimate guide for Earth Revival Game with interactive maps, treasure hunts, limited time events, and tips for unlocking old world treasures and greate experience your gameplay.">
+   
+    <title>Earth Revival Download Game & Guide</title>
+    <link rel="stylesheet" href="style.css?v=3.8">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@200&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js/minified/introjs.min.css">
+<script src="https://cdn.jsdelivr.net/npm/intro.js/minified/intro.min.js"></script>
+  <script async src="https://www.tiktok.com/embed.js"></script>
 
-    <!-- Open Graph tags -->
-    <meta property="og:title" content="Earth Revival Interactive Maps"/>
-    <meta property="og:description" content="A complete interactive map for exploration in Earth Revival."/>
-
-    <meta property="og:image" content="https://raw.githubusercontent.com/BangOneGaming/Earth-Revival-Interactive-Map/main/tittle.png"/>
-    <meta property="og:image:width" content="1200"/>
-    <meta property="og:image:height" content="630"/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:url" content="https://your-website.com"/>
-
-    <!-- Twitter Card tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Earth Revival Interactive Maps">
-    <meta name="twitter:description" content="A complete interactive map for exploration in Earth Revival.">
-<meta name="google-site-verification" content="Kc8xcFRY2VFooEOA4ylGU68pU06pP1M1X9KWX0RyWzg" />
-    <meta name="twitter:image" content="https://raw.githubusercontent.com/BangOneGaming/Earth-Revival-Interactive-Map/main/tittle.png">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467"
-     crossorigin="anonymous" data-adbreak-test="on"></script>
-<meta name="google-adsense-account" content="ca-pub-8582564022805467">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XW3RFZ2RVY"></script>
 <script>
-     (adsbygoogle = window.adsbygoogle || []).push({
-         google_ad_client: "ca-pub-8582564022805467",
-         enable_page_level_ads: true
-     });
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-XW3RFZ2RVY');
 </script>
-
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
-
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-image: url('background.jpg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      position: relative;
-    }
-
-    .title-banner {
-      position: absolute;
-      top: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60vw;
-      max-width: 800px;
-      z-index: 10;
-      pointer-events: none;
-      display: none; /* default disembunyikan */
-    }
-
-    .overlay-btn {
-      position: absolute;
-      background: transparent;
-      border: none;
-      padding: 0;
-      cursor: pointer;
-      animation: neonPulse 2s infinite ease-in-out;
-      animation-play-state: running;
-      text-align: center; /* Agar teks berada di tengah */
-      display: flex;
-      flex-direction: column; /* Menempatkan gambar dan teks secara vertikal */
-      justify-content: center; /* Menyusun konten di tengah tombol */
-    }
-
-    .overlay-btn img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    /* Neon color masing-masing tombol */
-    .overlay-btn.earth { --neon-color: skyblue; }
-    .overlay-btn.mars { --neon-color: orange; }
-    .overlay-btn.pegasus { --neon-color: white; }
-
-    /* Animasi denyut neon */
-    @keyframes neonPulse {
-      0%, 100% { filter: drop-shadow(0 0 0 transparent); }
-      50% { filter: drop-shadow(0 0 12px var(--neon-color)); }
-    }
-
-    /* Hentikan animasi saat hover atau active */
-    .overlay-btn:hover,
-    .overlay-btn.active {
-      animation-play-state: paused;
-    }
-
-    /* Neon solid saat hover atau aktif */
-    .overlay-btn:hover img,
-    .overlay-btn.active img {
-      filter: drop-shadow(0 0 12px var(--neon-color));
-    }
-h4 {
-  font-family: 'Lato', sans-serif;
-  font-weight: 400; /* tipis */
-  color: orange;
-  font-size: 33px;
-  margin: 0;
-}
-
-    
-
-
-.top-right-label {
-  position: absolute;
-  top: 13px;
-  left: 135px;
-  z-index: 100;
-}
-
-    /* Teks yang muncul saat hover */
-.overlay-btn .overlay-text {
-  position: absolute;
-  top: -50px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 6px 12px;
-  background-color: rgba(19, 39, 96, 0.613); /* biru gelap transparan */
-  border-radius: 8px;
-  border: 2px solid #889dcb;
-  width: auto;
-  max-width: 90%;
-  text-align: center;
-  color: white;
-  font-size: 24px;
-  font-weight: bold;
-  text-shadow: 0 0 10px var(--neon-color), 0 0 20px var(--neon-color);
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-  pointer-events: none;
-  z-index: 1;
-}
-
-
-.overlay-btn:hover .overlay-text {
-  opacity: 1;
-}
-
-
-    @media (orientation: portrait) {
-      body {
-        background-image: url('portrait_background.jpg');
-      }
-      .title-banner {
-        display: block;
-      }
-      .top-right-label {
-  position: absolute;
-  top: 20px;
-  left: 30px;
-  z-index: 100;
-}
-  #ad-container {
-    display: none;
-  }
-    }
-  </style>
 </head>
 <body>
 
-  <img src="statics/tittle_er.png" alt="Title" class="title-banner" />
-<div class="top-right-label">
-  <h4>World Map</h4>
+<!-- Kontainer untuk Gambar sebagai fallback -->
+<div class="image-background" id="imageBackground"></div>
+    <!-- Konten halaman Anda di sini -->
+    <video class="video-background" autoplay loop playsinline muted id="backgroundVideo">
+        <source src="images/background_video.mp4" type="video/mp4">
+        Browser Anda tidak mendukung video.
+    </video>
+
+
+<!-- Preloader (tampilkan saat pemuatan) -->
+<div id="preloader" class="preloader">
+    <div class="loader"></div>
 </div>
 
-  <script>
-    const overlayData = {
-      earth: {
-        src: 'earth.png',
-        url: 'earth.html',
-        class: 'earth',
-        name: 'Earth'
-      },
-      mars: {
-        src: 'mars.png',
-        url: 'The-Land-of-The-Lost/index.html',
-        class: 'mars',
-        name: 'Mars'
-      },
-      pegasus: {
-        src: 'pegasus.png',
-        url: 'https://BANGONEGAMING.com/pegasus',
-        class: 'pegasus',
-        name: 'Pegasus'
-      }
-    };
-
-    function createOverlay(type) {
-      const { src, url, class: cls, name } = overlayData[type];
-      const isPortrait = window.innerWidth < window.innerHeight;
-
-      const btn = document.createElement('button');
-      btn.className = `overlay-btn ${cls}`;
-      btn.onclick = () => window.location.href = url;
-
-      const img = document.createElement('img');
-      img.src = src;
-
-      // Teks yang akan muncul saat hover
-      const text = document.createElement('span');
-      text.className = 'overlay-text';
-      text.textContent = name; // Nama seperti 'Earth', 'Mars', 'Pegasus'
-
-      btn.appendChild(img);
-      btn.appendChild(text);
-
-      // Posisi dan ukuran tombol sesuai jenis overlay
-if (type === 'earth') {
-  if (isPortrait) {
-    btn.style.left   = '17.87vw';
-    btn.style.top    = '38.26vh';
-    btn.style.width  = '28vh';   // sebelumnya '322px'
-    btn.style.height = '28vh';   // sebelumnya '322px'
-  } else {
-    btn.style.left   = '33.78vw';
-    btn.style.top    = '18.39vh';
-    btn.style.width  = '32.46vw';   // 389px
-    btn.style.height = '77.02vh';   // 389px
-  }
-      } else if (type === 'mars') {
-        if (isPortrait) {
-          btn.style.left = '2.70vw';
-          btn.style.top = '43.14vh';
-          btn.style.width = '24.44vw';
-          btn.style.height = '12.72vh';
-        } else {
-          btn.style.left = '26.90vw';
-          btn.style.top = '32.30vh';
-    btn.style.width  = '12.56vw';   // 389px
-    btn.style.height = '30.02vh';   // 389px
-        }
-      } else if (type === 'pegasus') {
-        if (isPortrait) {
-          btn.style.left = '58.33vw';
-          btn.style.top = '36.27vh';
-          btn.style.width = '47.67vw';
-          btn.style.height = '23.43vh';
-        } else {
-    btn.style.left   = '56.20vw';   // 645px
-    btn.style.top    = '8.70vh';    // 57px
-    btn.style.width  = '27.00vw';   // 322px
-    btn.style.height = '69.00vh';   // 322px
-        }
-      }
-
-      document.body.appendChild(btn);
-    }
-
-    function loadOverlays() {
-      ['earth', 'pegasus', 'mars'].forEach(type => createOverlay(type));
-    }
-
-    window.onload = loadOverlays;
-
-    let lastOrientation = window.innerWidth < window.innerHeight ? 'portrait' : 'landscape';
-    window.addEventListener('resize', () => {
-      const currentOrientation = window.innerWidth < window.innerHeight ? 'portrait' : 'landscape';
-      if (currentOrientation !== lastOrientation) {
-        lastOrientation = currentOrientation;
-        document.querySelectorAll('.overlay-btn').forEach(el => el.remove());
-        loadOverlays();
-      }
-    });
-  </script>
-<!-- Iklan sticky bawah dengan background hitam transparan dan bisa ditutup -->
-<div id="ad-container" style="position:fixed; bottom:0; left:0; width:100%; background: rgba(0,0,0,0.3); z-index:9999;">
-  <div style="position: relative; max-width: 100%; margin: auto; background: rgba(0, 0, 0, 0.3); padding: 10px 40px 10px 10px;">
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-8582564022805467"
-         data-ad-slot="1368580738"
-         data-ad-format="horizontal"
-         data-full-width-responsive="true"></ins>
-    <!-- Tombol close -->
-    <button onclick="document.getElementById('ad-container').style.display='none'" 
-            style="position:absolute; top:5px; right:5px; background:none; color:white; border:none; font-size:24px; font-weight:bold; cursor:pointer; z-index:10000;">×</button>
+<!-- Pop-up container -->
+<div id="tiktok-popup">
+  <span id="close-btn">&times;</span>
+  
+  <!-- Teks informasi atau judul -->
+  <div id="popup-text">
+    <h3>Video Tips</h3>
+    <p>Turn On Sound!</p>
   </div>
+
+  <!-- TikTok video embed -->
+  <div id="tiktok-container"></div>
 </div>
 
-<script>
-  (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
 
+<!-- Konten Halaman (disembunyikan selama preload) -->
+<div id="mainContent" style="display: none;">
+
+    
+    <div class="container">
+    <header>
+        <img src="images/tittle_er.png" alt="Earth Revival" class="title-image"><br>
+        <h2 class="guide-label">Guide</h2>
+    </header>
+    
+
+
+
+
+<!-- Tab Navigation Buttons -->
+<div class="tab-buttons">
+    <button class="tab-button active" onclick="openTab(event, 'intro')"
+        data-intro="Map Information and Download Link."
+        data-step="1">
+        <div class="tab-content-wrapper">
+            <img src="icons/facility.png" alt="Intro Icon">
+            <div class="tab-text">Intro</div>
+        </div>
+    </button>
+
+    <button class="tab-button" onclick="openTab(event, 'maps')"
+        data-intro="Explore the entire map freely. Discover treasures and other hidden items."
+        data-step="2">
+        <div class="tab-content-wrapper">
+            <img src="icons/exploration.png" alt="Map Icon">
+            <div class="tab-text">Map Exploration</div>
+        </div>
+    </button>
+
+    <button class="tab-button" onclick="openTab(event, 'video-tips')"
+        data-intro="Need help? Watch our video tips for useful guidance."
+        data-step="3">
+        <div class="tab-content-wrapper">
+            <img src="icons/guide.png" alt="Video Tips Icon">
+            <div class="tab-text">Video Tips</div>
+        </div>
+    </button>
+
+    <button class="tab-button" onclick="openTab(event, 'recipe')"
+        data-intro="Find and share your favorite recipes here!"
+        data-step="4">
+        <div class="tab-content-wrapper">
+            <img src="icons/cook.png" alt="Recipe Icon">
+        </div>
+        <div class="recipe-text">Recipe</div>
+    </button>
+
+    <button class="tab-button" onclick="openTab(event, 'battleware')"
+        data-intro="View battleware builds and share your best weapon setups."
+        data-step="5">
+        <div class="tab-content-wrapper">
+            <img src="icons/battleware.png" alt="Battleware Icon">
+            <div class="tab-text">Battleware</div>
+        </div>
+    </button>
+</div>
+
+
+
+
+
+
+<!-- Intro Tab Content -->
+<div id="intro" class="tab-content" style="display: block;">
+
+    <section class="download-section">
+        <div class="game-info">
+            <img src="https://assets-prd.ignimgs.com/2022/08/19/earth-revival-button-logo-1660927935525.jpg?width=300&crop=1%3A1%2Csmart&auto=webp&dpr=2" alt="Earth Revival Icon" class="game-icon">
+            <div class="scrollable-container">
+                <div class="game-details">
+                    <h2 class="game-name">Earth Revival</h2>
+                    <div class="platform-logos">
+                        <img src="https://pngimg.com/uploads/android_logo/android_logo_PNG2.png" alt="Android Logo" class="platform-logo">
+                        <img src="https://pngimg.com/uploads/apple_logo/apple_logo_PNG19666.png" alt="iPhone Logo" class="platform-logo">
+                        <img src="https://pngimg.com/uploads/windows_logos/windows_logos_PNG9.png" alt="Windows Logo" class="platform-logo">
+                    </div>
+                    <div class="platform-sizes">
+                        <p class="platform-size">Android: 20.78 GB</p>
+                        <p class="platform-size">iPhone: 19.64 GB</p>
+                        <p class="platform-size">Windows: 88.52 GB</p>
+                    </div>
+                    <p>Genre: Adventure, Survival, Futuristic, MMORPG</p>
+                </div>
+            </div>
+        </div>
+        <a href="https://www.2112earthrevival.com/home" class="download-button" target="_blank">Download</a>
+    </section>
+
+    <!-- Intro Text Section -->
+    <section id="intro-text">
+        <p>Welcome to the Earth Revival Guide! This is your ultimate resource for mastering the exciting mobile game Earth Revival...</p>
+
+        <!-- Map Information as part of Intro -->
+        <div class="map-info">
+    <div class="map-description">
+        <img src="icons/sundale.png" alt="Sundale Valley Map" class="map-icon">
+        <h2>Sundale Valley</h2>
+        <p>In this region, you can find a variety of abundant natural resources. Below is a list of materials available in Sundale Valley.</p>
+        
+        <p><strong>Wood:</strong> <img src="icons/wood.png" alt="Wood Icon" class="resource-icon"></p>
+        <ul>
+            <li><strong><img src="resource_img/cedar.png" alt="Cedar" class="resource-icon"> Cedar</strong></li>
+            <li><strong><img src="resource_img/resin.png" alt="Resin" class="resource-icon"> Resin</strong></li>
+        </ul>
+        
+        <p><strong>Stone:</strong> <img src="icons/stone.png" alt="Stone Icon" class="resource-icon"></p>
+        <ul>
+            <li><strong><img src="resource_img/ironore.png" alt="Iron Ore" class="resource-icon"> Iron Ore</strong></li>
+            <li><strong><img src="resource_img/clay.png" alt="Clay" class="resource-icon"> Clay</strong></li>
+        </ul>
+        
+        <p><strong>Fiber:</strong> <img src="icons/fiber.png" alt="Fiber Icon" class="resource-icon"></p>
+        <ul>
+            <li><strong><img src="resource_img/flaxfiber.png" alt="Flax Fiber" class="resource-icon"> Flax Fiber</strong></li>
+        </ul>
+        
+        <p><strong>Scrap:</strong> <img src="icons/scrap.png" alt="Scrap Icon" class="resource-icon"></p>
+        <ul>
+            <li><strong><img src="resource_img/lens.png" alt="Lens" class="resource-icon"> Lens</strong></li>
+            <li><strong><img src="resource_img/screw.png" alt="Screw" class="resource-icon"> Screw</strong></li>
+        </ul>
+        
+        <p><strong>Ingredients:</strong> <img src="icons/ingredients.png" alt="Ingredients Icon" class="resource-icon"></p>
+        <ul>
+            <li><img src="resource_img/bracken.png" alt="Bracken" class="resource-icon"> Bracken</li>
+            <li><img src="resource_img/mushroom.png" alt="Mushroom" class="resource-icon"> Mushroom</li>
+            <li><img src="resource_img/neptunea.png" alt="Neptunea" class="resource-icon"> Neptunea</li>
+            <li><img src="resource_img/bellpepper.png" alt="Bell Pepper" class="resource-icon"> Bell Pepper</li>
+            <li><img src="resource_img/bamboomushroom.png" alt="Bamboo Mushroom" class="resource-icon"> Bamboo Mushroom</li>
+            <li><img src="resource_img/mutantberry.png" alt="Mutant Berry" class="resource-icon"> Mutant Berry</li>
+        </ul>
+    </div>
+
+    <div class="map-description">
+        <img src="icons/howling.png" alt="Howling Gobi Map" class="map-icon">
+        <h2>Howling Gobi</h2>
+        <p>Howling Gobi also has a variety of important resources that can be collected. Below are some materials that can be found in this region.</p>
+        
+        <p><strong>Wood:</strong> <img src="icons/wood.png" alt="Wood Icon" class="resource-icon"></p>
+        <ul>
+            <li><strong><img src="resource_img/poplar.png" alt="Poplar" class="resource-icon"> Poplar</strong></li>
+            <li><strong><img src="resource_img/resin.png" alt="Resin" class="resource-icon"> Resin</strong></li>
+        </ul>
+        
+        <p><strong>Stone:</strong> <img src="icons/stone.png" alt="Stone Icon" class="resource-icon"></p>
+        <ul>
+            <li><strong><img src="resource_img/pyrolusite.png" alt="Pyrolusite Ore" class="resource-icon"> Pyrolusite Ore</strong></li>
+            <li><strong><img src="resource_img/clay.png" alt="Clay" class="resource-icon"> Clay</strong></li>
+        </ul>
+        
+        <p><strong>Fiber:</strong> <img src="icons/fiber.png" alt="Fiber Icon" class="resource-icon"></p>
+        <ul>
+            <li><strong><img src="resource_img/sisalfiber.png" alt="Sisal Fiber" class="resource-icon"> Sisal Fiber</strong></li>
+        </ul>
+        
+        <p><strong>Scrap:</strong> <img src="icons/scrap.png" alt="Scrap Icon" class="resource-icon"></p>
+        <ul>
+            <li><strong><img src="resource_img/rubber.png" alt="Rubber" class="resource-icon"> Rubber</strong></li>
+            <li><strong><img src="resource_img/spring.png" alt="Spring" class="resource-icon"> Spring</strong></li>
+        </ul>
+        
+        <p><strong>Ingredients:</strong> <img src="icons/ingredients.png" alt="Ingredients Icon" class="resource-icon"></p>
+        <ul>
+            <li><img src="resource_img/ediblecactus.png" alt="Edible Cactus" class="resource-icon"> Edible Cactus</li>
+            <li><img src="resource_img/wildbuckthorn.png" alt="Wild Buckthorn" class="resource-icon"> Wild Buckthorn</li>
+            <li><img src="resource_img/wildpineapple.png" alt="Wild Pineapple" class="resource-icon"> Wild Pineapple</li>
+            <li><img src="resource_img/succulent.png" alt="Succulent" class="resource-icon"> Succulent</li>
+            <li><img src="resource_img/antiradberry.png" alt="Antirad Berry" class="resource-icon"> Antirad Berry</li>
+            <li><img src="resource_img/crookedarracord.png" alt="Crooked Arracord" class="resource-icon"> Crooked Arracord</li>
+        </ul>
+    </div>
+
+<div class="map-description">
+    <img src="icons/eden.png" alt="Edengate Map" class="map-icon">
+    <h2>Edengate</h2>
+    <p>In the mysterious region of Edengate, rare resources like <strong>Redwood</strong> and <strong>Glowherb Fiber</strong> thrive, along with valuable minerals such as <strong>Red Ochre Ore</strong>. Edengate also holds unique scrap materials and ingredients like <strong>Hydrated Lettuce</strong> and <strong>Colourful Spore Mushroom</strong>.</p>
+    
+    <p><strong>Wood:</strong> <img src="icons/wood.png" alt="Wood" class="resource-icon"></p>
+    <ul>
+        <li><strong><img src="resource_img/redwood.png" alt="Redwood" class="resource-icon"> Redwood</strong></li>
+        <li><strong><img src="resource_img/resin.png" alt="Resin" class="resource-icon"> Resin</strong></li>
+    </ul>
+    
+    <p><strong>Stone:</strong> <img src="icons/stone.png" alt="Stone" class="resource-icon"></p>
+    <ul>
+        <li><strong><img src="resource_img/redochre.png" alt="Red Ochre Ore" class="resource-icon"> Red Ochre Ore</strong></li>
+        <li><strong><img src="resource_img/clay.png" alt="Clay" class="resource-icon"> Clay</strong></li>
+    </ul>
+    
+    <p><strong>Fiber:</strong> <img src="icons/fiber.png" alt="Fiber" class="resource-icon"></p>
+    <ul>
+        <li><strong><img src="resource_img/glowherbfiber.png" alt="Glowherb Fiber" class="resource-icon"> Glowherb Fiber</strong></li>
+    </ul>
+    
+    <p><strong>Scrap:</strong> <img src="icons/scrap.png" alt="Scrap" class="resource-icon"></p>
+    <ul>
+        <li><strong><img src="resource_img/diode.png" alt="Diode" class="resource-icon"> Diode</strong></li>
+        <li><strong><img src="resource_img/precisionpart.png" alt="Precision Part" class="resource-icon"> Precision Part</strong></li>
+        <li><strong><img src="resource_img/electronicalcomponent.png" alt="Electronical Component" class="resource-icon"> Electronical Component</strong></li>
+    </ul>
+    
+        <p><strong>Ingredients:</strong> <img src="icons/ingredients.png" alt="Ingredients Icon" class="resource-icon"></p>
+    <ul>
+        <li><strong><img src="resource_img/hydratedlettuce.png" alt="Hydrated Lettuce" class="resource-icon"> Hydrated Lettuce</strong></li>
+        <li><strong><img src="resource_img/tunasurimi.png" alt="Tuna Surimi" class="resource-icon"> Tuna Surimi</strong></li>
+        <li><strong><img src="resource_img/strawberry.png" alt="Strawberry" class="resource-icon"> Strawberry</strong></li>
+        <li><strong><img src="resource_img/colourfulsporemushroom.png" alt="Colourful Spore Mushroom" class="resource-icon"> Colourful Spore Mushroom</strong></li>
+    </ul>
+</div>
+
+<div class="map-description">
+    <img src="icons/ragon.png" alt="Ragon Snowy Peak Map" class="map-icon">
+    <h2>Ragon Snowy Peak</h2>
+    <p>The icy Ragon Snowy Peak offers hardy resources such as <strong>Fir</strong> wood, <strong>Amber</strong>, <strong>Tungsten Ore</strong>, and <strong>Quartz</strong>. It’s also home to <strong>Snow Hemp Fiber</strong> and unique items like <strong>Industrial Hinge</strong> and <strong>Magnet Coil</strong>. Ingredients found here include <strong>Blueberry</strong>, <strong>Artic Bamboo Shoot</strong>, and <strong>Reishi Mushroom</strong>.</p>
+    
+    <p><strong>Wood:</strong> <img src="icons/wood.png" alt="Wood" class="resource-icon"></p>
+    <ul>
+        <li><strong><img src="resource_img/fir.png" alt="Fir" class="resource-icon"> Fir</strong></li>
+        <li><strong><img src="resource_img/amber.png" alt="Amber" class="resource-icon"> Amber</strong></li>
+    </ul>
+    
+    <p><strong>Stone:</strong> <img src="icons/stone.png" alt="Stone" class="resource-icon"></p>
+    <ul>
+        <li><strong><img src="resource_img/tungsten.png" alt="Tungsten Ore" class="resource-icon"> Tungsten Ore</strong></li>
+        <li><strong><img src="resource_img/quartz.png" alt="Quartz" class="resource-icon"> Quartz</strong></li>
+    </ul>
+    
+    <p><strong>Fiber:</strong> <img src="icons/fiber.png" alt="Fiber" class="resource-icon"></p>
+    <ul>
+        <li><strong><img src="resource_img/snowhempfiber.png" alt="Snow Hemp Fiber" class="resource-icon"> Snow Hemp Fiber</strong></li>
+    </ul>
+    
+    <p><strong>Scrap:</strong> <img src="icons/scrap.png" alt="Scrap" class="resource-icon"></p>
+    <ul>
+        <li><strong><img src="resource_img/industrialhinge.png" alt="Industrial Hinge" class="resource-icon"> Industrial Hinge</strong></li>
+        <li><strong><img src="resource_img/magnetcoil.png" alt="Magnet Coil" class="resource-icon"> Magnet Coil</strong></li>
+    </ul>
+    
+    <p><strong>Ingredients:</strong></p>
+    <ul>
+        <li><strong><img src="resource_img/blueberry.png" alt="Blueberry" class="resource-icon"> Blueberry</strong></li>
+        <li><strong><img src="resource_img/articbambooshoot.png" alt="Artic Bamboo Shoot" class="resource-icon"> Artic Bamboo Shoot</strong></li>
+        <li><strong><img src="resource_img/reishimushroom.png" alt="Reishi Mushroom" class="resource-icon"> Reishi Mushroom</strong></li>
+    </ul>
+</div>
+
+<div class="map-description">
+    <img src="icons/kepler.png" alt="Kepler Harbour Map" class="map-icon">
+    <h2>Kepler Harbour</h2>
+    <p>At Kepler Harbour, you'll encounter <strong>Palm Wood</strong>, <strong>Pyrite Sulfur</strong>, and <strong>Agave Americana L Fiber</strong>. This region is rich in scrap materials like <strong>Artificial Leather</strong> and <strong>Integrated Motor</strong>. Notable ingredients include <strong>Lava Tomato</strong>, <strong>Caocao Fruit</strong>, <strong>Cauliflower Fungus</strong>, and <strong>Magmashroom</strong>.</p>
+    
+    <p><strong>Wood:</strong> <img src="icons/wood.png" alt="Wood" class="resource-icon"></p>
+    <ul>
+        <li><strong><img src="resource_img/palmwood.png" alt="Palm Wood" class="resource-icon"> Palm Wood</strong></li>
+    </ul>
+    
+    <p><strong>Stone:</strong> <img src="icons/stone.png" alt="Stone" class="resource-icon"></p>
+    <ul>
+        <li><strong><img src="resource_img/pyrite.png" alt="Pyrite Sulfur" class="resource-icon"> Pyrite Sulfur</strong></li>
+    </ul>
+    
+    <p><strong>Fiber:</strong> <img src="icons/fiber.png" alt="Fiber" class="resource-icon"></p>
+    <ul>
+        <li><strong><img src="resource_img/agave.png" alt="Agave Americana L Fiber" class="resource-icon"> Agave Americana L Fiber</strong></li>
+    </ul>
+    
+    <p><strong>Scrap:</strong> <img src="icons/scrap.png" alt="Scrap" class="resource-icon"></p>
+    <ul>
+        <li><strong><img src="resource_img/artificialleather.png" alt="Artificial Leather" class="resource-icon"> Artificial Leather</strong></li>
+        <li><strong><img src="resource_img/integratedmotor.png" alt="Integrated Motor" class="resource-icon"> Integrated Motor</strong></li>
+    </ul>
+    
+        <p><strong>Ingredients:</strong> <img src="icons/ingredients.png" alt="Ingredients Icon" class="resource-icon"></p>
+    <ul>
+        <li><strong><img src="resource_img/lavatomato.png" alt="Lava Tomato" class="resource-icon"> Lava Tomato</strong></li>
+        <li><strong><img src="resource_img/caocaofruit.png" alt="Caocao Fruit" class="resource-icon"> Caocao Fruit</strong></li>
+        <li><strong><img src="resource_img/cauliflowerfungus.png" alt="Cauliflower Fungus" class="resource-icon"> Cauliflower Fungus</strong></li>
+        <li><strong><img src="resource_img/magmashroom.png" alt="Magmashroom" class="resource-icon"> Magmashroom</strong></li>
+    </ul>
+</div>
+    </section>
+</div>
+   
+
+<!-- Map Exploration Content -->
+<div id="maps" class="tab-content" style="display:none; position: relative;">
+    <h2>Explore the Map</h2>
+
+    <!-- Iframe preview -->
+    <iframe src="mapleaflet/map.html" 
+            width="100%" 
+            height="700px" 
+            style="border:2px solid #889dcb; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.3);">
+    </iframe>
+
+    <!-- Overlay transparan -->
+    <a href="mapleaflet/Map.html" 
+       style="position:absolute; top:0; left:0; width:100%; height:100%; 
+              display:block; z-index:10; background:transparent;">
+    </a>
+</div>
+
+
+    <!-- Intro Tab Content -->
+    <div id="intro" class="tab-content" style="display: block;">
+        <h2>Intro</h2>
+        <p>Welcome to the Earth Revival Guide! This is your ultimate resource for mastering the exciting mobile game Earth Revival...</p>
+    </div>
+
+<!-- Video Tips Tab Content -->
+<div id="video-tips" class="tab-content">
+
+<section id="survival-guide">
+    <h2>Survival Guide</h2>
+    <div class="guide-buttons">
+        <a href="https://youtu.be/lv399LZXRHg?si=dihwtwaCFTM8k0vr" class="guide-button">
+            <img src="images/chapter1.png" alt="Chapter 1">
+            <span class="guide-label">Chapter 1</span>
+        </a>
+        <a href="https://youtu.be/Tp2YDydDOpw?si=AplgVokMN7OaCz3b" class="guide-button">
+            <img src="images/chapter2.png" alt="Chapter 2">
+            <span class="guide-label">Chapter 2</span>
+        </a>
+        <a href="chapter3.html" class="guide-button">
+            <img src="images/chapter3.png" alt="Chapter 3">
+            <span class="guide-label">Chapter 3</span>
+        </a>
+        <a href="chapter4.html" class="guide-button">
+            <img src="images/chapter4.png" alt="Chapter 4">
+            <span class="guide-label">Chapter 4</span>
+        </a>
+        <a href="chapter5.html" class="guide-button">
+            <img src="images/chapter5.png" alt="Chapter 5">
+            <span class="guide-label">Chapter 5</span>
+        </a>
+        <a href="chapter6.html" class="guide-button">
+            <img src="images/chapter6.png" alt="Chapter 6">
+            <span class="guide-label">Chapter 6</span>
+        </a>
+    </div>
+</section>
+
+    <div class="container">
+        <!-- Large Video Player -->
+        <div class="large-video">
+            <div id="video-player-area">
+                <iframe id="video-frame" width="900" height="500" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <div id="video-description"></div>
+            </div>
+        </div>
+
+        <!-- Zone Commission Tips Videos Section -->
+        <div class="playlist-section">
+            <div class="playlist-title">Zone Commission Tips Videos</div>
+            <div class="playlist-container-wrapper">
+                <div class="playlist-container">
+                    <!-- Kepler Harbour Playlist -->
+                    <div class="playlist-item" onclick="loadVideo('PLXn9aZmxGH7rc0FqiCDKXGU9feYCY1jQk', 'Kepler Harbour Playlist')">
+                        <h3>Zone Commission: Kepler Harbour</h3>
+                        <iframe width="300" height="200" 
+                                src="https://www.youtube.com/embed/videoseries?list=PLXn9aZmxGH7rc0FqiCDKXGU9feYCY1jQk"
+                                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    </div>
+
+                    <!-- Howling Gobi Playlist -->
+                    <div class="playlist-item" onclick="loadVideo('PLXn9aZmxGH7rOPW52onDFAAg_3bp26IWA', 'Howling Gobi Playlist')">
+                        <h3>Zone Commission: Howling Gobi</h3>
+                        <iframe width="300" height="200" 
+                                src="https://www.youtube.com/embed/videoseries?list=PLXn9aZmxGH7rOPW52onDFAAg_3bp26IWA"
+                                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    </div>
+
+                    <!-- Sundale Valley Playlist -->
+                    <div class="playlist-item" onclick="loadVideo('PLXn9aZmxGH7qcwIhZ2KGsp0c0DJBHjQAg', 'Sundale Valley Playlist')">
+                        <h3>Zone Commission: Sundale Valley</h3>
+                        <iframe width="300" height="200" 
+                                src="https://www.youtube.com/embed/videoseries?list=PLXn9aZmxGH7qcwIhZ2KGsp0c0DJBHjQAg"
+                                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Old World Treasure List Location Section -->
+        <div class="playlist-section">
+            <div class="playlist-title">Old World Treasure List Location</div>
+            <div class="playlist-container-wrapper">
+                <div class="playlist-container">
+                    <!-- Video Items for Old World Treasure -->
+                    <div class="playlist-item" onclick="loadVideo('TJrT0dEWYIg', 'Old World Treasure: Sundale Valley')">
+                        <h3>Old World Treasure: Sundale Valley</h3>
+                        <iframe width="300" height="200" 
+                                src="https://www.youtube.com/embed/TJrT0dEWYIg" 
+                                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    </div>
+
+                    <div class="playlist-item" onclick="loadVideo('NZg2yvf4ltQ', 'Old World Treasure: Howling Gobi')">
+                        <h3>Old World Treasure: Howling Gobi</h3>
+                        <iframe width="300" height="200" 
+                                src="https://www.youtube.com/embed/NZg2yvf4ltQ" 
+                                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    </div>
+
+                    <div class="playlist-item" onclick="loadVideo('VcR6oDhaBsY', 'Old World Treasure: Edengate')">
+                        <h3>Old World Treasure: Edengate</h3>
+                        <iframe width="300" height="200" 
+                                src="https://www.youtube.com/embed/VcR6oDhaBsY" 
+                                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    </div>
+
+                    <div class="playlist-item" onclick="loadVideo('xgPNfESYlCA', 'Old World Treasure: Ragon Snowy Peak')">
+                        <h3>Old World Treasure: Ragon Snowy Peak</h3>
+                        <iframe width="300" height="200" 
+                                src="https://www.youtube.com/embed/xgPNfESYlCA" 
+                                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    </div>
+
+                    <div class="playlist-item" onclick="loadVideo('qNQY8z1lXZQ', 'Old World Treasure: Kepler Harbour')">
+                        <h3>Old World Treasure: Kepler Harbour</h3>
+                        <iframe width="300" height="200" 
+                                src="https://www.youtube.com/embed/qNQY8z1lXZQ" 
+                                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    </div>
+
+                    <div class="playlist-item" onclick="loadVideo('ZVQHYSRWPfU', 'Old World Treasure: Pegasus')">
+                        <h3>Old World Treasure: Pegasus</h3>
+                        <iframe width="300" height="200" 
+                                src="https://www.youtube.com/embed/ZVQHYSRWPfU" 
+                                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+    <!-- Battleware Set Tab Content -->
+<!-- Battleware Set Tab Content -->
+<div class="tab-content" id="battleware">
+    <!-- Tombol untuk membuka modal weapon -->
+        <h3>Battleware Build</h3>
+        
+<!-- Visitor Poster Container -->
+<div id="visitor-poster-content">
+    <!-- Di sini akan dimuat kontainer untuk setiap battleware berdasarkan ID -->
+</div>
+
+
+
+    <h3>Share Your Battleware Build</h3>
+    <button id="openModalBtn"> </button>
+
+    <!-- Modal untuk Battleware -->
+    <div id="weaponModal" class="modal">
+        <div class="modal-content">
+        
+<!-- Your Battleware Set -->
+<div id="battleware-content">
+    <div id="my-battleware-set">
+        <h3>Your Battleware Set</h3>
+
+        <!-- Weapon Placeholder -->
+        <div id="weapon-placeholder" class="placeholder">
+            <img class="placeholder-img" src="weapon/placeholder.png" alt="Weapon Placeholder">
+            <p class="placeholder-text">?</p>
+        </div>
+
+        <!-- Core Placeholder -->
+        <div id="core-placeholder" class="placeholder">
+            <img class="placeholder-img" src="core/placeholder.png" alt="Core Placeholder">
+            <p class="placeholder-text">?</p>
+        </div>
+
+        <!-- Mod Placeholders will be dynamically injected here -->
+        <div id="mod-placeholders">
+            <!-- Placeholder for 6 mods will be created by JavaScript -->
+        </div>
+    </div>
+</div>
+</div>
+
+
+  
+        
+            <span id="closeModalBtn" class="close-btn">&times;</span>
+            <h3>Select Your Weapon</h3>
+            <div id="battleware-container">
+                <div id="weapon-selection">
+                    <div class="weapon-list">
+                <!-- Daftar Senjata -->
+                <div class="weapon-item" data-name="Pyxis - Growth" onclick="selectWeapon('Pyxis - Growth', 'weapon/Pyxis - Growth.png')">
+                    <img src="weapon/Pyxis - Growth.png" alt="Pyxis - Growth">
+                    <p>Pyxis - Growth</p>
+                </div>
+                <div class="weapon-item" data-name="Solarwind" onclick="selectWeapon('Solarwind', 'weapon/Solarwind.png')">
+                    <img src="weapon/Solarwind.png" alt="Solarwind">
+                    <p>Solarwind</p>
+                </div>
+                <div class="weapon-item" data-name="Falcon" onclick="selectWeapon('Falcon', 'weapon/Falcon.png')">
+                    <img src="weapon/Falcon.png" alt="Falcon">
+                    <p>Falcon</p>
+                </div>
+                <div class="weapon-item" data-name="Asura" onclick="selectWeapon('Asura', 'weapon/Asura.png')">
+                    <img src="weapon/Asura.png" alt="Asura">
+                    <p>Asura</p>
+                </div>
+                <div class="weapon-item" data-name="Raptor" onclick="selectWeapon('Raptor', 'weapon/Raptor.png')">
+                    <img src="weapon/Raptor.png" alt="Raptor">
+                    <p>Raptor</p>
+                </div>
+                <div class="weapon-item" data-name="Biofang" onclick="selectWeapon('Biofang', 'weapon/Biofang.png')">
+                    <img src="weapon/Biofang.png" alt="Biofang">
+                    <p>Biofang</p>
+                </div>
+                <div class="weapon-item" data-name="Cetus" onclick="selectWeapon('Cetus', 'weapon/Cetus.png')">
+                    <img src="weapon/Cetus.png" alt="Cetus">
+                    <p>Cetus</p>
+                </div>
+                <div class="weapon-item" data-name="Fornax" onclick="selectWeapon('Fornax', 'weapon/Fornax.png')">
+                    <img src="weapon/Fornax.png" alt="Fornax">
+                    <p>Fornax</p>
+                </div>
+                <div class="weapon-item" data-name="Scream" onclick="selectWeapon('Scream', 'weapon/Scream.png')">
+                    <img src="weapon/Scream.png" alt="Scream">
+                    <p>Scream</p>
+                </div>
+                <div class="weapon-item" data-name="Shiva" onclick="selectWeapon('Shiva', 'weapon/Shiva.png')">
+                    <img src="weapon/Shiva.png" alt="Shiva">
+                    <p>Shiva</p>
+                </div>
+                <div class="weapon-item" data-name="Glaze" onclick="selectWeapon('Glaze', 'weapon/Glaze.png')">
+                    <img src="weapon/Glaze.png" alt="Glaze">
+                    <p>Gaze</p>
+                </div>
+                <div class="weapon-item" data-name="Maelstrorm" onclick="selectWeapon('Maelstrorm', 'weapon/Maelstrorm.png')">
+                    <img src="weapon/Maelstrorm.png" alt="Maelstrorm">
+                    <p>Maelstrorm</p>
+                </div>
+                <div class="weapon-item" data-name="Biofury" onclick="selectWeapon('Biofury', 'weapon/Biofury.png')">
+                    <img src="weapon/Biofury.png" alt="Biofury">
+                    <p>Biofury</p>
+                </div>
+                <div class="weapon-item" data-name="Scorn" onclick="selectWeapon('Scorn', 'weapon/Scorn.png')">
+                    <img src="weapon/Scorn.png" alt="Scorn">
+                    <p>Scorn</p>
+                </div>
+                <div class="weapon-item" data-name="Stalker" onclick="selectWeapon('Stalker', 'weapon/Stalker.png')">
+                    <img src="weapon/Stalker.png" alt="Stalker">
+                    <p>Stalker</p>
+                </div>
+            </div>
+        </div>
+                
+
+<!-- Pop-up Core Container -->
+<div id="corePopup" class="core-popup" style="display: none;">
+    <div class="core-popup-content">
+        <span id="closeCorePopup" class="close-btn">&times;</span>
+        <h5>Core Battleware <br><b>(Choose One)</b></h5>
+        <div class="core-content">
+            <!-- Gambar-gambar core -->
+            <div class="mod-item" data-name="Debuff Away" onclick="selectCore('Debuff Away', 'core/debuffaway.png')">
+                <img src="core/debuffaway.png" alt="Debuff Away">
+            </div>
+            <div class="mod-item" data-name="Elemental Detonation" onclick="selectCore('Elemental Detonation', 'core/elementaldetonation.png')">
+                <img src="core/elementaldetonation.png" alt="Elemental Detonation">
+            </div>
+            <div class="mod-item" data-name="Explosive Fission" onclick="selectCore('Explosive Fission', 'core/explosivefission.png')">
+                <img src="core/explosivefission.png" alt="Explosive Fission">
+            </div>
+            <div class="mod-item" data-name="Explosion Time" onclick="selectCore('Explosion Time', 'core/explosiontime.png')">
+                <img src="core/explotiontime.png" alt="Explosion Time">
+            </div>
+            <div class="mod-item" data-name="Hunter Focus" onclick="selectCore('Hunter Focus', 'core/hunterfocus.png')">
+                <img src="core/hunterfocus.png" alt="Hunter Focus">
+            </div>
+            <div class="mod-item" data-name="Lost Starlight" onclick="selectCore('Lost Starlight', 'core/loststarlight.png')">
+                <img src="core/loststarlight.png" alt="Lost Starlight">
+            </div>
+            <div class="mod-item" data-name="Maleaegis" onclick="selectCore('Maleaegis', 'core/maleaegis.png')">
+                <img src="core/maleaegis.png" alt="Maleaegis">
+            </div>
+            <div class="mod-item" data-name="Orbital Path" onclick="selectCore('Orbital Path', 'core/orbitalpath.png')">
+                <img src="core/orbitalpath.png" alt="Orbital Path">
+            </div>
+            <div class="mod-item" data-name="Sharp Weapon" onclick="selectCore('Sharp Weapon', 'core/sharpweapon.png')">
+                <img src="core/sharpweapon.png" alt="Sharp Weapon">
+            </div>
+            <div class="mod-item" data-name="Weakspot Exploiter" onclick="selectCore('Weakspot Exploiter', 'core/weakspotexploiter.png')">
+                <img src="core/weakspotexploiter.png" alt="Weakspot Exploiter">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pop-up Library Battleware Container -->
+<div id="library-popup" class="core-popup" style="display: none;">
+    <div class="core-popup-content">
+        <h5>Library<br><b>(Choose Six)</b></h5>
+        <div class="library-popup-content">
+            <!-- Gambar-gambar mod dalam library -->
+            <div class="mod-item" data-name="Agression" onclick="selectMod('Agression', 'mod/agression.png')">
+                <img src="mod/agression.png" alt="Agression">
+            </div>
+            <div class="mod-item" data-name="Army Disruptor" onclick="selectMod('Army Disruptor', 'mod/armydistruptor.png')">
+                <img src="mod/armydistruptor.png" alt="Army Disruptor">
+            </div>
+            <div class="mod-item" data-name="Crit Loop" onclick="selectMod('Crit Loop', 'mod/critloop.png')">
+                <img src="mod/critloop.png" alt="Crit Loop">
+            </div>
+            <div class="mod-item" data-name="Explosive Strike" onclick="selectMod('Explosive Strike', 'mod/explosivestrike.png')">
+                <img src="mod/explosivestrike.png" alt="Explosive Strike">
+            </div>
+            <div class="mod-item" data-name="Fatal Attraction" onclick="selectMod('Fatal Attraction', 'mod/fatalattraction.png')">
+                <img src="mod/fatalattraction.png" alt="Fatal Attraction">
+            </div>
+            <div class="mod-item" data-name="Horoscope" onclick="selectMod('Horoscope', 'mod/horoscope.png')">
+                <img src="mod/horoscope.png" alt="Horoscope">
+            </div>
+            <div class="mod-item" data-name="Longshot" onclick="selectMod('Longshot', 'mod/longshot.png')">
+                <img src="mod/longshot.png" alt="Longshot">
+            </div>
+            <div class="mod-item" data-name="Replenish" onclick="selectMod('Replenish', 'mod/replenish.png')">
+                <img src="mod/replenish.png" alt="Replenish">
+            </div>
+
+            <!-- Mod-item baru -->
+            <div class="mod-item" data-name="Heating Up" onclick="selectMod('Heating Up', 'mod/heatingup.png')">
+                <img src="mod/heatingup.png" alt="Heating Up">
+            </div>
+            <div class="mod-item" data-name="Rapid Cooling" onclick="selectMod('Rapid Cooling', 'mod/rapidcooling.png')">
+                <img src="mod/rapidcooling.png" alt="Rapid Cooling">
+            </div>
+            <div class="mod-item" data-name="Resistance" onclick="selectMod('Resistance', 'mod/resistance.png')">
+                <img src="mod/resistance.png" alt="Resistance">
+            </div>
+            <div class="mod-item" data-name="Poise" onclick="selectMod('Poise', 'mod/poise.png')">
+                <img src="mod/poise.png" alt="Poise">
+            </div>
+            <div class="mod-item" data-name="Chamber Ignition" onclick="selectMod('Chamber Ignition', 'mod/chamberignition.png')">
+                <img src="mod/chamberignition.png" alt="Chamber Ignition">
+            </div>
+            <div class="mod-item" data-name="Paralysis" onclick="selectMod('Paralysis', 'mod/paralysis.png')">
+                <img src="mod/paralysis.png" alt="Paralysis">
+            </div>
+            <div class="mod-item" data-name="March Forward" onclick="selectMod('March Forward', 'mod/marchforward.png')">
+                <img src="mod/marchforward.png" alt="March Forward">
+            </div>
+            <div class="mod-item" data-name="Miasma" onclick="selectMod('Miasma', 'mod/miasma.png')">
+                <img src="mod/miasma.png" alt="Miasma">
+            </div>
+            <div class="mod-item" data-name="Temporal Fissure" onclick="selectMod('Temporal Fissure', 'mod/temporalfissure.png')">
+                <img src="mod/temporalfissure.png" alt="Temporal Fissure">
+            </div>
+            <div class="mod-item" data-name="Luck" onclick="selectMod('Luck', 'mod/luck.png')">
+                <img src="mod/luck.png" alt="Luck">
+            </div>
+            <div class="mod-item" data-name="Crit Controller" onclick="selectMod('Crit Controller', 'mod/critcontroller.png')">
+                <img src="mod/critcontroller.png" alt="Crit Controller">
+            </div>
+
+            <!-- Mod-item baru berdasarkan gambar yang Anda berikan -->
+            <div class="mod-item" data-name="Potency" onclick="selectMod('Potency', 'mod/potency.png')">
+                <img src="mod/potency.png" alt="Potency">
+            </div>
+            <div class="mod-item" data-name="Emergency Aid" onclick="selectMod('Emergency Aid', 'mod/emergencyaid.png')">
+                <img src="mod/emergencyaid.png" alt="Emergency Aid">
+            </div>
+            <div class="mod-item" data-name="Ranged Hunter" onclick="selectMod('Ranged Hunter', 'mod/rangedhunter.png')">
+                <img src="mod/rangedhunter.png" alt="Ranged Hunter">
+            </div>
+            <div class="mod-item" data-name="Permutation" onclick="selectMod('Permutation', 'mod/permutation.png')">
+                <img src="mod/permutation.png" alt="Permutation">
+            </div>
+            <div class="mod-item" data-name="Guru" onclick="selectMod('Guru', 'mod/guru.png')">
+                <img src="mod/guru.png" alt="Guru">
+            </div>
+            <div class="mod-item" data-name="Brawler" onclick="selectMod('Brawler', 'mod/brawler.png')">
+                <img src="mod/brawler.png" alt="Brawler">
+            </div>
+            <div class="mod-item" data-name="Heavy Load" onclick="selectMod('Heavy Load', 'mod/heavyload.png')">
+                <img src="mod/heavyload.png" alt="Heavy Load">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="usernamedata" class="username-data" style="display: none;">
+    <div class="popup-content">
+        <h2>YOUR BUILD INFO</h2>
+        <form id="buildForm">
+            <!-- Username input di atas Build Name -->
+            <label for="username">Name in Game?:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="buildName">Your Build Name?:</label>
+            <input type="text" id="buildName" name="buildName" required>
+
+            <label for="videoLink">Share Link Video Showcase (optional):</label>
+            <input type="url" id="videoLink" name="videoLink">
+
+            <label for="profileFrame">Select Profile Frame:</label>
+            <!-- Gambar frame sebagai pilihan -->
+            <div id="frame-selection">
+                <label for="frame1">
+                    <input type="radio" id="frame1" name="profileFrame" value="frame1" required>
+                    <img src="frames/frame1.png" alt="Frame 1" class="frame-image">
+                </label>
+                <label for="frame2">
+                    <input type="radio" id="frame2" name="profileFrame" value="frame2">
+                    <img src="frames/frame2.png" alt="Frame 2" class="frame-image">
+                </label>
+                <label for="frame3">
+                    <input type="radio" id="frame3" name="profileFrame" value="frame3">
+                    <img src="frames/frame3.png" alt="Frame 3" class="frame-image">
+                </label>
+                <label for="frame4">
+                    <input type="radio" id="frame4" name="profileFrame" value="frame4">
+                    <img src="frames/frame4.png" alt="Frame 4" class="frame-image">
+                </label>
+                <label for="frame5">
+                    <input type="radio" id="frame5" name="profileFrame" value="frame5">
+                    <img src="frames/frame5.png" alt="Frame 5" class="frame-image">
+                </label>
+            </div>
+
+            <label for="description">Description Your Build:</label>
+            <textarea id="description" name="description" required></textarea>
+
+            <button type="submit" id="submitBuild">Post Build</button>
+        </form>
+    </div>
+</div>
+
+    </div>
+</div>
+
+</div>
+
+
+    <!-- Recipe Tab Content -->
+    <div id="recipe" class="tab-content">
+        <!-- Cooking Recipes Section -->
+        <div class="cooking">
+            <h2>Cooking Recipes From Player</h2>
+            <input type="text" id="cooking-search-input" placeholder="Search by recipe name..." />
+            <div id="cooking-container">
+                <button id="add-cooking-button">+</button>
+                <p>Add Your Cooking Recipe</p>
+                <!-- Cooking items will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- Food List Recipes Section -->
+        <section id="food-list-recipes" class="food-list-recipes">
+            <h2>Food List Recipes</h2>
+            <input type="text" id="search-input" placeholder="Search by recipe name..." />
+            <div id="recipe-container"></div>
+        </section>
+
+        <!-- Fish List Section -->
+        <div class="fish-list">
+            <h2>Exclusive Fishing List</h2>
+            <!-- Title for the fish list -->
+            <div class="fish-item">
+                <h3>Crystal Starfish</h3>
+                <p>Required Fishing Rod Level: <strong>Level 4</strong> (Pegasus Exclusive)</p>
+            </div>
+            <div class="fish-item">
+                <h3>Golden Trout</h3>
+                <p>Required Fishing Rod Level: <strong>Level 3</strong></p>
+            </div>
+            <div class="fish-item">
+                <h3>Silver Carp</h3>
+                <p>Required Fishing Rod Level: <strong>Level 2</strong></p>
+            </div>
+            <div class="fish-item">
+                <h3>Rainbow Salmon</h3>
+                <p>Required Fishing Rod Level: <strong>Level 5</strong></p>
+            </div>
+            <div class="fish-item">
+                <h3>Moonlit Catfish</h3>
+                <p>Required Fishing Rod Level: <strong>Level 6</strong></p>
+            </div>
+            <div class="fish-item">
+                <h3>Shadow Mackerel</h3>
+                <p>Required Fishing Rod Level: <strong>Level 3</strong></p>
+            </div>
+            <div class="fish-item">
+                <h3>Glowing Pufferfish</h3>
+                <p>Required Fishing Rod Level: <strong>Level 5</strong> (Hilde Exclusive)</p>
+            </div>
+            <div class="fish-item">
+                <h3>Ancient Tuna</h3>
+                <p>Required Fishing Rod Level: <strong>Level 7</strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<!-- Add Recipe Form Popup -->
+<div id="popup-form" class="popup-form" style="display: none;">
+  <form id="add-recipe-form">
+    <h3>Add New Recipe</h3>
+
+    <label for="recipe-name">Name:</label>
+    <input type="text" id="recipe-name" name="name" required>
+
+    <label for="recipe-effect">Effect:</label>
+    <input type="text" id="recipe-effect" name="effect" placeholder="Primary Effect" required>
+
+    <label for="recipe-special-effect">Special Effect:</label>
+    <input type="text" id="recipe-special-effect" name="special_effect" placeholder="Special Effect">
+
+    <label for="recipe-surprise-effect">Surprise Effect:</label>
+    <input type="text" id="recipe-surprise-effect" name="surprise_effect" placeholder="Surprise Effect">
+
+    <label>Ingredients:</label>
+    <div class="ingredients-inputs">
+      <input type="text" placeholder="Ingredient 1">
+      <input type="text" placeholder="Ingredient 2">
+      <input type="text" placeholder="Ingredient 3">
+      <input type="text" placeholder="Ingredient 4">
+    </div>
+
+    <label for="recipe-ys-id">Your Name/Server (optional):</label>
+    <input type="text" id="recipe-ys-id" placeholder="Your name in game">
+
+    <button type="submit" class="submit-btn">Submit</button>
+  </form>
+</div>
+
+<!-- Add Cooking Form Popup -->
+<div id="cooking-popup-form" class="popup-form" style="display: none;">
+  <div id="loading-indicator" style="display: none;">Uploading... Please wait.</div>
+  <form id="add-cooking-form">
+    <h3>What Recipe You Want to Share?</h3>
+
+    <label for="cooking-name">Name:</label>
+    <input type="text" id="cooking-name" name="name" required>
+
+    <label for="cooking-effect">Effect:</label>
+    <input type="text" id="cooking-effect" name="effect" placeholder="Primary Effect" required>
+
+    <label for="cooking-special-effect">Special Effect:</label>
+    <input type="text" id="cooking-special-effect" name="special_effect" placeholder="Special Effect">
+
+    <label for="cooking-surprise-effect">Surprise Effect:</label>
+    <input type="text" id="cooking-surprise-effect" name="surprise_effect" placeholder="Surprise Effect">
+
+    <label>Ingredients:</label>
+    <div class="ingredients-inputs">
+      <input type="text" placeholder="Ingredient 1" required>
+      <input type="text" placeholder="Ingredient 2">
+      <input type="text" placeholder="Ingredient 3">
+      <input type="text" placeholder="Ingredient 4">
+    </div>
+
+    <label for="cooking-image">Upload Image:</label>
+    <input type="file" id="cooking-image" name="image" accept="image/*" required>
+
+    <label for="cooking-ys-id">Your Name/Server (optional):</label>
+    <input type="text" id="cooking-ys-id" placeholder="Your name in game">
+
+    <button type="submit" class="submit-btn">Submit</button>
+  </form>
+</div>
+
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 BangOne Gaming. All rights reserved.</p>
+            <p><a href="privacy.html">Privacy Policy</a></p>
+        </div>
+    </footer>
+<div class="cookie-notification">
+    <p>This website uses cookies to enhance your experience. By continuing, you agree to our use of cookies.</p>
+    <button onclick="acceptCookies()">Accept</button>
+    <a href="privacy.html">Learn more</a>
+</div>
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467"
+     crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>
+  eruda.init();
+</script>
+    <script src="main.js?t=<?=time()?>"></script>
+    
 </body>
 </html>

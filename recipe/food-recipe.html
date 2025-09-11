@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Resep</title>
+    <style>
+        /* CSS untuk tampilan dan animasi */
+        .recipe-container {
+            position: relative;
+            width: 300px;
+            margin-bottom: 20px;
+        }
+
+        .recipe-image {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .recipe-info {
+            position: absolute;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: right 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        .recipe-container.show-info .recipe-info {
+            right: 0;
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Daftar Resep</h1>
+    <div id="recipes-container"></div>
+
+    <script>
+        // URL dari Google Sheets yang telah dipublikasikan sebagai CSV
+        const sheetUrl = 'https://script.google.com/macros/s/AKfycbzNA-Yr6qYL-giuFxQEWpzyelWfrG-NUBvsTjv2eBe234ZZhS03s95FSi-WLfxdIz18/exec';
+
+        // Fungsi untuk mengubah CSV ke JSON
+        function csvToJson(csv) {
+            const lines = csv.split("\n");
+            const result = [];
+            const headers = lines[0].split(",");
+
+            for (let i = 1; i < lines.length; i++) {
+                const obj = {};
+                const currentline = lines[i].split(",");
+
+                headers.forEach((header, index) => {
+                    obj[header.trim()] = currentline[index].trim();
+                });
+
+                result.push(obj);
+            }
+            return result;
+        }
+
+        async function load() {
+            const response = await fetch(
+                sheetUrl
+            );
+            const events = await response.json();
+            const container = document.getElementById('recipes-container');
+
+            events.forEach(recipe => {
+                console.log(recipe);
+                if (recipe["Recipe Food"]) {
+                    const recipeContainer = document.createElement('div');
+                    recipeContainer.classList.add('recipe-container');
+
+                    const img = document.createElement('img');
+                    img.src = recipe["food image"];
+                    img.alt = recipe["Recipe Food"];
+                    img.classList.add('recipe-image');
+                    img.onclick = function () { toggleInfo(this) };
+
+                    const infoDiv = document.createElement('div');
+                    infoDiv.classList.add('recipe-info');
+                    infoDiv.innerHTML = `
+    <h3>${recipe["Recipe Food"]}</h3>
+    <p><strong>Bahan-bahan:</strong> ${recipe["The Ingredient"]}</p>
+    <p><strong>Effect Buff:</strong> ${recipe["The Effect"]}</p>
+`;
+
+                    recipeContainer.appendChild(img);
+                    recipeContainer.appendChild(infoDiv);
+                    container.appendChild(recipeContainer);
+                }
+            });
+           
+        }
+
+        load();
+        function toggleInfo(imageElement) {
+            const container = imageElement.parentElement;
+            container.classList.toggle('show-info');
+        }
+    </script>
+
+</body>
+
+</html>
