@@ -10,21 +10,20 @@
 
   <!-- Earth Map -->
   <url>
-    <loc>https://earth-revival-interactive-map.pages.dev/earth</loc>
-    <lastmod>2025-09-02</lastmod>
+    <loc>https://earth-revival-interactive-map.pages.dev/mapleaflet/map</loc>
+    <lastmod>2025-09-17</lastmod>
     <priority>0.9</priority>
   </url>
 
-  <!-- The Land of the Lost -->
+  <!-- Earth -->
   <url>
-    <loc>https://earth-revival-interactive-map.pages.dev/The-Land-of-The-Lost/</loc>
-    <lastmod>2025-09-02</lastmod>
+    <loc>https://earth-revival-interactive-map.pages.dev/mapleaflet/earth</loc>
+    <lastmod>2025-09-17</lastmod>
     <priority>0.9</priority>
   </url>
 
   <!-- Pegasus -->
-  <url>
-    <loc>https://earth-revival-interactive-map.pages.dev/pegasus</loc>
+  <url> <loc>https://earth-revival-interactive-map.pages.dev/mapleaflet/The-Land-of-The-Lost/</loc>
     <lastmod>2025-09-02</lastmod>
     <priority>0.9</priority>
   </url>
