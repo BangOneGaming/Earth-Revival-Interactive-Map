@@ -1,31 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
-  <!-- Homepage -->
   <url>
     <loc>https://earth-revival-interactive-map.pages.dev/</loc>
     <lastmod>2025-09-02</lastmod>
     <priority>1.0</priority>
   </url>
-
-  <!-- Earth Map -->
   <url>
-    <loc>https://earth-revival-interactive-map.pages.dev/mapleaflet/map</loc>
+    <loc>https://earth-revival-interactive-map.pages.dev/mapleaflet/map/</loc>
     <lastmod>2025-09-17</lastmod>
     <priority>0.9</priority>
   </url>
-
-  <!-- Earth -->
   <url>
-    <loc>https://earth-revival-interactive-map.pages.dev/mapleaflet/earth</loc>
+    <loc>https://earth-revival-interactive-map.pages.dev/mapleaflet/earth/</loc>
     <lastmod>2025-09-17</lastmod>
     <priority>0.9</priority>
   </url>
-
-  <!-- Pegasus -->
-  <url> <loc>https://earth-revival-interactive-map.pages.dev/mapleaflet/The-Land-of-The-Lost/</loc>
+  <url>
+    <loc>https://earth-revival-interactive-map.pages.dev/mapleaflet/The-Land-of-The-Lost/</loc>
     <lastmod>2025-09-02</lastmod>
     <priority>0.9</priority>
   </url>
-
 </urlset>
