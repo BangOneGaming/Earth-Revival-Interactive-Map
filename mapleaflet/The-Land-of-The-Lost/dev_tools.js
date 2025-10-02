@@ -106,7 +106,7 @@ saveBtn.onclick = function () {
 
         ensureLastMarkerIdUpToDate().then(() => {
             const teleportIcon = L.icon({
-                iconUrl: 'https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_default.png',
+                iconUrl: '../icons/icon_default.png',
                 iconSize: [32, 32],
                 iconAnchor: [16, 32],
             });
@@ -119,12 +119,12 @@ saveBtn.onclick = function () {
             lastMarkerId = newMarkerId;  // Update lastMarkerId
 
             // Simpan data marker ke dalam markersData
-            markersData[newMarkerId] = {
-                id: newMarkerId,
-                lat: marker.getLatLng().lat,
-                lng: marker.getLatLng().lng,
-                iconUrl: 'https://earthrevivalinteractivemaps.bangonegaming.com/icons/icon_default.png'
-            };
+markersData[newMarkerId] = {
+    id: newMarkerId,
+    lat: marker.getLatLng().lat,
+    lng: marker.getLatLng().lng,
+    iconUrl: '../icons/icon_default.png' // path relatif ke folder script
+};
 
             confirmMarkerBtn.style.display = 'none';
             addMarkerBtn.style.display = 'none'; // Hide Add Marker button
@@ -217,7 +217,6 @@ function createMarkerForm(marker, map) {
     const form = document.createElement('form');
     form.id = 'marker_contribution';
 
-    
     const latlng = marker.getLatLng();
     console.log('[CreateMarkerForm] Creating form for marker at:', latlng);
 
@@ -242,6 +241,12 @@ function createMarkerForm(marker, map) {
         <div id="nameContainer" style="display: none;">
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" placeholder="Enter Name" required><br>
+        </div>
+
+        <!-- Field index opsional -->
+        <div>
+            <label for="index">Index (Optional):</label>
+            <input type="text" id="index" name="index" placeholder="Enter index or leave empty"><br>
         </div>
 
         <div>
@@ -275,10 +280,7 @@ function createMarkerForm(marker, map) {
 
         if (selectedValue !== "0") {
             nameContainer.style.display = 'block';
-
             let categoryText = "";
-            let categoryCount = 0;
-
             switch (selectedValue) {
                 case "2": categoryText = "Treasure Hunt"; break;
                 case "3": categoryText = "Limited Time Training"; break;
@@ -289,17 +291,15 @@ function createMarkerForm(marker, map) {
             }
 
             // Hitung jumlah marker dengan category_id yang sama
-            categoryCount = countMarkersInCategory(selectedValue);
+            const categoryCount = Object.values(markersData).filter(marker => marker.category_id === selectedValue).length;
 
-            // Set default name dengan angka yang sesuai
+            // Set default name
             nameInput.value = `The Land of The Lost - ${categoryText} ${categoryCount + 1}`;
         } else {
             nameContainer.style.display = 'none';
             nameInput.value = "";
         }
     });
-
-
 
 
 form.onsubmit = function (e) {
@@ -335,22 +335,23 @@ form.onsubmit = function (e) {
     const finalDesc = `(${coordY},${coordZ}) ${descText}`;
     const enName = form.name.value || "";
 
-    const newData = {
-        id: lastMarkerId.toString(),
-        ys_id: form.ys_id.value || "",
-        name: form.name.value,
-        en_name: enName,
-        category_id: form.category_id.value,
-        lat: latlng.lat.toString(),
-        lng: latlng.lng.toString(),
-        redirect_params: "0",
-        first_member_id: "0",
-        challenge_id: "0",
-        desc: finalDesc,
-        links_info: "[]",
-        bili_info: "[]",
-        loc_type: "11"
-    };
+const newData = {
+    id: lastMarkerId.toString(),
+    ys_id: form.ys_id.value || "",
+    name: form.name.value,
+    en_name: enName,
+    category_id: form.category_id.value,
+    lat: latlng.lat.toString(),
+    lng: latlng.lng.toString(),
+    redirect_params: "0",
+    first_member_id: "0",
+    challenge_id: "0",
+    desc: finalDesc,
+    links_info: "[]",
+    bili_info: "[]",
+    loc_type: "11",
+    index: form.index.value.trim() || ""   // <-- optional
+};
 
     console.log('[SaveMarker] Generated Marker JSON:', JSON.stringify(newData, null, 2));
 
