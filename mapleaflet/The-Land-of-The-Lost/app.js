@@ -66,7 +66,7 @@ document.querySelectorAll('#filter-container input[type="checkbox"]').forEach((c
     });
 });
 
-function filterMarkers() {
+function filterMarkers(isOverlayActive = false) {
     const filteredCategoryIds = [];
 
     const categoryMapping = {
@@ -88,65 +88,131 @@ function filterMarkers() {
 
     Object.entries(markersData).forEach(([id, markerData]) => {
         const marker = leafletMarkers[id];
+        if (!marker) return;
+
         const categoryId = parseInt(markerData.category_id);
+        const index = markerData.index;
 
-        if (!marker) return; // safety check
+        // Marker teleport / overlay aktif (index 1)
+        if (index === 1) {
+            if (isOverlayActive && (filteredCategoryIds.length === 0 || filteredCategoryIds.includes(categoryId))) {
+                if (!map.hasLayer(marker)) marker.addTo(map);
+            } else {
+                if (map.hasLayer(marker)) marker.removeFrom(map);
+            }
+            return;
+        }
 
-        if (filteredCategoryIds.length === 0 || filteredCategoryIds.includes(categoryId)) {
-            if (!map.hasLayer(marker)) {
-                marker.addTo(map);
+        // Marker biasa (index null atau >1)
+        if (!isOverlayActive) { 
+            if (filteredCategoryIds.length === 0 || filteredCategoryIds.includes(categoryId)) {
+                if (!map.hasLayer(marker)) marker.addTo(map);
+            } else {
+                if (map.hasLayer(marker)) marker.removeFrom(map);
             }
         } else {
-            if (map.hasLayer(marker)) {
-                marker.removeFrom(map);
-                updateFilterCounts();
-                
-            }
+            if (map.hasLayer(marker)) marker.removeFrom(map);
         }
     });
 }
 
-    // Function to show image and hide the button
-    function showImage(id) {
-        // Show the image
-        document.getElementById(`img-${id}`).style.display = 'block';
-        
-        // Hide the "Show Image" button
-        document.getElementById(`showImageBtn-${id}`).style.display = 'none';
-        
-        // Optionally, you can hide the upload button after image is shown
-        document.getElementById(`uploadImageBtn-${id}`).style.display = 'none';
+// Function to show image and hide the button
+function showImage(id) {
+    document.getElementById(`img-${id}`).style.display = 'block';
+    document.getElementById(`showImageBtn-${id}`).style.display = 'none';
+    const uploadBtn = document.getElementById(`uploadImageBtn-${id}`);
+    if (uploadBtn) uploadBtn.style.display = 'none';
+}
+
+// Function to handle image upload (dummy)
+function uploadImage(id) {
+    alert('Upload functionality is not implemented yet for this marker.');
+}
+
+// Ambil overlay berdasarkan key
+function getOverlay(key) {
+    if (!minimapKeys[key]) return null;
+    return minimapKeys[key];
+}
+
+// Toggle overlay di map
+let teleportButtonOverlays = [];
+let currentOverlay = null;
+
+function toggleOverlay(key) {
+    const overlay = minimapKeys[key];
+    if (!overlay) return;
+
+    const bounds = overlay.bounds;
+
+    if (currentOverlay) {
+        map.removeLayer(currentOverlay);
+        currentOverlay = null;
+
+        map.eachLayer(layer => {
+            if (layer instanceof L.TileLayer) layer.getContainer().style.filter = '';
+        });
+
+        // Tampilkan marker biasa sesuai filter
+        filterMarkers(false);
+        return;
     }
 
-    // Function to handle image upload (dummy function for now)
-    function uploadImage(id) {
-        alert('Upload functionality is not implemented yet for this marker.');
-    }
+    currentOverlay = L.imageOverlay(overlay.main.map_url, bounds, {
+        interactive: false,
+        opacity: 1,
+        zIndex: 1001
+    }).addTo(map);
 
+    const centerLat = (bounds[0][0] + bounds[1][0]) / 2;
+    const centerLng = (bounds[0][1] + bounds[1][1]) / 2;
+    map.setView([centerLat, centerLng], 10);
 
+    map.eachLayer(layer => {
+        if (layer instanceof L.TileLayer) layer.getContainer().style.filter = 'brightness(0.3)';
+    });
 
+    filterMarkers(true);
+}
+
+// Contoh: panggil saat teleport diklik
+function addTeleportButton(lat, lng) {
+    const html = `
+    <div class="teleport-wrapper">
+        <div class="teleport-arrow"></div>
+        <img src="../icons/teleport.png" class="teleport-icon" />
+    </div>
+    `;
+    const teleportIcon = L.divIcon({
+        html: html,
+        className: '',
+        iconSize: [40, 50],
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -40]
+    });
+
+    const marker = L.marker([lat, lng], {
+        icon: teleportIcon,
+        interactive: true,
+        zIndexOffset: 1000
+    }).addTo(map);
+
+    marker.on('click', () => {
+        toggleOverlay("greenhouse");
+    });
+}
 function addMarkerToMap(markerData) {
     const { id, ys_id, lat, lng, category_id, name, en_name, desc, image_info } = markerData;
 
 let iconUrl = '';
 switch (parseInt(category_id)) {
-    case 2:
-        iconUrl = '../icons/icon_treasure.png';
-        break;
-    case 3:
-        iconUrl = '../icons/icon_train.png';
-        break;
-    case 4:
-        iconUrl = '../icons/icon_zone.png';
-        break;
-    case 5:
-        iconUrl = '../icons/icon_scenery.png';
-        break;
-    case 6:
-        iconUrl = '../icons/icon_resource.png';
-        break;
-    default:
-        return;
+    case 2: iconUrl = '../icons/icon_treasure.png'; break;
+    case 3: iconUrl = '../icons/icon_train.png'; break;
+    case 4: iconUrl = '../icons/icon_zone.png'; break;
+    case 5: iconUrl = '../icons/icon_scenery.png'; break;
+    case 6: iconUrl = '../icons/icon_resource.png'; break;
+    case 99: iconUrl = '../icons/teleport.png'; break; // <-- teleport
+    default: return;
 }
 
     const customIcon = L.icon({
@@ -232,27 +298,32 @@ ${image_info && isValidImageURL(image_info) ? `
 
 
 
-    markersData[id] = {
-        id: id,
-        ys_id: ys_id,
-        lat: parseFloat(lat),
-        lng: parseFloat(lng),
-        category_id: category_id,
-        name: name,
-        en_name: en_name || name,
-        desc: desc || 'No description',
-        coordinateY: coordinateY,
-        coordinateZ: coordinateZ,
-        image_info: image_info || null // Menambahkan image_info
-    };
+markersData[id] = {
+    id: id,
+    ys_id: ys_id,
+    lat: parseFloat(lat),
+    lng: parseFloat(lng),
+    category_id: category_id,
+    name: name,
+    en_name: en_name || name,
+    desc: desc || 'No description',
+    coordinateY: coordinateY,
+    coordinateZ: coordinateZ,
+    index: markerData.index !== undefined ? parseInt(markerData.index) : null,
+    image_info: image_info || null
+};
+
 leafletMarkers[id] = marker;
+
 const catId = parseInt(category_id);
 if (!categoryCounts[catId]) categoryCounts[catId] = { total: 0, hidden: 0 };
 categoryCounts[catId].total++;
 
+// Tampilkan marker hanya jika bukan index 1
+if (markerData.index !== 1) {
     marker.addTo(map);
 }
-
+}
 function copyCoordinate(type, coordinate, markerId) {
     navigator.clipboard.writeText(coordinate).then(() => {
         const feedback = document.getElementById(`copyFeedback-${markerId}`);
@@ -271,10 +342,9 @@ function copyCoordinate(type, coordinate, markerId) {
 function initMap() {
     const init_position = [60.871009248911655, -76.62568359375001];
 
-    const southWest = L.latLng(55, -92);  // Mengurangi latitude dan longitude untuk memperluas batas ke selatan dan barat
-const northEast = L.latLng(68, -63);  // Meningkatkan latitude dan longitude untuk memperluas batas ke utara dan timur
-const mapBounds = L.latLngBounds(southWest, northEast);
-
+    const southWest = L.latLng(55, -92);
+    const northEast = L.latLng(68, -63);
+    const mapBounds = L.latLngBounds(southWest, northEast);
 
     map = L.map('map', {
         minZoom: 6.3,
@@ -321,6 +391,12 @@ const mapBounds = L.latLngBounds(southWest, northEast);
         weight: 0,
         fillOpacity: 1
     }).addTo(map);
+
+    // ✅ Tambahkan teleport hanya setelah map siap
+    map.whenReady(() => {
+        console.log('📍 Map siap, menambahkan teleport marker');
+        addTeleportButton(59.130562941820834, -68.70301399018001);
+    });
 
     // Zoom slider
     const zoomControl = L.DomUtil.create('div', 'leaflet-bar zoom-slider-container');
@@ -375,7 +451,13 @@ function clearMarkersFromMap() {
           filterContainer.style.display = 'none';
       }
   });
-  
+  // Tangkap semua checkbox filter
+document.querySelectorAll('#filter-container input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', () => {
+        // Panggil filterMarkers, overlay aktif atau tidak
+        filterMarkers(!!currentOverlay);
+    });
+});
 //Count container 
 function updateFilterCounts() {
     // Reset semua count
