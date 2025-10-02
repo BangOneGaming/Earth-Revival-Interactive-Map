@@ -35,7 +35,7 @@
   Loading markers...
 </div>
 
-<button id="home-map-btn">
+<button id="home-map-btn" onclick="location.href='index.html'">
     <img src="../icons/new_filter-btn.png" alt="Home Map">
 </button>
 
@@ -98,12 +98,14 @@
 <script>
   (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
-
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>eruda.init();</script>
     <!-- Leaflet Library -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <!-- Preload Script -->
 <script src="preload.js"></script>
+<script src="minimap.js"></script> 
 
 <script>
   // Muat app.js dengan query unik supaya selalu fresh
