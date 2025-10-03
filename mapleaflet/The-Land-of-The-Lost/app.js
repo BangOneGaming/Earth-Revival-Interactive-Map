@@ -166,7 +166,7 @@ function toggleOverlay(key) {
 
     const centerLat = (bounds[0][0] + bounds[1][0]) / 2;
     const centerLng = (bounds[0][1] + bounds[1][1]) / 2;
-    map.setView([centerLat, centerLng], 10);
+    map.setView([centerLat, centerLng], 9);
 
     map.eachLayer(layer => {
         if (layer instanceof L.TileLayer) layer.getContainer().style.filter = 'brightness(0.3)';
