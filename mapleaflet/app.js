@@ -450,35 +450,48 @@ function addMarkersToMap() {
             continue;
         }
 
-        const index = location.index;
+        // --- parse index & floor secara aman dan anggap 0 sebagai "tidak ada" (null)
+        const rawIndex = location.index;
+        let markerIndex = (rawIndex !== undefined && rawIndex !== null && rawIndex !== '') ? parseInt(rawIndex) : null;
+        if (isNaN(markerIndex) || markerIndex === 0) markerIndex = null;
+
+        const rawFloor = location.floor || location.Floor || location.FLOOR || null;
+        let markerFloor = (rawFloor !== undefined && rawFloor !== null && rawFloor !== '') ? parseInt(rawFloor) : null;
+        if (isNaN(markerFloor) || markerFloor === 0) markerFloor = null;
 
         // === FILTER KHUSUS UNTUK HILDE ===
         if (activeMiniMapKey === 'hilde') {
-            if (activeHildeSecondaryIndex) {
-                // Saat teleport aktif, hanya tampilkan marker dengan index sesuai
-                if (parseInt(index) !== activeHildeSecondaryIndex) continue;
+            // Gunakan strict null-check untuk activeHildeSecondaryIndex
+            if (activeHildeSecondaryIndex !== null) {
+                // Saat teleport/overlay aktif, hanya tampilkan marker dengan index yang cocok
+                // (markerIndex null = marker tanpa index → tidak tampil saat overlay aktif)
+                if (markerIndex === null || markerIndex !== activeHildeSecondaryIndex) {
+                    // debug
+                    // console.log(`[SKIP] Not matching index. markerIndex: ${markerIndex}, active: ${activeHildeSecondaryIndex}, name: ${location.en_name}`);
+                    continue;
+                }
 
-                // Cek floor
-                const rawFloor = location.floor || location.Floor || location.FLOOR || null;
-                const markerFloor = parseInt(rawFloor);
-                console.log(`[DEBUG] Marker index: ${index}, floor: ${rawFloor}, name: ${location.en_name}`);
-
-                if (!isNaN(markerFloor) && markerFloor !== activeFloorIndex) {
-                    console.log(`[SKIP] Marker index ${index} floor mismatch: ${markerFloor} !== ${activeFloorIndex}`);
+                // Jika marker punya floor (markerFloor != null), cocokkan juga
+                if (markerFloor !== null && markerFloor !== activeFloorIndex) {
+                    console.log(`[SKIP] Marker index ${markerIndex} floor mismatch: ${markerFloor} !== ${activeFloorIndex}`);
                     continue;
                 }
             } else {
-                // Saat teleport TIDAK aktif, hanya tampilkan marker tanpa index
-                if (index !== undefined && index !== null) continue;
+                // Saat teleport TIDAK aktif, hanya tampilkan marker tanpa index (markerIndex === null)
+                if (markerIndex !== null) {
+                    // marker punya index → sembunyikan saat tidak ada overlay aktif
+                    // console.log(`[SKIP] Marker has index while no overlay active: ${markerIndex} - ${location.en_name}`);
+                    continue;
+                }
             }
         } else {
-            // MiniMap lain: skip marker dengan index = 0
-            if (index === 0) {
-                console.log(`[SKIP] Marker with index 0, name: ${location.en_name}`);
-                continue;
-            }
+            // Untuk miniMap selain Hilde: tidak melakukan skip berdasarkan index=0 lagi,
+            // karena 0 sudah diubah menjadi null. Jika ada kebijakan khusus untuk map lain,
+            // ganti logika di sini sesuai kebutuhan.
+            // (Jangan pakai: if (index === 0) continue; — itu yang menyebabkan skip)
         }
 
+        // --- buat marker
         const latLng = [parseFloat(location.lat), parseFloat(location.lng)];
         const iconUrl = getIconUrl(location.category_id);
         const initialOpacity = loadMarkerOpacity(key) || 1.0;
@@ -492,26 +505,24 @@ function addMarkersToMap() {
             opacity: initialOpacity,
         });
 
-marker.options.loc_type = location.loc_type || 'Unknown';
-marker.options.category = location.category_id || 'Unknown';
-marker.options.id = location.id || key;
-marker.options.en_name = location.en_name || 'Unknown';
-marker.options.ys_id = location.ys_id || 'Unknown';
-marker.options.image_info = location.image_info || base64ImageCache[key] || '';
+        marker.options.loc_type = location.loc_type || 'Unknown';
+        marker.options.category = location.category_id || 'Unknown';
+        marker.options.id = location.id || key;
+        marker.options.en_name = location.en_name || 'Unknown';
+        marker.options.ys_id = location.ys_id || 'Unknown';
+        marker.options.image_info = location.image_info || base64ImageCache[key] || '';
 
-if (index !== undefined && index !== null) {
-    marker.options.index = parseInt(index);
-}
+        // Simpan hasil parsing (null atau number)
+        marker.options.index = markerIndex;
+        marker.options.floor = markerFloor;
 
-// ✅ Tambahkan ini
-marker.options.floor = location.floor || location.Floor || location.FLOOR || null;
         markers.push(marker);
 
         setupMarkerInteractions(marker, location, key);
         marker.addTo(map);
 
         const iconElement = marker._icon;
-        iconElement.classList.add('bounceIn');
+        if (iconElement) iconElement.classList.add('bounceIn');
 
         updateCategoryCounts(location.loc_type, location.category_id, initialOpacity);
     }
@@ -520,8 +531,6 @@ marker.options.floor = location.floor || location.Floor || location.FLOOR || nul
     hideMarkers();
     updateCategoryDisplay();
 }
-
-
 function calculateMaxCounts() {
     const seenMarkers = new Set(); // Gunakan set untuk melacak marker yang sudah dihitung
 
@@ -3955,34 +3964,32 @@ function updateMarkers() {
         let indexMatch = false;
 
         if (activeMiniMapKey === 'hilde') {
-            if ('index' in marker.options) {
-                const markerIndex = parseInt(marker.options.index);
+            const markerIndex = marker.options.index ?? null;
+            const markerFloor = marker.options.floor ?? null;
 
-                if (activeHildeSecondaryIndex !== null) {
-                    indexMatch = markerIndex === activeHildeSecondaryIndex;
-
-                    // Jika marker punya info floor, pastikan juga floor cocok
-                    if (indexMatch && 'floor' in marker.options) {
-                        indexMatch = parseInt(marker.options.floor) === activeFloorIndex;
+            if (activeHildeSecondaryIndex !== null) {
+                // Hanya tampilkan marker dengan index yang cocok
+                if (markerIndex === activeHildeSecondaryIndex) {
+                    // Jika marker punya floor, cocokkan juga
+                    if (markerFloor !== null) {
+                        indexMatch = markerFloor === activeFloorIndex;
+                    } else {
+                        indexMatch = true; // kalau floor null, tetap tampil
                     }
-                } else {
-                    indexMatch = false;
                 }
             } else {
-                // Marker tanpa index hanya muncul jika belum ada index aktif
-                indexMatch = activeHildeSecondaryIndex === null;
+                // Belum ada teleport yang diklik → tampilkan hanya marker tanpa index
+                indexMatch = markerIndex === null;
             }
         } else {
-            // Untuk peta selain Hilde
+            // Untuk peta selain Hilde → semua marker lolos
             indexMatch = true;
         }
 
         if (locTypeMatch && categoryMatch && indexMatch) {
             marker.addTo(map);
 
-            if ('index' in marker.options) {
-                console.log(`[SHOW] Marker index: ${marker.options.index}, floor: ${marker.options.floor || "none"}, name: ${marker.options.en_name}`);
-            }
+            console.log(`[SHOW] Marker index: ${marker.options.index ?? "null"}, floor: ${marker.options.floor ?? "null"}, name: ${marker.options.en_name}`);
         } else {
             map.removeLayer(marker);
         }
