@@ -1,51 +1,128 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const preloader = document.getElementById("preloader");  // ID elemen preloader
-    const mainContent = document.getElementById("mainContent");  // ID elemen konten utama
-    const video = document.getElementById("backgroundVideo");  // ID elemen video
-    const tiktokPopup = document.getElementById("tiktok-popup");  // Pop-up TikTok
-    
-    // Menyembunyikan pop-up TikTok saat preload
-    tiktokPopup.style.display = "none";
+  console.log("✅ DOM fully loaded");
 
-    // Fungsi untuk memeriksa dan menunggu video selesai dimuat
-    function waitForVideoLoad() {
-        return new Promise((resolve, reject) => {
-            video.oncanplaythrough = () => {
-                console.log("Video siap diputar.");
-                resolve();  // Video siap diputar
-            };
-            video.onerror = () => {
-                console.error("Video gagal dimuat.");
-                reject();  // Video gagal dimuat
-            };
-        });
+  const preloader = document.getElementById("preloader");
+  const mainContent = document.getElementById("mainContent");
+  const popup = document.getElementById("tiktok-popup");
+  const tiktokContainer = document.getElementById("tiktok-container");
+  const closeButton = document.getElementById("close-btn");
+  const video = document.getElementById("backgroundVideo");
+  const choiceScreen = document.getElementById("choiceScreen");
+  const continueBtn = document.getElementById("continueBtn");
+  const skipBtn = document.getElementById("skipBtn");
+  const confirmButtons = document.getElementById("confirm-buttons");
+const visitBtn = document.getElementById("visitBtn");
+const cancelBtn = document.getElementById("cancelBtn");
+
+
+  // === 1️⃣ TikTok embed setup ===
+  const tiktokVideos = [
+    "https://www.tiktok.com/@bangonegaming97/video/7426440636510817541",
+    "https://www.tiktok.com/@bangonegaming97/video/7413656089650154758",
+    "https://www.tiktok.com/@bangonegaming97/video/7404143266263731461",
+    "https://www.tiktok.com/@bangonegaming97/video/7403707817988721925",
+    "https://www.tiktok.com/@bangonegaming97/video/7347891752323403013",
+    "https://www.tiktok.com/@bangonegaming97/video/7345782737170910470",
+    "https://www.tiktok.com/@bangonegaming97/video/7346540023430319366",
+    "https://www.tiktok.com/@bangonegaming97/video/7346891791330708741",
+    "https://www.tiktok.com/@bangonegaming97/video/7347530691648802053"
+  ];
+
+  const randomVideoUrl = tiktokVideos[Math.floor(Math.random() * tiktokVideos.length)];
+  const tiktokEmbedHtml = `
+    <blockquote class="tiktok-embed" cite="${randomVideoUrl}" data-video-id="${randomVideoUrl.split('/').pop()}" style="max-width: 100%; max-height:100%; width: 418px;">
+      <section></section>
+    </blockquote>
+  `;
+  tiktokContainer.innerHTML = tiktokEmbedHtml;
+  window.tiktokEmbedLoad && window.tiktokEmbedLoad();
+
+  // === 2️⃣ Sembunyikan awal ===
+  mainContent.style.display = "none";
+  popup.style.display = "none";
+  choiceScreen.style.display = "none";
+
+  // === 3️⃣ Fungsi tunggu video siap ===
+  function waitForVideoLoad() {
+    return new Promise((resolve) => {
+      const timeout = setTimeout(() => resolve(), 5000);
+      video.oncanplaythrough = () => { clearTimeout(timeout); resolve(); };
+      video.onerror = () => { clearTimeout(timeout); resolve(); };
+    });
+  }
+
+  // === 4️⃣ Setelah video siap ===
+Promise.all([waitForVideoLoad()]).then(() => {
+    preloader.style.display = "none";
+    choiceScreen.style.display = "flex";
+
+    // Panggil AdSense sekarang, setelah container terlihat
+    try {
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {
+        console.warn("Adsense push error:", e);
     }
-
-    // Proses preload untuk semua konten
-    Promise.all([waitForVideoLoad()])
-        .then(() => {
-            // Menyembunyikan preloader dan menampilkan konten utama setelah video siap
-            preloader.style.display = "none";
-            mainContent.style.display = "block";
-            
-            // Tampilkan pop-up TikTok setelah konten utama dimuat
-            setTimeout(() => {
-                tiktokPopup.style.display = "flex"; // Menampilkan pop-up TikTok
-            }, 1000);  // Tampilkan setelah 1 detik (sesuaikan sesuai kebutuhan)
-        })
-        .catch((error) => {
-            console.log("Video gagal diputar, konten tetap dimuat.");
-            preloader.style.display = "none";
-            mainContent.style.display = "block";
-            
-            // Tampilkan pop-up TikTok meskipun video gagal diputar
-            setTimeout(() => {
-                tiktokPopup.style.display = "flex"; // Menampilkan pop-up TikTok
-            }, 1000);  // Tampilkan setelah 1 detik
-        });
 });
 
+// Tombol Continue → tampilkan konfirmasi
+continueBtn.addEventListener("click", () => {
+    // Sembunyikan tombol pilihan lain
+    document.querySelectorAll(".choice-btn-container").forEach(container => {
+        if (!container.contains(continueBtn)) {
+            container.style.display = "none";
+        }
+    });
 
+    // Tampilkan tombol konfirmasi (Visit & Cancel)
+    confirmButtons.style.display = "flex";
+
+    // Set aksi tombol Visit
+    visitBtn.onclick = () => {
+        // Sembunyikan layar pilihan
+        choiceScreen.style.display = "none";
+
+        // Tampilkan konten utama
+        mainContent.style.display = "block";
+
+        // Opsional: tampilkan popup TikTok
+        popup.style.display = "flex";
+        popup.style.left = "-400px";
+        setTimeout(() => {
+            popup.style.left = "20px"; // animasi slide-in
+        }, 50);
+    };
+});
+
+// Tombol Cancel → kembali ke tombol awal
+cancelBtn.addEventListener("click", () => {
+    document.querySelectorAll(".choice-btn-container").forEach(container => {
+        container.style.display = "flex"; // tampilkan semua tombol
+    });
+    confirmButtons.style.display = "none"; // sembunyikan tombol konfirmasi
+});
+// Tombol Skip
+skipBtn.addEventListener("click", () => {
+    // Sembunyikan tombol lain
+    document.querySelectorAll(".choice-btn-container").forEach(container => {
+        if (!container.contains(skipBtn)) {
+            container.style.display = "none";
+        }
+    });
+
+    // Tampilkan tombol konfirmasi
+    confirmButtons.style.display = "flex";
+
+    // Set action untuk tombol Visit
+    visitBtn.onclick = () => {
+        window.location.href = "wherewindmeets/index.html";
+    };
+});
+  // === 6️⃣ Tombol Close TikTok Popup ===
+  closeButton.addEventListener("click", () => {
+    popup.style.left = "-400px";
+    console.log("Pop-up disembunyikan:", popup.style.left);
+  });
+});
 
 
 // JavaScript will go here for further interactions if needed.
@@ -59,8 +136,7 @@ function openTab(event, tabId) {
     // Hide all tab content
     const tabContents = document.querySelectorAll('.tab-content');
     tabContents.forEach((content) => {
-        content.style.display = 'none'; // Menyembunyikan semua konten tab
-        content.classList.remove('active'); // Menghapus class active dari semua tab konten
+        content.style.display = 'none';
         console.log(`Tab dengan ID "${content.id}" disembunyikan.`);
     });
 
@@ -74,10 +150,9 @@ function openTab(event, tabId) {
     const selectedTab = document.getElementById(tabId);
     if (selectedTab) {
         console.log(`Tab ditemukan: ${tabId}`);
-        selectedTab.style.display = 'block'; // Tampilkan tab yang dipilih
-        selectedTab.classList.add('active'); // Tambahkan class active ke tab yang dipilih
-        event.currentTarget.classList.add('active'); // Tambahkan class active ke tombol tab yang dipilih
+        selectedTab.style.display = 'block';
         console.log(`Tab dengan ID "${tabId}" ditampilkan.`);
+        event.currentTarget.classList.add('active');
     } else {
         console.error(`Tab dengan ID "${tabId}" tidak ditemukan.`);
     }
@@ -1448,84 +1523,3 @@ if (video.error) {
     changeBackgroundImage();
 }
 
-
-
-
-document.addEventListener("DOMContentLoaded", function () {
-    const preloader = document.getElementById("preloader");  // ID elemen preloader
-    const mainContent = document.getElementById("mainContent");  // ID elemen konten utama
-    const popup = document.getElementById('tiktok-popup');  // Pop-up TikTok
-    
-    // Daftar URL video TikTok dari akun Anda (tanpa parameter &_r=1)
-    const tiktokVideos = [
-      "https://www.tiktok.com/@bangonegaming97/video/7426440636510817541",
-      "https://www.tiktok.com/@bangonegaming97/video/7413656089650154758",
-      "https://www.tiktok.com/@bangonegaming97/video/7404143266263731461",
-      "https://www.tiktok.com/@bangonegaming97/video/7403707817988721925",
-      "https://www.tiktok.com/@bangonegaming97/video/7347891752323403013",
-      "https://www.tiktok.com/@bangonegaming97/video/7345782737170910470",
-      "https://www.tiktok.com/@bangonegaming97/video/7346540023430319366",
-      "https://www.tiktok.com/@bangonegaming97/video/7346891791330708741",
-      "https://www.tiktok.com/@bangonegaming97/video/7347530691648802053"
-    ];
-    
-    // Pilih URL secara acak
-    const randomVideoUrl = tiktokVideos[Math.floor(Math.random() * tiktokVideos.length)];
-    
-    // Buat elemen embed video TikTok
-    const tiktokEmbedHtml = `
-      <blockquote class="tiktok-embed" cite="${randomVideoUrl}" data-video-id="${randomVideoUrl.split('/').pop()}" style="max-width: 100%; max-height:100%; width: 418px;">
-        <section></section>
-      </blockquote>
-    `;
-    
-    // Masukkan embed video ke dalam container
-    document.getElementById('tiktok-container').innerHTML = tiktokEmbedHtml;
-    
-    // Memuat embed video
-    window.tiktokEmbedLoad && window.tiktokEmbedLoad();
-    
-    // Menyembunyikan pop-up TikTok saat preload
-    popup.style.display = "none";
-    
-    // Fungsi untuk menutup pop-up
-    const closeButton = document.getElementById('close-btn');
-    closeButton.addEventListener('click', () => {
-        popup.style.left = '-400px';
-        console.log("Pop-up disembunyikan: ", popup.style.left); // Log perubahan posisi pop-up
-    });
-
-    // Fungsi untuk menunggu video dan preload selesai
-    function waitForPreload() {
-        return new Promise((resolve, reject) => {
-            // Menunggu preloader hilang dan video siap
-            const video = document.getElementById("backgroundVideo");
-            video.oncanplaythrough = () => {
-                resolve();
-            };
-            video.onerror = reject;  // Jika ada error pada video
-        });
-    }
-
-    // Proses preload untuk semua konten
-    waitForPreload().then(() => {
-        // Menyembunyikan preloader dan menampilkan konten utama setelah video siap
-        preloader.style.display = "none";
-        mainContent.style.display = "block";
-
-        // Tampilkan pop-up TikTok setelah preload selesai
-        popup.style.display = "flex";
-        
-        // Tampilkan pop-up dari kiri layar
-        popup.style.left = '-400px'; // Posisi awal pop-up (tersembunyi)
-        setTimeout(() => {
-            // Pindahkan pop-up ke posisi tampak setelah 1 detik
-            popup.style.left = '20px';
-            console.log("Pop-up tampil: ", popup.style.left);
-        }, 500);
-    }).catch((error) => {
-        console.log("Terjadi kesalahan saat preload.");
-        preloader.style.display = "none";
-        mainContent.style.display = "block";
-    });
-});
