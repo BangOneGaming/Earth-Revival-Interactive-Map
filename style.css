@@ -24,7 +24,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
+    z-index: 9900;
 }
 
 /* Loader Animasi */
@@ -2702,6 +2702,144 @@ input[type="radio"]:checked + .frame-image {
         max-height: 45vh;
     }
 }
+
+}
+/* Choice Screen */
+.choice-screen {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 9998;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.choice-screen.active {
+    display: flex;
+}
+
+.choice-title {
+    color: #fff;
+    font-size: 2rem;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-bottom: 20px;
+}
+
+.choice-buttons {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.choice-btn-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px; /* jarak tombol dan label */
+}
+
+/* Tombol umum */
+.choice-btn {
+    width: auto;
+    height: 200px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+/* Gambar dalam tombol */
+.choice-btn img {
+    width: 100%;
+    height: 100%;
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+    object-fit: contain;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover khusus Continue (biru cerah) */
+#continueBtn:hover img {
+    transform: scale(1.2);
+    box-shadow: 0 8px 20px rgba(2, 160, 197, 0.8); /* biru cerah */
+}
+
+/* Hover khusus Skip (coklat/emas) */
+#skipBtn:hover img {
+    transform: scale(1.2);
+    box-shadow: 0 8px 20px rgba(184, 134, 11, 0.8); /* coklat/emas */
+}
+
+/* Jarak antar tombol */
+.choice-buttons {
+    display: flex;
+    gap: 80px; /* jarak lebih luas antar tombol */
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Label di bawah tombol */
+.choice-label-img {
+    width: auto;
+    height: 70px;
+}
+#confirm-buttons {
+    display: none;                  /* awalnya sembunyi */
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;                    /* agar bisa center horizontal */
+    margin-top: 40px;               /* jarak dari tombol Continue/Skip */
+}
+.confirm-btn {
+    width: 180px;
+    height: 50px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#visitBtn {
+    background-color: #02a0c5; /* biru cerah */
+    color: #fff;
+}
+
+#cancelBtn {
+    background-color: #b8860b; /* coklat emas */
+    color: #fff;
+}
+
+.confirm-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+/* Container iklan di choice screen */
+.choice-ad-container {
+    margin-top: 30px;                       /* jarak dari tombol pilihan */
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 10px;                          /* ruang di dalam container */
+    background: rgba(255, 255, 255, 0.05); /* semi-transparent supaya shadow terlihat */
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3); /* shadow putih opacity 0.3 */
+    border-radius: 12px;                    /* sudut melengkung */
+    transition: box-shadow 0.3s ease;       /* animasi hover halus */
+}
+
 
 @media (max-width: 480px) {
   #tiktok-popup {
