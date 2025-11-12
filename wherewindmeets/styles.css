@@ -1,0 +1,352 @@
+/* === Reset & Base Styles === */
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #000;
+}
+
+/* === Map Container === */
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+/* === Dev Tools Panel === */
+.dev-tools-panel {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dev-tools-button {
+  padding: 10px 15px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.dev-tools-button:hover {
+  background: #45a049;
+}
+
+.dev-tools-button:active {
+  background: #3d8b40;
+}
+
+
+/* === Popup Styles === */
+.leaflet-popup-content {
+  margin: 0;
+}
+
+/* Container utama Leaflet popup */
+.leaflet-popup {
+  box-shadow: none;
+}
+
+/* Hilangkan background putih default Leaflet */
+.leaflet-popup-content-wrapper {
+  background: linear-gradient(135deg, rgba(139, 90, 43, 0.95) 0%, rgba(101, 67, 33, 0.98) 100%);
+  border-radius: 12px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(218, 165, 32, 0.3),
+    inset 0 1px 0 rgba(255, 215, 0, 0.2);
+  padding: 0;
+  border: 2px solid rgba(218, 165, 32, 0.8);
+  animation: popupGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes popupGlow {
+  0% {
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      0 0 20px rgba(218, 165, 32, 0.3),
+      inset 0 1px 0 rgba(255, 215, 0, 0.2);
+  }
+  100% {
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      0 0 30px rgba(218, 165, 32, 0.5),
+      inset 0 1px 0 rgba(255, 215, 0, 0.3);
+  }
+}
+
+/* Popup tip (arrow) */
+.leaflet-popup-tip {
+  background: rgba(101, 67, 33, 0.98);
+  border-top: 2px solid rgba(218, 165, 32, 0.8);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Konten marker popup */
+.marker-popup {
+  min-width: 280px;
+  max-width: 350px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, rgba(139, 90, 43, 0.95) 0%, rgba(101, 67, 33, 0.98) 50%, rgba(139, 90, 43, 0.95) 100%);
+  color: #f5f5f5;
+  border-radius: 10px;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Header dengan judul */
+.marker-popup-header {
+  background: linear-gradient(135deg, rgba(218, 165, 32, 0.3) 0%, rgba(184, 134, 11, 0.3) 100%);
+  padding: 15px;
+  border-bottom: 2px solid rgba(218, 165, 32, 0.6);
+}
+
+.marker-popup h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #DAA520;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.7),
+    0 0 10px rgba(218, 165, 32, 0.5);
+  line-height: 1.4;
+}
+
+/* Image section */
+.marker-popup-image {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 2px solid rgba(218, 165, 32, 0.4);
+}
+
+.marker-popup-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.marker-popup-image img:hover {
+  transform: scale(1.05);
+}
+
+/* Category info section */
+.marker-popup-category {
+  padding: 12px 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(218, 165, 32, 0.3);
+}
+
+.marker-popup-category-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.marker-popup-category-name {
+  color: #FFD700;
+  font-weight: bold;
+  font-size: 14px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+/* Coordinates section */
+.marker-popup-coords {
+  padding: 10px 15px;
+  background: rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid rgba(218, 165, 32, 0.3);
+}
+
+.marker-popup-coords-title {
+  color: #DAA520;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 6px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.marker-popup-coords-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.marker-popup-coord-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  padding: 6px 10px;
+  background: rgba(218, 165, 32, 0.1);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(218, 165, 32, 0.3);
+}
+
+.marker-popup-coord-item:hover {
+  background: rgba(218, 165, 32, 0.25);
+  border-color: rgba(218, 165, 32, 0.6);
+  box-shadow: 0 0 10px rgba(218, 165, 32, 0.4);
+  transform: translateY(-2px);
+}
+
+.marker-popup-coord-label {
+  color: #FFD700;
+  font-weight: bold;
+}
+
+.marker-popup-coord-value {
+  color: #f5f5f5;
+  font-family: 'Courier New', monospace;
+  flex: 1;
+}
+
+.marker-popup-copy-icon {
+  font-size: 14px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.marker-popup-coord-item:hover .marker-popup-copy-icon {
+  opacity: 1;
+}
+
+/* Description section */
+.marker-popup-desc {
+  padding: 12px 15px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.marker-popup-desc-title {
+  color: #DAA520;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 6px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.marker-popup-desc-text {
+  color: #e0e0e0;
+  font-size: 13px;
+  line-height: 1.6;
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.marker-popup-desc-text::-webkit-scrollbar {
+  width: 6px;
+}
+
+.marker-popup-desc-text::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.marker-popup-desc-text::-webkit-scrollbar-thumb {
+  background: rgba(218, 165, 32, 0.5);
+  border-radius: 3px;
+}
+
+.marker-popup-desc-text::-webkit-scrollbar-thumb:hover {
+  background: rgba(218, 165, 32, 0.7);
+}
+
+/* Empty state */
+.marker-popup-empty {
+  color: #999;
+  font-style: italic;
+  font-size: 12px;
+}
+
+/* Copy notification */
+.copy-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.95), rgba(56, 142, 60, 0.95));
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(76, 175, 80, 0.4);
+  font-size: 14px;
+  font-weight: bold;
+  opacity: 0;
+  transform: translateX(100px);
+  transition: all 0.3s ease;
+  border: 2px solid rgba(129, 199, 132, 0.8);
+}
+
+.copy-notification.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+/* === Loading Overlay === */
+#loadingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9998;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: none; /* hidden by default */
+}
+
+/* PC background */
+@media (min-width: 769px) {
+  #loadingOverlay {
+    background-image: url('https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg');
+  }
+}
+
+/* Mobile background */
+@media (max-width: 768px) {
+  #loadingOverlay {
+    background-image: url('https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg');
+  }
+}
+
+/* === Loading Spinner === */
+#loadingSpinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 22px;
+  font-family: 'Lato', sans-serif;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 16px 28px;
+  border-radius: 12px;
+  text-align: center;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+/* Spinner animation */
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+}

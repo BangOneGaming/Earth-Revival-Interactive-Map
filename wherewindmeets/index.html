@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Peta Lokal - Treasure Chest Viewer</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="ui.css" />
+</head>
+<body>
+  <!-- Filter Panel -->
+  <div class="filter-panel" id="filterPanel">
+    <div class="filter-header">
+      <h2>🗺️ Filter Markers</h2>
+    </div>
+    
+    <div class="filter-content" id="filterContent">
+      <!-- Filter items will be generated here -->
+    </div>
+    
+    <div class="filter-actions">
+      <button class="filter-btn filter-btn-all" id="btnSelectAll">Select All</button>
+      <button class="filter-btn filter-btn-none" id="btnSelectNone">Clear All</button>
+    </div>
+    
+    <div class="filter-stats" id="filterStats">
+      Showing <strong>0</strong> markers
+    </div>
+  </div>
+
+  <button class="filter-toggle" id="filterToggle">
+    ◀
+  </button>
+
+  <div id="map"></div>
+<div id="loadingOverlay">
+  <div id="loadingSpinner">Loading...</div>
+</div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <!-- Eruda DevTools -->
+  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+  <script>
+    eruda.init();
+    console.log("%c✅ Eruda aktif. Debug mode ON.", "color:lime;font-weight:bold;");
+  </script>
+
+  <!-- Application Scripts -->
+  <script src="memuat-data.js"></script>
+  <script src="ikon.js"></script>
+  <script src="peta.js"></script>
+  <script src="penanda.js"></script>
+  <script src="dev_tools.js"></script>
+  
+  <!-- Main application - load last -->
+  <script defer src="main.js"></script>
+</body>
+</html>

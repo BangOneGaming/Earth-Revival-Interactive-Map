@@ -1,0 +1,250 @@
+/* === Filter Panel === */
+.filter-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 280px;
+  background: linear-gradient(
+    to right,
+    rgba(19, 39, 96, 0) 0%,     /* kiri benar-benar hilang */
+    rgba(19, 39, 96, 1) 100%    /* kanan solid penuh */
+  );
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  transition: transform 0.3s ease;
+  /* Hapus bayangan sepenuhnya */
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  border-image: linear-gradient(
+    to right,
+    rgba(2, 160, 197, 0) 0%, 
+    rgba(2, 160, 197, 1) 100%
+  ) 1;
+}
+
+.filter-panel.hidden {
+  transform: translateX(100%);
+}
+
+/* === Toggle Button === */
+.filter-toggle {
+  position: fixed;
+  top: 50%;
+  right: 280px;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 80px;
+  background: #02a0c5;
+  border: none;
+  border-radius: 8px 0 0 8px;
+  cursor: pointer;
+  z-index: 999;
+  transition: right 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+  /* Hilangkan bayangan juga di tombol */
+  box-shadow: none;
+}
+
+.filter-toggle:hover {
+  background: #02a0c5;
+}
+
+.filter-panel.hidden ~ .filter-toggle {
+  right: 0;
+}
+
+/* === Panel Header === */
+.filter-header {
+  padding: 20px;
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(
+    to right,
+    rgba(2, 160, 197, 0) 0%,
+    rgba(2, 160, 197, 1) 100%
+  ) 1;
+  background: linear-gradient(
+    to right,
+    rgba(10, 28, 61, 0) 0%, 
+    rgba(10, 28, 61, 1) 100%
+  );
+}
+
+.filter-header h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* === Filter Content === */
+.filter-content {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.filter-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.filter-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.filter-content::-webkit-scrollbar-thumb {
+  background: #02a0c5;
+  border-radius: 4px;
+}
+
+.filter-content::-webkit-scrollbar-thumb:hover {
+  background: #0189a0;
+}
+/* === Filter Item === */
+.filter-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: rgba(10, 28, 61, 0.8);
+  border: 1px solid rgba(136, 157, 203, 0.4); /* tetap punya border */
+  border-left: none; /* ❌ hilangkan sisi kiri saja */
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-item:hover {
+  background: linear-gradient(
+    to right,
+    rgba(2, 160, 197, 0.15) 0%, 
+    rgba(2, 160, 197, 0.3) 100%
+  );
+  border: 1px solid rgba(2, 160, 197, 0.6);
+  border-left: none; /* tetap hilangkan sisi kiri */
+}
+
+.filter-item.active {
+  background: linear-gradient(
+    to right,
+    rgba(2, 160, 197, 0.25) 0%, 
+    rgba(2, 160, 197, 0.45) 100%
+  );
+  border: 1px solid rgba(2, 160, 197, 0.8);
+  border-left: none; /* sisi kiri tetap bersih */
+}
+/* === Icon Preview === */
+.filter-icon {
+  width: 32px;
+  height: 32px;
+  margin-right: 12px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+/* === Filter Label === */
+.filter-label {
+  flex: 1;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* === Checkbox === */
+.filter-checkbox {
+  width: 24px;
+  height: 24px;
+  margin-left: 12px;
+  cursor: pointer;
+  accent-color: #02a0c5;
+}
+
+/* === Stats Display === */
+.filter-stats {
+  padding: 15px 20px;
+  background: linear-gradient(
+    to right,
+    rgba(255, 165, 0, 0) 0%,
+    rgba(255, 165, 0, 0.25) 100%
+  );
+  border-top: 2px solid transparent;
+  border-image: linear-gradient(
+    to right,
+    rgba(2, 160, 197, 0) 0%,
+    rgba(2, 160, 197, 1) 100%
+  ) 1;
+  color: white;
+  font-size: 13px;
+  text-align: center;
+}
+
+.filter-stats strong {
+  color: #ff9800;
+  font-size: 16px;
+}
+
+/* === Action Buttons === */
+.filter-actions {
+  padding: 15px 20px;
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid transparent;
+  border-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 1) 100%
+  ) 1;
+}
+
+.filter-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.filter-btn-all {
+  background: #02a0c5;
+  color: white;
+}
+
+.filter-btn-all:hover {
+  background: #0189a0;
+}
+
+.filter-btn-none {
+  background: #f44336;
+  color: white;
+}
+
+.filter-btn-none:hover {
+  background: #da190b;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .filter-panel {
+    width: 240px;
+  }
+
+  .filter-toggle {
+    right: 240px;
+    width: 35px;
+    height: 70px;
+  }
+
+  .filter-panel.hidden ~ .filter-toggle {
+    right: 0;
+  }
+}
