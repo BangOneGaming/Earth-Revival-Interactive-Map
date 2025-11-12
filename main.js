@@ -125,41 +125,52 @@ skipBtn.addEventListener("click", () => {
 });
 
 
-// JavaScript will go here for further interactions if needed.
-document.addEventListener('DOMContentLoaded', function() {
+
+document.addEventListener('DOMContentLoaded', () => {
     console.log("Welcome to Earth Revival Guide!");
+
+    // Fungsi buka tab
+    function openTab(event, tabId) {
+        console.log('Tab ID:', tabId);
+        document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+
+        const selectedTab = document.getElementById(tabId);
+        if (selectedTab) {
+            selectedTab.style.display = 'block';
+            event.currentTarget.classList.add('active');
+        }
+    }
+
+    // Set default tab: "maps"
+    const defaultTabButton = document.querySelector('.tab-button[data-tab="maps"]');
+    if (defaultTabButton) {
+        openTab({ currentTarget: defaultTabButton }, "maps");
+    }
+
+    // Tambahkan event listener ke semua tab-button
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', e => {
+            const tabId = button.dataset.tab;
+            openTab(e, tabId);
+        });
+    });
 });
 
-function openTab(event, tabId) {
-    console.log('Tab ID:', tabId);
-
-    // Hide all tab content
-    const tabContents = document.querySelectorAll('.tab-content');
-    tabContents.forEach((content) => {
-        content.style.display = 'none';
-        console.log(`Tab dengan ID "${content.id}" disembunyikan.`);
-    });
-
-    // Remove "active" class from all tab buttons
-    const tabButtons = document.querySelectorAll('.tab-button');
-    tabButtons.forEach((button) => {
-        button.classList.remove('active');
-    });
-
-    // Cek apakah elemen dengan ID tabId ditemukan
-    const selectedTab = document.getElementById(tabId);
-    if (selectedTab) {
-        console.log(`Tab ditemukan: ${tabId}`);
-        selectedTab.style.display = 'block';
-        console.log(`Tab dengan ID "${tabId}" ditampilkan.`);
-        event.currentTarget.classList.add('active');
-    } else {
-        console.error(`Tab dengan ID "${tabId}" tidak ditemukan.`);
+document.addEventListener('DOMContentLoaded', () => {
+    const defaultTabButton = document.querySelector('.tab-button[data-tab="maps"]');
+    if (defaultTabButton) {
+        openTab({ currentTarget: defaultTabButton }, "maps");
     }
-}
 
-
-
+    // Event listener untuk klik tab
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', e => {
+            const tabId = button.dataset.tab;
+            openTab(e, tabId);
+        });
+    });
+});
 // Function to check if the center of the element is in the viewport's center
 function isCenterVerticallyInViewport(element) {
     const rect = element.getBoundingClientRect();
