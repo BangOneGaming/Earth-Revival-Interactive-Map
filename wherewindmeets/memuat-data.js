@@ -50,24 +50,47 @@ const DataLoader = {
    * Initialize and load all data from endpoints
    * @returns {Promise<void>}
    */
-  async init() {
-    console.log("🌐 Starting data load from API endpoints...");
-    this.showLoadingSpinner(true);
-    this.isLoading = true;
+async init() {
+  console.log("🌐 Starting data load from API endpoints...");
+  this.showLoadingSpinner(true);
+  this.isLoading = true;
 
-    try {
-      await this.loadAllEndpoints();
-      console.log("✅ All data loaded successfully");
-      this.isLoading = false;
-      this.showLoadingSpinner(false);
-      return true;
-    } catch (error) {
-      console.error("❌ Error loading data:", error);
-      this.isLoading = false;
-      this.showLoadingSpinner(false);
-      throw error;
+  try {
+    // 1️⃣ Muat semua endpoint utama
+    await this.loadAllEndpoints();
+    console.log("✅ All marker data loaded successfully");
+
+    // 2️⃣ Muat data feedback user dari endpoint FEEDBACK_USER_ENDPOINT
+    const feedbackRes = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/userfeedback");
+    const feedbackData = await feedbackRes.json();
+    console.log("💬 Feedback data loaded:", feedbackData);
+
+    // 3️⃣ Sinkronkan feedback ke semua markers
+    if (typeof syncFeedbackToMarkers === "function") {
+      Object.keys(this.loadedData).forEach(endpointKey => {
+        const endpointMarkers = this.loadedData[endpointKey];
+        if (endpointMarkers && typeof endpointMarkers === "object") {
+          console.log(`🔄 Sync feedback → endpoint: ${endpointKey}`);
+          syncFeedbackToMarkers(endpointMarkers, feedbackData);
+        }
+      });
+      console.log("✅ Feedback successfully synchronized with markers");
+    } else {
+      console.warn("⚠️ Fungsi syncFeedbackToMarkers belum terdefinisi!");
     }
-  },
+
+    // 4️⃣ Tandai proses selesai
+    this.isLoading = false;
+    this.showLoadingSpinner(false);
+    return true;
+
+  } catch (error) {
+    console.error("❌ Error loading data:", error);
+    this.isLoading = false;
+    this.showLoadingSpinner(false);
+    throw error;
+  }
+},
 
   /**
    * Load data from all endpoints in parallel

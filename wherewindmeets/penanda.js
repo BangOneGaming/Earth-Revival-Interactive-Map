@@ -214,6 +214,7 @@ const MarkerManager = {
    */
   getAllMarkers() {
     const allMarkers = [];
+    const markerEdits = JSON.parse(localStorage.getItem('markerEdits') || '{}');
     
     const sources = [
       window.chest,
@@ -235,8 +236,16 @@ const MarkerManager = {
     sources.forEach(source => {
       if (source && typeof source === 'object') {
         Object.keys(source).forEach(key => {
-          const marker = source[key];
-          allMarkers.push({ ...marker, _key: key });
+          const marker = { ...source[key], _key: key };
+          
+          // Apply edits if exists
+          if (markerEdits[key]) {
+            if (markerEdits[key].x) marker.x = markerEdits[key].x;
+            if (markerEdits[key].y) marker.y = markerEdits[key].y;
+            if (markerEdits[key].desc !== undefined) marker.desc = markerEdits[key].desc;
+          }
+          
+          allMarkers.push(marker);
         });
       }
     });
@@ -298,82 +307,183 @@ const MarkerManager = {
     }
     this.activeMarkers = {};
   },
-
-  /**
-   * Create popup content for a marker
-   * @param {Object} markerData - The marker data
-   * @returns {string} HTML popup content
-   */
-  createPopupContent(markerData) {
-    const categoryName = getCategoryName(markerData.category_id);
-    const categoryIcon = getIconUrl(markerData.category_id);
-    const description = markerData.desc || 'No description available';
-    
-    // Parse image info
-    let imageUrl = 'https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg';
-    try {
-      const imagesInfo = JSON.parse(markerData.images_info || '[]');
-      if (imagesInfo.length > 0 && imagesInfo[0]) {
-        imageUrl = imagesInfo[0];
-      }
-    } catch (e) {
-      // Use fallback image
+/**
+ * Create popup content for a marker
+ * @param {Object} markerData - The marker data
+ * @param {Object} editState - Current edit state {editingCoords, editingDesc}
+ * @returns {string} HTML popup content
+ */
+createPopupContent(markerData, editState = {}) {
+  const categoryName = getCategoryName(markerData.category_id);
+  const categoryIcon = getIconUrl(markerData.category_id);
+  const description = markerData.desc || 'No description available';
+  const markerKey = markerData._key;
+  
+  // Parse image info
+  let imageUrl = 'https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg';
+  try {
+    const imagesInfo = JSON.parse(markerData.images_info || '[]');
+    if (imagesInfo.length > 0 && imagesInfo[0]) {
+      imageUrl = imagesInfo[0];
     }
+  } catch (e) {
+    // Use fallback image
+  }
 
-    // Check if X, Y coordinates exist and are valid
-    const hasCoords = markerData.x && markerData.y && 
-                     !isNaN(parseFloat(markerData.x)) && 
-                     !isNaN(parseFloat(markerData.y));
-    
-    const coordX = hasCoords ? parseFloat(markerData.x).toFixed(2) : null;
-    const coordY = hasCoords ? parseFloat(markerData.y).toFixed(2) : null;
+  // Check visited status from localStorage
+  const visitedMarkers = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');
+  const isVisited = visitedMarkers[markerKey] || false;
 
-    // Coordinates section HTML
-    let coordsHTML = '';
-    if (hasCoords) {
-      coordsHTML = `
-        <div class="marker-popup-coords">
-          <div class="marker-popup-coords-title">📍 In-Game Coordinates</div>
-          <div class="marker-popup-coords-grid">
-            <div class="marker-popup-coord-item" onclick="copyToClipboard('${coordX}', 'X')" title="Click to copy X coordinate">
-              <span class="marker-popup-coord-label">X:</span>
-              <span class="marker-popup-coord-value">${coordX}</span>
-              <span class="marker-popup-copy-icon">📋</span>
-            </div>
-            <div class="marker-popup-coord-item" onclick="copyToClipboard('${coordY}', 'Y')" title="Click to copy Y coordinate">
-              <span class="marker-popup-coord-label">Y:</span>
-              <span class="marker-popup-coord-value">${coordY}</span>
-              <span class="marker-popup-copy-icon">📋</span>
-            </div>
-          </div>
-        </div>
-      `;
-    }
+  // Check if X, Y coordinates exist and are valid
+  const hasCoords = markerData.x && markerData.y && 
+                   !isNaN(parseFloat(markerData.x)) && 
+                   !isNaN(parseFloat(markerData.y));
+  
+  const coordX = hasCoords ? parseFloat(markerData.x).toFixed(2) : '';
+  const coordY = hasCoords ? parseFloat(markerData.y).toFixed(2) : '';
 
-    return `
-      <div class="marker-popup">
-        <div class="marker-popup-header">
-          <h3>${markerData.name || 'Unnamed Location'}</h3>
+// Coordinates section HTML
+let coordsHTML = '';
+if (editState.editingCoords) {
+  coordsHTML = `
+    <div class="marker-popup-coords">
+      <div class="marker-popup-section-header">
+        <div class="marker-popup-coords-title">📍 In-Game Coordinates (Editing)</div>
+      </div>
+      <div class="marker-popup-coords-edit">
+        <div class="marker-popup-coord-edit-field">
+          <label class="marker-popup-coord-edit-label">X:</label>
+          <input type="number" step="0.01" id="editX_${markerKey}" class="marker-popup-coord-edit-input" value="${coordX}" placeholder="X">
         </div>
-        
-        <div class="marker-popup-image">
-          <img src="${imageUrl}" alt="${markerData.name || 'Location'}" onerror="this.src='https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg'">
-        </div>
-        
-        <div class="marker-popup-category">
-          <img src="${categoryIcon}" alt="${categoryName}" class="marker-popup-category-icon">
-          <span class="marker-popup-category-name">${categoryName}</span>
-        </div>
-        
-        ${coordsHTML}
-        
-        <div class="marker-popup-desc">
-          <div class="marker-popup-desc-title">📝 Description</div>
-          <div class="marker-popup-desc-text">${description !== 'No description available' ? description : '<span class="marker-popup-empty">No description available</span>'}</div>
+        <div class="marker-popup-coord-edit-field">
+          <label class="marker-popup-coord-edit-label">Y:</label>
+          <input type="number" step="0.01" id="editY_${markerKey}" class="marker-popup-coord-edit-input" value="${coordY}" placeholder="Y">
         </div>
       </div>
-    `;
-  },
+      <div class="marker-popup-section-actions">
+        <button class="marker-popup-edit-btn editing" onclick="saveEdit('${markerKey}', 'coords')">
+          💾 Save
+        </button>
+        <button class="marker-popup-edit-btn cancel" onclick="cancelEdit('${markerKey}')">
+          ✖ Cancel
+        </button>
+      </div>
+    </div>
+  `;
+} else if (hasCoords) {
+  coordsHTML = `
+    <div class="marker-popup-coords">
+      <div class="marker-popup-section-header">
+        <div class="marker-popup-coords-title">📍 In-Game Coordinates</div>
+        <button class="marker-popup-section-edit-btn" data-tooltip="Edit Coordinates" onclick="event.stopPropagation(); startEdit('${markerKey}', 'coords')">
+          <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/edit.png?updatedAt=1762987960006" alt="Edit">
+        </button>
+      </div>
+      <div class="marker-popup-coords-grid">
+        <div class="marker-popup-coord-item" onclick="copyToClipboard('${coordX}', 'X')" title="Click to copy X coordinate">
+          <span class="marker-popup-coord-label">X:</span>
+          <span class="marker-popup-coord-value">${coordX}</span>
+          <span class="marker-popup-copy-icon">📋</span>
+        </div>
+        <div class="marker-popup-coord-item" onclick="copyToClipboard('${coordY}', 'Y')" title="Click to copy Y coordinate">
+          <span class="marker-popup-coord-label">Y:</span>
+          <span class="marker-popup-coord-value">${coordY}</span>
+          <span class="marker-popup-copy-icon">📋</span>
+        </div>
+      </div>
+    </div>
+  `;
+} else {
+  // Fallback jika coordinate kosong
+  coordsHTML = `
+    <div class="marker-popup-coords marker-popup-coords-empty">
+      <div class="marker-popup-section-header">
+        <div class="marker-popup-coords-title">📍 In-Game Coordinates</div>
+        <button class="marker-popup-section-edit-btn" onclick="event.stopPropagation(); startEdit('${markerKey}', 'coords')" title="Edit Coordinates">
+          <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/edit.png?updatedAt=1762987960006" alt="Edit">
+        </button>
+      </div>
+      <div class="marker-popup-coords-fallback">
+        No coordinate, come fill it
+      </div>
+    </div>
+  `;
+}
+
+// Description section HTML
+let descHTML = '';
+if (editState.editingDesc) {
+  descHTML = `
+    <div class="marker-popup-desc">
+      <div class="marker-popup-section-header">
+        <div class="marker-popup-desc-title">📝 Description (Editing)</div>
+      </div>
+      <textarea id="editDesc_${markerKey}" class="marker-popup-desc-edit" placeholder="Enter description...">${description !== 'No description available' ? description : ''}</textarea>
+      <div class="marker-popup-section-actions">
+        <button class="marker-popup-edit-btn editing" onclick="saveEdit('${markerKey}', 'desc')">
+          💾 Save
+        </button>
+        <button class="marker-popup-edit-btn cancel" onclick="cancelEdit('${markerKey}')">
+          ✖ Cancel
+        </button>
+      </div>
+    </div>
+  `;
+} else {
+  descHTML = `
+    <div class="marker-popup-desc">
+      <div class="marker-popup-section-header">
+        <div class="marker-popup-desc-title">📝 Description</div>
+        <button class="marker-popup-section-edit-btn" onclick="event.stopPropagation(); startEdit('${markerKey}', 'desc')" title="Edit Description">
+          <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/edit.png?updatedAt=1762987960006" alt="Edit">
+        </button>
+      </div>
+      <div class="marker-popup-desc-text">${description !== 'No description available' ? description : '<span class="marker-popup-empty">No description available</span>'}</div>
+    </div>
+  `;
+}
+
+// Update bagian footer popup dengan tombol Comments di tengah
+
+return `
+  <div class="marker-popup" data-marker-key="${markerKey}" onclick="event.stopPropagation()">
+    <div class="marker-popup-header">
+      <h3>${markerData.name || 'Unnamed Location'}</h3>
+    </div>
+    
+    <div class="marker-popup-image">
+      <img src="${imageUrl}" alt="${markerData.name || 'Location'}" onerror="this.src='https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg'">
+    </div>
+    
+    <div class="marker-popup-category">
+      <img src="${categoryIcon}" alt="${categoryName}" class="marker-popup-category-icon">
+      <span class="marker-popup-category-name">${categoryName}</span>
+    </div>
+    
+    ${coordsHTML}
+    ${descHTML}
+    
+    <div class="marker-popup-footer">
+      <div class="marker-popup-visited" onclick="event.stopPropagation(); toggleVisited('${markerKey}')">
+        <input type="checkbox" ${isVisited ? 'checked' : ''} onchange="event.stopPropagation()">
+        <span class="marker-popup-visited-label">✓ Visited</span>
+      </div>
+      
+      <button class="marker-popup-comments-btn" onclick="event.stopPropagation(); openCommentsModal('${markerKey}')">
+        💬 Comments
+      </button>
+      
+      ${markerData.ys_id ? `
+        <div class="marker-popup-ysid">
+          <span class="marker-popup-ysid-label">@${markerData.ys_id}</span>
+        </div>
+      ` : '<div class="marker-popup-ysid-spacer"></div>'}
+    </div>
+  </div>
+`;
+},
+
+
 
   /**
    * Add markers in batches for better performance
@@ -428,8 +538,15 @@ const MarkerManager = {
       .bindPopup(popupContent)
       .addTo(this.map);
 
+    // Check if marker is visited and apply opacity
+    const visitedMarkers = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');
+    if (visitedMarkers[markerKey]) {
+      leafletMarker.setOpacity(0.5);
+    }
+
     // Store marker with its category ID for easy filtering
     leafletMarker.categoryId = markerData.category_id;
+    leafletMarker.markerKey = markerKey;
     this.activeMarkers[markerKey] = leafletMarker;
   },
 
@@ -497,5 +614,174 @@ window.copyToClipboard = function(text, label) {
     console.error('Failed to copy:', err);
   });
 };
+
+/**
+ * Toggle visited status of a marker
+ * @param {string} markerKey - Marker key
+ */
+window.toggleVisited = function(markerKey) {
+  const visitedMarkers = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');
+  visitedMarkers[markerKey] = !visitedMarkers[markerKey];
+  localStorage.setItem('visitedMarkers', JSON.stringify(visitedMarkers));
+  
+  // Update marker opacity
+  const marker = MarkerManager.activeMarkers[markerKey];
+  if (marker) {
+    marker.setOpacity(visitedMarkers[markerKey] ? 0.5 : 1.0);
+    // Refresh popup
+    const markerData = MarkerManager.getAllMarkers().find(m => m._key === markerKey);
+    if (markerData) {
+      marker.getPopup().setContent(MarkerManager.createPopupContent(markerData));
+    }
+  }
+};
+
+/**
+ * Start editing mode
+ * @param {string} markerKey - Marker key
+ * @param {string} type - Edit type ('coords' or 'desc')
+ */
+window.startEdit = function(markerKey, type) {
+  // 🔒 Pastikan login dulu
+  if (!isLoggedIn()) {
+    showLoginPopup();
+    return;
+  }
+
+  const marker = MarkerManager.activeMarkers[markerKey];
+  if (!marker) return;
+  
+  const markerData = MarkerManager.getAllMarkers().find(m => m._key === markerKey);
+  if (!markerData) return;
+  
+  const editState = type === 'coords' ? { editingCoords: true } : { editingDesc: true };
+  marker.getPopup().setContent(MarkerManager.createPopupContent(markerData, editState));
+  
+  window.currentEditMarker = markerKey;
+  window.currentEditType = type;
+  
+  setTimeout(() => {
+    document.addEventListener('click', handleClickOutside, true);
+  }, 5000);
+};
+/**
+ * Handle click outside popup
+ * @param {Event} e - Click event
+ */
+function handleClickOutside(e) {
+  const popup = document.querySelector('.marker-popup');
+  if (popup && !popup.contains(e.target) && !e.target.closest('.leaflet-popup')) {
+    cancelEdit(window.currentEditMarker);
+  }
+}
+
+/**
+ * Cancel editing
+ * @param {string} markerKey - Marker key
+ */
+window.cancelEdit = function(markerKey) {
+  document.removeEventListener('click', handleClickOutside, true);
+  
+  const marker = MarkerManager.activeMarkers[markerKey];
+  if (!marker) return;
+  
+  const markerData = MarkerManager.getAllMarkers().find(m => m._key === markerKey);
+  if (markerData) {
+    marker.getPopup().setContent(MarkerManager.createPopupContent(markerData));
+  }
+  
+  window.currentEditMarker = null;
+  window.currentEditType = null;
+};
+
+/**
+ * Save edit changes
+ * @param {string} markerKey - Marker key
+ * @param {string} type - Edit type
+ *
+window.saveEdit = async function(markerKey, type) {
+  document.removeEventListener('click', handleClickOutside, true);
+  
+  const markerEdits = JSON.parse(localStorage.getItem('markerEdits') || '{}');
+  if (!markerEdits[markerKey]) markerEdits[markerKey] = {};
+
+  // --- Ambil data dari form edit
+  if (type === 'coords') {
+    const x = document.getElementById(`editX_${markerKey}`).value.trim();
+    const y = document.getElementById(`editY_${markerKey}`).value.trim();
+
+    // Validasi angka
+    if (x && isNaN(parseFloat(x))) {
+      showNotification('❌ X coordinate must be a number!', 'error');
+      return;
+    }
+    if (y && isNaN(parseFloat(y))) {
+      showNotification('❌ Y coordinate must be a number!', 'error');
+      return;
+    }
+
+    markerEdits[markerKey].x = x;
+    markerEdits[markerKey].y = y;
+
+  } else if (type === 'desc') {
+    const desc = document.getElementById(`editDesc_${markerKey}`).value.trim();
+    markerEdits[markerKey].desc = desc;
+  }
+
+  // Simpan lokal (fallback kalau offline)
+  localStorage.setItem('markerEdits', JSON.stringify(markerEdits));
+
+  // --- Update UI (refresh popup sementara)
+  const marker = MarkerManager.activeMarkers[markerKey];
+  if (marker) {
+    const markerData = MarkerManager.getAllMarkers().find(m => m._key === markerKey);
+    if (markerData) {
+      marker.getPopup().setContent(MarkerManager.createPopupContent(markerData));
+    }
+  }
+
+  // --- Reset edit state
+  window.currentEditMarker = null;
+  window.currentEditType = null;
+
+  // --- Kirim ke server
+  try {
+    showNotification('⏳ Saving to server...', 'info');
+
+    // Fungsi ini berasal dari feedback-marker.js
+    await saveFeedbackMarker(markerKey, markerEdits[markerKey]);
+
+    showNotification('✅ Changes saved & synced to server!', 'success');
+  } catch (err) {
+    console.error('Failed to save to server:', err);
+    showNotification('⚠️ Saved locally, but failed to sync with server.', 'error');
+  }
+};
+
+
+
+/**
+ * Show notification
+ * @param {string} message - Notification message
+ * @param {string} type - Notification type ('success' or 'error')
+ */
+function showNotification(message, type = 'success') {
+  const notification = document.createElement('div');
+  notification.className = 'copy-notification';
+  notification.textContent = message;
+  
+  if (type === 'error') {
+    notification.style.background = 'linear-gradient(135deg, rgba(244, 67, 54, 0.95), rgba(211, 47, 47, 0.95))';
+    notification.style.borderColor = 'rgba(239, 83, 80, 0.8)';
+  }
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => notification.classList.add('show'), 10);
+  setTimeout(() => {
+    notification.classList.remove('show');
+    setTimeout(() => document.body.removeChild(notification), 300);
+  }, 2000);
+}
 
 console.log("✅ marker-manager.js loaded successfully");

@@ -37,107 +37,175 @@
   <!-- Custom CSS -->  
   <link rel="stylesheet" href="styles.css" />  
   <link rel="stylesheet" href="ui.css" />  
+  <link rel="stylesheet" href="login.css" />  
+    <link rel="stylesheet" href="comment.css" />  
 </head>  
 <body>  
-  <!-- Filter Panel -->  
-  <div class="filter-panel" id="filterPanel">  
-    <div class="filter-header">  
-      <h2>🗺️ Filter Markers</h2>  
-    </div>  
-      
-    <div class="filter-content" id="filterContent">  
-      <!-- Filter items will be generated here -->  
-    </div>  
-      
-    <div class="filter-actions">  
-      <button class="filter-btn filter-btn-all" id="btnSelectAll">Select All</button>  
-      <button class="filter-btn filter-btn-none" id="btnSelectNone">Clear All</button>  
-    </div>  
-      
-    <div class="filter-stats" id="filterStats">  
-      Showing <strong>0</strong> markers  
-    </div>  
+<!-- Filter Panel -->  
+<div class="filter-panel" id="filterPanel">  
+  <div class="filter-header">  
+    <h2 class="filter-title-img">
+      <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/alternate.png?updatedAt=1762941265121" alt="Filter Markers" />
+    </h2>
   </div>  
-  
-  <button class="filter-toggle" id="filterToggle">  
-    ◀  
-  </button>  
-  
-  <div id="map"></div>  
-<div id="loadingOverlay">  
-  <div id="loadingSpinner">Loading...</div>  
+    
+  <div class="filter-content" id="filterContent"></div>  
+    
+  <div class="filter-actions">  
+    <button class="filter-btn filter-btn-all" id="btnSelectAll">Select All</button>  
+    <button class="filter-btn filter-btn-none" id="btnSelectNone">Clear All</button>  
+  </div>  
+    
+  <div class="filter-stats" id="filterStats">  
+    Showing <strong>0</strong> markers  
+  </div>  
 </div>  
-  
-  
-<!-- Sticky AdSense Wrapper -->
-<div id="adsense-sticky-wrapper" style="
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    z-index: 999;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 8px 0;
-    box-shadow: 0 -2px 6px rgba(0,0,0,0.15);
-">
 
-  <!-- Tombol Close -->
-  <button id="adsCloseBtn" style="
-      position: absolute;
-      top: 2px;
-      right: 5px;
-      border: none;
-      background: transparent;
-      font-size: 18px;
-      cursor: pointer;
-      color: #333;
-      z-index: 10000;
-  ">&#10060;</button>
+<button class="filter-toggle" id="filterToggle">◀</button>
+<div id="map">
 
-  <!-- Google AdSense Auto Ads Placeholder -->
-  <ins class="adsbygoogle"
-       style="display:block"
-       data-ad-client="ca-pub-8582564022805467"
-       data-ad-slot="7695704952"
-       data-ad-format="auto"
-       data-full-width-responsive="true"></ins>
+    <!-- Notifikasi Icon -->
+    <div id="notificationIcon"></div>
+
+    <!-- Notifikasi Popup Container -->
+    <div id="notificationBox">
+        <h3>Notifications</h3>
+        <div id="notificationContent">
+            <p>No notifications yet.</p>
+        </div>
+    </div>
+
+</div>
+<div id="loadingOverlay">    
+  <div id="loadingSpinner">Loading...</div>    
+</div>    
+<!-- GSI Onload (untuk One Tap / prompt) -->
+<div id="g_id_onload"
+     data-client_id="712617149675-2rufcnh8bdq0oo35812no2cgivm81pqp.apps.googleusercontent.com"
+     data-context="signin"
+     data-ux_mode="popup"
+     data-callback="handleGoogleLogin"
+     data-auto_prompt="false">
 </div>
 
-<script>
-  (adsbygoogle = window.adsbygoogle || []).push({});
-
-  // Tombol close
-  const adsCloseBtn = document.getElementById("adsCloseBtn");
-  const adsWrapper = document.getElementById("adsense-sticky-wrapper");
-  adsCloseBtn.addEventListener("click", () => {
-      adsWrapper.style.display = "none"; // sembunyikan wrapper (bukan ins langsung)
-  });
-</script>
-<!-- Google AdSense Auto Ads -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467"
-     crossorigin="anonymous"></script>
-
-<script>
-  (adsbygoogle = window.adsbygoogle || []).push({
-    google_ad_client: "ca-pub-8582564022805467",
-    enable_page_level_ads: true
-  });
-</script>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>  
-  
-  <!-- Eruda DevTools -->  
-  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>  
-
-  
-  <!-- Application Scripts -->  
-  <script src="memuat-data.js"></script>  
-  <script src="ikon.js"></script>  
-  <script src="peta.js"></script>  
-  <script src="penanda.js"></script>  
-  <script src="dev_tools.js"></script>  
+<!-- Container overlay untuk tombol login -->
+<div id="loginModal" style="display: none;">
+  <div id="loginContent">
+    <button id="closeLogin">&times;</button>
+    <div id="loginOverlay">
+      <div class="g_id_signin"
+           data-type="standard"
+           data-size="large"
+           data-theme="outline"
+           data-text="sign_in_with"
+           data-shape="rectangular"
+           data-logo_alignment="left">
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Comments Modal -->
+<div id="commentsModal" class="comments-modal" style="display: none;">
+  <div class="comments-modal-overlay" onclick="closeCommentsModal()"></div>
+  <div class="comments-modal-content">
+    <div class="comments-modal-header">
+      <h3 class="comments-modal-title">💬 Looking for Comments</h3>
+      <button class="comments-modal-close" onclick="closeCommentsModal()">&times;</button>
+    </div>
     
+    <div class="comments-modal-body" id="commentsModalBody">
+      <div class="comments-loading">Loading comments...</div>
+    </div>
+    
+    <div class="comments-modal-footer" id="commentsModalFooter">
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- Sticky AdSense Wrapper -->  
+<div id="adsense-sticky-wrapper" style="  
+    position: fixed;  
+    bottom: 0;  
+    left: 0;  
+    width: 100%;  
+    text-align: center;  
+    z-index: 999;  
+    background: rgba(255, 255, 255, 0.1);  
+    padding: 8px 0;  
+    box-shadow: 0 -2px 6px rgba(0,0,0,0.15);  
+">  
+  
+  <!-- Tombol Close -->  
+  <button id="adsCloseBtn" style="  
+      position: absolute;  
+      top: 2px;  
+      right: 5px;  
+      border: none;  
+      background: transparent;  
+      font-size: 18px;  
+      cursor: pointer;  
+      color: #333;  
+      z-index: 10000;  
+  ">&#10060;</button>  
+  
+  <!-- Google AdSense Auto Ads Placeholder -->  
+  <ins class="adsbygoogle"  
+       style="display:block"  
+       data-ad-client="ca-pub-8582564022805467"  
+       data-ad-slot="7695704952"  
+       data-ad-format="auto"  
+       data-full-width-responsive="true"></ins>  
+</div>  
+  
+<script>  
+  (adsbygoogle = window.adsbygoogle || []).push({});  
+  
+  // Tombol close  
+  const adsCloseBtn = document.getElementById("adsCloseBtn");  
+  const adsWrapper = document.getElementById("adsense-sticky-wrapper");  
+  adsCloseBtn.addEventListener("click", () => {  
+      adsWrapper.style.display = "none"; // sembunyikan wrapper (bukan ins langsung)  
+  });  
+</script>  
+<!-- Google AdSense Auto Ads -->  
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467"  
+     crossorigin="anonymous"></script>  
+  
+<script>  
+  (adsbygoogle = window.adsbygoogle || []).push({  
+    google_ad_client: "ca-pub-8582564022805467",  
+    enable_page_level_ads: true  
+  });  
+</script>  
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>    
+    
+<!-- Eruda Debug Console -->  
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>  
+<script>  
+  eruda.init(); // Inisialisasi Eruda  
+  console.log("✅ Eruda aktif!");  
+</script>  
+  
+<script src="https://accounts.google.com/gsi/client" async defer></script>  
+    <script src="username.js"></script>    
+    
+  <!-- Application Scripts -->    
+
+  <script src="memuat-data.js"></script>    
+
+  <script src="ikon.js"></script>    
+  <script src="peta.js"></script>    
+  <script src="penanda.js"></script>    
+  <script src="dev_tools.js"></script>  
+  <script src="feedbackmatker.js"></script>    
+<script src="comment.js"></script>
+      
+      
   <!-- Main application - load last -->  
   <script defer src="main.js"></script>  
+  
 </body>  
 </html> 

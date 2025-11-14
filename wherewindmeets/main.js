@@ -95,3 +95,31 @@
     setTimeout(initApp, 100);
   }
 })();
+// Inisialisasi currentUser dari localStorage (jika ada)
+const savedToken = localStorage.getItem("userToken");
+if (savedToken) {
+  try {
+    const payload = decodeJwt(savedToken);
+    currentUser = {
+      name: payload.name,
+      email: payload.email,
+      picture: payload.picture,
+      token: savedToken
+    };
+
+    // Cek profil user dari server
+    checkUserProfile().then(hasProfile => {
+      if (hasProfile) {
+        console.log("✅ User restored from previous session:", currentUser);
+      } else {
+        console.log("⚠️ No profile found for stored token");
+        localStorage.removeItem("userToken");
+        currentUser = null;
+      }
+    });
+  } catch (err) {
+    console.error("Error restoring user from localStorage:", err);
+    localStorage.removeItem("userToken");
+    currentUser = null;
+  }
+}
