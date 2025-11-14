@@ -41,6 +41,33 @@
     <link rel="stylesheet" href="comment.css" />  
 </head>  
 <body>  
+
+<!-- Tambahkan di HTML, sejajar dengan filter-panel -->
+<div class="leaderboard-panel" id="leaderboardPanel">
+  <div class="leaderboard-header">
+    <div class="leaderboard-title-img">
+      <img src="assets/ui/leaderboard-title.png" alt="Leaderboard" onerror="this.style.display='none'">
+    </div>
+    <h2>Top Contributors</h2>
+  </div>
+  
+  <div class="leaderboard-content" id="leaderboardContent">
+    <div class="leaderboard-loading">
+      <span>⏳ Loading contributors...</span>
+    </div>
+  </div>
+  
+  <div class="leaderboard-stats" id="leaderboardStats">
+    <div>Total Contributors: <strong id="totalContributors">0</strong></div>
+    <div>Total Feedbacks: <strong id="totalFeedbacks">0</strong></div>
+  </div>
+</div>
+
+<!-- Toggle button untuk leaderboard (di kiri) -->
+<button class="leaderboard-toggle" id="leaderboardToggle" onclick="toggleLeaderboard()">
+  🏆
+</button>
+
 <!-- Filter Panel -->  
 <div class="filter-panel" id="filterPanel">  
   <div class="filter-header">  
@@ -79,6 +106,10 @@
 <div id="loadingOverlay">    
   <div id="loadingSpinner">Loading...</div>    
 </div>    
+
+<!-- 🔵 TOP-CENTER LOGIN BUTTON -->
+<button id="topLoginBtn">Login</button>
+
 <!-- GSI Onload (untuk One Tap / prompt) -->
 <div id="g_id_onload"
      data-client_id="712617149675-2rufcnh8bdq0oo35812no2cgivm81pqp.apps.googleusercontent.com"
@@ -102,6 +133,11 @@
            data-logo_alignment="left">
       </div>
     </div>
+
+    <!-- Teks penjelasan di bawah tombol -->
+    <p id="loginNote" style="margin-top: 20px; font-size: 14px; color: #333; text-align: center;">
+      This login is not connected to the game you play. It only provides access to some map features and stores web data. Read our <a href="policy.html" target="_blank" style="color: #02a0c5; text-decoration: underline;">Privacy and Policy</a> for more information.
+    </p>
   </div>
 </div>
 <!-- Comments Modal -->
@@ -182,12 +218,7 @@
 </script>  
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>    
     
-<!-- Eruda Debug Console -->  
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>  
-<script>  
-  eruda.init(); // Inisialisasi Eruda  
-  console.log("✅ Eruda aktif!");  
-</script>  
+
   
 <script src="https://accounts.google.com/gsi/client" async defer></script>  
     <script src="username.js"></script>    
@@ -195,7 +226,7 @@
   <!-- Application Scripts -->    
 
   <script src="memuat-data.js"></script>    
-
+  <script src="leaderboard.js"></script>    
   <script src="ikon.js"></script>    
   <script src="peta.js"></script>    
   <script src="penanda.js"></script>    

@@ -8,7 +8,7 @@ const USER_PROFILE_ENDPOINT = "https://autumn-dream-8c07.square-spon.workers.dev
 window.handleGoogleLogin = async function (response) {
   const credential = response.credential;
   const payload = decodeJwt(credential);
-  
+
   currentUser = {
     name: payload.name,
     email: payload.email,
@@ -16,21 +16,29 @@ window.handleGoogleLogin = async function (response) {
     token: credential
   };
 
-  // Simpan token di localStorage supaya tetap login
+  // Simpan token
   localStorage.setItem("userToken", credential);
 
   console.log("✅ User logged in:", currentUser);
-  
   showLoadingState();
-  
+
   const hasProfile = await checkUserProfile();
-  
+
   if (!hasProfile) {
     showProfileForm();
-  } else {
-    hideLoginPopup();
-    showNotification(`Welcome back, ${currentUser.gameProfile.inGameName}!`, "success");
+    return;
   }
+
+  hideLoginPopup();
+  updateTopLoginVisibility()
+  showNotification(`Welcome back, ${currentUser.gameProfile.inGameName}!`, "success");
+
+  // 🔥 HAPUS visited lokal dulu supaya tidak pakai cache lama
+  localStorage.removeItem("visitedMarkers");
+  console.log("🧹 Cleared local visited markers");
+
+  // 🔥 Load visited dari server
+  await loadVisitedMarkersFromServer();
 };
 
 // Decode token helper
@@ -244,6 +252,19 @@ window.showLoginFromConsole = function() {
   showLoginPopup();
 };
 
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("topLoginBtn");
+  if (btn) {
+    btn.addEventListener("click", () => {
+      console.log("🔵 Login button clicked → opening login popup...");
+      showLoginPopup();
+    });
+  }
+
+  updateTopLoginVisibility(); // ⬅ cek login & sembunyikan kalau perlu
+});
+
+
 function showLoginPopup() {
   // Reset tampilan ke tombol Google
   const loginOverlay = document.getElementById("loginOverlay");
@@ -281,5 +302,16 @@ function showLoginPopup() {
     modal.style.display = "flex";
   } else {
     alert("Please sign in with Google to continue editing markers.");
+  }
+}
+
+function updateTopLoginVisibility() {
+  const btn = document.getElementById("topLoginBtn");
+  if (!btn) return;
+
+  if (isLoggedIn()) {
+    btn.style.display = "none";   // sembunyikan
+  } else {
+    btn.style.display = "block";  // tampilkan
   }
 }
