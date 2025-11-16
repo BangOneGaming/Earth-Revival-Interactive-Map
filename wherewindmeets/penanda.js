@@ -11,17 +11,56 @@ const MARKER_CONFIG = {
   debounceDelay: 120
 };
 
+// ========================================
+// FILTER GROUP CONFIGURATION
+// Category IDs berdasarkan ICON_CONFIG
+// ========================================
+const filterGroupConfig = {
+  discover: {
+    title: 'Discover',
+    icon: '',
+    categories: [1,] // Teleport + Treasure Chest
+  },
+  collection: {
+    title: 'Collection',
+    icon: '',
+    categories: [2,3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+  },
+  traveler: {  // ← KEY HARUS UNIK!
+    title: 'Traveler',
+    icon: '️',
+    categories: [21, 22, 23, 24]
+  },
+  combat: {  // ← KEY HARUS UNIK!
+    title: 'Combat Challenge',
+    icon: '',
+    categories: [25, 26, 27]
+  },
+  materialart: {  // ← KEY HARUS UNIK!
+    title: 'Material Art',
+    icon: '',
+    categories: [28]
+  }
+};
+
+console.log("✅ Filter groups configured:", filterGroupConfig);
+
+// ========================================
+// MARKER MANAGER
+// ========================================
 const MarkerManager = {
+  map: null,
   activeMarkers: {},
-  activeFilters: new Set(),
   filterItems: [],
+  activeFilters: new Set(),
 
   /**
    * Initialize marker manager
-   * @param {L.Map} mapInstance - The Leaflet map instance
+   * @param {L.Map} map - Leaflet map instance
    */
-  init(mapInstance) {
-    this.map = mapInstance;
+  init(map) {
+    console.log("🚀 MarkerManager.init() called");
+    this.map = map;
     this.initializeFilters();
     this.setupFilterUI();
     this.setupEventListeners();
@@ -32,6 +71,8 @@ const MarkerManager = {
    * Initialize filter configuration
    */
   initializeFilters() {
+    console.log("🔧 Initializing filters...");
+    
     // Ambil semua kategori dari konfigurasi ikon
     this.filterItems = getAllCategories().map(cat => ({
       id: `category_${cat.id}`,
@@ -40,49 +81,105 @@ const MarkerManager = {
       icon: cat.iconUrl
     }));
 
+    console.log("📋 Filter items loaded:", this.filterItems.length, "categories");
+    console.log("📋 Category IDs:", this.filterItems.map(f => f.categoryId));
+
     // 🔁 Coba ambil filter aktif terakhir dari localStorage
     const savedFilters = JSON.parse(localStorage.getItem("activeFilters")) || null;
 
     if (savedFilters && Array.isArray(savedFilters) && savedFilters.length > 0) {
       savedFilters.forEach(id => this.activeFilters.add(id));
-      console.log(`🔁 Restored ${savedFilters.length} filters from last session`);
+      console.log(`🔁 Restored ${savedFilters.length} filters from last session:`, savedFilters);
     } else {
-      // ✅ Default hanya Category 2 aktif
+      // ✅ Default: Treasure Chest (Category 2) aktif
       this.activeFilters.add("2");
-      console.log("✨ Default: only Category 2 active");
+      console.log("✨ Default: only Category 2 (Treasure Chest) active");
     }
 
     console.log(`✅ ${this.filterItems.length} filters initialized`);
   },
 
   /**
-   * Setup filter UI
+   * Setup filter UI with grouping
    */
   setupFilterUI() {
+    console.log("🎨 Setting up filter UI...");
+    
     const container = document.getElementById("filterContent");
-    if (!container) return;
+    if (!container) {
+      console.error("❌ filterContent container not found!");
+      return;
+    }
 
-    container.innerHTML = "";
+    container.innerHTML = '';
 
-    this.filterItems.forEach(item => {
-      const isActive = this.activeFilters.has(item.categoryId); // 🟢 cek status tersimpan
-      const filterItem = document.createElement("div");
-      filterItem.className = `filter-item ${isActive ? "active" : ""}`;
-      filterItem.dataset.categoryId = item.categoryId;
+    // Loop through each group
+    Object.keys(filterGroupConfig).forEach(groupKey => {
+      const group = filterGroupConfig[groupKey];
+      console.log(`📦 Creating group: ${group.title}`, group.categories);
+      
+      // Create group container
+      const groupDiv = document.createElement('div');
+      groupDiv.className = 'filter-group';
+      groupDiv.dataset.group = groupKey;
 
-      filterItem.innerHTML = `
-        <img src="${item.icon}" alt="${item.name}" class="filter-icon">
-        <span class="filter-label">${item.name}</span>
-        <input 
-          type="checkbox" 
-          class="filter-checkbox" 
-          ${isActive ? "checked" : ""} 
-          data-category="${item.categoryId}">
+      // Create group header
+      const groupHeader = document.createElement('div');
+      groupHeader.className = 'filter-group-header';
+      groupHeader.innerHTML = `
+        <span class="filter-group-title">${group.title}</span>
+        <span class="filter-group-toggle">▼</span>
       `;
+      
+      // Add click listener for toggle
+      groupHeader.addEventListener('click', () => {
+        groupDiv.classList.toggle('collapsed');
+        console.log(`🔄 Group ${group.title} toggled`);
+      });
+      
+      // Create items container
+      const itemsDiv = document.createElement('div');
+      itemsDiv.className = 'filter-group-items';
 
-      container.appendChild(filterItem);
+      let itemsAdded = 0;
+
+      // Add items for this group
+      group.categories.forEach(categoryId => {
+        const item = this.filterItems.find(f => String(f.categoryId) === String(categoryId));
+        
+        if (!item) {
+          console.warn(`⚠️ Category ${categoryId} not found in filterItems!`);
+          return;
+        }
+
+        const isActive = this.activeFilters.has(String(categoryId));
+        
+        const filterItem = document.createElement('div');
+        filterItem.className = `filter-item ${isActive ? 'active' : ''}`;
+        filterItem.dataset.categoryId = categoryId;
+
+        filterItem.innerHTML = `
+          <img src="${item.icon}" alt="${item.name}" class="filter-icon" onerror="this.src='${ICON_CONFIG.baseIcon}'">
+          <span class="filter-label">${item.name}</span>
+          <input 
+            type="checkbox" 
+            class="filter-checkbox" 
+            ${isActive ? 'checked' : ''} 
+            data-category="${categoryId}">
+        `;
+
+        itemsDiv.appendChild(filterItem);
+        itemsAdded++;
+      });
+
+      console.log(`✅ Added ${itemsAdded} items to ${group.title} group`);
+
+      groupDiv.appendChild(groupHeader);
+      groupDiv.appendChild(itemsDiv);
+      container.appendChild(groupDiv);
     });
 
+    console.log("✅ Filter UI setup complete");
     this.updateStats();
   },
 
@@ -90,11 +187,11 @@ const MarkerManager = {
    * Setup map and filter event listeners
    */
   setupEventListeners() {
-    // Map move event
+    console.log("🔗 Setting up event listeners...");
+    
     const debouncedUpdate = this.debounce(() => this.updateMarkersInView(), MARKER_CONFIG.debounceDelay);
     this.map.on('move', debouncedUpdate);
 
-    // Toggle panel button
     const toggleBtn = document.getElementById("filterToggle");
     const panel = document.getElementById("filterPanel");
 
@@ -105,7 +202,6 @@ const MarkerManager = {
       });
     }
 
-    // Filter item clicks
     const container = document.getElementById("filterContent");
     if (container) {
       container.addEventListener("click", (e) => {
@@ -115,57 +211,55 @@ const MarkerManager = {
         const checkbox = filterItem.querySelector(".filter-checkbox");
         const categoryId = filterItem.dataset.categoryId;
 
-        // Toggle checkbox if clicked on item (not checkbox itself)
         if (e.target !== checkbox) {
           checkbox.checked = !checkbox.checked;
         }
 
+        console.log(`🔘 Filter toggled: Category ${categoryId} = ${checkbox.checked}`);
         this.toggleFilter(categoryId, checkbox.checked, filterItem);
       });
     }
 
-    // Select All button
     const btnSelectAll = document.getElementById("btnSelectAll");
     if (btnSelectAll) {
-      btnSelectAll.addEventListener("click", () => this.selectAllFilters());
+      btnSelectAll.addEventListener("click", () => {
+        console.log("✅ Select All clicked");
+        this.selectAllFilters();
+      });
     }
 
-    // Clear All button
     const btnSelectNone = document.getElementById("btnSelectNone");
     if (btnSelectNone) {
-      btnSelectNone.addEventListener("click", () => this.clearAllFilters());
+      btnSelectNone.addEventListener("click", () => {
+        console.log("❌ Clear All clicked");
+        this.clearAllFilters();
+      });
     }
+
+    console.log("✅ Event listeners setup complete");
   },
 
-  /**
-   * Toggle filter on/off
-   * @param {string} categoryId - Category ID to toggle
-   * @param {boolean} enabled - Enable or disable
-   * @param {HTMLElement} filterItem - The filter item element
-   */
   toggleFilter(categoryId, enabled, filterItem) {
     if (enabled) {
-      this.activeFilters.add(categoryId);
+      this.activeFilters.add(String(categoryId));
       filterItem.classList.add("active");
     } else {
-      this.activeFilters.delete(categoryId);
+      this.activeFilters.delete(String(categoryId));
       filterItem.classList.remove("active");
-      this.removeMarkersByCategory(categoryId);
+      this.removeMarkersByCategory(String(categoryId));
     }
 
     // 💾 Simpan ke localStorage
     localStorage.setItem("activeFilters", JSON.stringify([...this.activeFilters]));
+    console.log("💾 Active filters saved:", [...this.activeFilters]);
 
     this.updateMarkersInView();
     this.updateStats();
   },
 
-  /**
-   * Select all filters
-   */
   selectAllFilters() {
     this.filterItems.forEach(item => {
-      this.activeFilters.add(item.categoryId);
+      this.activeFilters.add(String(item.categoryId));
     });
 
     document.querySelectorAll(".filter-checkbox").forEach(cb => {
@@ -175,8 +269,8 @@ const MarkerManager = {
       item.classList.add("active");
     });
 
-    // 💾 Simpan ke localStorage
     localStorage.setItem("activeFilters", JSON.stringify([...this.activeFilters]));
+    console.log("✅ All filters selected:", [...this.activeFilters]);
 
     this.updateMarkersInView();
     this.updateStats();
@@ -192,26 +286,17 @@ const MarkerManager = {
       item.classList.remove("active");
     });
 
-    // 💾 Simpan ke localStorage
     localStorage.setItem("activeFilters", JSON.stringify([]));
+    console.log("❌ All filters cleared");
 
     this.removeAllMarkers();
     this.updateStats();
   },
 
-  /**
-   * Check if category is active in filter
-   * @param {string} categoryId - Category ID to check
-   * @returns {boolean}
-   */
   isFilterActive(categoryId) {
-    return this.activeFilters.has(categoryId);
+    return this.activeFilters.has(String(categoryId));
   },
 
-  /**
-   * Get all markers from data sources
-   * @returns {Array} Combined array of all markers with keys
-   */
   getAllMarkers() {
     const allMarkers = [];
     const markerEdits = JSON.parse(localStorage.getItem('markerEdits') || '{}');
@@ -230,7 +315,21 @@ const MarkerManager = {
       window.petualangan,
       window.meong,
       window.pengetahuan,
-      window.cerita
+      window.cerita,
+      window.bulan,
+      window.tidakterhitung,
+      window.berharga,
+      window.kulinari,
+      window.spesial,
+      window.wc,
+      window.penyembuhan,
+      window.buatteman,
+      window.perdebatan,
+      window.buku,
+      window.penjaga,
+      window.benteng,
+      window.bos,
+      window.jurus
     ];
 
     sources.forEach(source => {
@@ -238,7 +337,6 @@ const MarkerManager = {
         Object.keys(source).forEach(key => {
           const marker = { ...source[key], _key: key };
           
-          // Apply edits if exists
           if (markerEdits[key]) {
             if (markerEdits[key].x) marker.x = markerEdits[key].x;
             if (markerEdits[key].y) marker.y = markerEdits[key].y;
@@ -253,10 +351,6 @@ const MarkerManager = {
     return allMarkers;
   },
 
-  /**
-   * Get buffered bounds for marker loading
-   * @returns {L.LatLngBounds} Buffered bounds
-   */
   getBufferedBounds() {
     let bounds = this.map.getBounds();
     const bufferLat = (bounds.getNorth() - bounds.getSouth()) * MARKER_CONFIG.bufferPercent;
@@ -268,10 +362,6 @@ const MarkerManager = {
     );
   },
 
-  /**
-   * Remove markers outside current bounds
-   * @param {L.LatLngBounds} bounds - The current bounds
-   */
   removeOutOfBoundsMarkers(bounds) {
     for (const key in this.activeMarkers) {
       const marker = this.activeMarkers[key];
@@ -282,14 +372,10 @@ const MarkerManager = {
     }
   },
 
-  /**
-   * Remove markers by category ID
-   * @param {string} categoryId - Category ID to remove
-   */
   removeMarkersByCategory(categoryId) {
     for (const key in this.activeMarkers) {
       const marker = this.activeMarkers[key];
-      if (marker.categoryId === categoryId) {
+      if (String(marker.categoryId) === String(categoryId)) {
         this.map.removeLayer(marker);
         delete this.activeMarkers[key];
       }
@@ -298,21 +384,13 @@ const MarkerManager = {
     this.updateStats();
   },
 
-  /**
-   * Remove all markers from map
-   */
   removeAllMarkers() {
     for (const key in this.activeMarkers) {
       this.map.removeLayer(this.activeMarkers[key]);
     }
     this.activeMarkers = {};
   },
-/**
- * Create popup content for a marker
- * @param {Object} markerData - The marker data
- * @param {Object} editState - Current edit state {editingCoords, editingDesc}
- * @returns {string} HTML popup content
- */
+
 createPopupContent(markerData, editState = {}) {
   const categoryName = getCategoryName(markerData.category_id);
   const categoryIcon = getIconUrl(markerData.category_id);
@@ -446,40 +524,41 @@ if (editState.editingDesc) {
 // Update bagian footer popup dengan tombol Comments di tengah
 
 return `
-  <div class="marker-popup" data-marker-key="${markerKey}" onclick="event.stopPropagation()">
-    <div class="marker-popup-header">
-      <h3>${markerData.name || 'Unnamed Location'}</h3>
-    </div>
-    
-    <div class="marker-popup-image">
-      <img src="${imageUrl}" alt="${markerData.name || 'Location'}" onerror="this.src='https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg'">
-    </div>
-    
-    <div class="marker-popup-category">
-      <img src="${categoryIcon}" alt="${categoryName}" class="marker-popup-category-icon">
-      <span class="marker-popup-category-name">${categoryName}</span>
-    </div>
-    
-    ${coordsHTML}
-    ${descHTML}
-    
-    <div class="marker-popup-footer">
-      <div class="marker-popup-visited" onclick="event.stopPropagation(); toggleVisited('${markerKey}')">
-        <input type="checkbox" ${isVisited ? 'checked' : ''} onchange="event.stopPropagation()">
-        <span class="marker-popup-visited-label">✓ Visited</span>
-      </div>
-      
-      <button class="marker-popup-comments-btn" onclick="event.stopPropagation(); openCommentsModal('${markerKey}')">
-        💬 Comments
-      </button>
-      
-      ${markerData.ys_id ? `
-        <div class="marker-popup-ysid">
-          <span class="marker-popup-ysid-label">@${markerData.ys_id}</span>
-        </div>
-      ` : '<div class="marker-popup-ysid-spacer"></div>'}
-    </div>
+<div class="marker-popup" data-marker-key="${markerKey}" onclick="event.stopPropagation()">
+
+  <div class="marker-popup-category">
+    <img src="${categoryIcon}" alt="${categoryName}" class="marker-popup-category-icon">
+    <span class="marker-popup-category-name">${categoryName}</span>
   </div>
+
+
+
+  <div class="marker-popup-image">
+    <img src="${imageUrl}" alt="${markerData.name || 'Location'}"
+         onerror="this.src='https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg'">
+  </div>
+  <div class="marker-popup-header">
+    <h3>${markerData.name || 'Unnamed Location'}</h3>
+  </div>
+  ${descHTML}
+  
+  <div class="marker-popup-footer">
+    <div class="marker-popup-visited" onclick="event.stopPropagation(); toggleVisited('${markerKey}')">
+      <input type="checkbox" ${isVisited ? 'checked' : ''} onchange="event.stopPropagation()">
+      <span class="marker-popup-visited-label">✓ Visited</span>
+    </div>
+
+    <button class="marker-popup-comments-btn" onclick="event.stopPropagation(); openCommentsModal('${markerKey}')">
+      💬 Comments
+    </button>
+
+    ${markerData.ys_id ? `
+      <div class="marker-popup-ysid">
+        <span class="marker-popup-ysid-label">@${markerData.ys_id}</span>
+      </div>
+    ` : '<div class="marker-popup-ysid-spacer"></div>'}
+  </div>
+</div>
 `;
 },
 

@@ -140,17 +140,20 @@ html, body {
 
 /* Header dengan judul */
 .marker-popup-header {
-  background: linear-gradient(135deg, rgba(218, 165, 32, 0.3) 0%, rgba(184, 134, 11, 0.3) 100%);
+  background: rgba(0, 0, 0, 0.2);
   padding: 15px;
   padding-right: 50px; /* Beri ruang untuk button edit description */
   border-bottom: 2px solid rgba(218, 165, 32, 0.6);
+  text-align: center; /* <--- bikin semua teks di tengah */
 }
 
-.marker-popup h3 {
+/* Judul h3 */
+.marker-popup-header h3 {
   margin: 0;
+  padding-left: 30px;
   font-size: 18px;
   font-weight: bold;
-  color: #DAA520;
+  color: #FFD700; /* sebelumnya #DAA520 */
   text-shadow: 
     2px 2px 4px rgba(0, 0, 0, 0.7),
     0 0 10px rgba(218, 165, 32, 0.5);
@@ -186,7 +189,7 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  background: rgba(0, 0, 0, 0.2);
+ background: linear-gradient(135deg, rgba(218, 165, 32, 0.3) 0%, rgba(184, 134, 11, 0.3) 100%);
   border-bottom: 1px solid rgba(218, 165, 32, 0.3);
 }
 
@@ -200,7 +203,7 @@ html, body {
 }
 
 .marker-popup-category-name {
-  color: #FFD700;
+  color: #f3d59b; /* sebelumnya #FFD700 */
   font-weight: bold;
   font-size: 18px;
   line-height: 32px;

@@ -17,7 +17,21 @@ const DATA_ENDPOINTS = {
   adventure: 'https://autumn-dream-8c07.square-spon.workers.dev/adventure',
   meow: 'https://autumn-dream-8c07.square-spon.workers.dev/meow',
   knowladge: 'https://autumn-dream-8c07.square-spon.workers.dev/knowladge',
-  story: 'https://autumn-dream-8c07.square-spon.workers.dev/story'
+  story: 'https://autumn-dream-8c07.square-spon.workers.dev/story',
+  moon: 'https://autumn-dream-8c07.square-spon.workers.dev/moon',
+  uncounted: 'https://autumn-dream-8c07.square-spon.workers.dev/uncounted',
+  precious: 'https://autumn-dream-8c07.square-spon.workers.dev/precious',
+  gourmet: 'https://autumn-dream-8c07.square-spon.workers.dev/gourmet',
+  special: 'https://autumn-dream-8c07.square-spon.workers.dev/specialstrange',
+  toilet: 'https://autumn-dream-8c07.square-spon.workers.dev/toilet',
+  healing: 'https://autumn-dream-8c07.square-spon.workers.dev/healingpot',
+  makeafriend: 'https://autumn-dream-8c07.square-spon.workers.dev/makeafriend',
+  argument: 'https://autumn-dream-8c07.square-spon.workers.dev/arrgument',
+  book: 'https://autumn-dream-8c07.square-spon.workers.dev/book',
+  guard: 'https://autumn-dream-8c07.square-spon.workers.dev/guard',
+  stronghold: 'https://autumn-dream-8c07.square-spon.workers.dev/strongehold',
+  boss: 'https://autumn-dream-8c07.square-spon.workers.dev/boss',
+  materialart: 'https://autumn-dream-8c07.square-spon.workers.dev/jutsu'
 };
 
 // Mapping endpoint keys to window global variables
@@ -35,7 +49,21 @@ const ENDPOINT_TO_GLOBAL = {
   adventure: 'petualangan',
   meow: 'meong',
   knowladge: 'pengetahuan',
-  story: 'cerita'
+  story: 'cerita',
+  moon: 'bulan',
+  uncounted: 'tidakterhitung',
+  precious: 'berharga',
+  gourmet: 'kulinari',
+  special: 'spesial',
+  toilet: 'wc',
+  healing: 'penyembuhan',
+  makeafriend: 'buatteman',
+  argument: 'perdebatan',
+  book: 'buku',
+  guard: 'penjaga',
+  stronghold: 'benteng',
+  boss: 'bos',
+  materialart: 'jurus'
 };
 
 const DataLoader = {

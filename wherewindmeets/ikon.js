@@ -12,6 +12,7 @@ const ICON_BASE_URL = "https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/";
  */
 const ICON_CONFIG = {
   baseIcon: `${ICON_BASE_URL}default.webp`,
+
   overlays: {
     "1": "batuteleport.webp",
     "2": "petiharta.webp",
@@ -32,11 +33,19 @@ const ICON_CONFIG = {
     "17": "treasureinpalmofyourhand.webp",
     "18": "gourmetfood.webp",
     "19": "specialmuscles.webp",
-    "20": "toilet.webp"
+    "20": "toilet.webp",
+    "21": "healing.webp",
+    "22": "makefriend.webp",
+    "23": "argument.webp",
+    "24": "book.webp",
+    "25": "guard.webp",
+    "26": "strongehold.webp",
+    "27": "boss.webp",
+    "28": "jutsu.webp"
   },
 
   names: {
-    "1": "Stone",
+    "1": "Teleport Landmark",
     "2": "Treasure Chest",
     "3": "Strange",
     "5": "Cave",
@@ -48,16 +57,24 @@ const ICON_CONFIG = {
     "10": "Injustice",
     "11": "Adventure",
     "12": "Meow",
-    "13": "Knowledge",
-    "14": "Category 14",
-    "15": "Category 15",
-    "16": "Category 16",
-    "17": "Category 17",
-    "18": "Category 18",
-    "19": "Category 19",
-    "20": "Category 20"
-  },
+    "13": "Wander Tales",
+    "14": "Tales and Echoes",
+    "15": "Overlapping Moon Shadows",
+    "16": "Scarecrow",
+    "17": "Precious",
+    "18": "Gourmet Food",
+    "19": "Special Strange",
+    "20": "Toilet",
+    "21": "Healing",
+    "22": "Make a Friend",
+    "23": "Argument",
+    "24": "Book",
+    "25": "Guard",
+    "26": "Stronghold",
+    "27": "Boss",
+    "28": "Material Art"
 
+},
   defaultSize: [32, 32],
   defaultAnchor: [16, 32],
   defaultPopupAnchor: [0, -32]

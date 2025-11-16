@@ -60,8 +60,8 @@
       console.log("%c✓ Icons initialized", "color:#4CAF50;");
 
       // Initialize map
-      const map = initializeMap();
-      console.log("%c✓ Map initialized", "color:#4CAF50;");
+ window.map = initializeMap();
+console.log("%c✓ Map initialized", "color:#4CAF50;");
 
       // Initialize marker manager (includes filter)
       if (typeof MarkerManager !== "undefined" && MarkerManager.init) {
