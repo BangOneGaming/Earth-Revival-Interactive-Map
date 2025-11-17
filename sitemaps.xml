@@ -1,34 +1,127 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
-    <url>
-        <loc>https://mapinteractive.bgonegaming.win/</loc>
-        <priority>1.0</priority>
-        <changefreq>daily</changefreq>
-    </url>
+  <!-- Main Domain Homepage -->
+  <url>
+    <loc>https://bgonegaming.win/</loc>
+    <lastmod>2024-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
 
-    <url>
-        <loc>https://mapinteractive.bgonegaming.win/wherewindmeets/</loc>
-        <priority>1.0</priority>
-        <changefreq>weekly</changefreq>
-    </url>
+  <!-- Earth Revival Interactive Map Subdomain -->
+  <url>
+    <loc>https://mapinteractive.bgonegaming.win/</loc>
+    <lastmod>2024-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
 
-    <url>
-        <loc>https://mapinteractive.bgonegaming.win/mapleaflet/map</loc>
-        <priority>0.8</priority>
-        <changefreq>weekly</changefreq>
-    </url>
+  <!-- Main Interactive Map -->
+  <url>
+    <loc>https://mapinteractive.bgonegaming.win/mapleaflet/map.html</loc>
+    <lastmod>2024-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
 
-    <url>
-        <loc>https://mapinteractive.bgonegaming.win/mapleaflet/earth</loc>
-        <priority>0.8</priority>
-        <changefreq>weekly</changefreq>
-    </url>
+  <!-- Privacy Policy -->
+  <url>
+    <loc>https://mapinteractive.bgonegaming.win/privacy.html</loc>
+    <lastmod>2024-11-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
 
-    <url>
-        <loc>https://mapinteractive.bgonegaming.win/mapleaflet/The-Land-of-The-Lost/</loc>
-        <priority>0.8</priority>
-        <changefreq>weekly</changefreq>
-    </url>
+  <!-- Section: Intro (Download & Map Information) -->
+  <url>
+    <loc>https://mapinteractive.bgonegaming.win/#intro</loc>
+    <lastmod>2024-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Section: Map Exploration -->
+  <url>
+    <loc>https://mapinteractive.bgonegaming.win/#maps</loc>
+    <lastmod>2024-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Section: Video Tips -->
+  <url>
+    <loc>https://mapinteractive.bgonegaming.win/#video-tips</loc>
+    <lastmod>2024-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Section: Recipe -->
+  <url>
+    <loc>https://mapinteractive.bgonegaming.win/#recipe</loc>
+    <lastmod>2024-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Section: Battleware -->
+  <url>
+    <loc>https://mapinteractive.bgonegaming.win/#battleware</loc>
+    <lastmod>2024-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Map Regions - Sundale Valley -->
+  <url>
+    <loc>https://mapinteractive.bgonegaming.win/#sundale-valley</loc>
+    <lastmod>2024-11-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Map Regions - Howling Gobi -->
+  <url>
+    <loc>https://mapinteractive.bgonegaming.win/#howling-gobi</loc>
+    <lastmod>2024-11-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Map Regions - Edengate -->
+  <url>
+    <loc>https://mapinteractive.bgonegaming.win/#edengate</loc>
+    <lastmod>2024-11-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Map Regions - Ragon Snowy Peak -->
+  <url>
+    <loc>https://mapinteractive.bgonegaming.win/#ragon-snowy-peak</loc>
+    <lastmod>2024-11-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Map Regions - Kepler Harbour -->
+  <url>
+    <loc>https://mapinteractive.bgonegaming.win/#kepler-harbour</loc>
+    <lastmod>2024-11-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Where Winds Meet Section -->
+  <url>
+    <loc>https://mapinteractive.bgonegaming.win/wherewindmeets/index.html</loc>
+    <lastmod>2024-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
 
 </urlset>
