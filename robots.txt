@@ -1,4 +1,22 @@
+# robots.txt for bgonegaming.win
+
 User-agent: *
 Allow: /
 
-Sitemap: https://earth-revival-interactive-map.pages.dev/sitemap.xml
+# Disallow admin or sensitive directories (if any)
+Disallow: /admin/
+Disallow: /private/
+
+# Allow all major search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+# Sitemap location
+Sitemap: https://mapinteractive.bgonegaming.win/sitemaps.xml
+Sitemap: https://bgonegaming.win/sitemaps.xml
