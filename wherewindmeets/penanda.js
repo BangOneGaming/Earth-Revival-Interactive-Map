@@ -24,7 +24,7 @@ const filterGroupConfig = {
   collection: {
     title: 'Collection',
     icon: '',
-    categories: [2,3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    categories: [2,3, 5, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
   },
   traveler: {  // ← KEY HARUS UNIK!
     title: 'Traveler',
@@ -70,34 +70,33 @@ const MarkerManager = {
   /**
    * Initialize filter configuration
    */
-  initializeFilters() {
-    console.log("🔧 Initializing filters...");
-    
-    // Ambil semua kategori dari konfigurasi ikon
-    this.filterItems = getAllCategories().map(cat => ({
-      id: `category_${cat.id}`,
-      categoryId: cat.id,
-      name: cat.name,
-      icon: cat.iconUrl
-    }));
+initializeFilters() {
+  console.log("🔧 Initializing filters...");
+  
+  // Ambil semua kategori dari konfigurasi ikon
+  this.filterItems = getAllCategories().map(cat => ({
+    id: `category_${cat.id}`,
+    categoryId: cat.id,
+    name: cat.name,
+    icon: cat.iconUrl
+  }));
 
-    console.log("📋 Filter items loaded:", this.filterItems.length, "categories");
-    console.log("📋 Category IDs:", this.filterItems.map(f => f.categoryId));
+  console.log("📋 Filter items loaded:", this.filterItems.length, "categories");
 
-    // 🔁 Coba ambil filter aktif terakhir dari localStorage
-    const savedFilters = JSON.parse(localStorage.getItem("activeFilters")) || null;
+  // 🔁 Aktifkan semua kategori di discover secara default
+  const discoverCategories = filterGroupConfig.discover.categories || [];
+  discoverCategories.forEach(catId => this.activeFilters.add(String(catId)));
+  console.log("✨ Default: Discover categories activated:", discoverCategories);
 
-    if (savedFilters && Array.isArray(savedFilters) && savedFilters.length > 0) {
-      savedFilters.forEach(id => this.activeFilters.add(id));
-      console.log(`🔁 Restored ${savedFilters.length} filters from last session:`, savedFilters);
-    } else {
-      // ✅ Default: Treasure Chest (Category 2) aktif
-      this.activeFilters.add("2");
-      console.log("✨ Default: only Category 2 (Treasure Chest) active");
-    }
+  // 🔁 Coba restore filter dari localStorage
+  const savedFilters = JSON.parse(localStorage.getItem("activeFilters")) || null;
+  if (savedFilters && Array.isArray(savedFilters) && savedFilters.length > 0) {
+    savedFilters.forEach(id => this.activeFilters.add(id));
+    console.log(`🔁 Restored ${savedFilters.length} filters from last session:`, savedFilters);
+  }
 
-    console.log(`✅ ${this.filterItems.length} filters initialized`);
-  },
+  console.log(`✅ ${this.filterItems.length} filters initialized`);
+},
 
   /**
    * Setup filter UI with grouping
@@ -119,10 +118,15 @@ const MarkerManager = {
       console.log(`📦 Creating group: ${group.title}`, group.categories);
       
       // Create group container
-      const groupDiv = document.createElement('div');
-      groupDiv.className = 'filter-group';
-      groupDiv.dataset.group = groupKey;
+// Create group container
+const groupDiv = document.createElement('div');
+groupDiv.className = 'filter-group';
+groupDiv.dataset.group = groupKey;
 
+// 🔹 Hide discover group
+if (groupKey === "discover") {
+  groupDiv.style.display = "none";
+}
       // Create group header
       const groupHeader = document.createElement('div');
       groupHeader.className = 'filter-group-header';
@@ -305,8 +309,8 @@ const MarkerManager = {
       window.chest,
       window.batutele,
       window.strangecollection,
-      window.gua,
       window.yellow,
+      window.gua,
       window.blue,
       window.red,
       window.peninggalan,
