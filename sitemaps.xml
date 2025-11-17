@@ -7,23 +7,23 @@
   <!-- Main Domain Homepage -->
   <url>
     <loc>https://bgonegaming.win/</loc>
-    <lastmod>2024-11-18</lastmod>
+    <lastmod>2025-11-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>1.0</priority>
   </url>
 
   <!-- Earth Revival Interactive Map Subdomain -->
   <url>
     <loc>https://mapinteractive.bgonegaming.win/</loc>
-    <lastmod>2024-11-18</lastmod>
+    <lastmod>2025-11-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>1.0</priority>
   </url>
 
   <!-- Main Interactive Map -->
   <url>
     <loc>https://mapinteractive.bgonegaming.win/mapleaflet/map.html</loc>
-    <lastmod>2024-11-18</lastmod>
+    <lastmod>2025-11-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -31,7 +31,7 @@
   <!-- Privacy Policy -->
   <url>
     <loc>https://mapinteractive.bgonegaming.win/privacy.html</loc>
-    <lastmod>2024-11-18</lastmod>
+    <lastmod>2025-11-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
@@ -39,23 +39,23 @@
   <!-- Section: Intro (Download & Map Information) -->
   <url>
     <loc>https://mapinteractive.bgonegaming.win/#intro</loc>
-    <lastmod>2024-11-18</lastmod>
+    <lastmod>2025-11-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.6</priority>
   </url>
 
   <!-- Section: Map Exploration -->
   <url>
     <loc>https://mapinteractive.bgonegaming.win/#maps</loc>
-    <lastmod>2024-11-18</lastmod>
+    <lastmod>2025-11-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
 
   <!-- Section: Video Tips -->
   <url>
     <loc>https://mapinteractive.bgonegaming.win/#video-tips</loc>
-    <lastmod>2024-11-18</lastmod>
+    <lastmod>2025-11-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -63,7 +63,7 @@
   <!-- Section: Recipe -->
   <url>
     <loc>https://mapinteractive.bgonegaming.win/#recipe</loc>
-    <lastmod>2024-11-18</lastmod>
+    <lastmod>2025-11-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -71,7 +71,7 @@
   <!-- Section: Battleware -->
   <url>
     <loc>https://mapinteractive.bgonegaming.win/#battleware</loc>
-    <lastmod>2024-11-18</lastmod>
+    <lastmod>2025-11-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -79,7 +79,7 @@
   <!-- Map Regions - Sundale Valley -->
   <url>
     <loc>https://mapinteractive.bgonegaming.win/#sundale-valley</loc>
-    <lastmod>2024-11-18</lastmod>
+    <lastmod>2025-11-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -87,7 +87,7 @@
   <!-- Map Regions - Howling Gobi -->
   <url>
     <loc>https://mapinteractive.bgonegaming.win/#howling-gobi</loc>
-    <lastmod>2024-11-18</lastmod>
+    <lastmod>2025-11-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -95,7 +95,7 @@
   <!-- Map Regions - Edengate -->
   <url>
     <loc>https://mapinteractive.bgonegaming.win/#edengate</loc>
-    <lastmod>2024-11-18</lastmod>
+    <lastmod>2025-11-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -103,7 +103,7 @@
   <!-- Map Regions - Ragon Snowy Peak -->
   <url>
     <loc>https://mapinteractive.bgonegaming.win/#ragon-snowy-peak</loc>
-    <lastmod>2024-11-18</lastmod>
+    <lastmod>2025-11-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -111,7 +111,7 @@
   <!-- Map Regions - Kepler Harbour -->
   <url>
     <loc>https://mapinteractive.bgonegaming.win/#kepler-harbour</loc>
-    <lastmod>2024-11-18</lastmod>
+    <lastmod>2025-11-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -119,9 +119,9 @@
   <!-- Where Winds Meet Section -->
   <url>
     <loc>https://mapinteractive.bgonegaming.win/wherewindmeets/index.html</loc>
-    <lastmod>2024-11-18</lastmod>
+    <lastmod>2025-11-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
+    <priority>0.9</priority>
   </url>
 
 </urlset>
