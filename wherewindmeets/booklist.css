@@ -1,7 +1,7 @@
 /* Tombol Book Icon - Selalu terlihat di layar */
 #bookToggleBtn {
   position: fixed;      /* tetap terlihat di layar */
-  top: 20px;
+  top: 60px;
   left: 10px;
   width: 44px;
   height: 44px;
@@ -15,7 +15,7 @@
   justify-content: center;
   box-shadow: 0 4px 12px rgba(139, 105, 20, 0.4);
   transition: all 0.3s ease;
-  z-index: 10000;       /* lebih tinggi dari panel */
+  z-index: 600;       /* lebih tinggi dari panel */
   padding: 0;
 }
 

@@ -348,7 +348,7 @@
 #notificationIcon {
   position: absolute;
   top: 10px;
-  left: 40px;
+  left: 10px;
   width: 40px;
   height: 40px;
   background-image: url("https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/notification.png?updatedAt=1763084712942");
@@ -368,7 +368,7 @@
 #notificationBox {
   position: absolute;
   top: 10px;        /* muncul di bawah ikon */
-  left: 80px;
+  left: 50px;
   width: 260px;
   max-height: 300px;
   overflow-y: auto;

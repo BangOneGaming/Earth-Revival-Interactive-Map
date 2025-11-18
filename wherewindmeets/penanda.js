@@ -713,6 +713,7 @@ window.toggleVisited = async function (markerKey) {
   if (isLoggedIn()) {
     try {
       const token = getUserToken();
+      
 
       const res = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker", {
         method: "POST",

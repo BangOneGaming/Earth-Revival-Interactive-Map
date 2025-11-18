@@ -36,10 +36,12 @@
 
   <!-- Custom CSS -->  
   <link rel="stylesheet" href="styles.css" />  
+    <link rel="stylesheet" href="form.css" />  
     <link rel="stylesheet" href="booklist.css" />  
   <link rel="stylesheet" href="ui.css" />  
   <link rel="stylesheet" href="login.css" />  
-    <link rel="stylesheet" href="comment.css" />  
+    <link rel="stylesheet" href="comment.css" /> 
+        <link rel="stylesheet" href="profile-container.css" />  
 </head>  
 <body>  
 
@@ -219,7 +221,12 @@
 </script>  
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>    
     
-
+<!-- Eruda Debug Console -->  
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>  
+<script>  
+  eruda.init(); // Inisialisasi Eruda  
+  console.log("✅ Eruda aktif!");  
+</script>  
   
 <script src="https://accounts.google.com/gsi/client" async defer></script>  
     <script src="username.js"></script>    
@@ -227,11 +234,14 @@
   <!-- Application Scripts -->    
 
   <script src="memuat-data.js"></script>    
-  <script src="leaderboard.js"></script>    
+  <script src="leaderboard.js"></script>  
+    <script src="penanda.js"></script>    
   <script src="ikon.js"></script>    
   <script src="peta.js"></script>
   <script src="booklist.js"></script>
   <script src="penanda.js"></script>    
+    <script src="profile.js"></script>
+      <script src="form.js"></script>    
   <script src="dev_tools.js"></script>  
   <script src="feedbackmatker.js"></script>    
 <script src="comment.js"></script>

@@ -1,0 +1,456 @@
+/**
+ * Profile Container Styles
+ * Modular CSS for player profile display system
+ * Updated with golden/brown theme matching filter panel
+ */
+
+/* ==========================================
+   MAIN CONTAINER
+   ========================================== */
+#profileContainer {
+  position: fixed;
+  top: 10px;
+  left: 40px;
+  z-index: 500;
+  background: linear-gradient(
+    to right,
+    rgba(110, 75, 31, 1) 0%,
+    rgba(110, 75, 31, 0.6) 20%,
+    rgba(243, 213, 155, 0.12) 45%,
+    rgba(255, 255, 255, 0.06) 60%,
+    rgba(110, 75, 31, 0) 100%
+  );
+  
+  border: 2px solid transparent;
+  border-image: linear-gradient(
+    to left,
+    rgba(243, 213, 155, 0) 0%,
+    rgba(243, 213, 155, 1) 100%
+  ) 1;
+  
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  min-width: 280px;
+  max-width: 320px;
+  transition: all 0.3s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+
+/* ==========================================
+   BACKGROUND TITLE IMAGE
+   ========================================== */
+.profile-title-bg {
+  position: absolute;
+  top: 0;
+  left: 23%;
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-position: left top;
+  background-repeat: no-repeat;
+  opacity: 0.15;
+  border-radius: 12px 12px 0 0;
+  pointer-events: none;
+  z-index: 0;
+}
+/* ==========================================
+   CONTENT WRAPPER
+   ========================================== */
+.profile-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ==========================================
+   HEADER SECTION
+   ========================================== */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(
+    to left,
+    rgba(243, 213, 155, 0) 0%,
+    rgba(243, 213, 155, 1) 100%
+  ) 1;
+}
+
+.profile-weapon-img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(243, 229, 171, 0.5));
+  flex-shrink: 0;
+}
+
+.profile-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #f3d59b;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.profile-role {
+  font-size: 12px;
+  color: #4CAF50;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* ==========================================
+   STATS SECTION
+   ========================================== */
+.profile-stats-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.profile-stats-section.collapsed {
+  max-height: 200px;
+}
+
+
+/* ==========================================
+   CUSTOM SCROLLBAR (Golden theme)
+   ========================================== */
+.profile-stats-section::-webkit-scrollbar {
+  width: 8px;
+}
+
+.profile-stats-section::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.profile-stats-section::-webkit-scrollbar-thumb {
+  background: #d4a74a;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.profile-stats-section::-webkit-scrollbar-thumb:hover {
+  background: #b3872e;
+}
+
+/* Firefox scrollbar */
+.profile-stats-section {
+  scrollbar-width: thin;
+  scrollbar-color: #d4a74a rgba(255, 255, 255, 0.15);
+}
+
+/* ==========================================
+   STAT ITEM (Golden/Brown theme)
+   ========================================== */
+.profile-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(80, 55, 20, 0.8);
+  padding: 8px 10px;
+  border: 1px solid rgba(212, 167, 74, 0.35);
+  border-left: none;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.profile-stat-item:hover {
+  background: linear-gradient(
+    to left,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(212, 167, 74, 0.35) 100%
+  );
+  border: 1px solid rgba(243, 213, 155, 0.8);
+  border-left: none;
+  transform: translateX(-2px);
+}
+
+.profile-stat-item.zero-count {
+  opacity: 0.6;
+}
+
+.profile-stat-item.zero-count:hover {
+  opacity: 0.8;
+}
+
+.profile-stat-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  flex-shrink: 0;
+}
+
+.profile-stat-name {
+  flex: 1;
+  font-size: 13px;
+  color: #e8d4a0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+
+.profile-stat-count {
+  font-size: 14px;
+  font-weight: bold;
+  color: #4CAF50;
+  min-width: 30px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.profile-stat-item.zero-count .profile-stat-count {
+  color: #888;
+}
+
+/* ==========================================
+   SHOW MORE BUTTON
+   ========================================== */
+.profile-show-more-btn {
+  width: 100%;
+  padding: 8px 12px;
+  margin-top: 8px;
+  background: linear-gradient(135deg, #d4a74a, #b3872e);
+  border: 1px solid rgba(243, 213, 155, 0.5);
+  border-radius: 6px;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.profile-show-more-btn:hover {
+  background: linear-gradient(135deg, #f3d59b, #d4a74a);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(212, 167, 74, 0.4);
+}
+
+.profile-show-more-btn:active {
+  transform: translateY(0);
+}
+
+.profile-show-more-icon {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+.profile-show-more-btn.expanded .profile-show-more-icon {
+  transform: rotate(180deg);
+}
+
+/* ==========================================
+   EMPTY STATE
+   ========================================== */
+.profile-empty-state {
+  text-align: center;
+  padding: 20px;
+  color: rgba(232, 212, 160, 0.6);
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* ==========================================
+   TOGGLE BUTTON (Optional)
+   ========================================== */
+.profile-toggle-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(212, 167, 74, 0.3);
+  border: 1px solid rgba(243, 213, 155, 0.3);
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #f3d59b;
+  font-size: 14px;
+  z-index: 10;
+}
+
+.profile-toggle-btn:hover {
+  background: rgba(212, 167, 74, 0.5);
+  transform: scale(1.1);
+}
+
+/* ==========================================
+   LOADING STATE
+   ========================================== */
+.profile-loading {
+  text-align: center;
+  padding: 20px;
+  color: #e8d4a0;
+  font-size: 13px;
+}
+
+.profile-loading::after {
+  content: '...';
+  animation: profileLoadingDots 1.5s infinite;
+}
+
+@keyframes profileLoadingDots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
+
+/* ==========================================
+   ANIMATIONS
+   ========================================== */
+@keyframes profileSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+#profileContainer.animate-in {
+  animation: profileSlideIn 0.3s ease-out;
+}
+
+/* ==========================================
+   COLLAPSED STATE (Optional Feature)
+   ========================================== */
+#profileContainer.collapsed .profile-stats-section {
+  max-height: 0;
+  overflow: hidden;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+#profileContainer.collapsed .profile-header {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+/* ==========================================
+   HIGHLIGHT EFFECT (for newly visited)
+   ========================================== */
+.profile-stat-item.highlight {
+  animation: profileHighlight 0.5s ease;
+}
+
+@keyframes profileHighlight {
+  0%, 100% {
+    background: rgba(80, 55, 20, 0.8);
+  }
+  50% {
+    background: rgba(76, 175, 80, 0.3);
+    border-color: rgba(76, 175, 80, 0.8);
+  }
+}
+
+/* ==========================================
+   TOTAL COUNTER
+   ========================================== */
+.profile-total-counter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  margin-top: 10px;
+  background: linear-gradient(
+    to left,
+    rgba(243, 213, 155, 0) 0%,
+    rgba(243, 213, 155, 0.25) 100%
+  );
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(
+    to left,
+    rgba(243, 213, 155, 0) 0%,
+    rgba(243, 213, 155, 1) 100%
+  ) 1;
+  border-radius: 6px;
+}
+
+.profile-total-label {
+  font-size: 13px;
+  color: #e8d4a0;
+  font-weight: 600;
+}
+
+.profile-total-value {
+  font-size: 16px;
+  color: #f3d59b;
+  font-weight: bold;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.28);
+}
+/* MOBILE FIX — Panel lebih kecil & lebih pendek */
+@media (max-width: 768px) {
+  #profileContainer {
+    top: 10px;             /* Turun sedikit biar tidak ganggu */
+    right: 70px;
+    min-width: 230px;      /* ❗ Lebar lebih kecil */
+    max-width: 250px;      /* ❗ Lebar lebih kecil */
+    padding: 10px;
+  }
+
+  /* Tinggi list default sangat pendek */
+  .profile-stats-section {
+    max-height: 400px !important;  
+  }
+
+  /* Saat collapsed lebih pendek lagi */
+  .profile-stats-section.collapsed {
+    max-height: 60px !important;
+  }
+
+  /* Saat SHOW MORE ditekan */
+  .profile-stats-section.expanded {
+    max-height: 260px !important;  /* baru boleh tinggi */
+  }
+
+  /* Icon dan font diperkecil agar tidak makan tempat */
+  .profile-stat-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .profile-name {
+    font-size: 14px;
+  }
+
+  .profile-stat-name {
+    font-size: 12px;
+  }
+
+  .profile-stat-count {
+    font-size: 13px;
+  }
+}
