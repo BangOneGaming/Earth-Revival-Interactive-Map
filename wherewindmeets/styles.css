@@ -751,6 +751,205 @@ html, body {
     padding: 4px 8px;
   }
 }
+
+
+
+
+    /* Overlay */
+    .patch-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .patch-overlay.active {
+      display: flex;
+    }
+
+    /* Popup Container */
+    .patch-popup {
+      background: linear-gradient(135deg, #0a1628 0%, #1a2942 100%);
+      border: 3px solid #4a7c9e;
+      border-radius: 16px;
+      max-width: 500px;
+      width: 90%;
+      padding: 0;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(74, 124, 158, 0.3);
+      animation: popupAppear 0.4s ease-out;
+      overflow: hidden;
+    }
+
+    @keyframes popupAppear {
+      from {
+        opacity: 0;
+        transform: scale(0.8) translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    /* Header with Image */
+    .patch-header {
+      position: relative;
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(180deg, rgba(74, 124, 158, 0.2) 0%, transparent 100%);
+    }
+
+    .patch-image {
+      max-width: 150px;
+      height: auto;
+      margin-bottom: 15px;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+    }
+
+    .patch-title {
+      color: #87ceeb;
+      font-size: 28px;
+      font-weight: bold;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .patch-subtitle {
+      color: #b0d4e8;
+      font-size: 14px;
+      margin: 5px 0 0 0;
+    }
+
+    /* Close Button */
+    .patch-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid #4a7c9e;
+      color: #fff;
+      font-size: 24px;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .patch-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: #87ceeb;
+      transform: rotate(90deg);
+    }
+
+    /* Content */
+    .patch-content {
+      padding: 25px 30px;
+      color: #e0f0ff;
+      line-height: 1.8;
+    }
+
+    .patch-content h3 {
+      color: #87ceeb;
+      font-size: 20px;
+      margin: 0 0 15px 0;
+      border-bottom: 2px solid #4a7c9e;
+      padding-bottom: 8px;
+    }
+
+    .patch-content ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 20px 0;
+    }
+
+    .patch-content li {
+      padding: 8px 0 8px 25px;
+      position: relative;
+      font-size: 15px;
+    }
+
+    .patch-content li:before {
+      content: "✦";
+      position: absolute;
+      left: 0;
+      color: #4a7c9e;
+      font-size: 18px;
+    }
+
+    /* Footer */
+    .patch-footer {
+      background: rgba(74, 124, 158, 0.15);
+      padding: 20px 30px;
+      border-top: 1px solid #4a7c9e;
+    }
+
+    .patch-footer p {
+      color: #b0d4e8;
+      font-size: 14px;
+      margin: 0 0 15px 0;
+      text-align: center;
+    }
+
+    .patch-contact {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .patch-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: rgba(74, 124, 158, 0.3);
+      border: 2px solid #4a7c9e;
+      border-radius: 8px;
+      color: #87ceeb;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .patch-link:hover {
+      background: rgba(74, 124, 158, 0.5);
+      border-color: #87ceeb;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(74, 124, 158, 0.4);
+    }
+
+    .patch-link svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    /* Brand */
+    .patch-brand {
+      text-align: center;
+      padding: 15px;
+      color: #4a7c9e;
+      font-size: 13px;
+      border-top: 1px solid rgba(74, 124, 158, 0.3);
+    }
+
+    .patch-brand strong {
+      color: #87ceeb;
+    }
+
+
+
 /* === Loading Overlay === */
 #loadingOverlay {
   position: fixed;

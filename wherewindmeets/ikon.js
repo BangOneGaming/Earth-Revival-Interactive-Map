@@ -93,7 +93,7 @@ const ICON_CONFIG = {
     "24": "Book",
     "25": "Guard",
     "26": "Stronghold",
-    "27": "Boss",
+    "27": "World Boss",
     "28": "Material Art"
   },
 
