@@ -1,0 +1,267 @@
+    /* === UNDERGROUND UNIFIED CONTAINER === */
+    
+    /* Main Container - Contains both button and panel */
+    .underground-container {
+      position: fixed;
+      top: 10px;
+      left: 30%;
+      z-index: 500;
+      display: flex;
+              flex-direction: row; /* Horizontal layout */
+        align-items: flex-start; /* Button dan panel align di atas */
+      gap: 12px;
+    }
+    
+    /* Toggle Button */
+    .underground-toggle {
+      width: 50px;
+      height: 50px;
+      background: rgba(0, 0, 0, 0);
+      border: 2px solid #f4e5c0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      flex-shrink: 0;
+    }
+    
+    .underground-toggle:hover {
+      background: linear-gradient(135deg, #f3d59b, #d4a74a);
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(212, 167, 74, 0.6);
+    }
+    
+    .underground-toggle img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+    
+    /* Panel - Transparent, No Border */
+    .underground-panel {
+      width: 200px;
+      background: transparent;
+      border: none;
+      
+      /* Animation */
+      opacity: 0;
+      transform: scale(0.9) translateX(-10px);
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      
+      display: flex;
+      flex-direction: column;
+      overflow: visible;
+    }
+    
+    /* Panel visible state */
+    .underground-panel.visible {
+      opacity: 1;
+      transform: scale(1) translateX(0);
+      pointer-events: auto;
+    }
+    
+    /* Header - Hidden */
+    .underground-header {
+      display: none;
+    }
+    
+    /* Content area */
+    .underground-content {
+      padding: 0;
+      overflow-y: auto;
+      max-height: 260px;
+    }
+    
+    .underground-content::-webkit-scrollbar { 
+      width: 4px; 
+    }
+    
+    .underground-content::-webkit-scrollbar-track { 
+      background: rgba(255,255,255,0.1); 
+      border-radius: 2px; 
+    }
+    
+    .underground-content::-webkit-scrollbar-thumb { 
+      background: #d4a74a; 
+      border-radius: 2px; 
+    }
+    
+    /* Floor item */
+    .floor-item {
+      display: flex;
+      align-items: center;
+      padding: 8px;
+      margin-bottom: 6px;
+      background: rgba(80,55,20,0.6);
+      border: 1px solid rgba(212,167,74,0.3);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .floor-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .floor-item:hover {
+      background: rgba(212,167,74,0.3);
+      border-color: rgba(243,213,155,0.6);
+      transform: translateX(3px);
+    }
+    
+    /* Active state */
+    .floor-item.active {
+      background: linear-gradient(
+        135deg,
+        rgba(243,213,155,0.5) 0%,
+        rgba(212,167,74,0.6) 100%
+      );
+      border: 2px solid rgba(243,213,155,1);
+      box-shadow: 0 0 12px rgba(243,213,155,0.4);
+    }
+    
+    /* Active indicator */
+    .floor-item.active::before {
+      content: '●';
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #f3d59b;
+      font-size: 16px;
+      text-shadow: 0 0 8px rgba(243,213,155,0.8);
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
+      50% { opacity: 0.6; transform: translateY(-50%) scale(1.2); }
+    }
+    
+    /* Floor icon */
+    .floor-icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 8px;
+      flex-shrink: 0;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+    
+    /* Floor info */
+    .floor-info {
+      flex: 1;
+      min-width: 0;
+      padding-right: 20px;
+    }
+    
+    .floor-name {
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+    
+    .floor-depth {
+      color: rgba(243,213,155,0.7);
+      font-size: 10px;
+      margin-left: 4px;
+    }
+    
+    /* Hidden elements */
+    .floor-description,
+    .floor-checkbox,
+    .underground-stats {
+      display: none;
+    }
+    
+    /* Animation - Desktop (slide from left) */
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    .underground-panel.visible .floor-item {
+      animation: slideInLeft 0.25s ease forwards;
+    }
+    
+    .underground-panel.visible .floor-item:nth-child(1) { animation-delay: 0.03s; }
+    .underground-panel.visible .floor-item:nth-child(2) { animation-delay: 0.06s; }
+    .underground-panel.visible .floor-item:nth-child(3) { animation-delay: 0.09s; }
+    .underground-panel.visible .floor-item:nth-child(4) { animation-delay: 0.12s; }
+    .underground-panel.visible .floor-item:nth-child(5) { animation-delay: 0.15s; }
+    
+    /* === MOBILE RESPONSIVE === */
+    @media (max-width: 768px) {
+      /* ✨ Container positioned - button di kiri, panel di kanan */
+      .underground-container {
+        top: 25vh;
+        left: 10px;
+        bottom: auto;
+        flex-direction: row; /* Horizontal layout */
+        align-items: flex-start; /* Button dan panel align di atas */
+        gap: 8px;
+      }
+      
+      /* Toggle button size */
+      .underground-toggle {
+        width: 45px;
+        height: 45px;
+      }
+      
+      .underground-toggle img {
+        width: 24px;
+        height: 24px;
+      }
+      
+      /* Panel width dan animation dari kanan */
+      .underground-panel {
+        width: 150px;
+        transform: scale(0.9) translateX(10px); /* Slide dari kanan */
+      }
+      
+      .underground-panel.visible {
+        transform: scale(1) translateX(0);
+      }
+      
+      /* ✨ Floor item animation - slide from right */
+      @keyframes slideInRight {
+        from {
+          opacity: 0;
+          transform: translateX(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      
+      .underground-panel.visible .floor-item {
+        animation: slideInRight 0.25s ease forwards;
+      }
+      
+      /* Font sizes */
+      .floor-name {
+        font-size: 9px;
+      }
+      
+      .floor-depth {
+        font-size: 8px;
+      }
+    }

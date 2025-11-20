@@ -39,12 +39,8 @@
 
     try {
       // Check if required functions are available
-      if (typeof initializeIcons !== "function") {
-        throw new Error("initializeIcons not found - icons.js may not be loaded");
-      }
-      if (typeof initializeMap !== "function") {
-        throw new Error("initializeMap not found - map-init.js may not be loaded");
-      }
+      if (typeof initializeIcons !== "function") throw new Error("initializeIcons not found");
+      if (typeof initializeMap !== "function") throw new Error("initializeMap not found");
 
       // Load data from API first
       if (typeof DataLoader !== "undefined" && DataLoader.init) {
@@ -60,18 +56,25 @@
       console.log("%c✓ Icons initialized", "color:#4CAF50;");
 
       // Initialize map
- window.map = initializeMap();
-console.log("%c✓ Map initialized", "color:#4CAF50;");
+      window.map = initializeMap();
+      console.log("%c✓ Map initialized", "color:#4CAF50;");
+
+      // Initialize UndergroundManager (Popup Version)
+      if (typeof UndergroundManager !== "undefined") {
+        console.log("%c⏳ Initializing UndergroundManager...", "color:#02a0c5;font-weight:bold;");
+        await UndergroundManager.init(window.map);
+        console.log("%c✓ UndergroundManager initialized", "color:#4CAF50;");
+      }
 
       // Initialize marker manager (includes filter)
       if (typeof MarkerManager !== "undefined" && MarkerManager.init) {
-        MarkerManager.init(map);
+        MarkerManager.init(window.map);
         console.log("%c✓ Marker manager initialized", "color:#4CAF50;");
       }
 
       // Initialize dev tools if available
       if (typeof createDevToolsPanel === "function") {
-        createDevToolsPanel(map);
+        createDevToolsPanel(window.map);
         console.log("%c✓ Dev tools initialized", "color:#4CAF50;");
       }
 
@@ -95,9 +98,9 @@ console.log("%c✓ Map initialized", "color:#4CAF50;");
     setTimeout(initApp, 100);
   }
 })();
+
 // Inisialisasi currentUser dari localStorage (jika ada)
 const savedToken = localStorage.getItem("userToken");
-
 if (savedToken) {
   try {
     const payload = decodeJwt(savedToken);
@@ -120,7 +123,6 @@ if (savedToken) {
         // 🔥 LOAD VISITED DARI SERVER
         await loadVisitedMarkersFromServer();
         console.log("📥 Visited markers loaded from server");
-        
       } else {
         console.log("⚠️ Invalid session, clearing token");
         localStorage.removeItem("userToken");

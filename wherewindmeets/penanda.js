@@ -176,7 +176,7 @@ if (groupKey === "discover") {
         itemsAdded++;
       });
 
-      console.log(`✅ Added ${itemsAdded} items to ${group.title} group`);
+
 
       groupDiv.appendChild(groupHeader);
       groupDiv.appendChild(itemsDiv);
@@ -567,108 +567,172 @@ return `
 },
 
 
+/**
+ * Add markers in batches for better performance
+ * @param {Array} markers - Array of marker data
+ * @param {L.LatLngBounds} bounds - The current bounds
+ */
+addMarkersBatch(markers, bounds) {
+  const batchSize = MARKER_CONFIG.batchSize;
+  let index = 0;
 
-  /**
-   * Add markers in batches for better performance
-   * @param {Array} markers - Array of marker data
-   * @param {L.LatLngBounds} bounds - The current bounds
-   */
-  addMarkersBatch(markers, bounds) {
-    const batchSize = MARKER_CONFIG.batchSize;
-    let index = 0;
+  const addNextBatch = () => {
+    const end = Math.min(index + batchSize, markers.length);
 
-    const addNextBatch = () => {
-      const end = Math.min(index + batchSize, markers.length);
+    for (let i = index; i < end; i++) {
+      const markerData = markers[i];
+      const lat = parseFloat(markerData.lat);
+      const lng = parseFloat(markerData.lng);
+      const markerKey = markerData._key;
 
-      for (let i = index; i < end; i++) {
-        const markerData = markers[i];
-        const lat = parseFloat(markerData.lat);
-        const lng = parseFloat(markerData.lng);
-        const markerKey = markerData._key;
-
-        // Check if marker passes filter
-        const passesFilter = this.isFilterActive(markerData.category_id);
-
-        if (bounds.contains([lat, lng]) && !this.activeMarkers[markerKey] && passesFilter) {
-          this.createAndAddMarker(markerData, lat, lng, markerKey);
-        }
+      // Skip if already exists
+      if (this.activeMarkers[markerKey]) {
+        continue;
       }
 
-      index = end;
-      if (index < markers.length) {
-        requestAnimationFrame(addNextBatch);
-      } else {
-        // Update stats after all markers are loaded
-        this.updateStats();
+      // Check bounds
+      if (!bounds.contains([lat, lng])) {
+        continue;
       }
-    };
 
-    addNextBatch();
-  },
+      // Check if marker passes category filter
+      const passesFilter = this.isFilterActive(markerData.category_id);
+      if (!passesFilter) {
+        continue;
+      }
 
-  /**
-   * Create and add a marker to the map
-   * @param {Object} markerData - The marker data
-   * @param {number} lat - Latitude
-   * @param {number} lng - Longitude
-   * @param {string} markerKey - Unique key for the marker
-   */
-  createAndAddMarker(markerData, lat, lng, markerKey) {
-    const icon = getIconByCategory(markerData.category_id);
-    const popupContent = this.createPopupContent(markerData);
+      // Check if marker passes floor filter
+      let passesFloorFilter = true;
+      if (typeof UndergroundManager !== 'undefined') {
+        passesFloorFilter = UndergroundManager.shouldShowMarker(markerData);
+      }
+      if (!passesFloorFilter) {
+        continue;
+      }
 
-    const leafletMarker = L.marker([lat, lng], { icon })
-      .bindPopup(popupContent)
-      .addTo(this.map);
-
-    // Check if marker is visited and apply opacity
-    const visitedMarkers = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');
-    if (visitedMarkers[markerKey]) {
-      leafletMarker.setOpacity(0.5);
+      // Create and add marker
+      this.createAndAddMarker(markerData, lat, lng, markerKey);
     }
 
-    // Store marker with its category ID for easy filtering
-    leafletMarker.categoryId = markerData.category_id;
-    leafletMarker.markerKey = markerKey;
-    this.activeMarkers[markerKey] = leafletMarker;
-  },
+    index = end;
+    if (index < markers.length) {
+      requestAnimationFrame(addNextBatch);
+    } else {
+      // Update stats after all markers are loaded
+      this.updateStats();
+      
+      // Update underground stats if available
+      if (typeof UndergroundManager !== 'undefined') {
+        UndergroundManager.updateStats();
+      }
+    }
+  };
 
-  /**
-   * Update markers visible in current view
-   */
-  updateMarkersInView() {
-    const bounds = this.getBufferedBounds();
-    const markers = this.getAllMarkers();
+  addNextBatch();
+},
 
-    this.removeOutOfBoundsMarkers(bounds);
-    this.addMarkersBatch(markers, bounds);
-  },
+/**
+ * Create and add a marker to the map
+ * @param {Object} markerData - The marker data
+ * @param {number} lat - Latitude
+ * @param {number} lng - Longitude
+ * @param {string} markerKey - Unique key for the marker
+ */
+createAndAddMarker(markerData, lat, lng, markerKey) {
+  const icon = getIconByCategory(markerData.category_id);
+  const popupContent = this.createPopupContent(markerData);
 
-  /**
-   * Update stats display
-   */
-  updateStats() {
-    const statsEl = document.getElementById("filterStats");
-    if (!statsEl) return;
+  const leafletMarker = L.marker([lat, lng], { icon })
+    .bindPopup(popupContent)
+    .addTo(this.map);
 
-    const count = Object.keys(this.activeMarkers).length;
-    statsEl.innerHTML = `Showing <strong>${count}</strong> markers`;
-  },
-
-  /**
-   * Debounce helper function
-   * @param {Function} fn - Function to debounce
-   * @param {number} delay - Delay in milliseconds
-   * @returns {Function} Debounced function
-   */
-  debounce(fn, delay) {
-    let timeout;
-    return function(...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => fn.apply(this, args), delay);
-    };
+  // Check if marker is visited and apply opacity
+  const visitedMarkers = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');
+  if (visitedMarkers[markerKey]) {
+    leafletMarker.setOpacity(0.5);
   }
-};
+
+  // Store marker with its category ID and floor for easy filtering
+  leafletMarker.categoryId = markerData.category_id;
+  leafletMarker.markerKey = markerKey;
+  leafletMarker.floor = markerData.floor || ''; // ← FLOOR DATA
+  
+  this.activeMarkers[markerKey] = leafletMarker;
+},
+
+/**
+ * Update markers visible in current view
+ */
+updateMarkersInView() {
+  const bounds = this.getBufferedBounds();
+  const markers = this.getAllMarkers();
+
+  this.removeOutOfBoundsMarkers(bounds);
+  this.addMarkersBatch(markers, bounds);
+},
+
+/**
+ * Update stats display
+ */
+updateStats() {
+  const statsEl = document.getElementById("filterStats");
+  if (!statsEl) return;
+
+  const count = Object.keys(this.activeMarkers).length;
+  
+  // Get floor info if available
+  let floorInfo = '';
+  if (typeof UndergroundManager !== 'undefined') {
+    const activeFloorData = UndergroundManager.getActiveFloorInfo();
+    if (activeFloorData) {
+      let floorName = activeFloorData.name;
+      if (floorName.includes('(')) {
+        floorName = floorName.split('(')[0].trim();
+      }
+      floorInfo = ` <span style="color: #f3d59b;">| ${floorName}</span>`;
+    }
+  }
+  
+  statsEl.innerHTML = `Showing <strong>${count}</strong> markers${floorInfo}`;
+},
+
+/**
+ * Force refresh all markers (untuk floor change)
+ */
+/**
+ * GANTI BAGIAN INI - Dari forceRefreshMarkers sampai window.copyToClipboard
+ * 
+ * PENTING: Tambahkan closing bracket }; setelah forceRefreshMarkers
+ * dan SEBELUM window.copyToClipboard
+ */
+
+/**
+ * Force refresh all markers (untuk floor change)
+ */
+forceRefreshMarkers() {
+  console.log("🔄 Force refresh markers for floor change...");
+  this.removeAllMarkers();
+  this.updateMarkersInView();
+},
+
+/**
+ * Debounce helper function
+ * @param {Function} fn - Function to debounce
+ * @param {number} delay - Delay in milliseconds
+ * @returns {Function} Debounced function
+ */
+debounce(fn, delay) {
+  let timeout;
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+}; // ← INI CLOSING BRACKET MarkerManager - HARUS ADA!
+
+// ========================================
+// FUNCTIONS DI LUAR MarkerManager
+// ========================================
 
 /**
  * Copy text to clipboard
@@ -699,59 +763,27 @@ window.copyToClipboard = function(text, label) {
 };
 
 /**
- * Toggle visited status of a marker
- * @param {string} markerKey - Marker key
- */
-/**
  * Toggle visited status of a marker (supports login and localStorage)
  * @param {string} markerKey - Marker key
  */
-window.toggleVisited = async function (markerKey) {
+// Cache sementara untuk batch POST
+window.visitedCache = {};
+
+/**
+ * Toggle visited status marker
+ * Hanya update localStorage & cache dulu
+ */
+window.toggleVisited = function(markerKey) {
   const visitedMarkers = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');
   const newStatus = !visitedMarkers[markerKey];
 
+  // Update localStorage
+  visitedMarkers[markerKey] = newStatus;
+  localStorage.setItem('visitedMarkers', JSON.stringify(visitedMarkers));
+
+  // Update cache untuk batch POST nanti
   if (isLoggedIn()) {
-    try {
-      const token = getUserToken();
-      
-
-      const res = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ markerKey, visited: newStatus })
-      });
-
-      if (!res.ok) throw new Error("Server POST error");
-
-      const text = await res.text();
-
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch {
-        return;
-      }
-
-      // =====================================================
-      // 🔵 Satu-satunya console log untuk POST:
-      // =====================================================
-      console.log("📌 POST SOURCE:", data.source || "UNKNOWN");
-
-      // Simpan visited hasil server
-      localStorage.setItem('visitedMarkers', JSON.stringify(data.visitedMarkers));
-
-    } catch (err) {
-      // Fallback ke localStorage
-      visitedMarkers[markerKey] = newStatus;
-      localStorage.setItem('visitedMarkers', JSON.stringify(visitedMarkers));
-    }
-  } else {
-    // Not logged in → simpan lokal saja
-    visitedMarkers[markerKey] = newStatus;
-    localStorage.setItem('visitedMarkers', JSON.stringify(visitedMarkers));
+    window.visitedCache[markerKey] = newStatus;
   }
 
   // Update opacity marker
@@ -762,7 +794,60 @@ window.toggleVisited = async function (markerKey) {
   const markerData = MarkerManager.getAllMarkers().find(m => m._key === markerKey);
   if (markerData) marker.getPopup().setContent(MarkerManager.createPopupContent(markerData));
 };
-// Tambahkan fungsi untuk load visited markers dari server
+
+/**
+ * Kirim batch visited markers ke server
+ */
+async function flushVisitedCache() {
+  if (!isLoggedIn()) return;
+  const keys = Object.keys(window.visitedCache);
+  if (!keys.length) return;
+
+  const token = getUserToken();
+  const payload = { visitedMarkers: { ...window.visitedCache } };
+
+  // Reset cache dulu, supaya bisa retry kalau gagal nanti
+  window.visitedCache = {};
+
+  try {
+    const res = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) throw new Error("Server POST failed");
+
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); } catch(e) { data = {}; }
+
+    console.log("✅ Batch POST source:", data.source || "UNKNOWN");
+
+    // Simpan hasil server jika tersedia
+    if (data.visitedMarkers) {
+      localStorage.setItem('visitedMarkers', JSON.stringify(data.visitedMarkers));
+    }
+
+  } catch (err) {
+    console.warn("❌ Batch POST failed, retry next time", err);
+    // Masukkan kembali ke cache agar bisa retry
+    window.visitedCache = { ...window.visitedCache, ...payload.visitedMarkers };
+  }
+}
+
+// Flush setiap 120 detik
+setInterval(flushVisitedCache, 120_000);
+
+// Flush saat user meninggalkan halaman
+window.addEventListener("beforeunload", flushVisitedCache);
+
+/**
+ * Load visited markers dari server (panggil sekali saat login/refresh)
+ */
 async function loadVisitedMarkersFromServer() {
   console.log("====== 🟦 loadVisitedMarkersFromServer() START ======");
 
@@ -773,48 +858,32 @@ async function loadVisitedMarkersFromServer() {
 
   try {
     const token = getUserToken();
-    console.log("🔑 Sending token:", token);
-
     const res = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker", {
       method: "GET",
       headers: { "Authorization": `Bearer ${token}` }
     });
 
-    console.log("🌐 GET Response status:", res.status);
-
     const text = await res.text();
-    console.log("📩 Raw GET response:", text);
-
     let data;
-    try {
-      data = JSON.parse(text);
-    } catch (e) {
-      console.error("❌ JSON parse failed:", e);
-      return;
-    }
-
-    console.log("📥 Parsed GET data:", data);
-
-    // Penanda sumber data
-    console.log("📌 SOURCE:", data.source || "UNKNOWN (tidak ada field source)");
+    try { data = JSON.parse(text); } catch(e) { data = {}; }
 
     const visited = data.visitedMarkers || {};
     localStorage.setItem("visitedMarkers", JSON.stringify(visited));
 
-    console.log("💾 Saved visitedMarkers:", visited);
-
-    // Update opacity
+    // Update opacity marker
     Object.entries(visited).forEach(([key, v]) => {
       const marker = MarkerManager.activeMarkers[key];
       if (marker) marker.setOpacity(v ? 0.5 : 1.0);
     });
 
+    console.log("📌 Loaded visitedMarkers from server", visited);
   } catch (err) {
     console.error("❌ loadVisitedMarkersFromServer ERROR:", err);
   }
 
   console.log("====== 🟩 loadVisitedMarkersFromServer() END ======");
 }
+
 /**
  * Start editing mode
  * @param {string} markerKey - Marker key
@@ -843,6 +912,7 @@ window.startEdit = function(markerKey, type) {
     document.addEventListener('click', handleClickOutside, true);
   }, 5000);
 };
+
 /**
  * Handle click outside popup
  * @param {Event} e - Click event
@@ -937,8 +1007,6 @@ window.saveEdit = async function(markerKey, type) {
   }
 };
 
-
-
 /**
  * Show notification
  * @param {string} message - Notification message
@@ -962,4 +1030,3 @@ function showNotification(message, type = 'success') {
     setTimeout(() => document.body.removeChild(notification), 300);
   }, 2000);
 }
-

@@ -108,30 +108,52 @@ const DataLoader = {
     await Promise.all(promises);
   },
 
-  async loadEndpoint(key, url) {
-    try {
-      const response = await fetch(url);
+async loadEndpoint(key, url) {
+  console.group(`🔎 Checking endpoint: %c${key}`, "color: orange; font-weight: bold");
+  console.log("🌐 URL:", url);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+  try {
+    const response = await fetch(url);
 
-      const data = await response.json();
-
-      this.loadedData[key] = data;
-
-      const globalVar = ENDPOINT_TO_GLOBAL[key];
-      if (globalVar) window[globalVar] = data;
-
-      return data;
-
-    } catch (error) {
-      this.loadedData[key] = {};
-      const globalVar = ENDPOINT_TO_GLOBAL[key];
-      if (globalVar) window[globalVar] = {};
-      throw error;
+    // HTTP error seperti 404, 403, 500
+    if (!response.ok) {
+      console.error(`❌ HTTP ERROR for "${key}" →`, response.status, response.statusText);
+      console.groupEnd();
+      return this.loadedData[key] = {};
     }
-  },
+
+    let data;
+
+    // JSON parse error (contoh: koma hilang, bracket salah)
+    try {
+      data = await response.json();
+    } catch (jsonErr) {
+      console.error(`❌ JSON SYNTAX ERROR in "${key}"`);
+      console.error(jsonErr);
+      console.groupEnd();
+      return this.loadedData[key] = {};
+    }
+
+    // Deteksi JSON kosong atau tidak valid
+    if (!data || typeof data !== 'object') {
+      console.warn(`⚠️ INVALID JSON for "${key}" → not an object`, data);
+    } else if (Object.keys(data).length === 0) {
+      console.warn(`⚠️ EMPTY JSON for "${key}"`);
+    } else {
+      console.log(`✅ OK: "${key}" loaded successfully`);
+    }
+
+    this.loadedData[key] = data;
+    console.groupEnd();
+    return data;
+
+  } catch (err) {
+    console.error(`❌ UNKNOWN ERROR on "${key}"`);
+    console.error(err);
+    console.groupEnd();
+    return this.loadedData[key] = {};
+  }
+},
 
   async reloadEndpoint(key) {
     if (!DATA_ENDPOINTS[key]) return;

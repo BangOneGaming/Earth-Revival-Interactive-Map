@@ -149,8 +149,8 @@ setInterval(() => {
 }, 5 * 60 * 1000);
 
 // Optional: Reload leaderboard setelah user save feedback
-const originalSaveFeedbackUser = window.saveFeedbackUser || saveFeedbackUser;
-if (typeof saveFeedbackUser !== 'undefined') {
+if (window.saveFeedbackUser) {
+  const originalSaveFeedbackUser = window.saveFeedbackUser;
   window.saveFeedbackUser = async function(...args) {
     const result = await originalSaveFeedbackUser.apply(this, args);
     
@@ -162,4 +162,6 @@ if (typeof saveFeedbackUser !== 'undefined') {
     
     return result;
   };
+} else {
+  console.warn("⚠️ saveFeedbackUser is not defined yet, leaderboard reload wrapper skipped");
 }

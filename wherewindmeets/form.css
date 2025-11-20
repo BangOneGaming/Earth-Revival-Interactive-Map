@@ -50,7 +50,7 @@
   
   background: rgba(0, 0, 0, 0);
   border: 2px solid #f4e5c0;
-  border-radius: 50%;
+  border-radius: 10px;
   
   cursor: pointer;
   box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
@@ -83,7 +83,9 @@ body > #addMarkerBtn {
 }
 
 #addMarkerBtn:hover {
-  transform: translateY(-2px) scale(1.05);
+        background: linear-gradient(135deg, #f3d59b, #d4a74a);
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(212, 167, 74, 0.6);
 }
 
 #addMarkerBtn.active {
