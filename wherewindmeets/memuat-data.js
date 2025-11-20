@@ -1,37 +1,41 @@
 /**
  * Data loader module for fetching marker data from API endpoints
+ * Now optimized with batch loading
  */
 
-// API endpoints configuration
+// Base URL for API
+const API_BASE_URL = 'https://autumn-dream-8c07.square-spon.workers.dev';
+
+// API endpoints configuration (kept for backward compatibility)
 const DATA_ENDPOINTS = {
-  list: 'https://autumn-dream-8c07.square-spon.workers.dev/list',
-  batu: 'https://autumn-dream-8c07.square-spon.workers.dev/batu',
-  aneh: 'https://autumn-dream-8c07.square-spon.workers.dev/aneh',
-  cave: 'https://autumn-dream-8c07.square-spon.workers.dev/cave',
-  soundofheaven: 'https://autumn-dream-8c07.square-spon.workers.dev/soundofheaven',
-  windofpath: 'https://autumn-dream-8c07.square-spon.workers.dev/windofpath',
-  windofsacriface: 'https://autumn-dream-8c07.square-spon.workers.dev/windofsacriface',
-  relic: 'https://autumn-dream-8c07.square-spon.workers.dev/relic',
-  cat: 'https://autumn-dream-8c07.square-spon.workers.dev/cat',
-  injustice: 'https://autumn-dream-8c07.square-spon.workers.dev/injustice',
-  adventure: 'https://autumn-dream-8c07.square-spon.workers.dev/adventure',
-  meow: 'https://autumn-dream-8c07.square-spon.workers.dev/meow',
-  knowladge: 'https://autumn-dream-8c07.square-spon.workers.dev/knowladge',
-  story: 'https://autumn-dream-8c07.square-spon.workers.dev/story',
-  moon: 'https://autumn-dream-8c07.square-spon.workers.dev/moon',
-  uncounted: 'https://autumn-dream-8c07.square-spon.workers.dev/uncounted',
-  precious: 'https://autumn-dream-8c07.square-spon.workers.dev/precious',
-  gourmet: 'https://autumn-dream-8c07.square-spon.workers.dev/gourmet',
-  special: 'https://autumn-dream-8c07.square-spon.workers.dev/specialstrange',
-  toilet: 'https://autumn-dream-8c07.square-spon.workers.dev/toilet',
-  healing: 'https://autumn-dream-8c07.square-spon.workers.dev/healingpot',
-  makeafriend: 'https://autumn-dream-8c07.square-spon.workers.dev/makeafriend',
-  argument: 'https://autumn-dream-8c07.square-spon.workers.dev/arrgument',
-  book: 'https://autumn-dream-8c07.square-spon.workers.dev/book',
-  guard: 'https://autumn-dream-8c07.square-spon.workers.dev/guard',
-  stronghold: 'https://autumn-dream-8c07.square-spon.workers.dev/strongehold',
-  boss: 'https://autumn-dream-8c07.square-spon.workers.dev/boss',
-  materialart: 'https://autumn-dream-8c07.square-spon.workers.dev/jutsu'
+  list: `${API_BASE_URL}/list`,
+  batu: `${API_BASE_URL}/batu`,
+  aneh: `${API_BASE_URL}/aneh`,
+  cave: `${API_BASE_URL}/cave`,
+  soundofheaven: `${API_BASE_URL}/soundofheaven`,
+  windofpath: `${API_BASE_URL}/windofpath`,
+  windofsacriface: `${API_BASE_URL}/windofsacriface`,
+  relic: `${API_BASE_URL}/relic`,
+  cat: `${API_BASE_URL}/cat`,
+  injustice: `${API_BASE_URL}/injustice`,
+  adventure: `${API_BASE_URL}/adventure`,
+  meow: `${API_BASE_URL}/meow`,
+  knowladge: `${API_BASE_URL}/knowladge`,
+  story: `${API_BASE_URL}/story`,
+  moon: `${API_BASE_URL}/moon`,
+  uncounted: `${API_BASE_URL}/uncounted`,
+  precious: `${API_BASE_URL}/precious`,
+  gourmet: `${API_BASE_URL}/gourmet`,
+  special: `${API_BASE_URL}/specialstrange`,
+  toilet: `${API_BASE_URL}/toilet`,
+  healing: `${API_BASE_URL}/healingpot`,
+  makeafriend: `${API_BASE_URL}/makeafriend`,
+  argument: `${API_BASE_URL}/arrgument`,
+  book: `${API_BASE_URL}/book`,
+  guard: `${API_BASE_URL}/guard`,
+  stronghold: `${API_BASE_URL}/strongehold`,
+  boss: `${API_BASE_URL}/boss`,
+  materialart: `${API_BASE_URL}/jutsu`
 };
 
 // Mapping endpoint keys to window global variables
@@ -70,17 +74,21 @@ const DataLoader = {
   loadedData: {},
   loadingProgress: {},
   isLoading: false,
+  useBatchLoading: true, // Toggle untuk batch loading
 
   async init() {
     this.showLoadingSpinner(true);
     this.isLoading = true;
 
     try {
+      // Load all marker data
       await this.loadAllEndpoints();
 
-      const feedbackRes = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/userfeedback");
+      // Load feedback data separately
+      const feedbackRes = await fetch(`${API_BASE_URL}/userfeedback`);
       const feedbackData = await feedbackRes.json();
 
+      // Sync feedback to markers
       if (typeof syncFeedbackToMarkers === "function") {
         Object.keys(this.loadedData).forEach(endpointKey => {
           const endpointMarkers = this.loadedData[endpointKey];
@@ -92,9 +100,11 @@ const DataLoader = {
 
       this.isLoading = false;
       this.showLoadingSpinner(false);
+      console.log('✅ Data loaded successfully via batch endpoint');
       return true;
 
     } catch (error) {
+      console.error('❌ Data loading failed:', error);
       this.isLoading = false;
       this.showLoadingSpinner(false);
       throw error;
@@ -102,10 +112,65 @@ const DataLoader = {
   },
 
   async loadAllEndpoints() {
-    const promises = Object.keys(DATA_ENDPOINTS).map(key =>
-      this.loadEndpoint(key, DATA_ENDPOINTS[key])
-    );
-    await Promise.all(promises);
+    if (this.useBatchLoading) {
+      // Use batch endpoint - HEMAT 93% REQUEST!
+      await this.loadBatch();
+    } else {
+      // Fallback: load individually (for debugging)
+      const promises = Object.keys(DATA_ENDPOINTS).map(key =>
+        this.loadEndpoint(key, DATA_ENDPOINTS[key])
+      );
+      await Promise.all(promises);
+    }
+  },
+
+  async loadBatch() {
+    try {
+      // Get all endpoint keys
+      const endpointKeys = Object.keys(DATA_ENDPOINTS);
+
+      console.log(`📦 Loading ${endpointKeys.length} endpoints via batch...`);
+
+      // Call batch endpoint
+      const response = await fetch(`${API_BASE_URL}/batch`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          endpoints: endpointKeys
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Batch request failed: ${response.status}`);
+      }
+
+      const batchData = await response.json();
+
+      // Process batch data
+      Object.keys(batchData).forEach(key => {
+        this.loadedData[key] = batchData[key] || {};
+
+        // Set global variables
+        const globalVar = ENDPOINT_TO_GLOBAL[key];
+        if (globalVar) {
+          window[globalVar] = batchData[key] || {};
+        }
+      });
+
+      console.log(`✅ Batch loading complete: ${Object.keys(batchData).length} endpoints loaded`);
+
+    } catch (error) {
+      console.error('❌ Batch loading failed, falling back to individual requests:', error);
+      
+      // Fallback to individual loading
+      this.useBatchLoading = false;
+      const promises = Object.keys(DATA_ENDPOINTS).map(key =>
+        this.loadEndpoint(key, DATA_ENDPOINTS[key])
+      );
+      await Promise.all(promises);
+    }
   },
 
   async loadEndpoint(key, url) {
@@ -126,6 +191,7 @@ const DataLoader = {
       return data;
 
     } catch (error) {
+      console.error(`Error loading ${key}:`, error);
       this.loadedData[key] = {};
       const globalVar = ENDPOINT_TO_GLOBAL[key];
       if (globalVar) window[globalVar] = {};
@@ -182,7 +248,8 @@ const DataLoader = {
       isLoading: this.isLoading,
       loadedEndpoints: Object.keys(this.loadedData).length,
       totalEndpoints: Object.keys(DATA_ENDPOINTS).length,
-      endpoints: Object.keys(DATA_ENDPOINTS)
+      endpoints: Object.keys(DATA_ENDPOINTS),
+      batchMode: this.useBatchLoading
     };
   }
 };
