@@ -582,23 +582,15 @@
 @media only screen and (max-width: 768px) {
     #adsense-sticky-wrapper {
         padding: 1px 0 !important;
-        max-height: 70px !important;
+        max-height: 20px !important;
         overflow: hidden !important;
-        display: flex !important; /* TAMBAHKAN INI */
-        align-items: flex-end !important; /* DAN INI */
-        justify-content: center !important; /* DAN INI */
     }
     
-    /* SCALE DOWN IKLAN */
-    #adsense-sticky-wrapper .adsbygoogle {
-        transform: scale(0.55) !important;
-        transform-origin: center center !important; /* GANTI ke center */
-        /* HAPUS margin-bottom negative */
-    }
+
     
     #adsCloseBtn {
         top: 2px !important;
-        right: 20px !important;
+        right: 2px !important;
         font-size: 11px !important;
     }
 }
@@ -607,19 +599,15 @@
 @media only screen and (max-width: 480px) {
     #adsense-sticky-wrapper {
         padding: 0 !important;
-        max-height: 60px !important;
-        background: rgba(255, 255, 255, 0.08) !important;
+        height: 1px !important;
+        max-height: 1px !important;
+        background: rgba(255, 255, 255, 0.5) !important;
     }
     
-    /* Scale lebih kecil lagi */
-    #adsense-sticky-wrapper .adsbygoogle {
-        transform: scale(0.45) !important;
-        margin-bottom: -50px !important;
-    }
     
     #adsCloseBtn {
         top: 1px !important;
-        right: 1px !important;
+        right: 50px !important;
         font-size: 10px !important;
     }
 }
@@ -628,14 +616,9 @@
 @media only screen and (max-width: 360px) {
     #adsense-sticky-wrapper {
         max-height: 50px !important;
-        background: rgba(255, 255, 255, 0.05) !important;
+        background: rgba(255, 255, 255, 1) !important;
     }
-    
-    /* Scale paling kecil */
-    #adsense-sticky-wrapper .adsbygoogle {
-        transform: scale(0.4) !important;
-        margin-bottom: -55px !important;
-    }
+
 }
 
 /* ========================================
