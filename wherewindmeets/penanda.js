@@ -766,124 +766,112 @@ window.copyToClipboard = function(text, label) {
  * Toggle visited status of a marker (supports login and localStorage)
  * @param {string} markerKey - Marker key
  */
-// Cache sementara untuk batch POST
-window.visitedCache = {};
-
-/**
- * Toggle visited status marker
- * Hanya update localStorage & cache dulu
- */
-window.toggleVisited = function(markerKey) {
-  const visitedMarkers = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');
-  const newStatus = !visitedMarkers[markerKey];
-
-  // Update localStorage
-  visitedMarkers[markerKey] = newStatus;
-  localStorage.setItem('visitedMarkers', JSON.stringify(visitedMarkers));
-
-  // Update cache untuk batch POST nanti
-  if (isLoggedIn()) {
-    window.visitedCache[markerKey] = newStatus;
-  }
-
-  // Update opacity marker
-  const marker = MarkerManager.activeMarkers[markerKey];
-  if (marker) marker.setOpacity(newStatus ? 0.5 : 1.0);
-
-  // Refresh popup
-  const markerData = MarkerManager.getAllMarkers().find(m => m._key === markerKey);
-  if (markerData) marker.getPopup().setContent(MarkerManager.createPopupContent(markerData));
-};
-
-/**
- * Kirim batch visited markers ke server
- */
-async function flushVisitedCache() {
-  if (!isLoggedIn()) return;
-  const keys = Object.keys(window.visitedCache);
-  if (!keys.length) return;
-
-  const token = getUserToken();
-  const payload = { visitedMarkers: { ...window.visitedCache } };
-
-  // Reset cache dulu, supaya bisa retry kalau gagal nanti
-  window.visitedCache = {};
-
-  try {
-    const res = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify(payload)
-    });
-
-    if (!res.ok) throw new Error("Server POST failed");
-
-    const text = await res.text();
-    let data;
-    try { data = JSON.parse(text); } catch(e) { data = {}; }
-
-    console.log("✅ Batch POST source:", data.source || "UNKNOWN");
-
-    // Simpan hasil server jika tersedia
-    if (data.visitedMarkers) {
-      localStorage.setItem('visitedMarkers', JSON.stringify(data.visitedMarkers));
-    }
-
-  } catch (err) {
-    console.warn("❌ Batch POST failed, retry next time", err);
-    // Masukkan kembali ke cache agar bisa retry
-    window.visitedCache = { ...window.visitedCache, ...payload.visitedMarkers };
-  }
+window.toggleVisited = async function (markerKey) {  
+  const visitedMarkers = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');  
+  const newStatus = !visitedMarkers[markerKey];  
+  
+  if (isLoggedIn()) {  
+    try {  
+      const token = getUserToken();  
+        
+      const res = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker", {  
+        method: "POST",  
+        headers: {  
+          "Content-Type": "application/json",  
+          "Authorization": `Bearer ${token}`  
+        },  
+        body: JSON.stringify({ markerKey, visited: newStatus })  
+      });  
+  
+      if (!res.ok) throw new Error("Server POST error");  
+  
+      const text = await res.text();  
+  
+      let data;  
+      try {  
+        data = JSON.parse(text);  
+      } catch {  
+        return;  
+      }  
+  
+      console.log("📌 POST SOURCE:", data.source || "UNKNOWN");  
+  
+      // Simpan visited hasil server  
+      localStorage.setItem('visitedMarkers', JSON.stringify(data.visitedMarkers));  
+  
+    } catch (err) {  
+      // Fallback ke localStorage  
+      visitedMarkers[markerKey] = newStatus;  
+      localStorage.setItem('visitedMarkers', JSON.stringify(visitedMarkers));  
+    }  
+  } else {  
+    // Not logged in → simpan lokal saja  
+    visitedMarkers[markerKey] = newStatus;  
+    localStorage.setItem('visitedMarkers', JSON.stringify(visitedMarkers));  
+  }  
+  
+  // Update opacity marker  
+  const marker = MarkerManager.activeMarkers[markerKey];  
+  if (marker) marker.setOpacity(newStatus ? 0.5 : 1.0);  
+  
+  // Refresh popup  
+  const markerData = MarkerManager.getAllMarkers().find(m => m._key === markerKey);  
+  if (markerData) marker.getPopup().setContent(MarkerManager.createPopupContent(markerData));  
+};  
+  
+/**  
+ * Load visited markers from server  
+ */  
+async function loadVisitedMarkersFromServer() {  
+  console.log("====== 🟦 loadVisitedMarkersFromServer() START ======");  
+  
+  if (!isLoggedIn()) {  
+    console.warn("⛔ Not logged in — skip visited load");  
+    return;  
+  }  
+  
+  try {  
+    const token = getUserToken();  
+    console.log("🔑 Sending token:", token);  
+  
+    const res = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker", {  
+      method: "GET",  
+      headers: { "Authorization": `Bearer ${token}` }  
+    });  
+  
+    console.log("🌐 GET Response status:", res.status);  
+  
+    const text = await res.text();  
+    console.log("📩 Raw GET response:", text);  
+  
+    let data;  
+    try {  
+      data = JSON.parse(text);  
+    } catch (e) {  
+      console.error("❌ JSON parse failed:", e);  
+      return;  
+    }  
+  
+    console.log("📥 Parsed GET data:", data);  
+    console.log("📌 SOURCE:", data.source || "UNKNOWN (tidak ada field source)");  
+  
+    const visited = data.visitedMarkers || {};  
+    localStorage.setItem("visitedMarkers", JSON.stringify(visited));  
+  
+    console.log("💾 Saved visitedMarkers:", visited);  
+  
+    // Update opacity  
+    Object.entries(visited).forEach(([key, v]) => {  
+      const marker = MarkerManager.activeMarkers[key];  
+      if (marker) marker.setOpacity(v ? 0.5 : 1.0);  
+    });  
+  
+  } catch (err) {  
+    console.error("❌ loadVisitedMarkersFromServer ERROR:", err);  
+  }  
+  
+  console.log("====== 🟩 loadVisitedMarkersFromServer() END ======");  
 }
-
-// Flush setiap 120 detik
-setInterval(flushVisitedCache, 120_000);
-
-// Flush saat user meninggalkan halaman
-window.addEventListener("beforeunload", flushVisitedCache);
-
-/**
- * Load visited markers dari server (panggil sekali saat login/refresh)
- */
-async function loadVisitedMarkersFromServer() {
-  console.log("====== 🟦 loadVisitedMarkersFromServer() START ======");
-
-  if (!isLoggedIn()) {
-    console.warn("⛔ Not logged in — skip visited load");
-    return;
-  }
-
-  try {
-    const token = getUserToken();
-    const res = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker", {
-      method: "GET",
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-
-    const text = await res.text();
-    let data;
-    try { data = JSON.parse(text); } catch(e) { data = {}; }
-
-    const visited = data.visitedMarkers || {};
-    localStorage.setItem("visitedMarkers", JSON.stringify(visited));
-
-    // Update opacity marker
-    Object.entries(visited).forEach(([key, v]) => {
-      const marker = MarkerManager.activeMarkers[key];
-      if (marker) marker.setOpacity(v ? 0.5 : 1.0);
-    });
-
-    console.log("📌 Loaded visitedMarkers from server", visited);
-  } catch (err) {
-    console.error("❌ loadVisitedMarkersFromServer ERROR:", err);
-  }
-
-  console.log("====== 🟩 loadVisitedMarkersFromServer() END ======");
-}
-
 /**
  * Start editing mode
  * @param {string} markerKey - Marker key
