@@ -533,11 +533,11 @@
     left: 280px;
   }
 }
+
+
 /* ========================================
    ADSENSE STICKY WRAPPER - MOBILE FIX
-   Container height dikecilkan, bukan iklannya
    ======================================== */
-
 /* Default Desktop Style */
 #adsense-sticky-wrapper {
     position: fixed !important;
@@ -550,7 +550,6 @@
     padding: 2px 0 !important;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1) !important;
     transition: all 0.3s ease !important;
-    /* Container biarkan natural di desktop */
 }
 
 /* Close Button Default */
@@ -571,25 +570,31 @@
     color: #000 !important;
 }
 
-/* AdSense - Biarkan ukuran aslinya */
+/* AdSense - Biarkan ukuran aslinya di desktop */
 #adsense-sticky-wrapper .adsbygoogle {
     display: block !important;
 }
 
 /* ========================================
-   MOBILE: KURANGI TINGGI CONTAINER
+   MOBILE: SCALE DOWN IKLAN + BATASI CONTAINER
    ======================================== */
-
 /* Tablet & Mobile (≤768px) */
 @media only screen and (max-width: 768px) {
     #adsense-sticky-wrapper {
         padding: 1px 0 !important;
-        max-height: 70px !important; /* Batasi tinggi container */
-        overflow: hidden !important; /* Sembunyikan yang lebih */
+        max-height: 70px !important;
+        overflow: hidden !important;
+    }
+    
+    /* SCALE DOWN IKLAN - ini kuncinya! */
+    #adsense-sticky-wrapper .adsbygoogle {
+        transform: scale(0.55) !important;
+        transform-origin: center bottom !important;
+        margin-bottom: -40px !important; /* Kompensasi space dari scale */
     }
     
     #adsCloseBtn {
-        top: 10px !important;
+        top: 2px !important;
         right: 2px !important;
         font-size: 11px !important;
     }
@@ -599,12 +604,18 @@
 @media only screen and (max-width: 480px) {
     #adsense-sticky-wrapper {
         padding: 0 !important;
-        max-height: 60px !important; /* Container sangat pendek */
-        background: rgba(255, 255, 255, 0.08) !important; /* Lebih transparan */
+        max-height: 60px !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+    }
+    
+    /* Scale lebih kecil lagi */
+    #adsense-sticky-wrapper .adsbygoogle {
+        transform: scale(0.45) !important;
+        margin-bottom: -50px !important;
     }
     
     #adsCloseBtn {
-        top: 10px !important;
+        top: 1px !important;
         right: 1px !important;
         font-size: 10px !important;
     }
@@ -613,17 +624,20 @@
 /* Extra Small Mobile (≤360px) - SUPER KECIL */
 @media only screen and (max-width: 360px) {
     #adsense-sticky-wrapper {
-        max-height: 50px !important; /* Sangat kecil */
-        background: rgba(255, 255, 255, 0.05) !important; /* Hampir transparan */
+        max-height: 50px !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+    }
+    
+    /* Scale paling kecil */
+    #adsense-sticky-wrapper .adsbygoogle {
+        transform: scale(0.4) !important;
+        margin-bottom: -55px !important;
     }
 }
-
 
 /* ========================================
    HIDDEN STATE (when closed)
    ======================================== */
-
 #adsense-sticky-wrapper[style*="display: none"] {
     display: none !important;
 }
-
