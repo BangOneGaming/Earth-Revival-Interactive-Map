@@ -155,7 +155,7 @@
   border: none;
   border-radius: 8px 0 0 8px;
   cursor: pointer;
-  z-index: 999;
+  z-index: 2000;
   transition: right 0.3s ease, background 0.3s ease;
   display: flex;
   align-items: center;
@@ -520,8 +520,22 @@
   .leaderboard-panel:not(.manually-opened) {
     transform: translateX(-100%);
   }
-  .leaderboard-toggle { left: 240px; width: 35px; height: 70px; }
-  .leaderboard-panel.hidden ~ .leaderboard-toggle { left: 0; }
+  
+  /* Tombol default di posisi 0 (panel tertutup) */
+  .leaderboard-toggle { 
+    left: 0;  /* ✅ Default: tombol di tepi kiri */
+    width: 35px; 
+    height: 70px; 
+  }
+  
+  /* Ketika panel dibuka manual, geser tombol */
+  .leaderboard-panel.manually-opened ~ .leaderboard-toggle { 
+    left: 240px;  /* ✅ Tombol mengikuti panel yang terbuka */
+  }
+  
+  .leaderboard-panel.hidden ~ .leaderboard-toggle { 
+    left: 0; 
+  }
 }
 
 /* Desktop: default visible */

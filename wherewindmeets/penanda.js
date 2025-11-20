@@ -43,7 +43,7 @@ const filterGroupConfig = {
   }
 };
 
-console.log("✅ Filter groups configured:", filterGroupConfig);
+
 
 // ========================================
 // MARKER MANAGER
@@ -59,7 +59,6 @@ const MarkerManager = {
    * @param {L.Map} map - Leaflet map instance
    */
   init(map) {
-    console.log("🚀 MarkerManager.init() called");
     this.map = map;
     this.initializeFilters();
     this.setupFilterUI();
@@ -71,7 +70,6 @@ const MarkerManager = {
    * Initialize filter configuration
    */
 initializeFilters() {
-  console.log("🔧 Initializing filters...");
   
   // Ambil semua kategori dari konfigurasi ikon
   this.filterItems = getAllCategories().map(cat => ({
@@ -81,28 +79,24 @@ initializeFilters() {
     icon: cat.iconUrl
   }));
 
-  console.log("📋 Filter items loaded:", this.filterItems.length, "categories");
 
   // 🔁 Aktifkan semua kategori di discover secara default
   const discoverCategories = filterGroupConfig.discover.categories || [];
   discoverCategories.forEach(catId => this.activeFilters.add(String(catId)));
-  console.log("✨ Default: Discover categories activated:", discoverCategories);
+
 
   // 🔁 Coba restore filter dari localStorage
   const savedFilters = JSON.parse(localStorage.getItem("activeFilters")) || null;
   if (savedFilters && Array.isArray(savedFilters) && savedFilters.length > 0) {
     savedFilters.forEach(id => this.activeFilters.add(id));
-    console.log(`🔁 Restored ${savedFilters.length} filters from last session:`, savedFilters);
   }
 
-  console.log(`✅ ${this.filterItems.length} filters initialized`);
 },
 
   /**
    * Setup filter UI with grouping
    */
   setupFilterUI() {
-    console.log("🎨 Setting up filter UI...");
     
     const container = document.getElementById("filterContent");
     if (!container) {
@@ -115,7 +109,6 @@ initializeFilters() {
     // Loop through each group
     Object.keys(filterGroupConfig).forEach(groupKey => {
       const group = filterGroupConfig[groupKey];
-      console.log(`📦 Creating group: ${group.title}`, group.categories);
       
       // Create group container
 // Create group container
@@ -138,7 +131,7 @@ if (groupKey === "discover") {
       // Add click listener for toggle
       groupHeader.addEventListener('click', () => {
         groupDiv.classList.toggle('collapsed');
-        console.log(`🔄 Group ${group.title} toggled`);
+
       });
       
       // Create items container
@@ -183,7 +176,6 @@ if (groupKey === "discover") {
       container.appendChild(groupDiv);
     });
 
-    console.log("✅ Filter UI setup complete");
     this.updateStats();
   },
 
@@ -191,7 +183,7 @@ if (groupKey === "discover") {
    * Setup map and filter event listeners
    */
   setupEventListeners() {
-    console.log("🔗 Setting up event listeners...");
+    
     
     const debouncedUpdate = this.debounce(() => this.updateMarkersInView(), MARKER_CONFIG.debounceDelay);
     this.map.on('move', debouncedUpdate);
@@ -219,7 +211,7 @@ if (groupKey === "discover") {
           checkbox.checked = !checkbox.checked;
         }
 
-        console.log(`🔘 Filter toggled: Category ${categoryId} = ${checkbox.checked}`);
+        
         this.toggleFilter(categoryId, checkbox.checked, filterItem);
       });
     }
@@ -227,7 +219,7 @@ if (groupKey === "discover") {
     const btnSelectAll = document.getElementById("btnSelectAll");
     if (btnSelectAll) {
       btnSelectAll.addEventListener("click", () => {
-        console.log("✅ Select All clicked");
+        
         this.selectAllFilters();
       });
     }
@@ -240,7 +232,6 @@ if (groupKey === "discover") {
       });
     }
 
-    console.log("✅ Event listeners setup complete");
   },
 
   toggleFilter(categoryId, enabled, filterItem) {
@@ -255,7 +246,7 @@ if (groupKey === "discover") {
 
     // 💾 Simpan ke localStorage
     localStorage.setItem("activeFilters", JSON.stringify([...this.activeFilters]));
-    console.log("💾 Active filters saved:", [...this.activeFilters]);
+    
 
     this.updateMarkersInView();
     this.updateStats();
@@ -710,7 +701,7 @@ updateStats() {
  * Force refresh all markers (untuk floor change)
  */
 forceRefreshMarkers() {
-  console.log("🔄 Force refresh markers for floor change...");
+  
   this.removeAllMarkers();
   this.updateMarkersInView();
 },
@@ -794,7 +785,6 @@ window.toggleVisited = async function (markerKey) {
         return;  
       }  
   
-      console.log("📌 POST SOURCE:", data.source || "UNKNOWN");  
   
       // Simpan visited hasil server  
       localStorage.setItem('visitedMarkers', JSON.stringify(data.visitedMarkers));  
@@ -823,7 +813,7 @@ window.toggleVisited = async function (markerKey) {
  * Load visited markers from server  
  */  
 async function loadVisitedMarkersFromServer() {  
-  console.log("====== 🟦 loadVisitedMarkersFromServer() START ======");  
+  
   
   if (!isLoggedIn()) {  
     console.warn("⛔ Not logged in — skip visited load");  
@@ -832,17 +822,17 @@ async function loadVisitedMarkersFromServer() {
   
   try {  
     const token = getUserToken();  
-    console.log("🔑 Sending token:", token);  
+    
   
     const res = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker", {  
       method: "GET",  
       headers: { "Authorization": `Bearer ${token}` }  
     });  
   
-    console.log("🌐 GET Response status:", res.status);  
+    
   
     const text = await res.text();  
-    console.log("📩 Raw GET response:", text);  
+    
   
     let data;  
     try {  
@@ -852,13 +842,12 @@ async function loadVisitedMarkersFromServer() {
       return;  
     }  
   
-    console.log("📥 Parsed GET data:", data);  
-    console.log("📌 SOURCE:", data.source || "UNKNOWN (tidak ada field source)");  
+    
   
     const visited = data.visitedMarkers || {};  
     localStorage.setItem("visitedMarkers", JSON.stringify(visited));  
   
-    console.log("💾 Saved visitedMarkers:", visited);  
+    
   
     // Update opacity  
     Object.entries(visited).forEach(([key, v]) => {  
@@ -870,7 +859,7 @@ async function loadVisitedMarkersFromServer() {
     console.error("❌ loadVisitedMarkersFromServer ERROR:", err);  
   }  
   
-  console.log("====== 🟩 loadVisitedMarkersFromServer() END ======");  
+  
 }
 /**
  * Start editing mode

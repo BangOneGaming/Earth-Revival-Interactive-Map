@@ -86,7 +86,7 @@ const UndergroundManager = {
       }
     });
     
-    console.log(`🎨 Map effects applied: brightness=${brightness}, blur=${blur}px`);
+    
   },
 
   /**
@@ -104,15 +104,13 @@ const UndergroundManager = {
       }
     });
     
-    console.log("🎨 Map effects reset to normal");
+    
   },
 
   /**
    * Initialize underground manager
    */
   async init(map) {
-    console.log("🚀 UndergroundManager.init() called");
-    console.log("🗺️ Map object received:", !!map);
     
     this.map = map;
     
@@ -124,11 +122,7 @@ const UndergroundManager = {
     const toggleBtn = document.getElementById("undergroundToggle");
     const content = document.getElementById("undergroundContent");
     
-    console.log("🔍 DOM Check:");
-    console.log("  - Panel exists:", !!panel);
-    console.log("  - Toggle button exists:", !!toggleBtn);
-    console.log("  - Content container exists:", !!content);
-    
+        
     if (!panel || !toggleBtn || !content) {
       console.error("❌ CRITICAL: Required DOM elements missing!");
       return;
@@ -140,21 +134,20 @@ const UndergroundManager = {
     console.log("✅ Overlay data loading complete");
     
     // Setup UI
-    console.log("⏳ Setting up UI...");
     this.setupUI();
-    console.log("✅ UI setup complete");
+ 
     
     // Setup event listeners
-    console.log("⏳ Setting up event listeners...");
+
     this.setupEventListeners();
-    console.log("✅ Event listeners setup complete");
+    
     
     // Load saved floor or default to surface
     const savedFloor = localStorage.getItem('activeFloor') || 'surface';
-    console.log("📂 Loading saved floor:", savedFloor);
+    
     this.setActiveFloor(savedFloor, false);
     
-    console.log("✅ UndergroundManager initialized successfully");
+    
   },
 
   /**
@@ -163,13 +156,12 @@ const UndergroundManager = {
   async waitForMapReady() {
     return new Promise((resolve) => {
       if (this.isMapReady()) {
-        console.log("✅ Map is already ready");
         this.mapReady = true;
         resolve();
         return;
       }
 
-      console.log("⏳ Waiting for map to be ready...");
+      
       
       // Try every 100ms, max 5 seconds
       let attempts = 0;
@@ -179,7 +171,7 @@ const UndergroundManager = {
         attempts++;
         
         if (this.isMapReady()) {
-          console.log(`✅ Map ready after ${attempts * 100}ms`);
+          
           this.mapReady = true;
           clearInterval(checkInterval);
           resolve();
@@ -215,7 +207,7 @@ const UndergroundManager = {
     this.overlayData.forEach((overlay, index) => {
       const underground = String(overlay.underground);
 
-      console.log(`🗂️ Overlay #${index + 1}:`, overlay);
+      
 
       if (!overlay.path) {
         console.warn(`⚠️ Overlay #${index + 1} has no path!`, overlay);
@@ -238,7 +230,7 @@ const UndergroundManager = {
       }
       this.overlayLayers[underground].push(imageOverlay);
 
-      console.log(`🗺️ Created overlay for underground ${underground}`);
+      
     });
   },
 
@@ -247,7 +239,7 @@ const UndergroundManager = {
    */
   async loadOverlayData() {
     try {
-      console.log("📡 Loading overlay data...");
+      
       const response = await fetch('https://autumn-dream-8c07.square-spon.workers.dev/bellow');
       
       if (!response.ok) {
@@ -255,7 +247,7 @@ const UndergroundManager = {
       }
       
       this.overlayData = await response.json();
-      console.log("✅ Overlay data loaded:", this.overlayData.length, "overlays");
+      
       
       // Create overlay layers
       this.createOverlayLayers();
@@ -270,7 +262,7 @@ const UndergroundManager = {
    * Setup floor selection UI
    */
   setupUI() {
-    console.log("🎨 Setting up Underground UI...");
+    
     
     const container = document.getElementById("undergroundContent");
     if (!container) {
@@ -305,7 +297,7 @@ const UndergroundManager = {
       container.appendChild(floorItem);
     });
 
-    console.log("✅ Underground UI setup complete");
+    
     this.updateStats();
   },
 
@@ -313,7 +305,7 @@ const UndergroundManager = {
    * Setup event listeners
    */
   setupEventListeners() {
-    console.log("🔗 Setting up Underground event listeners...");
+    
     
     const toggleBtn = document.getElementById("undergroundToggle");
     const panel = document.getElementById("undergroundPanel");
@@ -346,7 +338,7 @@ const UndergroundManager = {
         if (!floorItem) return;
 
         const floorId = floorItem.dataset.floorId;
-        console.log("✅ Floor item clicked:", floorId);
+        
         
         this.setActiveFloor(floorId);
         
@@ -356,7 +348,7 @@ const UndergroundManager = {
       });
     }
 
-    console.log("✅ Underground event listeners setup complete");
+    
   },
 
   /**
@@ -370,10 +362,10 @@ const UndergroundManager = {
     
     if (this.isOpen) {
       panel.classList.add('visible');
-      console.log("✅ Panel OPENED");
+      
     } else {
       panel.classList.remove('visible');
-      console.log("✅ Panel CLOSED");
+      
     }
   },
 
@@ -386,14 +378,14 @@ const UndergroundManager = {
     
     this.isOpen = false;
     panel.classList.remove('visible');
-    console.log("✅ Panel closed");
+    
   },
 
   /**
    * Set active floor and update markers
    */
   setActiveFloor(floorId, updateMarkers = true) {
-    console.log(`🎯 Setting active floor to: ${floorId}`);
+    
     
     const previousFloor = this.activeFloor;
     this.activeFloor = floorId;
@@ -429,12 +421,12 @@ const UndergroundManager = {
     
     // 🔥 FORCE REFRESH ALL MARKERS saat floor berubah
     if (updateMarkers && typeof MarkerManager !== 'undefined') {
-      console.log("🔄 Force refreshing ALL markers for floor change...");
+      
       MarkerManager.forceRefreshMarkers();
     }
     
     this.updateStats();
-    console.log(`✅ Floor switch complete: ${previousFloor} → ${floorId}`);
+    
   },
 
   /**
@@ -447,7 +439,7 @@ const UndergroundManager = {
       return;
     }
 
-    console.log(`🔄 Updating overlays: ${previousFloor} → ${newFloor}`);
+    
     
     // Remove previous floor overlays
     if (previousFloor && previousFloor !== 'surface') {
@@ -457,7 +449,7 @@ const UndergroundManager = {
           try {
             if (this.map.hasLayer(overlay)) {
               this.map.removeLayer(overlay);
-              console.log(`🗑️ Removed overlay #${i + 1} for floor ${previousFloor}`);
+              
             }
           } catch (err) {
             console.error(`❌ Error removing overlay:`, err);
@@ -473,7 +465,7 @@ const UndergroundManager = {
         newOverlays.forEach((overlay, i) => {
           try {
             overlay.addTo(this.map);
-            console.log(`➕ Added overlay #${i + 1} for floor ${newFloor}`);
+            
           } catch (err) {
             console.error(`❌ Error adding overlay:`, err);
           }
