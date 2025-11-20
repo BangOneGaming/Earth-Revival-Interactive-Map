@@ -556,7 +556,7 @@
 /* Close Button Default */
 #adsCloseBtn {
     position: absolute !important;
-    top: 2px !important;
+    top: 6px !important;
     right: 4px !important;
     border: none !important;
     background: transparent !important;
@@ -589,7 +589,7 @@
     }
     
     #adsCloseBtn {
-        top: 1px !important;
+        top: 10px !important;
         right: 2px !important;
         font-size: 11px !important;
     }
@@ -604,7 +604,7 @@
     }
     
     #adsCloseBtn {
-        top: 0 !important;
+        top: 10px !important;
         right: 1px !important;
         font-size: 10px !important;
     }
@@ -618,24 +618,6 @@
     }
 }
 
-/* ========================================
-   ALTERNATIVE: CROP FROM BOTTOM
-   Jika mau crop iklan dari bawah
-   ======================================== */
-
-@media only screen and (max-width: 480px) {
-    #adsense-sticky-wrapper .adsbygoogle {
-        /* Crop dari bawah dengan positioning */
-        position: relative !important;
-        bottom: -20px !important; /* Geser ke bawah 20px, container potong sisanya */
-    }
-}
-
-@media only screen and (max-width: 360px) {
-    #adsense-sticky-wrapper .adsbygoogle {
-        bottom: -30px !important; /* Lebih banyak yang terpotong */
-    }
-}
 
 /* ========================================
    HIDDEN STATE (when closed)
@@ -645,29 +627,3 @@
     display: none !important;
 }
 
-/* ========================================
-   ADJUST MAP PADDING
-   Supaya konten tidak tertutup
-   ======================================== */
-
-#map {
-    padding-bottom: 90px !important; /* Desktop */
-}
-
-@media only screen and (max-width: 768px) {
-    #map {
-        padding-bottom: 75px !important;
-    }
-}
-
-@media only screen and (max-width: 480px) {
-    #map {
-        padding-bottom: 65px !important;
-    }
-}
-
-@media only screen and (max-width: 360px) {
-    #map {
-        padding-bottom: 55px !important;
-    }
-}
