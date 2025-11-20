@@ -584,18 +584,21 @@
         padding: 1px 0 !important;
         max-height: 70px !important;
         overflow: hidden !important;
+        display: flex !important; /* TAMBAHKAN INI */
+        align-items: flex-end !important; /* DAN INI */
+        justify-content: center !important; /* DAN INI */
     }
     
-    /* SCALE DOWN IKLAN - ini kuncinya! */
+    /* SCALE DOWN IKLAN */
     #adsense-sticky-wrapper .adsbygoogle {
         transform: scale(0.55) !important;
-        transform-origin: center bottom !important;
-        margin-bottom: -40px !important; /* Kompensasi space dari scale */
+        transform-origin: center center !important; /* GANTI ke center */
+        /* HAPUS margin-bottom negative */
     }
     
     #adsCloseBtn {
         top: 2px !important;
-        right: 2px !important;
+        right: 20px !important;
         font-size: 11px !important;
     }
 }
