@@ -63,7 +63,14 @@ const ICON_CONFIG = {
     "25": "guard.webp",
     "26": "strongehold.webp",
     "27": "boss.webp",
-    "28": "jutsu.webp"
+    "28": "jutsu.webp",
+    "29": "fishing.webp",
+    "30": "pot.webp",
+    "31": "miaodao.webp",
+    "32": "archer.webp",
+    "33": "melody.webp",
+    "34": "riddle.webp",
+    "35": "summo.webp"
   },
 
   names: {
@@ -78,7 +85,7 @@ const ICON_CONFIG = {
     "9": "Cat Play",
     "10": "Injustice",
     "11": "Adventure",
-    "12": "Meow Meow",
+    "12": "Meow Meow Treasure",
     "13": "Wander Tales",
     "14": "Tales and Echoes",
     "15": "Overlapping Moon Shadows",
@@ -88,13 +95,20 @@ const ICON_CONFIG = {
     "19": "Special Strange",
     "20": "Toilet",
     "21": "Doctor Treatment",
-    "22": "Make a Friend",
+    "22": "Material Fellowship",
     "23": "Gift of Gab",
     "24": "Book",
-    "25": "Material Fellowship",
+    "25": "Guard",
     "26": "Outpost",
     "27": "World Boss",
-    "28": "Material Art"
+    "28": "Material Art",
+    "29": "Fishing Spot",
+    "30": "Pitch Pot",
+    "31": "Miaodao",
+    "32": "Archer Contest",
+    "33": "Graceful Melody",
+    "34": "Riddle",
+    "35": "Sumo"
   },
 
   // Custom sizes per category

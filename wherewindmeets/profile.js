@@ -33,36 +33,45 @@ const ProfileContainer = (function() {
   // ==========================================
   // CATEGORY TO SOURCE MAPPING (sama seperti MarkerManager)
   // ==========================================
-  const CATEGORY_SOURCES = {
-    1: 'batutele',
-    2: 'chest',
-    3: 'strangecollection',
-    4: 'yellow',
-    5: 'gua',
-    6: 'blue',
-    7: 'red',
-    8: 'peninggalan',
-    9: 'kucing',
-    10: 'ketidakadilan',
-    11: 'petualangan',
-    12: 'meong',
-    13: 'pengetahuan',
-    14: 'cerita',
-    15: 'bulan',
-    16: 'tidakterhitung',
-    17: 'berharga',
-    18: 'kulinari',
-    19: 'spesial',
-    20: 'wc',
-    21: 'penyembuhan',
-    22: 'buatteman',
-    23: 'perdebatan',
-    24: 'buku',
-    25: 'penjaga',
-    26: 'benteng',
-    27: 'bos',
-    28: 'jurus'
-  };
+const CATEGORY_SOURCES = {
+  1: 'batutele',
+  2: 'chest',
+  3: 'strangecollection',
+  4: 'yellow',
+  5: 'gua',
+  6: 'blue',
+  7: 'red',
+  8: 'peninggalan',
+  9: 'kucing',
+  10: 'ketidakadilan',
+  11: 'petualangan',
+  12: 'meong',
+  13: 'pengetahuan',
+  14: 'cerita',
+  15: 'bulan',
+  16: 'tidakterhitung',
+  17: 'berharga',
+  18: 'kulinari',
+  19: 'spesial',
+  20: 'wc',
+  21: 'penyembuhan',
+  22: 'buatteman',
+  23: 'perdebatan',
+  24: 'buku',
+  25: 'penjaga',
+  26: 'benteng',
+  27: 'bos',
+  28: 'jurus',
+  // Tambahan baru
+  29: 'pemancing',
+  30: 'mabuk',
+  31: 'kartu',
+  32: 'panah',
+  33: 'melodi',
+  34: 'tebakan',
+  35: 'gulat'
+};
+
 // ==========================================
 // FIXED CATEGORY NAMES (Hardcoded)
 // ==========================================
@@ -94,7 +103,15 @@ const CATEGORY_NAMES = {
   "25": "Guard",
   "26": "Stronghold",
   "27": "Boss",
-  "28": "Material Art"
+  "28": "Material Art",
+  // Tambahan baru
+  "29": "Fishing Spot",
+  "30": "Pitch Pot",
+  "31": "Miaodao",
+  "32": "Archer Contest",
+  "33": "Graceful Melody",
+  "34": "Riddle",
+  "35": "Sumo"
 };
 
 // ==========================================
@@ -128,7 +145,15 @@ const CATEGORY_ICONS = {
   "25": "guard.webp",
   "26": "strongehold.webp",
   "27": "boss.webp",
-  "28": "jutsu.webp"
+  "28": "jutsu.webp",
+  // Tambahan baru
+  "29": "fishing.webp",
+  "30": "pot.webp",
+  "31": "miaodao.webp",
+  "32": "archer.webp",
+  "33": "melody.webp",
+  "34": "riddle.webp",
+  "35": "summo.webp"
 };
   // ==========================================
   // PRIVATE METHODS

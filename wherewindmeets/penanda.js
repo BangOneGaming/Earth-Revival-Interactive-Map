@@ -19,31 +19,35 @@ const filterGroupConfig = {
   discover: {
     title: 'Discover',
     icon: '',
-    categories: [1,] // Teleport + Treasure Chest
+    categories: [1]  // Teleport + Treasure Chest
   },
   collection: {
     title: 'Collection',
     icon: '',
-    categories: [2,3, 5, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    categories: [2, 3, 5, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
   },
-  traveler: {  // ← KEY HARUS UNIK!
+    minigame: {
+    title: "Mini Game's",
+    icon: '',
+    categories: [29, 30, 31, 32, 33, 34, 35]
+  },
+  traveler: {
     title: 'Traveler',
     icon: '️',
     categories: [21, 22, 23, 24]
   },
-  combat: {  // ← KEY HARUS UNIK!
+  combat: {
     title: 'Combat Challenge',
     icon: '',
     categories: [25, 26, 27]
   },
-  materialart: {  // ← KEY HARUS UNIK!
+  materialart: {
     title: 'Material Art',
     icon: '',
     categories: [28]
   }
+
 };
-
-
 
 // ========================================
 // MARKER MANAGER
@@ -292,40 +296,47 @@ if (groupKey === "discover") {
     return this.activeFilters.has(String(categoryId));
   },
 
-  getAllMarkers() {
-    const allMarkers = [];
-    const markerEdits = JSON.parse(localStorage.getItem('markerEdits') || '{}');
-    
-    const sources = [
-      window.chest,
-      window.batutele,
-      window.strangecollection,
-      window.yellow,
-      window.gua,
-      window.blue,
-      window.red,
-      window.peninggalan,
-      window.kucing,
-      window.ketidakadilan,
-      window.petualangan,
-      window.meong,
-      window.pengetahuan,
-      window.cerita,
-      window.bulan,
-      window.tidakterhitung,
-      window.berharga,
-      window.kulinari,
-      window.spesial,
-      window.wc,
-      window.penyembuhan,
-      window.buatteman,
-      window.perdebatan,
-      window.buku,
-      window.penjaga,
-      window.benteng,
-      window.bos,
-      window.jurus
-    ];
+getAllMarkers() {
+  const allMarkers = [];
+  const markerEdits = JSON.parse(localStorage.getItem('markerEdits') || '{}');
+
+  const sources = [
+    window.chest,
+    window.batutele,
+    window.strangecollection,
+    window.yellow,
+    window.gua,
+    window.blue,
+    window.red,
+    window.peninggalan,
+    window.kucing,
+    window.ketidakadilan,
+    window.petualangan,
+    window.meong,
+    window.pengetahuan,
+    window.cerita,
+    window.bulan,
+    window.tidakterhitung,
+    window.berharga,
+    window.kulinari,
+    window.spesial,
+    window.wc,
+    window.penyembuhan,
+    window.buatteman,
+    window.perdebatan,
+    window.buku,
+    window.penjaga,
+    window.benteng,
+    window.bos,
+    window.jurus,
+    window.pemancing,
+    window.mabuk,
+    window.kartu,
+    window.panah,
+    window.melodi,
+    window.tebakan,
+    window.gulat
+  ];
 
     sources.forEach(source => {
       if (source && typeof source === 'object') {

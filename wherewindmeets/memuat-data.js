@@ -35,7 +35,14 @@ const DATA_ENDPOINTS = {
   guard: `${API_BASE_URL}/guard`,
   stronghold: `${API_BASE_URL}/strongehold`,
   boss: `${API_BASE_URL}/boss`,
-  materialart: `${API_BASE_URL}/jutsu`
+  materialart: `${API_BASE_URL}/jutsu`,
+  pemancing: `${API_BASE_URL}/catchfish`,
+  mabuk: `${API_BASE_URL}/pot`,
+  kartu: `${API_BASE_URL}/card`,
+  panah: `${API_BASE_URL}/shootingarcher`,
+  melodi: `${API_BASE_URL}/melody`,
+  tebakan: `${API_BASE_URL}/riddle`,
+  gulat: `${API_BASE_URL}/summo`
 };
 
 // Mapping endpoint keys to window global variables
@@ -67,7 +74,14 @@ const ENDPOINT_TO_GLOBAL = {
   guard: 'penjaga',
   stronghold: 'benteng',
   boss: 'bos',
-  materialart: 'jurus'
+  materialart: 'jurus',
+  pemancing: 'pemancing', 
+  mabuk: 'mabuk',  
+  kartu: 'kartu', 
+  panah: 'panah', 
+  melodi: 'melodi',
+  tebakan: 'tebakan',
+  gulat: 'gulat'
 };
 
 const DataLoader = {
@@ -124,55 +138,56 @@ const DataLoader = {
     }
   },
 
-  async loadBatch() {
-    try {
-      // Get all endpoint keys
-      const endpointKeys = Object.keys(DATA_ENDPOINTS);
+async loadBatch() {
+  try {
+    // ✅ Extract path dari URL, bukan pakai key
+    const endpointPaths = Object.entries(DATA_ENDPOINTS).map(([key, url]) => ({
+      key: key,
+      path: new URL(url).pathname.slice(1) // remove leading "/"
+    }));
 
-      console.log(`📦 Loading ${endpointKeys.length} endpoints via batch...`);
+    console.log(`📦 Loading ${endpointPaths.length} endpoints via batch...`);
 
-      // Call batch endpoint
-      const response = await fetch(`${API_BASE_URL}/batch`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          endpoints: endpointKeys
-        })
-      });
+    // Kirim path URL ke batch
+    const response = await fetch(`${API_BASE_URL}/batch`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        endpoints: endpointPaths.map(e => e.path) // ["list", "batu", "specialstrange", "healingpot", ...]
+      })
+    });
 
-      if (!response.ok) {
-        throw new Error(`Batch request failed: ${response.status}`);
-      }
-
-      const batchData = await response.json();
-
-      // Process batch data
-      Object.keys(batchData).forEach(key => {
-        this.loadedData[key] = batchData[key] || {};
-
-        // Set global variables
-        const globalVar = ENDPOINT_TO_GLOBAL[key];
-        if (globalVar) {
-          window[globalVar] = batchData[key] || {};
-        }
-      });
-
-      console.log(`✅ Batch loading complete: ${Object.keys(batchData).length} endpoints loaded`);
-
-    } catch (error) {
-      console.error('❌ Batch loading failed, falling back to individual requests:', error);
-      
-      // Fallback to individual loading
-      this.useBatchLoading = false;
-      const promises = Object.keys(DATA_ENDPOINTS).map(key =>
-        this.loadEndpoint(key, DATA_ENDPOINTS[key])
-      );
-      await Promise.all(promises);
+    if (!response.ok) {
+      throw new Error(`Batch request failed: ${response.status}`);
     }
-  },
 
+    const batchData = await response.json();
+
+    // ✅ Map response back ke frontend key
+    endpointPaths.forEach(({ key, path }) => {
+      const data = batchData[path] || {};
+      this.loadedData[key] = data;
+
+      const globalVar = ENDPOINT_TO_GLOBAL[key];
+      if (globalVar) {
+        window[globalVar] = data;
+      }
+    });
+
+    console.log(`✅ Batch loading complete: ${Object.keys(batchData).length} endpoints loaded`);
+
+  } catch (error) {
+    console.error('❌ Batch loading failed, falling back to individual requests:', error);
+    
+    this.useBatchLoading = false;
+    const promises = Object.keys(DATA_ENDPOINTS).map(key =>
+      this.loadEndpoint(key, DATA_ENDPOINTS[key])
+    );
+    await Promise.all(promises);
+  }
+},
   async loadEndpoint(key, url) {
     try {
       const response = await fetch(url);
