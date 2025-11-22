@@ -531,7 +531,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.log("🔄 Found saved login, checking profile...");
       const profileData = await checkUserProfile();
 
-      // Cek jika profil kosong atau field tidak lengkap
       const needsProfileUpdate = !profileData || 
         !profileData.class || 
         !profileData.inGameName;
@@ -542,7 +541,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         showNotification("Please complete your profile", "info");
         showProfileForm(profileData);
       } else {
-        // Parse class untuk mendapatkan weaponType dan role
         const weaponVariant = profileData.class;
         let weaponType = null;
         let role = null;
@@ -555,14 +553,13 @@ document.addEventListener("DOMContentLoaded", async () => {
           }
         }
 
-        // ✅ VALIDASI TAMBAHAN: Cek apakah weapon variant valid
         if (!weaponType || !role) {
-          console.log("⚠️ Invalid weapon variant detected (old data format):", weaponVariant);
+          console.log("⚠️ Invalid weapon variant detected:", weaponVariant);
           showLoginPopup();
-          showNotification("Please update your profile to new weapon system", "info");
+          showNotification("Please update your profile", "info");
           showProfileForm(profileData);
         } else {
-          // Profile valid
+          // ✅ Profile valid - set gameProfile
           currentUser.gameProfile = {
             inGameName: profileData.inGameName,
             weaponType: weaponType,
@@ -570,6 +567,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             role: role
           };
           console.log("✅ Profile loaded successfully:", currentUser.gameProfile);
+
+          // ✅ TAMBAHKAN: Load visited markers (merge dengan lokal)
+          if (typeof loadVisitedMarkersFromServer === 'function') {
+            await loadVisitedMarkersFromServer();
+            console.log("📥 Visited markers merged");
+          }
         }
       }
     } catch (err) {
@@ -589,7 +592,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }, 1000);
   }
 });
-
 function showLoginPopup() {
   const loginOverlay = document.getElementById("loginOverlay");
   if (loginOverlay) {

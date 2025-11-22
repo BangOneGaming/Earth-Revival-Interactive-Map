@@ -532,66 +532,61 @@ const iconUrl = ICON_BASE + iconFile;
    * Initialize and create profile container
    * @param {Object} options - Configuration options
    */
-  function create(options = {}) {
-    remove();
+function create(options = {}) {
+  remove();
 
-    if (typeof isLoggedIn !== 'function' || !isLoggedIn()) {
-      console.warn('ProfileContainer: User not logged in');
-      return;
-    }
-
-    const profile = typeof getUserProfile === 'function' ? getUserProfile() : window.currentUser?.gameProfile;
-    if (!profile || !profile.weaponType) {
-      console.warn('ProfileContainer: Invalid profile data');
-      return;
-    }
-
-    const weaponData = window.WWM_WEAPONS?.[profile.weaponType];
-    if (!weaponData) {
-      console.warn('ProfileContainer: Weapon data not found');
-      return;
-    }
-
-    const visitedCounts = getVisitedCountsByCategory();
-    const totalVisited = getTotalVisitedCount();
-
-    container = document.createElement('div');
-    container.id = CONFIG.containerId;
-    container.className = CONFIG.animationClass;
-
-    if (options.position) {
-      Object.assign(CONFIG.position, options.position);
-    }
-
-    const titleBg = createTitleBackground(weaponData.title);
-    const content = document.createElement('div');
-    content.className = 'profile-content';
-
-    const header = createHeader(profile, weaponData);
-    const statsWrapper = createStatsSection(visitedCounts);
-
-    if (options.showTotal !== false) {
-      const totalCounter = createTotalCounter(totalVisited);
-content.appendChild(header);
-content.appendChild(totalCounter); // total di tengah
-content.appendChild(statsWrapper);
-    } else {
-      content.appendChild(header);
-      content.appendChild(statsWrapper);
-    }
-
-    if (options.toggleButton) {
-      const toggleBtn = createToggleButton();
-      container.appendChild(toggleBtn);
-    }
-
-    container.appendChild(titleBg);
-    container.appendChild(content);
-
-    document.body.appendChild(container);
-
-    console.log('✅ Profile container created');
+  if (typeof isLoggedIn !== 'function' || !isLoggedIn()) {
+    return;
   }
+
+  const profile = typeof getUserProfile === 'function' ? getUserProfile() : window.currentUser?.gameProfile;
+
+  if (!profile || !profile.weaponType) {
+    return;
+  }
+
+  const weaponData = window.WWM_WEAPONS?.[profile.weaponType];
+  if (!weaponData) {
+    return;
+  }
+
+  const visitedCounts = getVisitedCountsByCategory();
+  const totalVisited = getTotalVisitedCount();
+
+  container = document.createElement('div');
+  container.id = CONFIG.containerId;
+  container.className = CONFIG.animationClass;
+
+  if (options.position) {
+    Object.assign(CONFIG.position, options.position);
+  }
+
+  const titleBg = createTitleBackground(weaponData.title);
+  const content = document.createElement('div');
+  content.className = 'profile-content';
+
+  const header = createHeader(profile, weaponData);
+  const statsWrapper = createStatsSection(visitedCounts);
+
+  if (options.showTotal !== false) {
+    const totalCounter = createTotalCounter(totalVisited);
+    content.appendChild(header);
+    content.appendChild(totalCounter);
+    content.appendChild(statsWrapper);
+  } else {
+    content.appendChild(header);
+    content.appendChild(statsWrapper);
+  }
+
+  if (options.toggleButton) {
+    const toggleBtn = createToggleButton();
+    container.appendChild(toggleBtn);
+  }
+
+  container.appendChild(titleBg);
+  container.appendChild(content);
+  document.body.appendChild(container);
+}
 
   /**
    * Update profile container

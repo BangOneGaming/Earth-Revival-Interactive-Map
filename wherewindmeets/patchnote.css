@@ -405,3 +405,31 @@
     font-size: 16px;
   }
 }
+
+//*sementara*//
+
+/* Patch Icon in List */
+.patch-content li img.patch-icon {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+  margin-right: 8px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .patch-content li img.patch-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .patch-content li img.patch-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 5px;
+  }
+}

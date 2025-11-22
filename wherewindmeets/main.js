@@ -99,39 +99,3 @@
   }
 })();
 
-// Inisialisasi currentUser dari localStorage (jika ada)
-const savedToken = localStorage.getItem("userToken");
-if (savedToken) {
-  try {
-    const payload = decodeJwt(savedToken);
-
-    currentUser = {
-      name: payload.name,
-      email: payload.email,
-      picture: payload.picture,
-      token: savedToken
-    };
-
-    checkUserProfile().then(async hasProfile => {
-      if (hasProfile) {
-        console.log("✅ User restored from previous session:", currentUser);
-
-        // 🔥 HAPUS VISITED LOKAL DULU
-        localStorage.removeItem("visitedMarkers");
-        console.log("🧹 Cleared local visited cache");
-
-        // 🔥 LOAD VISITED DARI SERVER
-        await loadVisitedMarkersFromServer();
-        console.log("📥 Visited markers loaded from server");
-      } else {
-        console.log("⚠️ Invalid session, clearing token");
-        localStorage.removeItem("userToken");
-        currentUser = null;
-      }
-    });
-
-  } catch (err) {
-    console.error("Error restoring session:", err);
-    localStorage.removeItem("userToken");
-  }
-}
