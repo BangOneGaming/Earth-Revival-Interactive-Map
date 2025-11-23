@@ -235,6 +235,22 @@ if (groupKey === "discover") {
         this.clearAllFilters();
       });
     }
+this.map.on('popupopen', (e) => {
+  const popup = e.popup;
+  const content = popup.getElement();
+  if (!content) return;
+
+  const popupDiv = content.querySelector('.marker-popup');
+  if (!popupDiv) return;
+
+  const markerKey = popupDiv.dataset.markerKey;
+
+  // ⬇️ BAGIAN PALING PENTING — load image
+  const imageContainer = content.querySelector('.marker-image-container');
+  if (imageContainer) {
+    MarkerImageHandler.loadImages(markerKey);
+  }
+});
 
   },
 
@@ -402,17 +418,6 @@ createPopupContent(markerData, editState = {}) {
   const categoryIcon = getIconUrl(markerData.category_id);
   const description = markerData.desc || 'No description available';
   const markerKey = markerData._key;
-  
-  // Parse image info
-  let imageUrl = 'https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg';
-  try {
-    const imagesInfo = JSON.parse(markerData.images_info || '[]');
-    if (imagesInfo.length > 0 && imagesInfo[0]) {
-      imageUrl = imagesInfo[0];
-    }
-  } catch (e) {
-    // Use fallback image
-  }
 
   // Check visited status from localStorage
   const visitedMarkers = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');
@@ -426,146 +431,149 @@ createPopupContent(markerData, editState = {}) {
   const coordX = hasCoords ? parseFloat(markerData.x).toFixed(2) : '';
   const coordY = hasCoords ? parseFloat(markerData.y).toFixed(2) : '';
 
-// Coordinates section HTML
-let coordsHTML = '';
-if (editState.editingCoords) {
-  coordsHTML = `
-    <div class="marker-popup-coords">
-      <div class="marker-popup-section-header">
-        <div class="marker-popup-coords-title">📍 In-Game Coordinates (Editing)</div>
-      </div>
-      <div class="marker-popup-coords-edit">
-        <div class="marker-popup-coord-edit-field">
-          <label class="marker-popup-coord-edit-label">X:</label>
-          <input type="number" step="0.01" id="editX_${markerKey}" class="marker-popup-coord-edit-input" value="${coordX}" placeholder="X">
+  // Coordinates section HTML
+  let coordsHTML = '';
+  if (editState.editingCoords) {
+    coordsHTML = `
+      <div class="marker-popup-coords">
+        <div class="marker-popup-section-header">
+          <div class="marker-popup-coords-title">📍 In-Game Coordinates (Editing)</div>
         </div>
-        <div class="marker-popup-coord-edit-field">
-          <label class="marker-popup-coord-edit-label">Y:</label>
-          <input type="number" step="0.01" id="editY_${markerKey}" class="marker-popup-coord-edit-input" value="${coordY}" placeholder="Y">
+        <div class="marker-popup-coords-edit">
+          <div class="marker-popup-coord-edit-field">
+            <label class="marker-popup-coord-edit-label">X:</label>
+            <input type="number" step="0.01" id="editX_${markerKey}" class="marker-popup-coord-edit-input" value="${coordX}" placeholder="X">
+          </div>
+          <div class="marker-popup-coord-edit-field">
+            <label class="marker-popup-coord-edit-label">Y:</label>
+            <input type="number" step="0.01" id="editY_${markerKey}" class="marker-popup-coord-edit-input" value="${coordY}" placeholder="Y">
+          </div>
         </div>
-      </div>
-      <div class="marker-popup-section-actions">
-        <button class="marker-popup-edit-btn editing" onclick="saveEdit('${markerKey}', 'coords')">
-          💾 Save
-        </button>
-        <button class="marker-popup-edit-btn cancel" onclick="cancelEdit('${markerKey}')">
-          ✖ Cancel
-        </button>
-      </div>
-    </div>
-  `;
-} else if (hasCoords) {
-  coordsHTML = `
-    <div class="marker-popup-coords">
-      <div class="marker-popup-section-header">
-        <div class="marker-popup-coords-title">📍 In-Game Coordinates</div>
-        <button class="marker-popup-section-edit-btn" data-tooltip="Edit Coordinates" onclick="event.stopPropagation(); startEdit('${markerKey}', 'coords')">
-          <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/edit.png?updatedAt=1762987960006" alt="Edit">
-        </button>
-      </div>
-      <div class="marker-popup-coords-grid">
-        <div class="marker-popup-coord-item" onclick="copyToClipboard('${coordX}', 'X')" title="Click to copy X coordinate">
-          <span class="marker-popup-coord-label">X:</span>
-          <span class="marker-popup-coord-value">${coordX}</span>
-          <span class="marker-popup-copy-icon">📋</span>
-        </div>
-        <div class="marker-popup-coord-item" onclick="copyToClipboard('${coordY}', 'Y')" title="Click to copy Y coordinate">
-          <span class="marker-popup-coord-label">Y:</span>
-          <span class="marker-popup-coord-value">${coordY}</span>
-          <span class="marker-popup-copy-icon">📋</span>
+        <div class="marker-popup-section-actions">
+          <button class="marker-popup-edit-btn editing" onclick="saveEdit('${markerKey}', 'coords')">
+            💾 Save
+          </button>
+          <button class="marker-popup-edit-btn cancel" onclick="cancelEdit('${markerKey}')">
+            ✖ Cancel
+          </button>
         </div>
       </div>
+    `;
+  } else if (hasCoords) {
+    coordsHTML = `
+      <div class="marker-popup-coords">
+        <div class="marker-popup-section-header">
+          <div class="marker-popup-coords-title">📍 In-Game Coordinates</div>
+          <button class="marker-popup-section-edit-btn" data-tooltip="Edit Coordinates" onclick="event.stopPropagation(); startEdit('${markerKey}', 'coords')">
+            <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/edit.png?updatedAt=1762987960006" alt="Edit">
+          </button>
+        </div>
+        <div class="marker-popup-coords-grid">
+          <div class="marker-popup-coord-item" onclick="copyToClipboard('${coordX}', 'X')" title="Click to copy X coordinate">
+            <span class="marker-popup-coord-label">X:</span>
+            <span class="marker-popup-coord-value">${coordX}</span>
+            <span class="marker-popup-copy-icon">📋</span>
+          </div>
+          <div class="marker-popup-coord-item" onclick="copyToClipboard('${coordY}', 'Y')" title="Click to copy Y coordinate">
+            <span class="marker-popup-coord-label">Y:</span>
+            <span class="marker-popup-coord-value">${coordY}</span>
+            <span class="marker-popup-copy-icon">📋</span>
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    coordsHTML = `
+      <div class="marker-popup-coords marker-popup-coords-empty">
+        <div class="marker-popup-section-header">
+          <div class="marker-popup-coords-title">📍 In-Game Coordinates</div>
+          <button class="marker-popup-section-edit-btn" onclick="event.stopPropagation(); startEdit('${markerKey}', 'coords')" title="Edit Coordinates">
+            <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/edit.png?updatedAt=1762987960006" alt="Edit">
+          </button>
+        </div>
+        <div class="marker-popup-coords-fallback">
+          No coordinate, come fill it
+        </div>
+      </div>
+    `;
+  }
+
+  // Description section HTML
+  let descHTML = '';
+  if (editState.editingDesc) {
+    descHTML = `
+      <div class="marker-popup-desc">
+        <div class="marker-popup-section-header">
+          <div class="marker-popup-desc-title">📝 Description (Editing)</div>
+        </div>
+        <textarea id="editDesc_${markerKey}" class="marker-popup-desc-edit" placeholder="Enter description...">${description !== 'No description available' ? description : ''}</textarea>
+        <div class="marker-popup-section-actions">
+          <button class="marker-popup-edit-btn editing" onclick="saveEdit('${markerKey}', 'desc')">
+            💾 Save
+          </button>
+          <button class="marker-popup-edit-btn cancel" onclick="cancelEdit('${markerKey}')">
+            ✖ Cancel
+          </button>
+        </div>
+      </div>
+    `;
+  } else {
+    descHTML = `
+      <div class="marker-popup-desc">
+        <div class="marker-popup-section-header">
+          <div class="marker-popup-desc-title">📝 Description</div>
+          <button class="marker-popup-section-edit-btn" onclick="event.stopPropagation(); startEdit('${markerKey}', 'desc')" title="Edit Description">
+            <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/edit.png?updatedAt=1762987960006" alt="Edit">
+          </button>
+        </div>
+        <div class="marker-popup-desc-text">${description !== 'No description available' ? description : '<span class="marker-popup-empty">No description available</span>'}</div>
+      </div>
+    `;
+  }
+
+  // ✅ GUNAKAN MarkerImageHandler untuk bagian gambar
+  const imageHTML = typeof MarkerImageHandler !== 'undefined' 
+    ? MarkerImageHandler.createImageContainerHTML(markerData)
+    : `<div class="marker-popup-image">
+        <img src="https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg" 
+             alt="${markerData.name || 'Location'}"
+             onerror="this.src='https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg'">
+       </div>`;
+
+  return `
+    <div class="marker-popup" data-marker-key="${markerKey}" onclick="event.stopPropagation()">
+
+      <div class="marker-popup-category">
+        <img src="${categoryIcon}" alt="${categoryName}" class="marker-popup-category-icon">
+        <span class="marker-popup-category-name">${categoryName}</span>
+      </div>
+
+      ${imageHTML}
+
+      <div class="marker-popup-header">
+        <h3>${markerData.name || 'Unnamed Location'}</h3>
+      </div>
+
+      ${descHTML}
+      
+      <div class="marker-popup-footer">
+        <div class="marker-popup-visited" onclick="event.stopPropagation(); toggleVisited('${markerKey}')">
+          <input type="checkbox" ${isVisited ? 'checked' : ''} onchange="event.stopPropagation()">
+          <span class="marker-popup-visited-label">✓ Visited</span>
+        </div>
+
+        <button class="marker-popup-comments-btn" onclick="event.stopPropagation(); openCommentsModal('${markerKey}')">
+          💬 Comments
+        </button>
+
+        ${markerData.ys_id ? `
+          <div class="marker-popup-ysid">
+            <span class="marker-popup-ysid-label">@${markerData.ys_id}</span>
+          </div>
+        ` : '<div class="marker-popup-ysid-spacer"></div>'}
+      </div>
     </div>
   `;
-} else {
-  // Fallback jika coordinate kosong
-  coordsHTML = `
-    <div class="marker-popup-coords marker-popup-coords-empty">
-      <div class="marker-popup-section-header">
-        <div class="marker-popup-coords-title">📍 In-Game Coordinates</div>
-        <button class="marker-popup-section-edit-btn" onclick="event.stopPropagation(); startEdit('${markerKey}', 'coords')" title="Edit Coordinates">
-          <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/edit.png?updatedAt=1762987960006" alt="Edit">
-        </button>
-      </div>
-      <div class="marker-popup-coords-fallback">
-        No coordinate, come fill it
-      </div>
-    </div>
-  `;
-}
-
-// Description section HTML
-let descHTML = '';
-if (editState.editingDesc) {
-  descHTML = `
-    <div class="marker-popup-desc">
-      <div class="marker-popup-section-header">
-        <div class="marker-popup-desc-title">📝 Description (Editing)</div>
-      </div>
-      <textarea id="editDesc_${markerKey}" class="marker-popup-desc-edit" placeholder="Enter description...">${description !== 'No description available' ? description : ''}</textarea>
-      <div class="marker-popup-section-actions">
-        <button class="marker-popup-edit-btn editing" onclick="saveEdit('${markerKey}', 'desc')">
-          💾 Save
-        </button>
-        <button class="marker-popup-edit-btn cancel" onclick="cancelEdit('${markerKey}')">
-          ✖ Cancel
-        </button>
-      </div>
-    </div>
-  `;
-} else {
-  descHTML = `
-    <div class="marker-popup-desc">
-      <div class="marker-popup-section-header">
-        <div class="marker-popup-desc-title">📝 Description</div>
-        <button class="marker-popup-section-edit-btn" onclick="event.stopPropagation(); startEdit('${markerKey}', 'desc')" title="Edit Description">
-          <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/edit.png?updatedAt=1762987960006" alt="Edit">
-        </button>
-      </div>
-      <div class="marker-popup-desc-text">${description !== 'No description available' ? description : '<span class="marker-popup-empty">No description available</span>'}</div>
-    </div>
-  `;
-}
-
-// Update bagian footer popup dengan tombol Comments di tengah
-
-return `
-<div class="marker-popup" data-marker-key="${markerKey}" onclick="event.stopPropagation()">
-
-  <div class="marker-popup-category">
-    <img src="${categoryIcon}" alt="${categoryName}" class="marker-popup-category-icon">
-    <span class="marker-popup-category-name">${categoryName}</span>
-  </div>
-
-
-
-  <div class="marker-popup-image">
-    <img src="${imageUrl}" alt="${markerData.name || 'Location'}"
-         onerror="this.src='https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg'">
-  </div>
-  <div class="marker-popup-header">
-    <h3>${markerData.name || 'Unnamed Location'}</h3>
-  </div>
-  ${descHTML}
-  
-  <div class="marker-popup-footer">
-    <div class="marker-popup-visited" onclick="event.stopPropagation(); toggleVisited('${markerKey}')">
-      <input type="checkbox" ${isVisited ? 'checked' : ''} onchange="event.stopPropagation()">
-      <span class="marker-popup-visited-label">✓ Visited</span>
-    </div>
-
-    <button class="marker-popup-comments-btn" onclick="event.stopPropagation(); openCommentsModal('${markerKey}')">
-      💬 Comments
-    </button>
-
-    ${markerData.ys_id ? `
-      <div class="marker-popup-ysid">
-        <span class="marker-popup-ysid-label">@${markerData.ys_id}</span>
-      </div>
-    ` : '<div class="marker-popup-ysid-spacer"></div>'}
-  </div>
-</div>
-`;
 },
 
 

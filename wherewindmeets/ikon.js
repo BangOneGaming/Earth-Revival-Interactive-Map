@@ -94,7 +94,7 @@ const ICON_CONFIG = {
     "18": "Gourmet Food",
     "19": "Special Strange",
     "20": "Toilet",
-    "21": "Doctor Treatment",
+    "21": "Healing Ilnies",
     "22": "Material Fellowship",
     "23": "Gift of Gab",
     "24": "Book",

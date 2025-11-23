@@ -74,13 +74,14 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
 <script>
-  const CSS_VERSION = "2.0.1"; // ← Ganti ini saat ada update
+  const CSS_VERSION = "3.2.3"; // ← Ganti ini saat ada update
 </script>
 
 <!-- Custom CSS -->
 <script>
   const cssFiles = [
     'styles.css',
+    'marker-image-handler.css',
     'patchnote.css',
     'form.css',
     'layer.css',
@@ -385,7 +386,6 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>    
     
 
-  
 <script src="https://accounts.google.com/gsi/client" async defer></script>  
     <script src="username.js"></script>    
     
@@ -394,10 +394,12 @@
 <script>
   const v = Date.now();
   const files = [
+
     "memuat-data.js",
     "feedbackmatker.js",
     "penanda.js",
     "leaderboard.js",
+    "marker-image-handler.js",
     "ikon.js",
     "peta.js",
     "booklist.js",

@@ -26,7 +26,7 @@
       setTimeout(() => {
         console.log("%c✅ Loading complete (100%)", "color:lime;font-weight:bold;");
         resolve();
-      }, 3000); // 3 detik tambahan
+      }, 3000);
     });
   }
 
@@ -35,7 +35,7 @@
    */
   async function initApp() {
     console.log("%c🗺️ Initializing Map Application...", "color:#4CAF50;font-weight:bold;");
-    showLoading(); // 🟢 Tampilkan loading overlay
+    showLoading();
 
     try {
       // Check if required functions are available
@@ -72,6 +72,12 @@
         console.log("%c✓ Marker manager initialized", "color:#4CAF50;");
       }
 
+      // ✅ Initialize MarkerImageHandler SETELAH MarkerManager
+      if (typeof MarkerImageHandler !== "undefined" && MarkerImageHandler.init) {
+        MarkerImageHandler.init();
+        console.log("%c✓ MarkerImageHandler initialized", "color:#4CAF50;");
+      }
+
       // Initialize dev tools if available
       if (typeof createDevToolsPanel === "function") {
         createDevToolsPanel(window.map);
@@ -82,11 +88,11 @@
       await simulateFinalLoading();
 
       console.log("%c✅ Application ready!", "color:lime;font-weight:bold;font-size:16px;");
+
     } catch (error) {
       console.error("%c❌ Initialization error:", "color:red;font-weight:bold;", error);
       console.error("Stack trace:", error.stack);
     } finally {
-      // 🔵 Sembunyikan loading overlay setelah semua siap
       hideLoading();
     }
   }
@@ -98,4 +104,3 @@
     setTimeout(initApp, 100);
   }
 })();
-

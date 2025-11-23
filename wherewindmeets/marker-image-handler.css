@@ -1,0 +1,477 @@
+/**
+ * Marker Image Handler Styles
+ * Styles for image upload, carousel, lazy load, and full view modal
+ * @version 2.1.0
+ */
+
+/* ==========================================
+   IMAGE CONTAINER
+   ========================================== */
+
+.marker-image-container {
+  position: relative;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #1a1a2e;
+}
+
+.marker-image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.marker-popup-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+/* ==========================================
+   LOADING STATE
+   ========================================== */
+
+.marker-image-loading {
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 26, 46, 0.8);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 8;
+}
+
+.marker-image-loading .spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #f3d59b;
+  border-radius: 50%;
+  display: flex;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Hide loading when loaded */
+.marker-image-container[data-loaded="true"] .marker-image-loading {
+  display: none;
+}
+
+/* ==========================================
+   UPLOADING STATE
+   ========================================== */
+
+.marker-image-container.uploading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 10;
+}
+
+.marker-image-container.uploading::before {
+  content: '⏳';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 32px;
+  z-index: 11;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+/* ==========================================
+   HOVER OVERLAY
+   ========================================== */
+
+.marker-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 5;
+}
+
+.marker-image-wrapper:hover .marker-image-overlay {
+  opacity: 1;
+}
+
+.marker-image-wrapper:hover .marker-popup-img {
+  transform: scale(1.05);
+}
+
+/* Overlay Buttons */
+.marker-image-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 150px;
+  justify-content: center;
+  font-family: inherit;
+}
+
+.marker-image-btn.upload-btn {
+  background: transparent;
+  color: #f3d59b;
+  border: 2px solid #f3d59b;
+  box-shadow: none;
+}
+
+.marker-image-btn.upload-btn:hover {
+  background: linear-gradient(135deg, #f3d59b, #d4a855);
+  color: #1a1a2e;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(243, 213, 155, 0.5);
+}
+
+.marker-image-btn.fullview-btn {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  box-shadow: none;
+}
+
+.marker-image-btn.fullview-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+}
+
+.marker-image-btn:active {
+  transform: translateY(0);
+}
+
+/* ==========================================
+   CAROUSEL NAVIGATION
+   ========================================== */
+
+.marker-image-nav-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.marker-image-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 6;
+  opacity: 0;
+  pointer-events: all;
+}
+
+.marker-image-wrapper:hover .marker-image-nav {
+  opacity: 1;
+}
+
+.marker-image-nav:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.marker-image-nav.prev {
+  left: 10px;
+}
+
+.marker-image-nav.next {
+  right: 10px;
+}
+
+/* Indicators */
+.marker-image-indicators {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 6;
+  pointer-events: all;
+}
+
+.marker-image-indicators .indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.marker-image-indicators .indicator.active {
+  background: #f3d59b;
+  transform: scale(1.3);
+  box-shadow: 0 0 10px rgba(243, 213, 155, 0.5);
+}
+
+.marker-image-indicators .indicator:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* ==========================================
+   FULL VIEW MODAL
+   ========================================== */
+
+.marker-fullview-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.marker-fullview-modal.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.marker-fullview-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(10px);
+}
+
+.marker-fullview-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  animation: zoomIn 0.3s ease;
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.marker-fullview-content img {
+  max-width: 100%;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.marker-fullview-close {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #f44336, #d32f2f);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(244, 67, 54, 0.4);
+}
+
+.marker-fullview-close:hover {
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 6px 20px rgba(244, 67, 54, 0.6);
+}
+
+/* Full View Navigation */
+.fullview-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.fullview-nav:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #f3d59b;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.fullview-nav.prev {
+  left: -70px;
+}
+
+.fullview-nav.next {
+  right: -70px;
+}
+
+.fullview-counter {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: #f3d59b;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ==========================================
+   UPLOADER NAME BADGE
+   ========================================== */
+
+.marker-image-uploader {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #f3d59b;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  z-index: 4;
+  display: none;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243, 213, 155, 0.2);
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fullview-uploader {
+  position: absolute;
+  bottom: -40px;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  color: #f3d59b;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  backdrop-filter: blur(4px);
+}
+
+/* ==========================================
+   FALLBACK STATE
+   ========================================== */
+
+.marker-image-container[data-is-fallback="true"] .marker-popup-img {
+  filter: grayscale(30%) brightness(0.8);
+}
+
+.marker-image-container[data-is-fallback="true"] .marker-image-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+/* ==========================================
+   ALWAYS SHOW UPLOAD BUTTON WHEN NO IMAGES
+   ========================================== */
+
+.marker-image-container[data-is-fallback="true"] .marker-image-overlay {
+  opacity: 1 !important;        /* Selalu tampil */
+  pointer-events: all;          /* Bisa diklik walau tidak hover */
+}
+
+.marker-image-container[data-is-fallback="true"] .marker-image-btn.upload-btn {
+  opacity: 1;
+  cursor: pointer;              /* Tetap bisa diklik */
+}
+
+/* Kalau kamu ingin tombol upload selalu muncul TANPA hover di fallback */
+.marker-image-container[data-is-fallback="true"] .marker-image-wrapper:hover .marker-image-overlay {
+  opacity: 1;
+}
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 768px) {
+  .marker-image-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+    min-width: 130px;
+  }
+
+  .marker-image-nav {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    opacity: 1;
+  }
+
+  .marker-image-nav.prev { left: 5px; }
+  .marker-image-nav.next { right: 5px; }
+
+  .marker-fullview-close {
+    top: -10px;
+    right: -10px;
+    width: 35px;
+    height: 35px;
+  }
+
+  .fullview-nav {
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+  }
+
+  .fullview-nav.prev { left: 10px; }
+  .fullview-nav.next { right: 10px; }
+}
