@@ -403,43 +403,87 @@ const MarkerImageHandler = (function() {
     if (input) input.click();
   }
 
-  async function handleFileSelect(event, markerKey) {
-    const file = event.target.files[0];
-    if (!file) return;
+async function checkServerQuota() {
+  try {
+    const res = await fetch(CONFIG.authEndpoint, {
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${getUserToken()}` }
+    });
 
-    const validation = validateFile(file);
-    if (!validation.valid) {
-      showNotification(`❌ ${validation.error}`, 'error');
-      event.target.value = '';
-      return;
+    // Jika server blokir karena limit
+    if (res.status === 429 || res.status === 503) {
+      throw new Error("quota");
     }
 
-    const container = document.querySelector(`.marker-image-container[data-marker-key="${markerKey}"]`);
-
-    try {
-      if (container) container.classList.add('uploading');
-      showNotification('⏳ Uploading...', 'info');
-
-      const imageUrl = await uploadToImageKit(file, markerKey);
-      const format = file.type.replace('image/', '');
-      await saveImageUrlToServer(markerKey, imageUrl, format);
-
-      // Reset UI to refresh
-      if (container) {
-        container.dataset.uiLoaded = 'false';
-      }
-      loadImages(markerKey);
-
-      showNotification('✅ Upload success!', 'success');
-    } catch (error) {
-      console.error('Upload failed:', error);
-      showNotification(`❌ ${error.message}`, 'error');
-    } finally {
-      if (container) container.classList.remove('uploading');
-      event.target.value = '';
+    // Jika server kirim pesan error khusus
+    const data = await res.json();
+    if (data.error && (
+      data.error.includes("limit") ||
+      data.error.includes("quota") ||
+      data.error.includes("exceed")
+    )) {
+      throw new Error("quota");
     }
+
+    return data; // aman
+  } catch (e) {
+    throw new Error("quota");
+  }
+}
+
+
+async function handleFileSelect(event, markerKey) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const validation = validateFile(file);
+  if (!validation.valid) {
+    showNotification(`❌ ${validation.error}`, 'error');
+    event.target.value = '';
+    return;
   }
 
+  const container = document.querySelector(`.marker-image-container[data-marker-key="${markerKey}"]`);
+
+  try {
+    if (container) container.classList.add('uploading');
+
+    // ======================================================
+    // 🔥 CEK QUOTA DULU — kalau limit, langsung batal!
+    // ======================================================
+    try {
+      await checkServerQuota();
+    } catch (err) {
+      if (err.message === "quota") {
+        showNotification(
+          "❌ Sorry! Our server is out of daily quota. Please come back tomorrow.",
+          "error"
+        );
+        event.target.value = ""; // Reset input
+        return; // Stop — jangan upload ke ImageKit!
+      }
+    }
+
+    showNotification('⏳ Uploading...', 'info');
+
+    // Jika lolos quota → lanjut upload
+    const imageUrl = await uploadToImageKit(file, markerKey);
+    const format = file.type.replace('image/', '');
+    await saveImageUrlToServer(markerKey, imageUrl, format);
+
+    if (container) {
+      container.dataset.uiLoaded = 'false';
+    }
+    loadImages(markerKey);
+    showNotification('✅ Upload success!', 'success');
+  } catch (error) {
+    console.error('Upload failed:', error);
+    showNotification(`❌ ${error.message}`, 'error');
+  } finally {
+    if (container) container.classList.remove('uploading');
+    event.target.value = '';
+  }
+}
   // ==========================================
   // FULL VIEW MODAL
   // ==========================================

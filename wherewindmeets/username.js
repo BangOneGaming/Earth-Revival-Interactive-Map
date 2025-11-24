@@ -88,7 +88,7 @@ window.handleGoogleLogin = async function (response) {
   if (needsProfileUpdate) {
     console.log("⚠️ Profile incomplete - needs completion");
     showNotification("Please complete your profile", "info");
-    showProfileForm(profileData);
+    showProfileForm(profileData, false); // false = not skippable yet
     return;
   }
 
@@ -110,7 +110,7 @@ window.handleGoogleLogin = async function (response) {
   if (!weaponType || !role) {
     console.log("⚠️ Invalid weapon variant detected (old data format):", weaponVariant);
     showNotification("Please update your profile to new weapon system", "info");
-    showProfileForm(profileData);
+    showProfileForm(profileData, false);
     return;
   }
 
@@ -262,7 +262,7 @@ window.closeWeaponDisplayModal = function() {
   }
   
   // Show profile container when closing welcome screen
-  if (isLoggedIn() && currentUser?.gameProfile) {
+  if (isLoggedIn() && currentUser?.gameProfile && !currentUser.gameProfile.incomplete) {
     setTimeout(() => {
       if (typeof ProfileContainer !== 'undefined') {
         ProfileContainer.create({ showTotal: true });
@@ -271,7 +271,7 @@ window.closeWeaponDisplayModal = function() {
   }
 };
 
-function showProfileForm(existingProfile = null) {
+function showProfileForm(existingProfile = null, isSkippable = false) {
   const loginOverlay = document.getElementById("loginOverlay");
   if (loginOverlay) {
     const weaponTypeOptions = Object.keys(WWM_WEAPONS)
@@ -280,10 +280,24 @@ function showProfileForm(existingProfile = null) {
 
     const defaultName = existingProfile?.inGameName || '';
 
+    // Skip button hanya muncul jika isSkippable = true (setelah error 429)
+    const skipButton = isSkippable ? `
+      <button 
+        type="button"
+        onclick="skipProfileForm()"
+        style="padding: 12px; background: linear-gradient(145deg, #757575, #616161); color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px;"
+      >
+        Skip for Now
+      </button>
+    ` : '';
+
+    const warningMessage = isSkippable ? '<p style="color: #ff9800; margin-bottom: 15px; font-size: 13px;">⚠️ Service temporarily unavailable. You can skip and try again later.</p>' : '';
+
     loginOverlay.innerHTML = `
       <div style="text-align: center; max-height: 80vh; overflow-y: auto;">
         <h3 style="margin-bottom: 20px; color: #333;">Complete Your Profile</h3>
         ${existingProfile?.class ? '<p style="color: #4CAF50; margin-bottom: 15px; font-size: 14px;">✨ Update to new weapon system</p>' : ''}
+        ${warningMessage}
         <form id="profileForm" style="display: flex; flex-direction: column; gap: 15px;">
           <div style="text-align: left;">
             <label for="inGameName" style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">
@@ -354,6 +368,7 @@ function showProfileForm(existingProfile = null) {
           >
             Save Profile
           </button>
+          ${skipButton}
         </form>
       </div>
     `;
@@ -449,6 +464,19 @@ async function handleProfileSubmit(e) {
     const responseText = await res.text();
     
     if (!res.ok) {
+      // ✅ HANDLE ERROR 429 (Rate Limit)
+      if (res.status === 429) {
+        console.error("❌ Rate limit reached (429)");
+        showNotification("Service temporarily unavailable. You can skip and try again later.", "error");
+        
+        // Re-render form dengan skip button
+        const existingProfile = {
+          inGameName: inGameName,
+          class: weaponVariant
+        };
+        showProfileForm(existingProfile, true); // true = show skip button
+        return;
+      }
       throw new Error(`Failed to save profile (${res.status}): ${responseText}`);
     }
     
@@ -473,11 +501,36 @@ async function handleProfileSubmit(e) {
     
   } catch (err) {
     console.error("❌ Error saving profile:", err);
-    showNotification(`Failed to save profile: ${err.message}`, "error");
+    showNotification(`${err.message}`, "error");
     submitBtn.disabled = false;
     submitBtn.textContent = "Save Profile";
   }
 }
+
+// ✅ FUNGSI UNTUK SKIP PROFILE CREATION
+window.skipProfileForm = function() {
+  console.log("⏭️ User skipped profile creation");
+  
+  // Set a temporary flag for incomplete profile
+  if (currentUser) {
+    currentUser.gameProfile = {
+      inGameName: currentUser.name, // Use Google name as fallback
+      weaponType: null,
+      weaponVariant: null,
+      role: "Guest",
+      incomplete: true
+    };
+  }
+  
+  hideLoginPopup();
+  updateTopLoginVisibility();
+  showNotification("You can complete your profile anytime from the login button", "info");
+  
+  // Load visited markers if available
+  if (typeof loadVisitedMarkersFromServer === 'function') {
+    loadVisitedMarkersFromServer();
+  }
+};
 
 window.isLoggedIn = function() {
   return currentUser !== null;
@@ -539,7 +592,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("⚠️ Profile incomplete - needs completion");
         showLoginPopup();
         showNotification("Please complete your profile", "info");
-        showProfileForm(profileData);
+        showProfileForm(profileData, false); // false = not skippable yet
       } else {
         const weaponVariant = profileData.class;
         let weaponType = null;
@@ -557,7 +610,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           console.log("⚠️ Invalid weapon variant detected:", weaponVariant);
           showLoginPopup();
           showNotification("Please update your profile", "info");
-          showProfileForm(profileData);
+          showProfileForm(profileData, false); // false = not skippable yet
         } else {
           // ✅ Profile valid - set gameProfile
           currentUser.gameProfile = {
@@ -568,7 +621,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           };
           console.log("✅ Profile loaded successfully:", currentUser.gameProfile);
 
-          // ✅ TAMBAHKAN: Load visited markers (merge dengan lokal)
+          // ✅ Load visited markers (merge dengan lokal)
           if (typeof loadVisitedMarkersFromServer === 'function') {
             await loadVisitedMarkersFromServer();
             console.log("📥 Visited markers merged");
@@ -583,8 +636,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   updateTopLoginVisibility();
   
-  // Show profile container if user is logged in
-  if (isLoggedIn() && currentUser?.gameProfile) {
+  // Show profile container if user is logged in AND profile is complete
+  if (isLoggedIn() && currentUser?.gameProfile && !currentUser.gameProfile.incomplete) {
     setTimeout(() => {
       if (typeof ProfileContainer !== 'undefined') {
         ProfileContainer.create({ showTotal: true });
@@ -592,6 +645,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }, 1000);
   }
 });
+
 function showLoginPopup() {
   const loginOverlay = document.getElementById("loginOverlay");
   if (loginOverlay) {
