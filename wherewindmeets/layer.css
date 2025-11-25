@@ -5,7 +5,7 @@
       position: fixed;
       top: 10px;
       left: 30%;
-      z-index: 500;
+      z-index: 700;
       display: flex;
               flex-direction: row; /* Horizontal layout */
         align-items: flex-start; /* Button dan panel align di atas */

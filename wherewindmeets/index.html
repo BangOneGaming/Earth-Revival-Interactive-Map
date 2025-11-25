@@ -70,7 +70,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
   <script>
-    const CSS_VERSION = "5.2.4";
+    const CSS_VERSION = "5.5.4";
   </script>
 
   <!-- Custom CSS -->
@@ -78,6 +78,7 @@
     const cssFiles = [
       'styles.css',
       'marker-image-handler.css',
+      'knowladgelist.css',
       'patchnote.css',
       'form.css',
       'layer.css',
@@ -261,18 +262,33 @@
     <div class="patch-content">
       <h3>✨ What's New</h3>
       <ul>
+        <li>
+          <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/knoweverything.webp" alt="Wander Tales" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;">
+          <strong> Wander Tales List Available</strong> - New button on map for easy access! All markers now have clear descriptions in popups (more descriptions coming soon for all markers)
+        </li>
+        <li>
+          <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/book.webp" alt="Knowledge List" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;">
+          <strong> Knowledge List Added</strong> - New map button! Collect notes across all of Jianghua more easily with the organized knowledge list
+        </li>
+        <li><strong>🎨 Fixed Button UI Position</strong> - UI is now cleaner and no longer overlapping. Better organized interface!</li>
+      </ul>
+      
+      <h3>🔮 Upcoming Updates</h3>
+      <ul>
+        <li><strong>📝 Full Description Coverage</strong> - Descriptions will soon be available for all markers</li>
+        <li><strong>⚡ Server Quota Fix</strong> - Submission limits will be fixed early next month or this week</li>
+        <li><strong>🧘 Inner Way & Mystic Skill Locations</strong> - Coming very soon!</li>
+      </ul>
+      
+      <h3>🎯 Previous Updates</h3>
+      <ul>
         <li><strong>🔐 Login System Improved</strong> - You can now skip profile creation if it fails. No more stuck at login!</li>
         <li><strong>📸 Image Upload Beta</strong> - Upload images directly to markers (experimental feature, report bugs if found)</li>
         <li><strong>💾 Offline Marker Tracking</strong> - Your visited markers now work offline. Progress saved locally!</li>
         <li><strong>📱 Mobile Optimization</strong> - Best experience now available on mobile web desktop mode</li>
         <li><strong>🗺️ Enhanced Map Quality</strong> - Zoom in max level without losing map details</li>
-      </ul>
-      
-      <h3>🎯 Previous Updates</h3>
-      <ul>
         <li>Added <strong>Tiangxing</strong> region with full location coverage</li>
         <li>All mini game locations now discoverable (Fishing, Pitch Pot, Miaodao, Archery, and more)</li>
-        <li>Multiple new areas and exploration zones added</li>
       </ul>
     </div>
     
@@ -299,7 +315,7 @@
     <div class="patch-brand">
       Made with ❤️ by <strong>Bangone Gaming</strong>
     </div>
-  </div>
+  </div
 </div>
 
 <!-- Sticky AdSense Wrapper -->
@@ -373,12 +389,14 @@
   const files = [
     "memuat-data.js",
     "feedbackmatker.js",
+    "descmanager.js",
     "penanda.js",
     "leaderboard.js",
     "marker-image-handler.js",
     "ikon.js",
     "peta.js",
     "booklist.js",
+    "knowladgelist.js",
     "profile.js",
     "form.js",
     "layer.js",

@@ -122,8 +122,8 @@
    ADD MARKER BUTTON (Default Icon Style)
    ========================================== */
 #addMarkerBtn {
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   padding: 0;
   
   background: rgba(0, 0, 0, 0);

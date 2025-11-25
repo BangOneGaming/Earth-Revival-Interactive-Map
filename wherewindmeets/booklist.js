@@ -17,66 +17,71 @@ const BookPanel = {
     this.setupEventListeners();
   },
 
-  createElements() {
-    const toggleBtn = document.createElement('button');
-    toggleBtn.id = 'bookToggleBtn';
-    toggleBtn.innerHTML = '📖';
-    toggleBtn.title = 'Book Collection';
-    document.body.appendChild(toggleBtn);
+createElements() {
+  const iconUrl = "https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/book.webp";
 
-    const panel = document.createElement('div');
-    panel.id = 'bookPanel';
-    panel.innerHTML = `
-      <div class="book-panel-header">
-        <h2 class="book-panel-title">
-          📚 Book Collection
-          <span class="book-count-badge" id="bookCountBadge">0</span>
-        </h2>
-        <p class="book-panel-subtitle">Click on any book to view location</p>
-        <div class="book-close-btn" id="bookCloseBtn">×</div>
+  const toggleBtn = document.createElement('button');
+  toggleBtn.id = 'bookToggleBtn';
+  toggleBtn.innerHTML = `
+    <img src="${iconUrl}" class="book-toggle-icon">
+  `;
+  toggleBtn.title = 'Book Collection';
+  document.body.appendChild(toggleBtn);
+
+  const panel = document.createElement('div');
+  panel.id = 'bookPanel';
+  panel.innerHTML = `
+    <div class="book-panel-header">
+      <h2 class="book-panel-title">
+        <img src="${iconUrl}" class="book-title-icon">
+        Book Collection
+        <span class="book-count-badge" id="bookCountBadge">0</span>
+      </h2>
+      <p class="book-panel-subtitle">Click on any book to view location</p>
+      <div class="book-close-btn" id="bookCloseBtn">×</div>
+    </div>
+    
+    <div class="book-search-container">
+      <input 
+        type="text" 
+        id="bookSearchInput" 
+        placeholder="Search books..."
+        autocomplete="off"
+      />
+    </div>
+    
+    <div class="book-list-container" id="bookListContainer">
+      <div class="book-loading">
+        <div class="book-loading-spinner"></div>
+        <p>Loading books...</p>
       </div>
-      
-      <div class="book-search-container">
-        <input 
-          type="text" 
-          id="bookSearchInput" 
-          placeholder="🔍 Search books..."
-          autocomplete="off"
-        />
-      </div>
-      
-      <div class="book-list-container" id="bookListContainer">
-        <div class="book-loading">
-          <div class="book-loading-spinner"></div>
-          <p>Loading books...</p>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(panel);
+    </div>
+  `;
+  document.body.appendChild(panel);
 
-    this.panel = panel;
-    this.toggleBtn = toggleBtn;
-    this.searchInput = document.getElementById('bookSearchInput');
-    this.listContainer = document.getElementById('bookListContainer');
-  },
+  this.panel = panel;
+  this.toggleBtn = toggleBtn;
+  this.searchInput = document.getElementById('bookSearchInput');
+  this.listContainer = document.getElementById('bookListContainer');
+},
 
-  setupEventListeners() {
-    this.toggleBtn.addEventListener('click', () => this.toggle());
+setupEventListeners() {
+  this.toggleBtn.addEventListener('click', () => this.toggle());
 
-    document.getElementById('bookCloseBtn').addEventListener('click', () => this.close());
+  document.getElementById('bookCloseBtn').addEventListener('click', () => this.close());
 
-    this.searchInput.addEventListener('input', (e) => this.filterBooks(e.target.value));
+  this.searchInput.addEventListener('input', (e) => this.filterBooks(e.target.value));
 
-    document.addEventListener('click', (e) => {
-      if (this.isOpen && !this.panel.contains(e.target) && !this.toggleBtn.contains(e.target)) {
-        this.close();
-      }
-    });
+  document.addEventListener('click', (e) => {
+    if (this.isOpen && !this.panel.contains(e.target) && !this.toggleBtn.contains(e.target)) {
+      this.close();
+    }
+  });
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && this.isOpen) this.close();
-    });
-  },
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && this.isOpen) this.close();
+  });
+},
 
   loadBookData() {
     // Cek langsung window.buku
@@ -160,76 +165,89 @@ const BookPanel = {
     });
   },
 
-  onBookClick(key) {
-    const book = this.bookData[key];
-    if (!book) return;
+onBookClick(key) {
+  const book = this.bookData[key];
+  if (!book) return;
 
-    // Aktifkan category book (24)
-    if (typeof MarkerManager !== 'undefined') {
-      MarkerManager.activeFilters.add('24');
+  /* =====================================
+     0. Tutup popup aktif
+     ===================================== */
+  if (window.map) {
+    window.map.closePopup();
+  }
 
-      const bookCheckbox = document.querySelector('[data-category-id="24"] .filter-checkbox');
-      if (bookCheckbox) bookCheckbox.checked = true;
+  /* =====================================
+     1. Aktifkan kategori Book (24)
+     ===================================== */
+  if (typeof MarkerManager !== 'undefined') {
+    MarkerManager.activeFilters.add('24');
 
-      const bookFilterItem = document.querySelector('[data-category-id="24"]');
-      if (bookFilterItem) bookFilterItem.classList.add('active');
+    const checkbox = document.querySelector('[data-category-id="24"] .filter-checkbox');
+    if (checkbox) checkbox.checked = true;
 
-      localStorage.setItem("activeFilters", JSON.stringify([...MarkerManager.activeFilters]));
-      MarkerManager.updateMarkersInView();
-    }
+    const filterItem = document.querySelector('[data-category-id="24"]');
+    if (filterItem) filterItem.classList.add('active');
 
-    const zoomAndOpenPopup = (coords, key) => {
-      if (!window.map) return;
+    localStorage.setItem(
+      "activeFilters",
+      JSON.stringify([...MarkerManager.activeFilters])
+    );
 
-      // Zoom duration 3 detik
-      window.map.flyTo(coords, 6, {
-        animate: true,
-        duration: 3,
-        easeLinearity: 0.25
-      });
+    MarkerManager.updateMarkersInView();
+  }
 
-      // Tunggu zoom selesai (3 detik) + delay lazy loading (4 detik) = 7 detik
-      setTimeout(() => {
-        const tryOpenPopup = () => {
-          const marker = window.MarkerManager?.markers?.[key];
-          if (marker) {
-            // Tambah efek glow pada marker
-            this.addGlowEffect(marker);
-            
-            // Buka popup
-            if (typeof marker.openPopup === 'function') {
-              marker.openPopup();
-            }
-            return true;
-          }
-          return false;
-        };
+  /* =====================================
+     2. Stop jika tidak ada koordinat
+     ===================================== */
+  if (!window.map || !book.lat || !book.lng) return;
 
-        // Coba langsung
-        if (!tryOpenPopup()) {
-          // Jika belum ada, polling selama 3 detik tambahan
-          const start = Date.now();
-          const interval = setInterval(() => {
-            if (tryOpenPopup() || Date.now() - start > 3000) {
-              clearInterval(interval);
-            }
-          }, 200);
-        }
-      }, 4000); // 4 detik setelah mulai zoom
+  const coords = [book.lat, book.lng];
+
+  /* =====================================
+     3. Zoom ke lokasi
+     ===================================== */
+  window.map.flyTo(coords, 6, {
+    animate: true,
+    duration: 2
+  });
+
+  /* =====================================
+     4. Setelah zoom → klik marker
+        (Pakai polling agar menunggu marker
+        benar-benar selesai render)
+     ===================================== */
+  window.map.once("moveend", () => {
+    let attempts = 0;
+    const maxAttempts = 10;
+
+    const tryClick = () => {
+      const marker = MarkerManager.activeMarkers?.[key];
+
+      // Jika sudah muncul → klik marker
+      if (marker && marker._icon) {
+        marker._icon.dispatchEvent(new MouseEvent("click", {
+          bubbles: true,
+          cancelable: true
+        }));
+        return;
+      }
+
+      // Jika belum muncul → coba lagi
+      attempts++;
+      if (attempts < maxAttempts) {
+        setTimeout(tryClick, 120);
+      }
     };
 
-    if (book.lat !== undefined && book.lng !== undefined) {
-      const coords = [book.lat, book.lng];
+    // mulai polling setelah zoom selesai
+    setTimeout(tryClick, 150);
+  });
 
-      if (window.map && typeof window.map.flyTo === 'function') {
-        zoomAndOpenPopup(coords, key);
-      } else {
-        window.forcedBookZoom = { coords, key };
-      }
-    }
-
-    setTimeout(() => this.close(), 300);
-  },
+  /* =====================================
+     5. Tutup panel Book
+     ===================================== */
+  setTimeout(() => this.close(), 200);
+},
 
   // Tambah efek glow pada marker
   addGlowEffect(marker) {

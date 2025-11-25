@@ -1,7 +1,7 @@
     // Show popup after map loads
     function showPatchPopup() {
       const overlay = document.getElementById('patchOverlay');
-      const hasSeenPatch = localStorage.getItem('seenPatchV3'); // Change version number for new updates
+      const hasSeenPatch = localStorage.getItem('seenPatchV4'); // Change version number for new updates
       
       if (!hasSeenPatch) {
         overlay.classList.add('active');
@@ -12,7 +12,7 @@
     function closePatchPopup() {
       const overlay = document.getElementById('patchOverlay');
       overlay.classList.remove('active');
-      localStorage.setItem('seenPatchV3', 'true'); // Mark as seen
+      localStorage.setItem('seenPatchV4', 'true'); // Mark as seen
     }
 
     // Close on overlay click
