@@ -782,7 +782,7 @@ debounce(fn, delay) {
 }; // ← INI CLOSING BRACKET MarkerManager - HARUS ADA!
 
 // ========================================
-// FUNCTIONS DI LUAR MarkerManager
+// VISITED MARKER FUNCTIONS
 // ========================================
 
 /**
@@ -792,7 +792,6 @@ debounce(fn, delay) {
  */
 window.copyToClipboard = function(text, label) {
   navigator.clipboard.writeText(text).then(() => {
-    // Show notification
     const notification = document.createElement('div');
     notification.className = 'copy-notification';
     notification.textContent = `${label} coordinate copied: ${text}`;
@@ -814,11 +813,8 @@ window.copyToClipboard = function(text, label) {
 };
 
 /**
- * Toggle visited status of a marker (supports login and localStorage)
- * @param {string} markerKey - Marker key
- */
-/**
  * Toggle visited status - SIMPAN LOKAL SAJA (tidak kirim ke server)
+ * @param {string} markerKey - Marker key
  */
 window.toggleVisited = function (markerKey) {
   const visitedMarkers = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');
@@ -837,12 +833,34 @@ window.toggleVisited = function (markerKey) {
   if (markerData) marker.getPopup().setContent(MarkerManager.createPopupContent(markerData));
 };
 
+// ========================================
+// SYNC PROTECTION FLAGS
+// ========================================
+let isLoadingVisitedMarkers = false;
+let lastSyncTime = 0;
+const SYNC_COOLDOWN = 5000; // 5 detik cooldown
+
 /**
  * Load visited markers - GABUNG server + lokal (lokal menang)
+ * ✅ FIXED: Tidak akan dipanggil berulang-ulang
  */
 async function loadVisitedMarkersFromServer() {
+  // ✅ CHECK 1: Cegah jika sedang loading
+  if (isLoadingVisitedMarkers) {
+    console.log("⏭️ Already syncing visited markers, skipping...");
+    return;
+  }
+  
+  // ✅ CHECK 2: Cooldown untuk mencegah spam
+  const now = Date.now();
+  if (now - lastSyncTime < SYNC_COOLDOWN) {
+    console.log("⏱️ Sync cooldown active, skipping...");
+    return;
+  }
+  
   const localVisited = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');
   
+  // Jika belum login, hanya update opacity dari lokal
   if (!isLoggedIn()) {
     Object.entries(localVisited).forEach(([key, v]) => {
       const marker = MarkerManager.activeMarkers[key];
@@ -851,8 +869,14 @@ async function loadVisitedMarkersFromServer() {
     return;
   }
   
+  // Set flags
+  isLoadingVisitedMarkers = true;
+  lastSyncTime = now;
+  
   try {
     const token = getUserToken();
+    
+    console.log("📥 Fetching visited markers from server...");
     
     const res = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker", {
       method: "GET",
@@ -863,6 +887,7 @@ async function loadVisitedMarkersFromServer() {
     try {
       data = JSON.parse(await res.text());
     } catch (e) {
+      console.error("❌ Failed to parse server response");
       return;
     }
     
@@ -879,36 +904,65 @@ async function loadVisitedMarkersFromServer() {
     if (keysToSync.length > 0) {
       console.log(`📤 Syncing ${keysToSync.length} markers to server...`);
       
-      for (const markerKey of keysToSync) {
-        await fetch("https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({ 
-            markerKey: markerKey, 
-            visited: localVisited[markerKey] 
-          })
-        });
+      // Kirim satu per satu dengan delay untuk mencegah rate limit
+      for (let i = 0; i < keysToSync.length; i++) {
+        const markerKey = keysToSync[i];
+        
+        try {
+          await fetch("https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ 
+              markerKey: markerKey, 
+              visited: localVisited[markerKey] 
+            })
+          });
+          
+          // Delay 50ms antar request
+          if (i < keysToSync.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 50));
+          }
+          
+        } catch (err) {
+          console.error(`Failed to sync marker ${markerKey}:`, err);
+        }
       }
       
       console.log("✅ Sync complete");
+    } else {
+      console.log("✅ No changes to sync");
     }
     
-    // Update opacity
+    // Update opacity semua marker
     Object.entries(merged).forEach(([key, v]) => {
       const marker = MarkerManager.activeMarkers[key];
       if (marker) marker.setOpacity(v ? 0.5 : 1.0);
     });
     
   } catch (err) {
+    console.error("❌ Error syncing visited markers:", err);
+    
+    // Fallback: update dari lokal saja
     Object.entries(localVisited).forEach(([key, v]) => {
       const marker = MarkerManager.activeMarkers[key];
       if (marker) marker.setOpacity(v ? 0.5 : 1.0);
     });
+  } finally {
+    // ✅ PENTING: Reset flag di finally agar bisa dipanggil lagi nanti
+    isLoadingVisitedMarkers = false;
   }
 }
+
+// ✅ Export function agar bisa dipanggil dari file lain
+window.loadVisitedMarkersFromServer = loadVisitedMarkersFromServer;
+
+// ========================================
+// MARKER EDITING FUNCTIONS
+// ========================================
+
 /**
  * Start editing mode
  * @param {string} markerKey - Marker key
@@ -935,7 +989,37 @@ window.startEdit = function(markerKey, type) {
   
   setTimeout(() => {
     document.addEventListener('click', handleClickOutside, true);
-  }, 5000);
+  }, 100);
+};
+
+/**
+ * Handle click outside popup to cancel edit
+ * @param {Event} e - Click event
+ */
+function handleClickOutside(e) {
+  const popup = document.querySelector('.marker-popup');
+  if (popup && !popup.contains(e.target) && !e.target.closest('.leaflet-popup')) {
+    cancelEdit(window.currentEditMarker);
+  }
+}
+
+/**
+ * Cancel editing
+ * @param {string} markerKey - Marker key
+ */
+window.cancelEdit = function(markerKey) {
+  document.removeEventListener('click', handleClickOutside, true);
+  
+  const marker = MarkerManager.activeMarkers[markerKey];
+  if (!marker) return;
+  
+  const markerData = MarkerManager.getAllMarkers().find(m => m._key === markerKey);
+  if (markerData) {
+    marker.getPopup().setContent(MarkerManager.createPopupContent(markerData));
+  }
+  
+  window.currentEditMarker = null;
+  window.currentEditType = null;
 };
 
 /**
