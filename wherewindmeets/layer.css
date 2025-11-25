@@ -15,8 +15,8 @@
     
     /* Toggle Button */
     .underground-toggle {
-      width: 50px;
-      height: 50px;
+  width: 48px;
+  height: 48px;
       background: rgba(0, 0, 0, 0);
       border: 2px solid #f4e5c0;
       border-radius: 10px;
@@ -267,3 +267,110 @@
         font-size: 8px;
       }
     }
+    /* ==========================================
+   UNDERGROUND HINT STYLES (COMPLETE + FIXED)
+========================================== */
+
+/* Base Hint Style */
+.underground-hint {
+  position: fixed;
+  background: linear-gradient(135deg, #ffe6a8, #ffd88a);
+  color: #6a4100;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 0 0 2px rgba(212, 175, 55, 0.3);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  z-index: 2000;
+}
+
+/* PC VERSION - DIMUNCULKAN DI BAWAH TOMBOL */
+.underground-hint::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  border-width: 0 10px 10px 10px;
+  border-style: solid;
+  border-color: transparent transparent #ffe6a8 transparent;
+
+  filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* Animated Arrow Icon (pointing up for PC) */
+.underground-hint::after {
+  content: "️";
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translateX(-50%) translateY(-10px);
+  font-size: 20px;
+  animation: bounceUp 1.5s ease-in-out infinite;
+}
+
+@keyframes bounceUp {
+  0%, 100% {
+    transform: translateX(-50%) translateY(-10px);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-15px);
+  }
+}
+
+/* Tampilkan */
+.underground-hint.show {
+  opacity: 1;
+}
+
+/* ==========================================
+   MOBILE VERSION (PANAH KE KIRI)
+========================================== */
+
+@media (max-width: 768px) {
+
+  /* Hint repositioned by JS; only arrow direction changed */
+  .underground-hint::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    left: auto;
+    bottom: auto;
+    transform: translateY(-50%);
+    
+    border-width: 8px 10px 8px 0;
+    border-style: solid;
+    border-color: transparent #ffe6a8 transparent transparent;
+    
+    filter: drop-shadow(-2px 0 2px rgba(0, 0, 0, 0.1));
+  }
+
+  /* Animated arrow for mobile (bounce left) */
+  .underground-hint::after {
+    content: "";
+    position: absolute;
+    left: -30px;
+    top: 50%;
+    right: auto;
+    transform: translateY(-50%);
+    font-size: 18px;
+    animation: bounceLeft 1.5s ease-in-out infinite;
+  }
+
+  @keyframes bounceLeft {
+    0%, 100% {
+      transform: translateY(-50%) translateX(0);
+    }
+    50% {
+      transform: translateY(-50%) translateX(-5px);
+    }
+  }
+}

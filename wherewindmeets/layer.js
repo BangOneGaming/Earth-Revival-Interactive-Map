@@ -1,5 +1,5 @@
 /**
- * Underground Floor Manager - Popup Version (FIXED Icons)
+ * Underground Floor Manager - Popup Version (FIXED Icons + Hint)
  * Container muncul di sebelah tombol (kiri bawah)
  */
 
@@ -17,7 +17,7 @@ const UndergroundManager = {
     { 
       id: 'surface', 
       name: 'Jianghua', 
-      icon: `${ICON_BASE_URL}outland.png`,  // ✅ Gunakan backticks untuk template literal
+      icon: `${ICON_BASE_URL}outland.png`,
       description: 'Ground level',
       filterValue: null,
       brightness: 1.0,
@@ -26,7 +26,7 @@ const UndergroundManager = {
     { 
       id: '1', 
       name: 'Cave Level 1', 
-      icon: `${ICON_BASE_URL}layericon.png`,  // ✅ Gunakan backticks
+      icon: `${ICON_BASE_URL}layericon.png`,
       description: 'First level',
       filterValue: '1',
       brightness: 0.3,
@@ -35,7 +35,7 @@ const UndergroundManager = {
     { 
       id: '2', 
       name: 'Cave Level 2', 
-      icon: `${ICON_BASE_URL}layericon.png`,  // ✅ Gunakan backticks
+      icon: `${ICON_BASE_URL}layericon.png`,
       description: 'Second level',
       filterValue: '2',
       brightness: 0.2,
@@ -44,7 +44,7 @@ const UndergroundManager = {
     { 
       id: '3', 
       name: 'Cave Level 3', 
-      icon: `${ICON_BASE_URL}layericon.png`,  // ✅ Gunakan backticks
+      icon: `${ICON_BASE_URL}layericon.png`,
       description: 'Third level',
       filterValue: '3',
       brightness: 0.1,
@@ -53,7 +53,7 @@ const UndergroundManager = {
     { 
       id: '4', 
       name: 'Deepest Cave', 
-      icon: `${ICON_BASE_URL}layericon.png`,  // ✅ Gunakan backticks
+      icon: `${ICON_BASE_URL}layericon.png`,
       description: 'Deepest level',
       filterValue: '4',
       brightness: 0.025,
@@ -85,8 +85,6 @@ const UndergroundManager = {
         element.style.transition = 'filter 0.5s ease-in-out';
       }
     });
-    
-    
   },
 
   /**
@@ -103,15 +101,12 @@ const UndergroundManager = {
         }
       }
     });
-    
-    
   },
 
   /**
    * Initialize underground manager
    */
   async init(map) {
-    
     this.map = map;
     
     // 🔥 WAIT for map to be fully ready
@@ -122,7 +117,6 @@ const UndergroundManager = {
     const toggleBtn = document.getElementById("undergroundToggle");
     const content = document.getElementById("undergroundContent");
     
-        
     if (!panel || !toggleBtn || !content) {
       console.error("❌ CRITICAL: Required DOM elements missing!");
       return;
@@ -135,19 +129,18 @@ const UndergroundManager = {
     
     // Setup UI
     this.setupUI();
- 
     
     // Setup event listeners
-
     this.setupEventListeners();
-    
     
     // Load saved floor or default to surface
     const savedFloor = localStorage.getItem('activeFloor') || 'surface';
-    
     this.setActiveFloor(savedFloor, false);
     
-    
+    // 🎯 Show hint after everything is loaded (delay 2 seconds)
+    setTimeout(() => {
+      this.showUndergroundHint();
+    }, 2000);
   },
 
   /**
@@ -160,8 +153,6 @@ const UndergroundManager = {
         resolve();
         return;
       }
-
-      
       
       // Try every 100ms, max 5 seconds
       let attempts = 0;
@@ -171,13 +162,12 @@ const UndergroundManager = {
         attempts++;
         
         if (this.isMapReady()) {
-          
           this.mapReady = true;
           clearInterval(checkInterval);
           resolve();
         } else if (attempts >= maxAttempts) {
           console.warn("⚠️ Map not ready after 5s, proceeding anyway");
-          this.mapReady = true; // Force proceed
+          this.mapReady = true;
           clearInterval(checkInterval);
           resolve();
         }
@@ -207,8 +197,6 @@ const UndergroundManager = {
     this.overlayData.forEach((overlay, index) => {
       const underground = String(overlay.underground);
 
-      
-
       if (!overlay.path) {
         console.warn(`⚠️ Overlay #${index + 1} has no path!`, overlay);
         return;
@@ -229,8 +217,6 @@ const UndergroundManager = {
         this.overlayLayers[underground] = [];
       }
       this.overlayLayers[underground].push(imageOverlay);
-
-      
     });
   },
 
@@ -239,7 +225,6 @@ const UndergroundManager = {
    */
   async loadOverlayData() {
     try {
-      
       const response = await fetch('https://autumn-dream-8c07.square-spon.workers.dev/bellow');
       
       if (!response.ok) {
@@ -247,7 +232,6 @@ const UndergroundManager = {
       }
       
       this.overlayData = await response.json();
-      
       
       // Create overlay layers
       this.createOverlayLayers();
@@ -262,8 +246,6 @@ const UndergroundManager = {
    * Setup floor selection UI
    */
   setupUI() {
-    
-    
     const container = document.getElementById("undergroundContent");
     if (!container) {
       console.error("❌ undergroundContent container not found!");
@@ -297,7 +279,6 @@ const UndergroundManager = {
       container.appendChild(floorItem);
     });
 
-    
     this.updateStats();
   },
 
@@ -305,8 +286,6 @@ const UndergroundManager = {
    * Setup event listeners
    */
   setupEventListeners() {
-    
-    
     const toggleBtn = document.getElementById("undergroundToggle");
     const panel = document.getElementById("undergroundPanel");
 
@@ -338,8 +317,6 @@ const UndergroundManager = {
         if (!floorItem) return;
 
         const floorId = floorItem.dataset.floorId;
-        
-        
         this.setActiveFloor(floorId);
         
         setTimeout(() => {
@@ -347,8 +324,6 @@ const UndergroundManager = {
         }, 300);
       });
     }
-
-    
   },
 
   /**
@@ -362,10 +337,8 @@ const UndergroundManager = {
     
     if (this.isOpen) {
       panel.classList.add('visible');
-      
     } else {
       panel.classList.remove('visible');
-      
     }
   },
 
@@ -378,15 +351,12 @@ const UndergroundManager = {
     
     this.isOpen = false;
     panel.classList.remove('visible');
-    
   },
 
   /**
    * Set active floor and update markers
    */
   setActiveFloor(floorId, updateMarkers = true) {
-    
-    
     const previousFloor = this.activeFloor;
     this.activeFloor = floorId;
     
@@ -421,12 +391,10 @@ const UndergroundManager = {
     
     // 🔥 FORCE REFRESH ALL MARKERS saat floor berubah
     if (updateMarkers && typeof MarkerManager !== 'undefined') {
-      
       MarkerManager.forceRefreshMarkers();
     }
     
     this.updateStats();
-    
   },
 
   /**
@@ -438,8 +406,6 @@ const UndergroundManager = {
       console.warn("⚠️ Map not ready, skipping overlay update");
       return;
     }
-
-    
     
     // Remove previous floor overlays
     if (previousFloor && previousFloor !== 'surface') {
@@ -449,7 +415,6 @@ const UndergroundManager = {
           try {
             if (this.map.hasLayer(overlay)) {
               this.map.removeLayer(overlay);
-              
             }
           } catch (err) {
             console.error(`❌ Error removing overlay:`, err);
@@ -465,7 +430,6 @@ const UndergroundManager = {
         newOverlays.forEach((overlay, i) => {
           try {
             overlay.addTo(this.map);
-            
           } catch (err) {
             console.error(`❌ Error adding overlay:`, err);
           }
@@ -525,10 +489,70 @@ const UndergroundManager = {
       const visibleCount = Object.keys(MarkerManager.activeMarkers || {}).length;
       markersCountEl.textContent = visibleCount;
     }
+  },
+
+  /**
+   * 🎯 Show hint for underground toggle button
+   */
+  showUndergroundHint() {
+    const toggleBtn = document.getElementById("undergroundToggle");
+    if (!toggleBtn) return;
+    
+    // Hapus hint lama jika ada
+    const old = document.querySelector('.underground-hint');
+    if (old) old.remove();
+    
+    // Create hint element
+    const hint = document.createElement('div');
+    hint.className = 'underground-hint';
+    hint.textContent = 'Switch Underground Layer';
+    document.body.appendChild(hint);
+    
+    // Get button position
+    const rect = toggleBtn.getBoundingClientRect();
+    const isMobile = window.innerWidth <= 768;
+    
+    // Set position based on device
+    if (isMobile) {
+      // MOBILE: Hint di kanan tombol
+      hint.style.position = "fixed";
+      hint.style.left = (rect.right + 15) + "px";
+      hint.style.top = (rect.top + rect.height / 2) + "px";
+      hint.style.transform = "translateY(-50%)";
+    } else {
+      // PC: Hint di bawah tombol
+      hint.style.position = "fixed";
+      hint.style.left = (rect.left + rect.width / 2) + "px";
+      hint.style.top = (rect.bottom + 15) + "px";
+      hint.style.transform = "translateX(-50%)";
+    }
+    
+    // Animasi muncul
+    setTimeout(() => hint.classList.add('show'), 50);
+    
+    // Hilang sendiri setelah 19 detik
+    setTimeout(() => {
+      hint.classList.remove('show');
+      setTimeout(() => hint.remove(), 300);
+    }, 19000);
   }
 };
 
 // Make available globally
 window.UndergroundManager = UndergroundManager;
 
-console.log("✅ underground-manager.js loaded successfully (FIXED)");
+// 🎯 Update hint position on window resize
+let undergroundHintResizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(undergroundHintResizeTimeout);
+  undergroundHintResizeTimeout = setTimeout(() => {
+    const hint = document.querySelector('.underground-hint');
+    if (hint && hint.classList.contains('show')) {
+      // Recreate hint with new position
+      hint.remove();
+      UndergroundManager.showUndergroundHint();
+    }
+  }, 250);
+});
+
+console.log("✅ underground-manager.js loaded successfully (FIXED + Hint)");

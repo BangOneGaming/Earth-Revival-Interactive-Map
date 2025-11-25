@@ -56,7 +56,9 @@ html, body {
   box-shadow: none;
 }
 
-/* Hilangkan background putih default Leaflet */
+/* ============================================================
+   LEAFLET POPUP BASE STYLES
+============================================================ */
 .leaflet-popup-content-wrapper {
   background: linear-gradient(135deg, rgba(139, 90, 43, 0.95) 0%, rgba(101, 67, 33, 0.98) 100%);
   border-radius: 12px;
@@ -84,16 +86,17 @@ html, body {
   }
 }
 
-/* Popup tip (arrow) */
 .leaflet-popup-tip {
   background: rgba(101, 67, 33, 0.98);
   border-top: 2px solid rgba(218, 165, 32, 0.8);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* === Konten marker popup === */
+/* ============================================================
+   MARKER POPUP CONTAINER
+============================================================ */
 .marker-popup {
-  position: relative; /* 🔥 PENTING - untuk absolute positioning button */
+  position: relative;
   min-width: 280px;
   max-width: 350px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -104,63 +107,39 @@ html, body {
   overflow: hidden;
 }
 
-/* === Edit Description Icon (pojok kanan atas) === */
-.marker-popup-edit-desc-icon {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 100;
-  width: 32px;
-  height: 32px;
-  padding: 6px;
-  background: linear-gradient(135deg, rgba(218, 165, 32, 0.3), rgba(184, 134, 11, 0.3));
-  border: 1px solid rgba(218, 165, 32, 0.8);
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.3s ease;
+/* ============================================================
+   CATEGORY SECTION
+============================================================ */
+.marker-popup-category {
+  padding: 12px 15px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(218, 165, 32, 0.3) 0%, rgba(184, 134, 11, 0.3) 100%);
+  border-bottom: 1px solid rgba(218, 165, 32, 0.3);
 }
 
-.marker-popup-edit-desc-icon img {
-  width: 100%;
-  height: 100%;
+.marker-popup-category-icon {
+  width: 32px;
+  height: 32px;
   object-fit: contain;
-  filter: brightness(1.2);
+  display: none !important;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
-.marker-popup-edit-desc-icon:hover {
-  background: linear-gradient(135deg, rgba(218, 165, 32, 0.5), rgba(184, 134, 11, 0.5));
-  box-shadow: 0 0 15px rgba(218, 165, 32, 0.7);
-  transform: scale(1.1) rotate(15deg);
-  border-color: #FFD700;
-}
-
-/* Header dengan judul */
-.marker-popup-header {
-  background: rgba(0, 0, 0, 0.2);
-  padding: 15px;
-  padding-right: 50px; /* Beri ruang untuk button edit description */
-  border-bottom: 2px solid rgba(218, 165, 32, 0.6);
-  text-align: center; /* <--- bikin semua teks di tengah */
-}
-
-/* Judul h3 */
-.marker-popup-header h3 {
-  margin: 0;
-  padding-left: 30px;
-  font-size: 18px;
+.marker-popup-category-name {
+  color: #f3d59b;
   font-weight: bold;
-  color: #FFD700; /* sebelumnya #DAA520 */
-  text-shadow: 
-    2px 2px 4px rgba(0, 0, 0, 0.7),
-    0 0 10px rgba(218, 165, 32, 0.5);
-  line-height: 1.4;
+  font-size: 18px;
+  line-height: 32px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
 }
 
-/* Image section */
+/* ============================================================
+   IMAGE SECTION
+============================================================ */
 .marker-popup-image {
   width: 100%;
   height: 180px;
@@ -182,49 +161,54 @@ html, body {
   transform: scale(1.2);
 }
 
-/* Category info section - fully centered */
-.marker-popup-category {
-  padding: 12px 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
- background: linear-gradient(135deg, rgba(218, 165, 32, 0.3) 0%, rgba(184, 134, 11, 0.3) 100%);
-  border-bottom: 1px solid rgba(218, 165, 32, 0.3);
+/* ============================================================
+   HEADER SECTION
+============================================================ */
+.marker-popup-header {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  padding-right: 50px;
+  border-bottom: 2px solid rgba(218, 165, 32, 0.6);
+  text-align: center;
 }
 
-.marker-popup-category-icon {
-  width: 32px;
-  height: 32px;
-  object-fit: contain;
-  display: none !important; /* Hide icon as requested */
-  flex-shrink: 0;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
-}
-
-.marker-popup-category-name {
-  color: #f3d59b; /* sebelumnya #FFD700 */
-  font-weight: bold;
+.marker-popup-header h3 {
+  margin: 0;
+  padding-left: 30px;
   font-size: 18px;
-  line-height: 32px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.7),
+    0 0 10px rgba(218, 165, 32, 0.5);
+  line-height: 1.4;
 }
 
-/* === Coordinates section === */
+/* ============================================================
+   COORDINATES SECTION
+============================================================ */
 .marker-popup-coords {
   padding: 10px 15px;
   background: rgba(0, 0, 0, 0.15);
   border-bottom: 1px solid rgba(218, 165, 32, 0.3);
 }
 
+.marker-popup-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
 .marker-popup-coords-title {
   color: #DAA520;
   font-size: 12px;
   font-weight: bold;
-  margin-bottom: 6px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
 }
 
+/* Coordinate Display Grid */
 .marker-popup-coords-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -272,12 +256,7 @@ html, body {
   opacity: 1;
 }
 
-/* === Coordinate Fallback (empty state) === */
-.marker-popup-coords-empty {
-  background:   background: rgba(0, 0, 0, 0.15);
-  
-}
-
+/* Coordinate Empty State */
 .marker-popup-coords-fallback {
   padding: 12px;
   text-align: center;
@@ -291,7 +270,7 @@ html, body {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
 }
 
-/* === Coordinate Edit Fields === */
+/* Coordinate Edit Fields */
 .marker-popup-coords-edit {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -323,6 +302,7 @@ html, body {
   font-size: 13px;
   outline: none;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .marker-popup-coord-edit-input:focus {
@@ -331,87 +311,9 @@ html, body {
   background: rgba(0, 0, 0, 0.4);
 }
 
-/* === Footer Container (Visited + ys_id) === */
-.marker-popup-footer {
-  padding: 10px 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  background: rgba(0, 0, 0, 0.15);
-}
-
-/* === Visited Checkbox (Kiri) === */
-.marker-popup-visited {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  padding: 4px 8px;
-  border-radius: 6px;
-}
-
-.marker-popup-visited:hover {
-  background: rgba(218, 165, 32, 0.1);
-}
-
-.marker-popup-visited input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-  accent-color: #DAA520;
-}
-
-.marker-popup-visited-label {
-  color: #e0e0e0;
-  font-size: 13px;
-  font-weight: 500;
-  user-select: none;
-}
-
-/* === ys_id Display (Kanan) === */
-.marker-popup-ysid {
-  display: flex;
-  align-items: center;
-  padding: 6px 12px;
-  background: linear-gradient(135deg, rgba(218, 165, 32, 0.15), rgba(184, 134, 11, 0.15));
-  border: 1px solid rgba(218, 165, 32, 0.5);
-  border-radius: 20px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-}
-
-.marker-popup-ysid:hover {
-  background: linear-gradient(135deg, rgba(218, 165, 32, 0.25), rgba(184, 134, 11, 0.25));
-  border-color: rgba(218, 165, 32, 0.7);
-  box-shadow: 0 0 12px rgba(218, 165, 32, 0.4);
-  transform: translateY(-1px);
-}
-
-.marker-popup-ysid-label {
-  color: #FFD700;
-  font-size: 13px;
-  font-weight: bold;
-  font-family: 'Courier New', monospace;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-  letter-spacing: 0.5px;
-}
-
-/* Responsive: Stack vertically on small screens */
-@media (max-width: 350px) {
-  .marker-popup-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  
-  .marker-popup-ysid {
-    align-self: flex-end;
-  }
-}
-
-/* === Description section === */
+/* ============================================================
+   DESCRIPTION SECTION
+============================================================ */
 .marker-popup-desc {
   padding: 12px 15px;
   background: rgba(0, 0, 0, 0.1);
@@ -421,7 +323,6 @@ html, body {
   color: #DAA520;
   font-size: 12px;
   font-weight: bold;
-  margin-bottom: 6px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
 }
 
@@ -451,46 +352,330 @@ html, body {
   background: rgba(218, 165, 32, 0.7);
 }
 
-/* Empty state */
+.marker-popup-desc-edit {
+  width: 100%;
+  min-height: 80px;
+  padding: 8px 10px;
+  margin: 8px 0;
+  border-radius: 6px;
+  border: 1px solid rgba(218, 165, 32, 0.6);
+  background: rgba(0, 0, 0, 0.3);
+  color: #f5f5f5;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  outline: none;
+  transition: all 0.3s ease;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.marker-popup-desc-edit:focus {
+  border-color: #FFD700;
+  box-shadow: 0 0 8px rgba(218, 165, 32, 0.7);
+  background: rgba(0, 0, 0, 0.4);
+}
+
 .marker-popup-empty {
   color: #999;
   font-style: italic;
   font-size: 12px;
 }
 
-/* === Input Fields di Popup === */
-.marker-popup input[type="number"],
-.marker-popup textarea {
+/* ============================================================
+   EDIT BUTTONS (SECTION HEADER)
+============================================================ */
+.marker-popup-section-edit-btn {
+  position: relative;
+  flex-shrink: 0;
+  width: 50px;
+  height: 50px;
+  padding: 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+}
+
+.marker-popup-section-edit-btn img {
   width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: brightness(1.1);
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.marker-popup-section-edit-btn:hover img {
+  transform: scale(1.15) rotate(10deg);
+  filter: brightness(1.3);
+}
+
+/* Tooltip */
+.marker-popup-section-edit-btn::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%) translateX(-10px);
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
   padding: 6px 10px;
-  margin: 4px 0;
   border-radius: 6px;
-  border: 1px solid rgba(218, 165, 32, 0.6);
-  background: rgba(0, 0, 0, 0.2);
-  color: #f5f5f5;
-  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+}
+
+.marker-popup-section-edit-btn::before {
+  content: '';
+  position: absolute;
+  left: calc(100% + 2px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 5px 6px 5px 0;
+  border-color: transparent rgba(0, 0, 0, 0.85) transparent transparent;
+  opacity: 0;
+  transition: all 0.25s ease;
+  pointer-events: none;
+}
+
+.marker-popup-section-edit-btn:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+.marker-popup-section-edit-btn:hover::before {
+  opacity: 1;
+}
+
+/* ============================================================
+   FOOTER SECTION (VISITED + YS_ID)
+============================================================ */
+.marker-popup-footer {
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid rgba(218, 165, 32, 0.2);
+}
+
+/* Visited Checkbox */
+.marker-popup-visited {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.marker-popup-visited:hover {
+  background: rgba(218, 165, 32, 0.1);
+}
+
+.marker-popup-visited input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #DAA520;
+}
+
+.marker-popup-visited-label {
+  color: #e0e0e0;
   font-size: 13px;
-  outline: none;
+  font-weight: 500;
+  user-select: none;
+}
+
+/* YS_ID Display */
+.marker-popup-ysid {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, rgba(218, 165, 32, 0.15), rgba(184, 134, 11, 0.15));
+  border: 1px solid rgba(218, 165, 32, 0.5);
+  border-radius: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
 }
 
-.marker-popup input[type="number"]:focus,
-.marker-popup textarea:focus {
-  border-color: #FFD700;
-  box-shadow: 0 0 8px rgba(218, 165, 32, 0.7);
-  background: rgba(0, 0, 0, 0.3);
+.marker-popup-ysid:hover {
+  background: linear-gradient(135deg, rgba(218, 165, 32, 0.25), rgba(184, 134, 11, 0.25));
+  border-color: rgba(218, 165, 32, 0.7);
+  box-shadow: 0 0 12px rgba(218, 165, 32, 0.4);
+  transform: translateY(-1px);
 }
 
-/* === Actions Container === */
-.marker-popup-actions {
+.marker-popup-ysid-label {
+  color: #FFD700;
+  font-size: 13px;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  letter-spacing: 0.5px;
+}
+
+.marker-popup-ysid-spacer {
+  width: 0;
+  height: 0;
+}
+
+/* ============================================================
+   COMMENTS SECTION (NEW)
+============================================================ */
+.marker-popup-comments-section {
   padding: 12px 15px;
+  background: rgba(0, 0, 0, 0.15);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Comments Button */
+.marker-popup-comments-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 24px;
+  width: 100%;
+  max-width: 200px;
+  border: 2px solid rgba(218, 165, 32, 0.8);
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(218, 165, 32, 0.3), rgba(184, 134, 11, 0.3));
+  color: #FFD700;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.marker-popup-comments-btn:hover {
+  background: linear-gradient(135deg, rgba(218, 165, 32, 0.5), rgba(184, 134, 11, 0.5));
+  box-shadow: 0 0 15px rgba(218, 165, 32, 0.6);
+  transform: translateY(-2px);
+  border-color: #FFD700;
+}
+
+.marker-popup-comments-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================================================
+   REPORT SECTION
+============================================================ */
+.marker-popup-report-section {
+  position: relative;
+  background: rgba(0, 0, 0, 0.15);
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 12px 8px 0;
+}
+
+.marker-popup-report-btn {
+  background: transparent;
+  border: 1px solid rgba(214, 169, 111, 0.6);
+  color: #ffd88a;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.marker-popup-report-btn:hover {
+  background: rgba(255, 215, 135, 0.25);
+  border-color: #ffcc82;
+  transform: translateY(-1px);
+}
+
+/* Floating Report Popup */
+.report-popup {
+  position: absolute;
+  bottom: 45px;
+  right: 12px;
+  background: linear-gradient(135deg, rgba(40, 30, 15, 0.96), rgba(25, 18, 8, 0.96));
+  border: 2px solid rgba(218, 165, 32, 0.85);
+  padding: 14px;
+  border-radius: 12px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  width: 230px;
+  z-index: 99999;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.6),
+    0 0 14px rgba(218, 165, 32, 0.35);
+  animation: reportPopupFadeIn 0.25s ease;
+}
+
+.report-popup.show {
+  display: flex;
+}
+
+@keyframes reportPopupFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Report Link Item */
+.report-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid rgba(218, 165, 32, 0.6);
+  border-radius: 8px;
+  text-decoration: none;
+  color: #f3d59b;
+  font-weight: 500;
+  font-size: 13px;
+  transition: all 0.25s ease;
+  background: linear-gradient(135deg, rgba(218, 165, 32, 0.12), rgba(184, 134, 11, 0.12));
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.report-link:hover {
+  background: linear-gradient(135deg, rgba(218, 165, 32, 0.25), rgba(184, 134, 11, 0.25));
+  box-shadow: 0 0 12px rgba(218, 165, 32, 0.4);
+  transform: translateX(4px);
+}
+
+/* ============================================================
+   SECTION ACTIONS (SAVE/CANCEL BUTTONS)
+============================================================ */
+.marker-popup-section-actions {
   display: flex;
   gap: 8px;
-  background: rgba(0, 0, 0, 0.15);
-  justify-content: center;
+  margin-top: 10px;
+  justify-content: flex-end;
 }
 
-/* === Buttons di Popup === */
 .marker-popup-edit-btn {
   display: flex;
   align-items: center;
@@ -505,13 +690,7 @@ html, body {
   font-size: 13px;
   cursor: pointer;
   transition: all 0.3s ease;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-}
-
-.marker-popup-edit-icon {
-  width: 16px;
-  height: 16px;
-  object-fit: contain;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .marker-popup-edit-btn:hover {
@@ -521,17 +700,42 @@ html, body {
 }
 
 .marker-popup-edit-btn.editing {
-  background: linear-gradient(135deg, #fff8e7, #f9e6a9, #f6d97a);  ,
-  color: #FFD700;
+  background: linear-gradient(135deg, #fff8e7, #f9e6a9, #f6d97a);
+  color: #8B5A2B;
+  border-color: rgba(218, 165, 32, 1);
 }
 
 .marker-popup-edit-btn.cancel {
-  background: linear-gradient(135deg, #fff8e7, #f9e6a9, #f6d97a);  ,
-  border-color: rgba(255,69,0,0.7);
-  color: #FFD700;
+  background: linear-gradient(135deg, rgba(220, 53, 69, 0.3), rgba(176, 42, 55, 0.3));
+  border-color: rgba(220, 53, 69, 0.7);
+  color: #ff6b6b;
 }
 
-/* === Copy notification === */
+.marker-popup-edit-btn.cancel:hover {
+  background: linear-gradient(135deg, rgba(220, 53, 69, 0.5), rgba(176, 42, 55, 0.5));
+}
+
+.marker-popup-edit-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.marker-popup-section-actions .marker-popup-edit-btn {
+  flex: 1;
+  justify-content: center;
+  margin: 0;
+}
+
+/* ============================================================
+   UTILITIES
+============================================================ */
+.marker-popup input,
+.marker-popup textarea,
+.marker-popup button {
+  cursor: pointer;
+}
+
 .copy-notification {
   position: fixed;
   top: 20px;
@@ -557,189 +761,14 @@ html, body {
   transform: translateX(0);
 }
 
-/* === Stop propagation on inputs/buttons === */
-.marker-popup input,
-.marker-popup textarea,
-.marker-popup button {
-  cursor: pointer;
-}
-
-
-/* === Section Header with Edit Button === */
-/* === Section Header with Edit Button === */
-.marker-popup-section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 6px;
-}
-
-/* Tombol edit tanpa background */
-.marker-popup-section-edit-btn {
-  position: relative;
-  flex-shrink: 0;
-  width: 50px;
-  height: 50px;
-  padding: 4px;
-  background: transparent; /* 🚫 Tidak ada background */
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: none; /* 🚫 Hilangkan bayangan */
-}
-
-.marker-popup-section-edit-btn img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: brightness(1.1);
-  transition: transform 0.3s ease, filter 0.3s ease;
-}
-
-/* Tooltip yang muncul di sebelah kanan saat hover */
-.marker-popup-section-edit-btn::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  left: calc(100% + 8px);
-  top: 50%;
-  transform: translateY(-50%) translateX(-10px);
-  background: rgba(0, 0, 0, 0.85); /* Tooltip tetap gelap */
-  color: #fff;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.25s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-  z-index: 1000;
-}
-
-/* Arrow tooltip */
-.marker-popup-section-edit-btn::before {
-  content: '';
-  position: absolute;
-  left: calc(100% + 2px);
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 5px 6px 5px 0;
-  border-color: transparent rgba(0, 0, 0, 0.85) transparent transparent;
-  opacity: 0;
-  transition: all 0.25s ease;
-  pointer-events: none;
-}
-
-/* Hover: hanya efek ringan pada ikon + tampilkan tooltip */
-.marker-popup-section-edit-btn:hover img {
-  transform: scale(1.15) rotate(10deg);
-  filter: brightness(1.3);
-}
-
-.marker-popup-section-edit-btn:hover::after {
-  opacity: 1;
-  transform: translateY(-50%) translateX(0);
-}
-
-.marker-popup-section-edit-btn:hover::before {
-  opacity: 1;
-}
-
-/* === Section Actions (Save/Cancel buttons) === */
-.marker-popup-section-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
-  justify-content: flex-end;
-}
-
-.marker-popup-section-actions .marker-popup-edit-btn {
-  flex: 1;
-  justify-content: center;
-  margin: 0;
-}
-
-/* === Coordinate Edit Fields === */
-.marker-popup-coords-edit {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.marker-popup-coord-edit-field {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.marker-popup-coord-edit-label {
-  color: #FFD700;
-  font-size: 11px;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-}
-
-.marker-popup-coord-edit-input {
-  width: 100%;
-  padding: 6px 8px;
-  border-radius: 4px;
-  border: 1px solid rgba(218, 165, 32, 0.6);
-  background: rgba(0, 0, 0, 0.3);
-  color: #f5f5f5;
-  font-family: 'Courier New', monospace;
-  font-size: 13px;
-  outline: none;
-  transition: all 0.3s ease;
-  box-sizing: border-box; /* 🔥 Penting agar padding tidak overflow */
-}
-
-.marker-popup-coord-edit-input:focus {
-  border-color: #FFD700;
-  box-shadow: 0 0 8px rgba(218, 165, 32, 0.7);
-  background: rgba(0, 0, 0, 0.4);
-}
-
-/* Fix untuk Description Textarea */
-.marker-popup-desc-edit {
-  width: 100%;
-  min-height: 80px;
-  padding: 8px 10px;
-  margin: 8px 0;
-  border-radius: 6px;
-  border: 1px solid rgba(218, 165, 32, 0.6);
-  background: rgba(0, 0, 0, 0.3);
-  color: #f5f5f5;
-  font-family: 'Courier New', monospace;
-  font-size: 13px;
-  outline: none;
-  transition: all 0.3s ease;
-  resize: vertical;
-  box-sizing: border-box; /* 🔥 Penting agar padding tidak overflow */
-}
-
-.marker-popup-desc-edit:focus {
-  border-color: #FFD700;
-  box-shadow: 0 0 8px rgba(218, 165, 32, 0.7);
-  background: rgba(0, 0, 0, 0.4);
-}
-
-/* Update existing styles */
-.marker-popup-coords-title,
-.marker-popup-desc-title {
-  margin-bottom: 0; /* Reset margin karena sudah ada di section-header */
-}
-
-/* Responsive */
+/* ============================================================
+   RESPONSIVE DESIGN
+============================================================ */
 @media (max-width: 400px) {
+  .marker-popup {
+    min-width: 260px;
+  }
+  
   .marker-popup-section-edit-btn {
     width: 20px;
     height: 20px;
@@ -749,81 +778,35 @@ html, body {
     font-size: 11px;
     padding: 4px 8px;
   }
-}
-/* ============================================================
-   REPORT BUTTON (TOGGLE)
-============================================================ */
-.marker-popup-report-section {
-  position: relative;
-  background: rgba(0, 0, 0, 0.15);
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  padding-right: 6px; /* TAMBAHKAN JARAK KANAN */
-}
-
-.marker-popup-report-btn {
-  background: transparent;
-  border: 0.4px solid #d6a96f;
-  color: #ffd88a;
-  padding: 4px;
-  border-radius: 8px;
-  font-size: 8px;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-  margin-bottom: 7px; /* JARAK KANAN */
+  
+  .marker-popup-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .marker-popup-ysid {
+    align-self: flex-end;
+  }
+  
+  .marker-popup-comments-btn {
+    max-width: 100%;
+    padding: 8px 20px;
+  }
 }
 
-.marker-popup-report-btn:hover {
-  background: rgba(255, 215, 135, 0.25);
-  border-color: #ffcc82;
-}
-
-/* === Floating Report Popup (Bottom Right) === */
-.report-popup {
-  position: absolute;
-  bottom: 12px;
-  right: 12px;
-  background: linear-gradient(135deg, rgba(40, 30, 15, 0.96), rgba(25, 18, 8, 0.96));
-  border: 2px solid rgba(218, 165, 32, 0.85);
-  padding: 14px;
-  border-radius: 12px;
-  display: none;
-  flex-direction: column;
-  gap: 10px;
-  width: 230px;
-  z-index: 99999;
-  box-shadow:
-    0 8px 24px rgba(0,0,0,0.6),
-    0 0 14px rgba(218,165,32,0.35);
-  animation: popupFadeIn 0.25s ease;
-}
-
-@keyframes popupFadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* === Report Link Item === */
-.report-link {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border: 1px solid rgba(218,165,32,0.6);
-  border-radius: 8px;
-  text-decoration: none;
-  color: #f3d59b;
-  font-weight: 500;
-  transition: 0.25s ease;
-  background: linear-gradient(135deg, rgba(218,165,32,0.12), rgba(184,134,11,0.12));
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-}
-
-.report-link:hover {
-  background: linear-gradient(135deg, rgba(218,165,32,0.25), rgba(184,134,11,0.25));
-  box-shadow: 0 0 12px rgba(218,165,32,0.4);
-  transform: translateX(4px);
+@media (max-width: 350px) {
+  .marker-popup-footer {
+    padding: 8px 12px;
+  }
+  
+  .marker-popup-comments-section {
+    padding: 10px 12px;
+  }
+  
+  .marker-popup-comments-btn {
+    font-size: 13px;
+  }
 }
 /* ========================================
    MARKER GLOW EFFECT

@@ -126,6 +126,11 @@ const MarkerAddSystem = (function() {
       </div>
     `;
   }
+/**
+ * Show Add Marker Button Hint
+ * PC: Hint di bawah tombol dengan panah ke atas
+ * Mobile: Hint di kanan tombol dengan panah ke kiri
+ */
 function showAddButtonHint() {
   if (!addMarkerBtn) return;
 
@@ -133,41 +138,54 @@ function showAddButtonHint() {
   const old = document.querySelector('.addmarker-hint');
   if (old) old.remove();
 
+  // Create hint element
   const hint = document.createElement('div');
   hint.className = 'addmarker-hint';
-  hint.textContent = 'Tap to if you found lost marker!';
+  hint.textContent = 'Tap if you found lost marker!';
   document.body.appendChild(hint);
 
-  // Posisi tombol
+  // Get button position
   const rect = addMarkerBtn.getBoundingClientRect();
+  const isMobile = window.innerWidth <= 600;
 
-  // === Versi DESKTOP (bawaan) ===
-  hint.style.position = "fixed";
-  hint.style.left = (rect.left + rect.width / 2) + "px";
-  hint.style.top = (rect.top + 5) + "px";
-  hint.style.transform = "translateX(-120%)";
-
-  hint.classList.add("hint-desktop");   // ← tambahkan class desktop
-
-  // === Versi MOBILE (<600px) → tooltip di kanan tombol ===
-  if (window.innerWidth <= 600) {
-    hint.style.left = rect.right + 12 + "px";     // kanan tombol
+  // Set position based on device
+  if (isMobile) {
+    // MOBILE: Hint di kanan tombol
+    hint.style.position = "fixed";
+    hint.style.left = (rect.right + 15) + "px";
     hint.style.top = (rect.top + rect.height / 2) + "px";
-    hint.style.transform = "translateY(-50%)";    // center
-
-    hint.classList.remove("hint-desktop");
-    hint.classList.add("hint-mobile");            // ← tambahkan class mobile
+    hint.style.transform = "translateY(-50%)";
+  } else {
+    // PC: Hint di bawah tombol
+    hint.style.position = "fixed";
+    hint.style.left = (rect.left + rect.width / 2) + "px";
+    hint.style.top = (rect.bottom + 15) + "px";
+    hint.style.transform = "translateX(-50%)";
   }
 
   // Animasi muncul
   setTimeout(() => hint.classList.add('show'), 50);
 
-  // Hilang sendiri
+  // Hilang sendiri setelah 19 detik
   setTimeout(() => {
     hint.classList.remove('show');
     setTimeout(() => hint.remove(), 300);
   }, 19000);
 }
+
+// Update hint position on window resize
+let hintResizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(hintResizeTimeout);
+  hintResizeTimeout = setTimeout(() => {
+    const hint = document.querySelector('.addmarker-hint');
+    if (hint && hint.classList.contains('show')) {
+      // Recreate hint with new position
+      hint.remove();
+      showAddButtonHint();
+    }
+  }, 250);
+});
   /**
    * Initialize category select events
    */

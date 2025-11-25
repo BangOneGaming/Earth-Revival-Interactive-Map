@@ -1,5 +1,58 @@
 const FEEDBACK_USER_ENDPOINT = "https://autumn-dream-8c07.square-spon.workers.dev/userfeedback";
 
+// Show 429 Error Popup for Feedback
+function showFeedback429ErrorPopup() {
+  // Check if popup already exists
+  let popup = document.getElementById('feedbackError429Popup');
+  if (popup) {
+    popup.remove();
+  }
+  
+  // Create popup HTML
+  const popupHTML = `
+    <div id="feedbackError429Popup" class="error429-overlay">
+      <div class="error429-popup">
+        <button class="error429-close" onclick="closeFeedback429Popup()">×</button>
+        <div class="error429-content">
+          <img src="sad.png" alt="Sad" class="error429-image" onerror="this.style.display='none'">
+          <div class="error429-title">Sorry! 😔</div>
+          <div class="error429-message">
+            Our server is out of quota.<br>
+            Please come back tomorrow and<br>
+            submit your contribution later.
+          </div>
+          <div class="error429-submessage">
+            Your edit is saved locally. Don't worry, you won't lose it!
+          </div>
+          <button class="error429-ok-btn" onclick="closeFeedback429Popup()">
+            Got It!
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Add to body
+  document.body.insertAdjacentHTML('beforeend', popupHTML);
+  
+  // Animate in
+  setTimeout(() => {
+    const popup = document.getElementById('feedbackError429Popup');
+    if (popup) {
+      popup.classList.add('show');
+    }
+  }, 10);
+}
+
+// Close Feedback 429 Error Popup
+window.closeFeedback429Popup = function() {
+  const popup = document.getElementById('feedbackError429Popup');
+  if (popup) {
+    popup.classList.remove('show');
+    setTimeout(() => popup.remove(), 300);
+  }
+};
+
 async function saveFeedbackUser(key, updateData) {
   try {
     if (!isLoggedIn()) {
@@ -24,6 +77,12 @@ async function saveFeedbackUser(key, updateData) {
         "Authorization": `Bearer ${token}`
       }
     });
+
+    // Handle 429 on GET request
+    if (existingRes.status === 429) {
+      showFeedback429ErrorPopup();
+      throw new Error("Server quota exceeded");
+    }
 
     let existingData = {};
     if (existingRes.ok) {
@@ -55,6 +114,12 @@ async function saveFeedbackUser(key, updateData) {
       body: JSON.stringify(payload)
     });
 
+    // Handle 429 on POST request
+    if (res.status === 429) {
+      showFeedback429ErrorPopup();
+      throw new Error("Server quota exceeded");
+    }
+
     if (!res.ok) {
       throw new Error("Failed saving feedback user");
     }
@@ -63,7 +128,11 @@ async function saveFeedbackUser(key, updateData) {
 
   } catch (err) {
     console.error("❌ Error saving feedback user:", err);
-    showNotification("Failed to save to feedbackuser", "error");
+    
+    // Only show error notification if it's not a 429 error (popup already shown)
+    if (!err.message.includes("quota exceeded")) {
+      showNotification("Failed to save to feedbackuser", "error");
+    }
   }
 }
 
@@ -106,7 +175,11 @@ window.saveEditFromConsole = async function(markerKey, type) {
     showNotification("✅ Synced with server!", "success");
   } catch (err) {
     console.error("❌ Failed to sync with server:", err);
-    showNotification("⚠️ Saved locally, but failed to sync", "error");
+    
+    // Don't show "saved locally" notification if quota exceeded (popup already shown)
+    if (!err.message.includes("quota exceeded")) {
+      showNotification("⚠️ Saved locally, but failed to sync", "error");
+    }
   }
 };
 

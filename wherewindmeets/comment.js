@@ -1,4 +1,4 @@
-// comments.js - Tambahkan file baru atau masukkan ke file existing
+// comments.js - Enhanced version with custom 429 error popup
 
 const COMMENTS_ENDPOINT = "https://autumn-dream-8c07.square-spon.workers.dev/comments";
 const MAX_COMMENT_LENGTH = 500;
@@ -24,6 +24,58 @@ window.closeCommentsModal = function() {
   currentMarkerKey = null;
 };
 
+// Show 429 Error Popup
+function show429ErrorPopup() {
+  // Check if popup already exists
+  let popup = document.getElementById('error429Popup');
+  if (popup) {
+    popup.remove();
+  }
+  
+  // Create popup HTML
+  const popupHTML = `
+    <div id="error429Popup" class="error429-overlay">
+      <div class="error429-popup">
+        <button class="error429-close" onclick="close429Popup()">×</button>
+        <div class="error429-content">
+          <img src="sad.png" alt="Sad" class="error429-image" onerror="this.style.display='none'">
+          <div class="error429-title">We're Sorry! 😔</div>
+          <div class="error429-message">
+            Our server is under limit.<br>
+            You can comment next day.
+          </div>
+          <div class="error429-submessage">
+            Thank you for your patience and understanding!
+          </div>
+          <button class="error429-ok-btn" onclick="close429Popup()">
+            OK, I Understand
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Add to body
+  document.body.insertAdjacentHTML('beforeend', popupHTML);
+  
+  // Animate in
+  setTimeout(() => {
+    const popup = document.getElementById('error429Popup');
+    if (popup) {
+      popup.classList.add('show');
+    }
+  }, 10);
+}
+
+// Close 429 Error Popup
+window.close429Popup = function() {
+  const popup = document.getElementById('error429Popup');
+  if (popup) {
+    popup.classList.remove('show');
+    setTimeout(() => popup.remove(), 300);
+  }
+};
+
 // Load comments from server
 async function loadComments(markerKey) {
   const modalBody = document.getElementById('commentsModalBody');
@@ -33,6 +85,20 @@ async function loadComments(markerKey) {
     const response = await fetch(`${COMMENTS_ENDPOINT}/${markerKey}`, {
       method: 'GET'
     });
+    
+    // Handle 429 rate limit error
+    if (response.status === 429) {
+      show429ErrorPopup();
+      modalBody.innerHTML = `
+        <div class="comments-error">
+          <div class="comments-error-icon">⚠️</div>
+          <div class="comments-error-message">
+            Comment system is temporarily unavailable.
+          </div>
+        </div>
+      `;
+      return;
+    }
     
     if (!response.ok) {
       throw new Error('Failed to load comments');
@@ -177,8 +243,14 @@ window.submitComment = async function(event) {
       })
     });
     
+    // Handle 429 rate limit error specifically
+    if (response.status === 429) {
+      show429ErrorPopup();
+      return;
+    }
+    
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.error || 'Failed to post comment');
     }
     
@@ -234,18 +306,21 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+
 document.addEventListener("DOMContentLoaded", () => {
     const icon = document.getElementById("notificationIcon");
     const box = document.getElementById("notificationBox");
 
-    icon.addEventListener("click", () => {
-        box.style.display = (box.style.display === "block") ? "none" : "block";
-    });
+    if (icon && box) {
+        icon.addEventListener("click", () => {
+            box.style.display = (box.style.display === "block") ? "none" : "block";
+        });
 
-    // Klik luar popup → close
-    document.addEventListener("click", (e) => {
-        if (!box.contains(e.target) && e.target !== icon) {
-            box.style.display = "none";
-        }
-    });
+        // Klik luar popup → close
+        document.addEventListener("click", (e) => {
+            if (!box.contains(e.target) && e.target !== icon) {
+                box.style.display = "none";
+            }
+        });
+    }
 });

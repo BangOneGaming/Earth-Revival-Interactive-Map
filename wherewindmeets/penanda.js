@@ -546,74 +546,73 @@ createPopupContent(markerData, editState = {}) {
              onerror="this.src='https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg'">
        </div>`;
 
+// Updated createPopupContent function dengan struktur baru
+
 return `
   <div class="marker-popup" data-marker-key="${markerKey}" onclick="event.stopPropagation()">
-
+    <!-- Category Section -->
     <div class="marker-popup-category">
       <img src="${categoryIcon}" alt="${categoryName}" class="marker-popup-category-icon">
       <span class="marker-popup-category-name">${categoryName}</span>
     </div>
-
+    
+    <!-- Image Section -->
     ${imageHTML}
-
+    
+    <!-- Header Section -->
     <div class="marker-popup-header">
       <h3>${markerData.name || 'Unnamed Location'}</h3>
     </div>
-
+    
+    <!-- Description Section -->
     ${descHTML}
-
-    <!-- =========== FOOTER ASLI (TIDAK ADA REPORT) =========== -->
+    
+    <!-- Footer Section (Visited + ys_id) -->
     <div class="marker-popup-footer">
       <div class="marker-popup-visited" onclick="event.stopPropagation(); toggleVisited('${markerKey}')">
         <input type="checkbox" ${isVisited ? 'checked' : ''} onchange="event.stopPropagation()">
         <span class="marker-popup-visited-label">✓ Visited</span>
       </div>
-
-      <button class="marker-popup-comments-btn" onclick="event.stopPropagation(); openCommentsModal('${markerKey}')">
-        💬 Comments
-      </button>
-
       ${markerData.ys_id ? `
         <div class="marker-popup-ysid">
           <span class="marker-popup-ysid-label">@${markerData.ys_id}</span>
         </div>
       ` : '<div class="marker-popup-ysid-spacer"></div>'}
     </div>
-
-
-
+    
+    <!-- Comments Section (NEW!) -->
+    <div class="marker-popup-comments-section">
+      <button class="marker-popup-comments-btn" onclick="event.stopPropagation(); openCommentsModal('${markerKey}')">
+        💬 Comments
+      </button>
+    </div>
+    
+    <!-- Report Section -->
     <div class="marker-popup-report-section">
-
       <button 
         class="marker-popup-report-btn"
         onclick="event.stopPropagation(); toggleReportPopup('${markerKey}')">
         ⚠ Report
       </button>
-
       <div class="report-popup" data-report="${markerKey}">
         <a class="report-link" href="https://discord.gg/Mt65qFprs" target="_blank">
-<svg viewBox="0 0 24 24" width="18" height="18" fill="#ffd88a">
-  <path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.07.07 0 0 0-.073.036c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.49 0 12.64 12.64 0 0 0-.622-1.25.07.07 0 0 0-.073-.036A19.736 19.736 0 0 0 4.69 4.37a.064.064 0 0 0-.03.027C.7 10.053-.42 15.58.13 21.053a.078.078 0 0 0 .028.053 19.9 19.9 0 0 0 6.072 3.073.07.07 0 0 0 .076-.027c.466-.638.883-1.313 1.246-2.017a.07.07 0 0 0-.041-.098 13.1 13.1 0 0 1-1.872-.892.07.07 0 0 1-.01-.116 10.2 10.2 0 0 0 .372-.292.07.07 0 0 1 .073-.01c3.927 1.793 8.18 1.793 12.062 0a.07.07 0 0 1 .074.009c.12.098.247.2.373.293a.07.07 0 0 1-.01.116c-.6.35-1.245.654-1.872.892a.07.07 0 0 0-.04.099c.385.703.802 1.378 1.245 2.016a.07.07 0 0 0 .077.027 19.87 19.87 0 0 0 6.072-3.073.07.07 0 0 0 .028-.053c.5-5.251-.838-10.755-3.983-16.656a.06.06 0 0 0-.029-.028ZM8.02 15.33c-1.183 0-2.154-1.084-2.154-2.412 0-1.328.955-2.412 2.154-2.412 1.21 0 2.168 1.093 2.154 2.412 0 1.328-.955 2.412-2.154 2.412Zm7.975 0c-1.183 0-2.154-1.084-2.154-2.412 0-1.328.955-2.412 2.154-2.412 1.21 0 2.168 1.093 2.154 2.412 0 1.328-.944 2.412-2.154 2.412Z"/>
-</svg>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="#ffd88a">
+            <path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.07.07 0 0 0-.073.036c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.49 0 12.64 12.64 0 0 0-.622-1.25.07.07 0 0 0-.073-.036A19.736 19.736 0 0 0 4.69 4.37a.064.064 0 0 0-.03.027C.7 10.053-.42 15.58.13 21.053a.078.078 0 0 0 .028.053 19.9 19.9 0 0 0 6.072 3.073.07.07 0 0 0 .076-.027c.466-.638.883-1.313 1.246-2.017a.07.07 0 0 0-.041-.098 13.1 13.1 0 0 1-1.872-.892.07.07 0 0 1-.01-.116 10.2 10.2 0 0 0 .372-.292.07.07 0 0 1 .073-.01c3.927 1.793 8.18 1.793 12.062 0a.07.07 0 0 1 .074.009c.12.098.247.2.373.293a.07.07 0 0 1-.01.116c-.6.35-1.245.654-1.872.892a.07.07 0 0 0-.04.099c.385.703.802 1.378 1.245 2.016a.07.07 0 0 0 .077.027 19.87 19.87 0 0 0 6.072-3.073.07.07 0 0 0 .028-.053c.5-5.251-.838-10.755-3.983-16.656a.06.06 0 0 0-.029-.028ZM8.02 15.33c-1.183 0-2.154-1.084-2.154-2.412 0-1.328.955-2.412 2.154-2.412 1.21 0 2.168 1.093 2.154 2.412 0 1.328-.955 2.412-2.154 2.412Zm7.975 0c-1.183 0-2.154-1.084-2.154-2.412 0-1.328.955-2.412 2.154-2.412 1.21 0 2.168 1.093 2.154 2.412 0 1.328-.944 2.412-2.154 2.412Z"/>
+          </svg>
           Discord
         </a>
-
-        <a class="report-link"
-           href="https://www.tiktok.com/@bangonegaming97"
-           target="_blank">
-<svg viewBox="0 0 24 24" width="18" height="18" fill="#ffd88a">
-  <path d="M12.58 2h3.22a5.73 5.73 0 0 0 4.1 4.08v3.22a8.92 8.92 0 0 1-4.13-1.17v7.72a6.69 6.69 0 1 1-6.69-6.69 6.6 6.6 0 0 1 1.5.17v3.36a3.33 3.33 0 1 0 2.42 3.21V2Z"/>
-</svg>
+        <a class="report-link" href="https://www.tiktok.com/@bangonegaming97" target="_blank">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="#ffd88a">
+            <path d="M12.58 2h3.22a5.73 5.73 0 0 0 4.1 4.08v3.22a8.92 8.92 0 0 1-4.13-1.17v7.72a6.69 6.69 0 1 1-6.69-6.69 6.6 6.6 0 0 1 1.5.17v3.36a3.33 3.33 0 1 0 2.42 3.21V2Z"/>
+          </svg>
           TikTok
         </a>
-
         <a class="report-link"
           href="mailto:square.spon@gmail.com?subject=Report%20Marker%20|%20Key:%20${markerKey}%20|%20Category:%20${markerData.category_id}&body=Hello,%0D%0AI want to report a marker.%0D%0A%0D%0AKey: ${markerKey}%0D%0ACategory ID: ${markerData.category_id}%0D%0AReason:%0D%0A">
           📧 Email
         </a>
       </div>
     </div>
-
   </div>
 `;
 },

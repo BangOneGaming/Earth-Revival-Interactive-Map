@@ -3,37 +3,115 @@
  * Tema emas kecoklatan konsisten dengan desain existing
  */
  
+/* Base Hint Style */
 .addmarker-hint {
-  position: absolute;
-  top: 50%;
-  
-  background: #ffe6a8;
+  position: fixed;
+  background: linear-gradient(135deg, #ffe6a8, #ffd88a);
   color: #6a4100;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 15px;
   font-weight: 600;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 0 0 2px rgba(212, 175, 55, 0.3);
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
-  transition: opacity .4s ease;
+  transition: opacity 0.4s ease;
+  z-index: 2000;
+}
+/* ==========================================
+   PC VERSION (Default) - BAWAH TOMBOL
+   ========================================== */
+.addmarker-hint {
+  /* Akan di-set via JS, ini fallback */
+  left: 50%;
+  top: 70px;
+  transform: translateX(-50%);
+}
+
+/* Panah ke ATAS (menunjuk ke tombol) */
+.addmarker-hint::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  border-width: 0 10px 10px 10px;
+  border-style: solid;
+  border-color: transparent transparent #ffe6a8 transparent;
+  
+  filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* ==========================================
+   ADD MARKER HINT - PC & MOBILE VERSIONS
+   ========================================== */
+
+/* Base Hint Style */
+.addmarker-hint {
+  position: fixed;
+  background: linear-gradient(135deg, #ffe6a8, #ffd88a);
+  color: #6a4100;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 0 0 2px rgba(212, 175, 55, 0.3);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
   z-index: 2000;
 }
 
-/* Panah kecil mengarah ke kiri */
+/* ==========================================
+   PC VERSION (Default) - BAWAH TOMBOL
+   ========================================== */
+.addmarker-hint {
+  /* Akan di-set via JS, ini fallback */
+  left: 50%;
+  top: 70px;
+  transform: translateX(-50%);
+}
+
+/* Panah ke ATAS (menunjuk ke tombol) */
+.addmarker-hint::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  border-width: 0 10px 10px 10px;
+  border-style: solid;
+  border-color: transparent transparent #ffe6a8 transparent;
+  
+  filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* Animated Arrow Icon (pointing down initially for PC) */
 .addmarker-hint::after {
   content: "";
   position: absolute;
-  top: %;
-  left: -6px;
+  right: -35px;
+  top: 50%;
   transform: translateY(-50%);
-  
-  border-width: 6px;
-  border-style: solid;
+  font-size: 20px;
+  animation: bounceDown 1.5s ease-in-out infinite;
+}
 
-  /* panah menghadap kiri */
-  border-color: transparent #ffe6a8 transparent transparent;
+@keyframes bounceDown {
+  0%, 100% {
+    transform: translateY(-50%) translateY(0);
+  }
+  50% {
+    transform: translateY(-50%) translateY(5px);
+  }
 }
 
 /* Tampilkan */
@@ -119,20 +197,51 @@ body > #addMarkerBtn {
     z-index: 501;
   }
 
-  /* Posisi hint (selalu di kanan tombol) */
   .addmarker-hint {
-    position: fixed;                 /* penting */
-    top: 25%;                        /* sejajar dengan tombol */
-    left: calc(50% + 60px);          /* geser ke kanan dari tombol */
-    transform: translateY(-50%);
-    z-index: 502;
+    /* Posisi akan di-set via JS */
+    padding: 10px 16px;
+    font-size: 14px;
+    left: auto;
+    top: auto;
+    transform: none;
   }
 
-  .addmarker-hint::after {
+  /* Panah ke KIRI (menunjuk ke tombol) */
+  .addmarker-hint::before {
+    content: "";
+    position: absolute;
     top: 50%;
-    left: -6px;
+    right: 100%;
+    left: auto;
+    bottom: auto;
     transform: translateY(-50%);
+    
+    border-width: 8px 10px 8px 0;
+    border-style: solid;
     border-color: transparent #ffe6a8 transparent transparent;
+    
+    filter: drop-shadow(-2px 0 2px rgba(0, 0, 0, 0.1));
+  }
+
+  /* Animated Arrow pointing LEFT for mobile */
+  .addmarker-hint::after {
+    content: "";
+    position: absolute;
+    left: -30px;
+    top: 50%;
+    right: auto;
+    transform: translateY(-50%);
+    font-size: 18px;
+    animation: bounceLeft 1.5s ease-in-out infinite;
+  }
+
+  @keyframes bounceLeft {
+    0%, 100% {
+      transform: translateY(-50%) translateX(0);
+    }
+    50% {
+      transform: translateY(-50%) translateX(-5px);
+    }
   }
 }
 /* ==========================================
