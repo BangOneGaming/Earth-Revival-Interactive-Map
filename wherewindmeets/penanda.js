@@ -843,17 +843,17 @@ let lastSyncTime = 0;
 const SYNC_COOLDOWN = 5000; // 5 detik cooldown
 
 /**
- * Load visited markers - GABUNG server + lokal (lokal menang)
- * ✅ FIXED: Tidak akan dipanggil berulang-ulang
+ * Load visited markers - BATCH VERSION
+ * ✅ Mengirim semua marker sekaligus dalam 1 request
  */
 async function loadVisitedMarkersFromServer() {
-  // ✅ CHECK 1: Cegah jika sedang loading
+  // ✅ Proteksi: Cegah jika sedang loading
   if (isLoadingVisitedMarkers) {
     console.log("⏭️ Already syncing visited markers, skipping...");
     return;
   }
   
-  // ✅ CHECK 2: Cooldown untuk mencegah spam
+  // ✅ Cooldown untuk mencegah spam
   const now = Date.now();
   if (now - lastSyncTime < SYNC_COOLDOWN) {
     console.log("⏱️ Sync cooldown active, skipping...");
@@ -898,42 +898,50 @@ async function loadVisitedMarkersFromServer() {
     
     localStorage.setItem("visitedMarkers", JSON.stringify(merged));
     
-    // ✅ Kirim ke server: hanya key yang lokal berbeda dari server
+    // ✅ Cari perbedaan untuk sync
     const keysToSync = Object.keys(localVisited).filter(key => 
       localVisited[key] !== serverVisited[key]
     );
     
+    // ✅ KIRIM BATCH (bukan satu per satu!)
     if (keysToSync.length > 0) {
-      console.log(`📤 Syncing ${keysToSync.length} markers to server...`);
+      console.log(`📤 Syncing ${keysToSync.length} markers to server (BATCH)...`);
       
-      // Kirim satu per satu dengan delay untuk mencegah rate limit
-      for (let i = 0; i < keysToSync.length; i++) {
-        const markerKey = keysToSync[i];
+      try {
+        const batchRes = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker/batch", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            markers: keysToSync.map(markerKey => ({
+              markerKey: markerKey,
+              visited: localVisited[markerKey]
+            }))
+          })
+        });
         
-        try {
-          await fetch("https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ 
-              markerKey: markerKey, 
-              visited: localVisited[markerKey] 
-            })
-          });
+        if (batchRes.ok) {
+          const batchData = await batchRes.json();
+          console.log(`✅ Batch sync complete! Updated ${batchData.updated} markers`);
+        } else {
+          const errorText = await batchRes.text();
+          console.error("❌ Batch sync failed:", batchRes.status, errorText);
           
-          // Delay 50ms antar request
-          if (i < keysToSync.length - 1) {
-            await new Promise(resolve => setTimeout(resolve, 50));
-          }
-          
-        } catch (err) {
-          console.error(`Failed to sync marker ${markerKey}:`, err);
+          // Fallback: jika batch gagal, coba satu per satu (backward compatible)
+          console.log("⚠️ Falling back to individual requests...");
+          await fallbackIndividualSync(keysToSync, localVisited, token);
         }
+        
+      } catch (err) {
+        console.error("❌ Batch request error:", err);
+        
+        // Fallback ke individual sync
+        console.log("⚠️ Falling back to individual requests...");
+        await fallbackIndividualSync(keysToSync, localVisited, token);
       }
       
-      console.log("✅ Sync complete");
     } else {
       console.log("✅ No changes to sync");
     }
@@ -953,14 +961,54 @@ async function loadVisitedMarkersFromServer() {
       if (marker) marker.setOpacity(v ? 0.5 : 1.0);
     });
   } finally {
-    // ✅ PENTING: Reset flag di finally agar bisa dipanggil lagi nanti
+    // ✅ Reset flag
     isLoadingVisitedMarkers = false;
   }
 }
 
-// ✅ Export function agar bisa dipanggil dari file lain
-window.loadVisitedMarkersFromServer = loadVisitedMarkersFromServer;
-
+/**
+ * Fallback: Individual sync (backward compatible)
+ * Dipanggil jika batch endpoint gagal
+ */
+async function fallbackIndividualSync(keysToSync, localVisited, token) {
+  let successCount = 0;
+  let failCount = 0;
+  
+  for (let i = 0; i < keysToSync.length; i++) {
+    const markerKey = keysToSync[i];
+    
+    try {
+      const res = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ 
+          markerKey: markerKey, 
+          visited: localVisited[markerKey] 
+        })
+      });
+      
+      if (res.ok) {
+        successCount++;
+      } else {
+        failCount++;
+      }
+      
+      // Delay untuk avoid rate limit
+      if (i < keysToSync.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+      
+    } catch (err) {
+      console.error(`Failed to sync marker ${markerKey}:`, err);
+      failCount++;
+    }
+  }
+  
+  console.log(`✅ Fallback sync complete: ${successCount} success, ${failCount} failed`);
+}
 // ========================================
 // MARKER EDITING FUNCTIONS
 // ========================================
