@@ -1023,47 +1023,17 @@ window.cancelEdit = function(markerKey) {
 };
 
 /**
- * Handle click outside popup
- * @param {Event} e - Click event
- */
-function handleClickOutside(e) {
-  const popup = document.querySelector('.marker-popup');
-  if (popup && !popup.contains(e.target) && !e.target.closest('.leaflet-popup')) {
-    cancelEdit(window.currentEditMarker);
-  }
-}
-
-/**
- * Cancel editing
- * @param {string} markerKey - Marker key
- */
-window.cancelEdit = function(markerKey) {
-  document.removeEventListener('click', handleClickOutside, true);
-  
-  const marker = MarkerManager.activeMarkers[markerKey];
-  if (!marker) return;
-  
-  const markerData = MarkerManager.getAllMarkers().find(m => m._key === markerKey);
-  if (markerData) {
-    marker.getPopup().setContent(MarkerManager.createPopupContent(markerData));
-  }
-  
-  window.currentEditMarker = null;
-  window.currentEditType = null;
-};
-
-/**
  * Save edit changes
  * @param {string} markerKey - Marker key
  * @param {string} type - Edit type
- *
+ */
 window.saveEdit = async function(markerKey, type) {
   document.removeEventListener('click', handleClickOutside, true);
   
   const markerEdits = JSON.parse(localStorage.getItem('markerEdits') || '{}');
   if (!markerEdits[markerKey]) markerEdits[markerKey] = {};
 
-  // --- Ambil data dari form edit
+  // Ambil data dari form edit
   if (type === 'coords') {
     const x = document.getElementById(`editX_${markerKey}`).value.trim();
     const y = document.getElementById(`editY_${markerKey}`).value.trim();
@@ -1089,7 +1059,7 @@ window.saveEdit = async function(markerKey, type) {
   // Simpan lokal (fallback kalau offline)
   localStorage.setItem('markerEdits', JSON.stringify(markerEdits));
 
-  // --- Update UI (refresh popup sementara)
+  // Update UI (refresh popup sementara)
   const marker = MarkerManager.activeMarkers[markerKey];
   if (marker) {
     const markerData = MarkerManager.getAllMarkers().find(m => m._key === markerKey);
@@ -1098,11 +1068,11 @@ window.saveEdit = async function(markerKey, type) {
     }
   }
 
-  // --- Reset edit state
+  // Reset edit state
   window.currentEditMarker = null;
   window.currentEditType = null;
 
-  // --- Kirim ke server
+  // Kirim ke server
   try {
     showNotification('⏳ Saving to server...', 'info');
 
@@ -1119,7 +1089,7 @@ window.saveEdit = async function(markerKey, type) {
 /**
  * Show notification
  * @param {string} message - Notification message
- * @param {string} type - Notification type ('success' or 'error')
+ * @param {string} type - Notification type ('success', 'error', 'info')
  */
 function showNotification(message, type = 'success') {
   const notification = document.createElement('div');
@@ -1129,6 +1099,9 @@ function showNotification(message, type = 'success') {
   if (type === 'error') {
     notification.style.background = 'linear-gradient(135deg, rgba(244, 67, 54, 0.95), rgba(211, 47, 47, 0.95))';
     notification.style.borderColor = 'rgba(239, 83, 80, 0.8)';
+  } else if (type === 'info') {
+    notification.style.background = 'linear-gradient(135deg, rgba(33, 150, 243, 0.95), rgba(25, 118, 210, 0.95))';
+    notification.style.borderColor = 'rgba(66, 165, 245, 0.8)';
   }
   
   document.body.appendChild(notification);
