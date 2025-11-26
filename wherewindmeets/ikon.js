@@ -70,7 +70,8 @@ const ICON_CONFIG = {
     "32": "archer.webp",
     "33": "melody.webp",
     "34": "riddle.webp",
-    "35": "summo.webp"
+    "35": "summo.webp",
+    "36": "mystic.webp"
   },
 
   names: {
@@ -108,7 +109,8 @@ const ICON_CONFIG = {
     "32": "Archer Contest",
     "33": "Graceful Melody",
     "34": "Riddle",
-    "35": "Sumo"
+    "35": "Sumo",
+    "36": "Mystic Skill"
   },
 
   // Custom sizes per category

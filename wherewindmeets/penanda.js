@@ -16,6 +16,11 @@ const MARKER_CONFIG = {
 // Category IDs berdasarkan ICON_CONFIG
 // ========================================
 const filterGroupConfig = {
+  hot : {
+    title: 'Hot',
+    icon: '',
+    categories: [2, 3, 13, 36]  // Teleport + Treasure Chest
+  },
   discover: {
     title: 'Discover',
     icon: '',
@@ -24,7 +29,7 @@ const filterGroupConfig = {
   collection: {
     title: 'Collection',
     icon: '',
-    categories: [2, 3, 5, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    categories: [5, 4, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20]
   },
     minigame: {
     title: "Mini Game's",
@@ -357,7 +362,8 @@ getAllMarkers() {
     window.panah,
     window.melodi,
     window.tebakan,
-    window.gulat
+    window.gulat,
+    window.tehnik
   ];
 
     sources.forEach(source => {
@@ -441,7 +447,15 @@ createPopupContent(markerData, editState = {}) {
   
   const coordX = hasCoords ? parseFloat(markerData.x).toFixed(2) : '';
   const coordY = hasCoords ? parseFloat(markerData.y).toFixed(2) : '';
-
+const hasValidLink =
+  markerData.links_info &&
+  markerData.links_info !== "0" &&
+  markerData.links_info !== 0 &&
+  markerData.links_info !== "[]" &&
+  markerData.links_info !== "null" &&
+  markerData.links_info !== "undefined" &&
+  markerData.links_info.trim() !== "";
+  
   // Coordinates section HTML
   let coordsHTML = '';
   if (editState.editingCoords) {
@@ -571,18 +585,39 @@ createPopupContent(markerData, editState = {}) {
       <!-- Description Section -->
       ${descHTML}
       
-      <!-- Footer Section (Visited + ys_id) -->
-      <div class="marker-popup-footer">
-        <div class="marker-popup-visited" onclick="event.stopPropagation(); toggleVisited('${markerKey}')">
-          <input type="checkbox" ${isVisited ? 'checked' : ''} onchange="event.stopPropagation()">
-          <span class="marker-popup-visited-label">✓ Visited</span>
-        </div>
-        ${markerData.ys_id ? `
-          <div class="marker-popup-ysid">
-            <span class="marker-popup-ysid-label">@${markerData.ys_id}</span>
-          </div>
-        ` : '<div class="marker-popup-ysid-spacer"></div>'}
+<!-- Footer Section (Visited + ys_id + links_info) -->
+<div class="marker-popup-footer">
+  
+  <!-- Left: Visited -->
+  <div class="marker-popup-visited" onclick="event.stopPropagation(); toggleVisited('${markerKey}')">
+    <input type="checkbox" ${isVisited ? 'checked' : ''} onchange="event.stopPropagation()">
+    <span class="marker-popup-visited-label">✓ Visited</span>
+  </div>
+
+  <!-- Right container: LINK + YSID -->
+  <div class="footer-right-group">
+
+    <!-- Link dulu -->
+    ${hasValidLink ? `
+      <div class="marker-popup-link-info">
+        <a href="${markerData.links_info}" 
+           target="_blank" 
+           class="marker-popup-link-btn">
+          🔗 Videos Hint
+        </a>
       </div>
+    ` : ''}
+
+    <!-- Baru YSID -->
+    ${markerData.ys_id ? `
+      <div class="marker-popup-ysid">
+        <span class="marker-popup-ysid-label">@${markerData.ys_id}</span>
+      </div>
+    ` : ''}
+
+  </div>
+
+</div>
       
       <!-- Comments Section (NEW!) -->
       <div class="marker-popup-comments-section">
@@ -1072,69 +1107,7 @@ window.cancelEdit = function(markerKey) {
   window.currentEditType = null;
 };
 
-/**
- * Save edit changes
- * @param {string} markerKey - Marker key
- * @param {string} type - Edit type
- */
-window.saveEdit = async function(markerKey, type) {
-  document.removeEventListener('click', handleClickOutside, true);
-  
-  const markerEdits = JSON.parse(localStorage.getItem('markerEdits') || '{}');
-  if (!markerEdits[markerKey]) markerEdits[markerKey] = {};
 
-  // Ambil data dari form edit
-  if (type === 'coords') {
-    const x = document.getElementById(`editX_${markerKey}`).value.trim();
-    const y = document.getElementById(`editY_${markerKey}`).value.trim();
-
-    // Validasi angka
-    if (x && isNaN(parseFloat(x))) {
-      showNotification('❌ X coordinate must be a number!', 'error');
-      return;
-    }
-    if (y && isNaN(parseFloat(y))) {
-      showNotification('❌ Y coordinate must be a number!', 'error');
-      return;
-    }
-
-    markerEdits[markerKey].x = x;
-    markerEdits[markerKey].y = y;
-
-  } else if (type === 'desc') {
-    const desc = document.getElementById(`editDesc_${markerKey}`).value.trim();
-    markerEdits[markerKey].desc = desc;
-  }
-
-  // Simpan lokal (fallback kalau offline)
-  localStorage.setItem('markerEdits', JSON.stringify(markerEdits));
-
-  // Update UI (refresh popup sementara)
-  const marker = MarkerManager.activeMarkers[markerKey];
-  if (marker) {
-    const markerData = MarkerManager.getAllMarkers().find(m => m._key === markerKey);
-    if (markerData) {
-      marker.getPopup().setContent(MarkerManager.createPopupContent(markerData));
-    }
-  }
-
-  // Reset edit state
-  window.currentEditMarker = null;
-  window.currentEditType = null;
-
-  // Kirim ke server
-  try {
-    showNotification('⏳ Saving to server...', 'info');
-
-    // Fungsi ini berasal dari feedback-marker.js
-    await saveFeedbackMarker(markerKey, markerEdits[markerKey]);
-
-    showNotification('✅ Changes saved & synced to server!', 'success');
-  } catch (err) {
-    console.error('Failed to save to server:', err);
-    showNotification('⚠️ Saved locally, but failed to sync with server.', 'error');
-  }
-};
 
 /**
  * Show notification

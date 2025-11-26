@@ -69,7 +69,8 @@ const CATEGORY_SOURCES = {
   32: 'panah',
   33: 'melodi',
   34: 'tebakan',
-  35: 'gulat'
+  35: 'gulat',
+  36: 'tehnik'
 };
 
 // ==========================================
@@ -111,7 +112,8 @@ const CATEGORY_NAMES = {
   "32": "Archer Contest",
   "33": "Graceful Melody",
   "34": "Riddle",
-  "35": "Sumo"
+  "35": "Sumo",
+  "36": "Mystic Skill"
 };
 
 // ==========================================
@@ -153,7 +155,8 @@ const CATEGORY_ICONS = {
   "32": "archer.webp",
   "33": "melody.webp",
   "34": "riddle.webp",
-  "35": "summo.webp"
+  "35": "summo.webp",
+  "36": "mystic.webp"
 };
   // ==========================================
   // PRIVATE METHODS
