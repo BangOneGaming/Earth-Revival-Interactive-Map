@@ -330,8 +330,10 @@
     padding: 2px 0;
     box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
     min-height: 60px;
+    position: relative;
 ">
-  <!-- Close Button - TERLIHAT NORMAL tapi pointer-events: none -->
+
+  <!-- Close Button -->
   <button id="adsCloseBtn" style="
       position: absolute;
       top: 2px;
@@ -341,51 +343,60 @@
       font-size: 12px;
       cursor: pointer;
       color: #333;
-      z-index: 1000;
+      z-index: 1002;
       pointer-events: none;
   ">&#10060;</button>
-  
-  <!-- Google AdSense Auto Ads Placeholder -->
+
+  <!-- Invisible Layer for Detect Click -->
+  <div id="adsClickLayer" style="
+      position:absolute;
+      inset:0;
+      z-index:1001;
+      pointer-events:auto;
+  "></div>
+
+  <!-- Google AdSense -->
   <ins class="adsbygoogle"
-       style="display:block"
+       style="display:block; position: relative; z-index: 1;"
        data-ad-client="ca-pub-8582564022805467"
        data-ad-slot="7695704952"
        data-ad-format="auto"
        data-full-width-responsive="true"></ins>
 </div>
 
-<script>  
-  (adsbygoogle = window.adsbygoogle || []).push({});  
-  
-  // Variables
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+
   const adsCloseBtn = document.getElementById("adsCloseBtn");  
-  const adsWrapper = document.getElementById("adsense-sticky-wrapper");  
+  const adsWrapper  = document.getElementById("adsense-sticky-wrapper");  
+  const adsLayer    = document.getElementById("adsClickLayer");
   let isCloseButtonActive = false;
-  
-  // Fungsi untuk aktivasi close button
-  function activateCloseButton(e) {
+
+  // Fungsi Aktifkan Tombol Close
+  function activateCloseButton() {
       if (!isCloseButtonActive) {
           isCloseButtonActive = true;
           adsCloseBtn.style.pointerEvents = "auto";
-          
-          
-          // Optional: kasih visual feedback
-          adsWrapper.style.background = "rgba(255, 255, 255, 1)";
+          adsLayer.style.pointerEvents = "none"; // setelah aktif, layer hilang
+          console.log("Close button activated");
       }
   }
-  
-  // Capture semua jenis interaksi
-  adsWrapper.addEventListener("mousedown", activateCloseButton, true);
-  adsWrapper.addEventListener("click", activateCloseButton, true);
-  adsWrapper.addEventListener("touchstart", activateCloseButton, { capture: true, passive: true });
-  
-  // Close Button Handler
+
+  // === Klik pada wrapper iklan atau layer → aktifkan close button ===
+  adsLayer.addEventListener("click", activateCloseButton);
+  adsWrapper.addEventListener("click", activateCloseButton);
+
+  // === Klik area bawah halaman (viewport bawah) ===
+  document.addEventListener("click", (e) => {
+      const bottomArea = window.innerHeight - e.clientY < 150;
+      if (bottomArea) activateCloseButton();
+  });
+
+  // Klik tombol X
   adsCloseBtn.addEventListener("click", function(e) {
-      e.stopPropagation();
-      e.preventDefault();
       if (isCloseButtonActive) {
           adsWrapper.style.display = "none";
-
+          console.log("Ad closed");
       }
   });
 </script>
@@ -404,12 +415,7 @@
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>    
     
-<!-- Eruda Debug Console -->  
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>  
-<script>  
-  eruda.init();
-  console.log("✅ Eruda aktif!");  
-</script>  
+
   
 <!-- Google Sign-In -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>  
