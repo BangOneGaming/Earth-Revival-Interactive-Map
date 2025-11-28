@@ -564,13 +564,14 @@
     padding: 2px 0 !important;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1) !important;
     transition: all 0.3s ease !important;
+    min-height: 60px !important; /* TAMBAHKAN INI! */
 }
 
 /* Close Button Default */
 #adsCloseBtn {
     position: absolute !important;
-    top: 6px !important;
-    right: 4px !important;
+    top: 15px !important;
+    right: 7px !important;
     border: none !important;
     background: transparent !important;
     font-size: 12px !important;
@@ -578,6 +579,7 @@
     color: #333 !important;
     z-index: 1000 !important;
     padding: 0 4px !important;
+    pointer-events: none !important; /* TAMBAHKAN INI! */
 }
 
 #adsCloseBtn:hover {
@@ -596,48 +598,41 @@
 @media only screen and (max-width: 768px) {
     #adsense-sticky-wrapper {
         padding: 1px 0 !important;
-        max-height: 20px !important;
-        overflow: hidden !important;
+        min-height: 50px !important; /* UBAH DARI max-height KE min-height */
+        /* overflow: hidden !important; HAPUS INI DULU UNTUK TESTING */
     }
     
-
-    
     #adsCloseBtn {
-        top: 2px !important;
-        right: 2px !important;
+        top: 14px !important;
+        right: 25px !important;
         font-size: 11px !important;
     }
 }
 
-/* Small Mobile (≤480px) - LEBIH KECIL LAGI */
+/* Small Mobile (≤480px) */
 @media only screen and (max-width: 480px) {
     #adsense-sticky-wrapper {
-        padding: 0 !important;
-        height: 1px !important;
-        max-height: 1px !important;
+        padding: 1px 0 !important;
+        min-height: 40px !important; /* PENTING: UBAH height JADI min-height */
         background: rgba(255, 255, 255, 0.5) !important;
     }
     
-    
     #adsCloseBtn {
-        top: 1px !important;
+        top: 14px !important;
         right: 50px !important;
         font-size: 10px !important;
     }
 }
 
-/* Extra Small Mobile (≤360px) - SUPER KECIL */
+/* Extra Small Mobile (≤360px) */
 @media only screen and (max-width: 360px) {
     #adsense-sticky-wrapper {
-        max-height: 50px !important;
+        min-height: 40px !important; /* UBAH max-height JADI min-height */
         background: rgba(255, 255, 255, 1) !important;
     }
-
 }
 
-/* ========================================
-   HIDDEN STATE (when closed)
-   ======================================== */
+/* HIDDEN STATE (when closed) */
 #adsense-sticky-wrapper[style*="display: none"] {
     display: none !important;
 }
