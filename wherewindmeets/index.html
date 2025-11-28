@@ -383,49 +383,61 @@ const adsWrapper  = document.getElementById("adsense-sticky-wrapper");
 const adsLayer    = document.getElementById("adsClickLayer");
 
 let isCloseButtonActive = false;
+let autoCloseTimer = null;
 
-// === Aktifkan tombol X TANPA menutup iklan ===
-function activateCloseButton() {  
-    if (!isCloseButtonActive) {  
-        isCloseButtonActive = true;
-
-        // tombol X aktif setelah klik pertama
-        adsCloseContainer.style.pointerEvents = "auto";  
-        adsCloseBtn.style.pointerEvents = "auto";  
-
-        // layer disable supaya click langsung ke iklan
-        adsLayer.style.pointerEvents = "none";  
-
-        console.log("%cCLOSE BUTTON ACTIVE!", "color:green; font-weight:bold;");  
-    }  
+// fungsi close
+function closeAds() {
+    adsWrapper.style.display = "none";
+    console.log("%cADS CLOSED", "color:red; font-weight:bold;");
 }
 
-// Lapisan pertama menangkap klik lalu hilang
-adsLayer.addEventListener("click", () => {  
+// Delay auto close
+function autoCloseWithDelay() {
+    if (autoCloseTimer) return; // cegah double timer
+
+    console.log("Menunggu sebelum auto close...");
+
+    autoCloseTimer = setTimeout(() => {
+        closeAds();
+    }, 800); // <= ganti delay jika mau (ms)
+}
+
+function activateCloseButton() {
+    if (!isCloseButtonActive) {
+        isCloseButtonActive = true;
+
+        // aktifkan tombol X
+        adsCloseContainer.style.pointerEvents = "auto";
+        adsCloseBtn.style.pointerEvents = "auto";
+
+        // disable layer
+        adsLayer.style.pointerEvents = "none";
+
+        console.log("%cCLOSE BUTTON ACTIVE!", "color:green; font-weight:bold;");
+
+        // auto close dengan delay, supaya iklan sempat tersentuh
+        autoCloseWithDelay();
+    }
+}
+
+// Klik pertama → aktifkan X + auto close delay
+adsLayer.addEventListener("click", () => {
     console.log("Klik terdeteksi pada: adsClickLayer");
     activateCloseButton();
 });
 
-// Klik bawah layar juga mengaktifkan X
-document.addEventListener("click", (e) => {  
+// Klik bawah layar (scroll area)
+document.addEventListener("click", (e) => {
     if (window.innerHeight - e.clientY < 150) {
         console.log("Klik area bawah layar → activate close");
         activateCloseButton();
-    }  
+    }
 });
 
-// === Klik tombol X → tutup dengan DELAY ===
-adsCloseBtn.addEventListener("click", function(e) {
+// klik x (manual)
+adsCloseBtn.addEventListener("click", function() {
     if (isCloseButtonActive) {
-
-        console.log("%cCLOSE BUTTON CLICKED → waiting delay...", "color:orange;");
-
-        // delay kecil 300ms supaya sentuhan ke iklan tetap terkirim
-        setTimeout(() => {
-            adsWrapper.style.display = "none";
-            console.log("%cADS CLOSED", "color:red; font-weight:bold;");
-        }, 300);
-
+        closeAds();
     }
 });
 </script>
