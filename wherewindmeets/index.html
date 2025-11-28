@@ -70,7 +70,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
   <script>
-    const CSS_VERSION = "5.6.4";
+    const CSS_VERSION = "5.5.4";
   </script>
 
   <!-- Custom CSS -->
@@ -329,8 +329,9 @@
     background: rgba(255, 255, 255, 1);
     padding: 2px 0;
     box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+    min-height: 60px;
 ">
-  <!-- Close Button -->
+  <!-- Close Button - TERLIHAT NORMAL tapi pointer-events: none -->
   <button id="adsCloseBtn" style="
       position: absolute;
       top: 2px;
@@ -341,8 +342,9 @@
       cursor: pointer;
       color: #333;
       z-index: 1000;
+      pointer-events: none;
   ">&#10060;</button>
-
+  
   <!-- Google AdSense Auto Ads Placeholder -->
   <ins class="adsbygoogle"
        style="display:block"
@@ -355,13 +357,38 @@
 <script>  
   (adsbygoogle = window.adsbygoogle || []).push({});  
   
-  // Close Button Handler
+  // Variables
   const adsCloseBtn = document.getElementById("adsCloseBtn");  
   const adsWrapper = document.getElementById("adsense-sticky-wrapper");  
-  adsCloseBtn.addEventListener("click", () => {  
-      adsWrapper.style.display = "none";
-  });  
-</script>  
+  let isCloseButtonActive = false;
+  
+  // Fungsi untuk aktivasi close button
+  function activateCloseButton(e) {
+      if (!isCloseButtonActive) {
+          isCloseButtonActive = true;
+          adsCloseBtn.style.pointerEvents = "auto";
+          
+          
+          // Optional: kasih visual feedback
+          adsWrapper.style.background = "rgba(255, 255, 255, 1)";
+      }
+  }
+  
+  // Capture semua jenis interaksi
+  adsWrapper.addEventListener("mousedown", activateCloseButton, true);
+  adsWrapper.addEventListener("click", activateCloseButton, true);
+  adsWrapper.addEventListener("touchstart", activateCloseButton, { capture: true, passive: true });
+  
+  // Close Button Handler
+  adsCloseBtn.addEventListener("click", function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      if (isCloseButtonActive) {
+          adsWrapper.style.display = "none";
+
+      }
+  });
+</script>
 
 <!-- Google AdSense Auto Ads -->  
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467"  
@@ -377,7 +404,12 @@
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>    
     
-
+<!-- Eruda Debug Console -->  
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>  
+<script>  
+  eruda.init();
+  console.log("✅ Eruda aktif!");  
+</script>  
   
 <!-- Google Sign-In -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>  
