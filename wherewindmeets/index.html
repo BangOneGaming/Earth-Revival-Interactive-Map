@@ -384,47 +384,48 @@ const adsLayer    = document.getElementById("adsClickLayer");
 
 let isCloseButtonActive = false;
 
-function closeAds() {
-    adsWrapper.style.display = "none";
-    console.log("%cADS CLOSED", "color:red; font-weight:bold;");
-}
-
-function activateCloseButton() {
-    if (!isCloseButtonActive) {
+// === Aktifkan tombol X TANPA menutup iklan ===
+function activateCloseButton() {  
+    if (!isCloseButtonActive) {  
         isCloseButtonActive = true;
 
-        // Aktifkan tombol X
-        adsCloseContainer.style.pointerEvents = "auto";
-        adsCloseBtn.style.pointerEvents = "auto";
+        // tombol X aktif setelah klik pertama
+        adsCloseContainer.style.pointerEvents = "auto";  
+        adsCloseBtn.style.pointerEvents = "auto";  
 
-        // Disable layer
-        adsLayer.style.pointerEvents = "none";
+        // layer disable supaya click langsung ke iklan
+        adsLayer.style.pointerEvents = "none";  
 
-        console.log("%cCLOSE BUTTON ACTIVE!", "color:green; font-weight:bold;");
-
-        // AUTO CLOSE langsung
-        closeAds();
-    }
+        console.log("%cCLOSE BUTTON ACTIVE!", "color:green; font-weight:bold;");  
+    }  
 }
 
-// Klik pertama → aktifkan X dan auto close
-adsLayer.addEventListener("click", () => {
+// Lapisan pertama menangkap klik lalu hilang
+adsLayer.addEventListener("click", () => {  
     console.log("Klik terdeteksi pada: adsClickLayer");
     activateCloseButton();
 });
 
-// Klik area bawah layar
-document.addEventListener("click", (e) => {
+// Klik bawah layar juga mengaktifkan X
+document.addEventListener("click", (e) => {  
     if (window.innerHeight - e.clientY < 150) {
         console.log("Klik area bawah layar → activate close");
         activateCloseButton();
-    }
+    }  
 });
 
-// Klik X manual (jika user klik lagi)
+// === Klik tombol X → tutup dengan DELAY ===
 adsCloseBtn.addEventListener("click", function(e) {
     if (isCloseButtonActive) {
-        closeAds();
+
+        console.log("%cCLOSE BUTTON CLICKED → waiting delay...", "color:orange;");
+
+        // delay kecil 300ms supaya sentuhan ke iklan tetap terkirim
+        setTimeout(() => {
+            adsWrapper.style.display = "none";
+            console.log("%cADS CLOSED", "color:red; font-weight:bold;");
+        }, 300);
+
     }
 });
 </script>
@@ -443,7 +444,12 @@ adsCloseBtn.addEventListener("click", function(e) {
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>    
     
-
+<!-- Eruda Debug Console -->  
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>  
+<script>  
+  eruda.init();
+  console.log("✅ Eruda aktif!");  
+</script>  
   
 <!-- Google Sign-In -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>  
