@@ -330,114 +330,95 @@
     padding: 2px 0;
     box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
     min-height: 60px;
-    position: relative;
 ">
-
   <!-- CLOSE BUTTON (super high z-index) -->
   <div id="adsCloseContainer" style="
-      position:absolute;
-      top:0;
-      right:0;
-      width:40px;
-      height:40px;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      z-index:999999;        /* <-- override iframe */
-      pointer-events:none;   /* awalnya non aktif */
+      position: absolute;
+      top: 2px;
+      right: 4px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999999;
+      pointer-events: none;
   ">
       <button id="adsCloseBtn" style="
-          border:none;
-          background:rgba(255,255,255,0.9);
-          font-size:14px;
-          cursor:pointer;
-          padding:4px 8px;
-          border-radius:4px;
-          pointer-events:none;
+          border: none;
+          background: rgba(255, 255, 255, 0.9);
+          font-size: 14px;
+          cursor: pointer;
+          padding: 4px 8px;
+          border-radius: 4px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
       ">&#10060;</button>
   </div>
-
-  <!-- CLICK LAYER -->
+  <!-- CLICK LAYER (di atas iklan, tapi di bawah close button) -->
   <div id="adsClickLayer" style="
-      position:absolute;
-      inset:0;
-      z-index:999998;
-      pointer-events:auto;
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: auto;
+      cursor: pointer;
   "></div>
-
   <!-- Google AdSense -->
   <ins class="adsbygoogle"
-       style="display:block; position: relative;"
+       style="display: block; position: relative; z-index: 0;"
        data-ad-client="ca-pub-8582564022805467"
        data-ad-slot="7695704952"
        data-ad-format="auto"
        data-full-width-responsive="true"></ins>
 </div>
-
 <script>
 (adsbygoogle = window.adsbygoogle || []).push({});
 
 const adsCloseBtn = document.getElementById("adsCloseBtn");
 const adsCloseContainer = document.getElementById("adsCloseContainer");
-const adsWrapper  = document.getElementById("adsense-sticky-wrapper");
-const adsLayer    = document.getElementById("adsClickLayer");
-
+const adsWrapper = document.getElementById("adsense-sticky-wrapper");
+const adsLayer = document.getElementById("adsClickLayer");
 let isCloseButtonActive = false;
-let autoCloseTimer = null;
 
-// fungsi close
+// Fungsi untuk tutup iklan
 function closeAds() {
     adsWrapper.style.display = "none";
-    console.log("%cADS CLOSED", "color:red; font-weight:bold;");
+    console.log("%c❌ ADS CLOSED!", "color: red; font-weight: bold; font-size: 14px;");
 }
 
-// Delay auto close
-function autoCloseWithDelay() {
-    if (autoCloseTimer) return; // cegah double timer
-
-    console.log("Menunggu sebelum auto close...");
-
-    autoCloseTimer = setTimeout(() => {
-        closeAds();
-    }, 800); // <= ganti delay jika mau (ms)
-}
-
+// Fungsi untuk aktifkan close button + auto close dalam 2 detik
 function activateCloseButton() {
     if (!isCloseButtonActive) {
         isCloseButtonActive = true;
-
-        // aktifkan tombol X
+        
+        // Aktifkan pointer close button
         adsCloseContainer.style.pointerEvents = "auto";
-        adsCloseBtn.style.pointerEvents = "auto";
-
-        // disable layer
+        
+        // Matikan click layer supaya iklan bisa diklik normal
         adsLayer.style.pointerEvents = "none";
-
-        console.log("%cCLOSE BUTTON ACTIVE!", "color:green; font-weight:bold;");
-
-        // auto close dengan delay, supaya iklan sempat tersentuh
-        autoCloseWithDelay();
+        
+        console.log("%c✅ CLOSE BUTTON ACTIVATED!", "color: green; font-weight: bold; font-size: 14px;");
+        console.log("%c⏱️ Auto-closing in 2 seconds...", "color: blue; font-weight: bold;");
+        
+        // Auto close dalam 2 detik
+        setTimeout(function() {
+            closeAds();
+        }, 2000);
     }
 }
 
-// Klik pertama → aktifkan X + auto close delay
-adsLayer.addEventListener("click", () => {
-    console.log("Klik terdeteksi pada: adsClickLayer");
+// HANYA trigger dari click layer
+adsLayer.addEventListener("click", function(e) {
+    console.log("%c🎯 Click detected on layer!", "color: orange; font-weight: bold;");
     activateCloseButton();
 });
 
-// Klik bawah layar (scroll area)
-document.addEventListener("click", (e) => {
-    if (window.innerHeight - e.clientY < 150) {
-        console.log("Klik area bawah layar → activate close");
-        activateCloseButton();
-    }
-});
-
-// klik x (manual)
-adsCloseBtn.addEventListener("click", function() {
+// Handler untuk close button manual (kalau user mau close lebih cepat)
+adsCloseBtn.addEventListener("click", function(e) {
+    e.stopPropagation();
     if (isCloseButtonActive) {
         closeAds();
+    } else {
+        console.log("%c⚠️ Close button not active yet!", "color: orange; font-weight: bold;");
     }
 });
 </script>
