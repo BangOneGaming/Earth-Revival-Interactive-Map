@@ -648,3 +648,13 @@
 #adsense-sticky-wrapper[style*="display: none"] {
     display: none !important;
 }
+/* ================================
+   HIDE ADS ON REAL MOBILE ONLY
+   ================================ */
+
+/* Mobile asli (punya hover: none dan coarse pointer) */
+@media (hover: none) and (pointer: coarse) {
+    #adsense-sticky-wrapper {
+        display: none !important;
+    }
+}
