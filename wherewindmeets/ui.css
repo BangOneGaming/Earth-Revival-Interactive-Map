@@ -563,10 +563,6 @@
     padding: 2px 0 !important;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1) !important;
     transition: all 0.3s ease !important;
-    height: auto !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
     min-height: 60px !important;
 }
 
@@ -629,16 +625,7 @@
 @media only screen and (max-width: 768px) {
     #adsense-sticky-wrapper {
         padding: 1px 0 !important;
-        max-height: 100px !important;
-        overflow: hidden !important;
-    }
-    
-    #adsense-sticky-wrapper .adsbygoogle,
-    #adsense-sticky-wrapper .adsbygoogle ins,
-    #adsense-sticky-wrapper .adsbygoogle iframe {
-        max-height: 90px !important;
-        overflow: hidden !important;
-        height: auto !important;
+        min-height: 50px !important;
     }
     
     #adsCloseBtn {
@@ -651,17 +638,15 @@
 @media only screen and (max-width: 480px) {
     #adsense-sticky-wrapper {
         padding: 1px 0 !important;
+        min-height: 40px !important;
         max-height: 100px !important;
         overflow: hidden !important;
         background: rgba(255, 255, 255, 0.5) !important;
     }
     
-    #adsense-sticky-wrapper .adsbygoogle,
-    #adsense-sticky-wrapper .adsbygoogle ins,
-    #adsense-sticky-wrapper .adsbygoogle iframe {
+    #adsense-sticky-wrapper .adsbygoogle {
         max-height: 90px !important;
         overflow: hidden !important;
-        height: auto !important;
     }
     
     #adsCloseBtn {
@@ -679,13 +664,9 @@
         background: rgba(255, 255, 255, 1) !important;
     }
     
-    #adsense-sticky-wrapper .adsbygoogle,
-    #adsense-sticky-wrapper .adsbygoogle ins,
-    #adsense-sticky-wrapper .adsbygoogle iframe {
+    #adsense-sticky-wrapper .adsbygoogle {
         max-height: 80px !important;
         overflow: hidden !important;
-        height: 25vh !important;
-        min-height: 60px !important;
     }
     
     #adsCloseBtn {
