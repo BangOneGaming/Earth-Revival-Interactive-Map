@@ -269,6 +269,75 @@ function createCompositeIconHTML(categoryId) {
   `;
 }
 
+
+/**
+ * Get icon URL dengan support untuk special_icon
+ */
+function getIconUrlWithSpecial(categoryId, specialIcon) {
+  if (specialIcon && specialIcon.trim() !== '') {
+    return `${ICON_BASE_URL}${specialIcon}.webp`;
+  }
+  
+  const overlay = ICON_CONFIG.overlays[String(categoryId)];
+  return overlay ? ICON_BASE_URL + overlay : ICON_CONFIG.baseIcon;
+}
+
+/**
+ * Create composite icon dengan support special_icon
+ */
+function createCompositeLeafletIconWithSpecial(categoryId, specialIcon) {
+  const overlayUrl = getIconUrlWithSpecial(categoryId, specialIcon);
+  const baseUrl = ICON_CONFIG.baseIcon;
+
+  const special = ICON_CONFIG.specialSizes[categoryId];
+  const size = special?.size || ICON_CONFIG.defaultSize;
+  const anchor = special?.anchor || ICON_CONFIG.defaultAnchor;
+  const popupAnchor = special?.popupAnchor || ICON_CONFIG.defaultPopupAnchor;
+
+  if (String(categoryId) === "1") {
+    return L.divIcon({
+      html: `
+        <div style="position:relative;width:${size[0]}px;height:${size[1]}px;">
+          <img src="${overlayUrl}" style="width:100%;height:100%;z-index:2;">
+        </div>
+      `,
+      iconSize: size,
+      iconAnchor: anchor,
+      popupAnchor: popupAnchor,
+      className: "no-default-icon-bg"
+    });
+  }
+
+  return L.divIcon({
+    html: `
+      <div style="position:relative;width:${size[0]}px;height:${size[1]}px;">
+        <img src="${baseUrl}" 
+             style="position:absolute;top:-10%;left:-10%;width:120%;height:120%;z-index:1;">
+        <img src="${overlayUrl}" 
+             style="position:absolute;top:10%;left:20%;width:60%;height:60%;z-index:2;">
+      </div>
+    `,
+    iconSize: size,
+    iconAnchor: anchor,
+    popupAnchor: popupAnchor,
+    className: "no-default-icon-bg"
+  });
+}
+
+/**
+ * Get icon by category dengan support special_icon
+ */
+function getIconByCategoryWithSpecial(categoryId, specialIcon) {
+  if (specialIcon && specialIcon.trim() !== '') {
+    return createCompositeLeafletIconWithSpecial(categoryId, specialIcon);
+  }
+  
+  const id = String(categoryId);
+  if (ICONS[id]) return ICONS[id];
+  return ICONS.default || new L.Icon.Default();
+}
+
+
 window.IconManager = {
   getIconUrl,
   getCategoryName,
@@ -277,6 +346,10 @@ window.IconManager = {
   getIconByCategory,
   createIconHTML,
   createCompositeIconHTML,
+  // ✅ Tambahkan ini
+  getIconUrlWithSpecial,
+  getIconByCategoryWithSpecial,
+  createCompositeLeafletIconWithSpecial,
   ICON_CONFIG,
   ICONS,
   FAILED_ICONS

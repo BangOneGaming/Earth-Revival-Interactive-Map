@@ -158,9 +158,22 @@
   </div>
 </div>
 
-<div id="loadingOverlay">    
-  <div id="loadingSpinner">Loading...</div>    
-</div>    
+<!-- Preload Overlay -->
+<div id="preloadOverlay">
+  <div id="preloadContainer">
+    <!-- Emotion Icon (5 gambar flip cepat) -->
+    <img id="preloadEmotionIcon" src="" alt="Loading emotion">
+    
+    <!-- Loading Text (ganti setelah setengah durasi) -->
+    <div id="preloadMessage">Better Experience With Mobile Desktop mode</div>
+    
+    <!-- Loading Bar Container -->
+    <div id="preloadBarContainer">
+      <div id="preloadBarFill"></div>
+      <div id="preloadBarPercent">0%</div>
+    </div>
+  </div>
+</div>
 
 <!-- 🔵 TOP-CENTER LOGIN BUTTON -->
 <button id="topLoginBtn">Login</button>
@@ -440,12 +453,7 @@ adsCloseBtn.addEventListener("click", function(e) {
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>    
     
-<!-- Eruda Debug Console -->  
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>  
-<script>  
-  eruda.init();
-  console.log("✅ Eruda aktif!");  
-</script>  
+
   
 <!-- Google Sign-In -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>  

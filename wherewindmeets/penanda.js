@@ -727,7 +727,14 @@ addMarkersBatch(markers, bounds) {
  * @param {string} markerKey - Unique key for the marker
  */
 createAndAddMarker(markerData, lat, lng, markerKey) {
-  const icon = getIconByCategory(markerData.category_id);
+  // ✅ PERUBAHAN UTAMA: Gunakan special_icon jika ada
+  const specialIcon = markerData.special_icon || null;
+  
+  // Gunakan fungsi baru yang support special_icon
+  const icon = typeof getIconByCategoryWithSpecial !== 'undefined'
+    ? getIconByCategoryWithSpecial(markerData.category_id, specialIcon)
+    : getIconByCategory(markerData.category_id);
+  
   const popupContent = this.createPopupContent(markerData);
 
   const leafletMarker = L.marker([lat, lng], { icon })
@@ -743,7 +750,8 @@ createAndAddMarker(markerData, lat, lng, markerKey) {
   // Store marker with its category ID and floor for easy filtering
   leafletMarker.categoryId = markerData.category_id;
   leafletMarker.markerKey = markerKey;
-  leafletMarker.floor = markerData.floor || ''; // ← FLOOR DATA
+  leafletMarker.floor = markerData.floor || '';
+  leafletMarker.specialIcon = specialIcon; // ← Simpan special_icon untuk reference
   
   this.activeMarkers[markerKey] = leafletMarker;
 },

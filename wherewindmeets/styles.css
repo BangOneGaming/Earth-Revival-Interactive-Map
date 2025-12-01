@@ -954,8 +954,8 @@ html, body {
   }
 }
 
-/* === Loading Overlay === */
-#loadingOverlay {
+/* === Preload Overlay (dengan background image) === */
+#preloadOverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -969,35 +969,231 @@ html, body {
 }
 
 @media (min-width: 769px) {
-  #loadingOverlay {
+  #preloadOverlay {
     background-image: url('https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg');
   }
 }
 
 @media (max-width: 768px) {
-  #loadingOverlay {
+  #preloadOverlay {
     background-image: url('https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg');
   }
 }
 
-/* === Loading Spinner === */
-#loadingSpinner {
+/* === Preload Container - DESKTOP (TRANSPARENT) === */
+#preloadContainer {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   color: white;
-  font-size: 22px;
   font-family: 'Lato', sans-serif;
   font-weight: bold;
-  background: rgba(0, 0, 0, 0.6);
-  padding: 16px 28px;
-  border-radius: 12px;
+  background: transparent;
+  padding: 50px 60px;
+  border-radius: 20px;
   text-align: center;
-  animation: pulse 1.2s ease-in-out infinite;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  min-width: 450px;
+  perspective: 1000px;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
-  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+/* === Emotion Icon - DESKTOP (Background Transparent + Bounce) === */
+#preloadEmotionIcon {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.6));
+  transform-style: preserve-3d;
+  background: transparent;
+  mix-blend-mode: normal;
+  animation: iconBounce 1s ease-in-out infinite;
+}
+
+/* === Animasi Loncat-Loncat Icon === */
+@keyframes iconBounce {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  25% {
+    transform: translateY(-10px);
+  }
+  50% {
+    transform: translateY(0px);
+  }
+  75% {
+    transform: translateY(-5px);
+  }
+}
+
+/* === Preload Message Text - DESKTOP === */
+#preloadMessage {
+  font-size: 22px;
+  line-height: 1.6;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* === Loading Bar Container === */
+#preloadBarContainer {
+  position: relative;
+  width: 100%;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* === Loading Bar Fill (Gradient Vanilla) === */
+#preloadBarFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(135deg, #ffe6a8, #ffd88a);
+  border-radius: 15px;
+  transition: width 0.3s ease-out;
+  box-shadow: 0 0 20px rgba(255, 230, 168, 0.6);
+}
+
+/* === Loading Bar Percent Text === */
+#preloadBarPercent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+  z-index: 1;
+}
+
+/* === Animasi FLIP 3D (Flip selesai dulu, BARU ganti gambar) === */
+@keyframes flip3DFast {
+  0% {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: rotateY(180deg);
+    opacity: 0.6;
+  }
+  100% {
+    transform: rotateY(360deg);
+    opacity: 1;
+  }
+}
+
+/* Class untuk trigger flip animation */
+.flip-animation {
+  animation: flip3DFast 0.6s ease-in-out;
+}
+
+/* === Animasi Fade Out === */
+@keyframes preloadFadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* === Animasi Fade In === */
+@keyframes preloadFadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* ========================================
+   RESPONSIVE - TABLET (≤768px)
+   ======================================== */
+@media only screen and (max-width: 768px) {
+  #preloadContainer {
+    min-width: 350px;
+    padding: 40px 45px;
+    gap: 25px;
+  }
+
+  #preloadEmotionIcon {
+    width: 100px;
+    height: 100px;
+  }
+
+  #preloadMessage {
+    font-size: 19px;
+    min-height: 50px;
+  }
+
+  #preloadBarContainer {
+    height: 26px;
+  }
+
+  #preloadBarPercent {
+    font-size: 14px;
+  }
+}
+
+/* ========================================
+   RESPONSIVE - MOBILE (≤480px)
+   ======================================== */
+@media only screen and (max-width: 480px) {
+  #preloadContainer {
+    min-width: 280px;
+    padding: 30px 35px;
+    gap: 20px;
+    border-radius: 16px;
+  }
+
+  #preloadEmotionIcon {
+    width: 80px;
+    height: 80px;
+  }
+
+  #preloadMessage {
+    font-size: 16px;
+    min-height: 45px;
+  }
+
+  #preloadBarContainer {
+    height: 24px;
+  }
+
+  #preloadBarPercent {
+    font-size: 13px;
+  }
+}
+
+/* ========================================
+   RESPONSIVE - EXTRA SMALL (≤360px)
+   ======================================== */
+@media only screen and (max-width: 360px) {
+  #preloadContainer {
+    min-width: 260px;
+    padding: 25px 30px;
+    gap: 18px;
+  }
+
+  #preloadEmotionIcon {
+    width: 70px;
+    height: 70px;
+  }
+
+  #preloadMessage {
+    font-size: 15px;
+    min-height: 40px;
+  }
+
+  #preloadBarContainer {
+    height: 22px;
+  }
+
+  #preloadBarPercent {
+    font-size: 12px;
+  }
 }
