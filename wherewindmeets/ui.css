@@ -547,6 +547,8 @@
     left: 280px;
   }
 }
+
+
 /* ========================================
    ADSENSE STICKY WRAPPER - MOBILE FIX
    ======================================== */
@@ -569,7 +571,7 @@
 /* Close Button - DI ATAS TENGAH */
 #adsCloseContainer {
     position: absolute !important;
-    top: 5px !important;
+    top: 10px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
     z-index: 999999 !important;
@@ -578,7 +580,7 @@
 
 #adsCloseBtn {
     border: 2px solid #333 !important;
-    background: rgba(255, 255, 255, 0.95) !important;
+    background: rgba(255, 255, 255, 4) !important;
     font-size: 16px !important;
     font-weight: bold !important;
     cursor: pointer !important;
@@ -590,31 +592,12 @@
 }
 
 #adsCloseBtn:hover {
-    background: rgba(240, 240, 240, 0.95) !important;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4) !important;
 }
 
 /* AdSense - Biarkan ukuran aslinya di desktop */
 #adsense-sticky-wrapper .adsbygoogle {
     display: block !important;
-}
-
-/* Hilangkan efek hover biru di click layer */
-#adsClickLayer {
-    -webkit-tap-highlight-color: transparent !important;
-    -webkit-touch-callout: none !important;
-    -webkit-user-select: none !important;
-    -moz-user-select: none !important;
-    -ms-user-select: none !important;
-    user-select: none !important;
-    outline: none !important;
-}
-
-#adsClickLayer:active,
-#adsClickLayer:focus,
-#adsClickLayer:hover {
-    background: transparent !important;
-    outline: none !important;
 }
 
 /* ========================================
@@ -639,14 +622,7 @@
     #adsense-sticky-wrapper {
         padding: 1px 0 !important;
         min-height: 40px !important;
-        max-height: 100px !important;
-        overflow: hidden !important;
         background: rgba(255, 255, 255, 0.5) !important;
-    }
-    
-    #adsense-sticky-wrapper .adsbygoogle {
-        max-height: 90px !important;
-        overflow: hidden !important;
     }
     
     #adsCloseBtn {
@@ -659,14 +635,7 @@
 @media only screen and (max-width: 360px) {
     #adsense-sticky-wrapper {
         min-height: 40px !important;
-        max-height: 90px !important;
-        overflow: hidden !important;
         background: rgba(255, 255, 255, 1) !important;
-    }
-    
-    #adsense-sticky-wrapper .adsbygoogle {
-        max-height: 80px !important;
-        overflow: hidden !important;
     }
     
     #adsCloseBtn {
