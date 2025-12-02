@@ -1,14 +1,15 @@
 /**
- * Marker Add Module
- * System untuk menambahkan marker baru ke peta
+ * Marker Add Module - WITH FLOOR SELECTION
+ * System untuk menambahkan marker baru ke peta dengan pilihan floor
  * 
  * Dependencies:
  * - peta.js (map object)
  * - profile.js (ProfileContainer untuk data user)
  * - login.js (currentUser)
+ * - underground-manager.js (UndergroundManager)
  * 
  * @author Your Name
- * @version 2.0.0 - Refined UX with popup controls
+ * @version 3.0.0 - Added Floor Selection with repositioning
  */
 
 const MarkerAddSystem = (function() {
@@ -23,6 +24,9 @@ const MarkerAddSystem = (function() {
   let addMarkerBtn = null;
   let formOverlay = null;
   let currentPosition = null;
+  let selectedFloor = null; // Track selected floor
+  let isRepositioning = false; // Flag untuk reposition mode
+  let savedFormData = null; // Simpan data form saat reposition
   
   const API_URL = 'https://autumn-dream-8c07.square-spon.workers.dev/terbaru';
   const ICON_BASE_URL = 'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/';
@@ -62,7 +66,7 @@ const MarkerAddSystem = (function() {
     }
   };
   
-  // Category Names (sama dengan profile.js)
+  // Category Names
   const CATEGORY_NAMES = {
     "1": "Teleport Landmark",
     "2": "Treasure Chest",
@@ -94,9 +98,17 @@ const MarkerAddSystem = (function() {
     "28": "Material Art"
   };
 
+  // Floor Options (from UndergroundManager)
+  const FLOOR_OPTIONS = [
+    { id: 'surface', name: 'Surface (Jianghua)', value: '' },
+    { id: '1', name: 'Cave Level 1', value: '1' },
+    { id: '2', name: 'Cave Level 2', value: '2' },
+    { id: '3', name: 'Cave Level 3', value: '3' },
+    { id: '4', name: 'Deepest Cave', value: '4' }
+  ];
+
   /**
    * Create custom category select with icons
-   * @returns {string} HTML string for custom select
    */
   function createCategorySelect() {
     return `
@@ -126,66 +138,72 @@ const MarkerAddSystem = (function() {
       </div>
     `;
   }
-/**
- * Show Add Marker Button Hint
- * PC: Hint di bawah tombol dengan panah ke atas
- * Mobile: Hint di kanan tombol dengan panah ke kiri
- */
-function showAddButtonHint() {
-  if (!addMarkerBtn) return;
 
-  // Hapus hint lama jika ada
-  const old = document.querySelector('.addmarker-hint');
-  if (old) old.remove();
-
-  // Create hint element
-  const hint = document.createElement('div');
-  hint.className = 'addmarker-hint';
-  hint.textContent = 'Tap if you found lost marker!';
-  document.body.appendChild(hint);
-
-  // Get button position
-  const rect = addMarkerBtn.getBoundingClientRect();
-  const isMobile = window.innerWidth <= 600;
-
-  // Set position based on device
-  if (isMobile) {
-    // MOBILE: Hint di kanan tombol
-    hint.style.position = "fixed";
-    hint.style.left = (rect.right + 15) + "px";
-    hint.style.top = (rect.top + rect.height / 2) + "px";
-    hint.style.transform = "translateY(-50%)";
-  } else {
-    // PC: Hint di bawah tombol
-    hint.style.position = "fixed";
-    hint.style.left = (rect.left + rect.width / 2) + "px";
-    hint.style.top = (rect.bottom + 15) + "px";
-    hint.style.transform = "translateX(-50%)";
+  /**
+   * Create Floor Dropdown
+   */
+  function createFloorSelect(defaultValue = '') {
+    return `
+      <div class="floor-select-wrapper">
+        <select name="floor" id="floorSelect" class="floor-select">
+          ${FLOOR_OPTIONS.map(floor => {
+            const selected = floor.value === defaultValue ? 'selected' : '';
+            return `<option value="${floor.value}" ${selected}>${floor.name}</option>`;
+          }).join('')}
+        </select>
+      </div>
+    `;
   }
 
-  // Animasi muncul
-  setTimeout(() => hint.classList.add('show'), 50);
+  /**
+   * Show Add Marker Button Hint
+   */
+  function showAddButtonHint() {
+    if (!addMarkerBtn) return;
 
-  // Hilang sendiri setelah 19 detik
-  setTimeout(() => {
-    hint.classList.remove('show');
-    setTimeout(() => hint.remove(), 300);
-  }, 19000);
-}
+    const old = document.querySelector('.addmarker-hint');
+    if (old) old.remove();
 
-// Update hint position on window resize
-let hintResizeTimeout;
-window.addEventListener('resize', () => {
-  clearTimeout(hintResizeTimeout);
-  hintResizeTimeout = setTimeout(() => {
-    const hint = document.querySelector('.addmarker-hint');
-    if (hint && hint.classList.contains('show')) {
-      // Recreate hint with new position
-      hint.remove();
-      showAddButtonHint();
+    const hint = document.createElement('div');
+    hint.className = 'addmarker-hint';
+    hint.textContent = 'Tap if you found lost marker!';
+    document.body.appendChild(hint);
+
+    const rect = addMarkerBtn.getBoundingClientRect();
+    const isMobile = window.innerWidth <= 600;
+
+    if (isMobile) {
+      hint.style.position = "fixed";
+      hint.style.left = (rect.right + 15) + "px";
+      hint.style.top = (rect.top + rect.height / 2) + "px";
+      hint.style.transform = "translateY(-50%)";
+    } else {
+      hint.style.position = "fixed";
+      hint.style.left = (rect.left + rect.width / 2) + "px";
+      hint.style.top = (rect.bottom + 15) + "px";
+      hint.style.transform = "translateX(-50%)";
     }
-  }, 250);
-});
+
+    setTimeout(() => hint.classList.add('show'), 50);
+    setTimeout(() => {
+      hint.classList.remove('show');
+      setTimeout(() => hint.remove(), 300);
+    }, 19000);
+  }
+
+  // Update hint position on window resize
+  let hintResizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(hintResizeTimeout);
+    hintResizeTimeout = setTimeout(() => {
+      const hint = document.querySelector('.addmarker-hint');
+      if (hint && hint.classList.contains('show')) {
+        hint.remove();
+        showAddButtonHint();
+      }
+    }, 250);
+  });
+
   /**
    * Initialize category select events
    */
@@ -198,14 +216,12 @@ window.addEventListener('resize', () => {
     
     if (!display || !dropdown || !hiddenInput) return;
     
-    // Toggle dropdown
     display.addEventListener('click', (e) => {
       e.stopPropagation();
       display.classList.toggle('active');
       dropdown.classList.toggle('active');
     });
     
-    // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.category-select-wrapper')) {
         display.classList.remove('active');
@@ -213,7 +229,6 @@ window.addEventListener('resize', () => {
       }
     });
     
-    // Select category option
     const options = dropdown.querySelectorAll('.category-option');
     options.forEach(option => {
       option.addEventListener('click', (e) => {
@@ -222,10 +237,8 @@ window.addEventListener('resize', () => {
         const iconFile = ICON_CONFIG.overlays[selectedId] || 'default.png';
         const iconUrl = ICON_BASE_URL + iconFile;
         
-        // Update hidden input
         hiddenInput.value = selectedId;
         
-        // Update display
         const displayIcon = display.querySelector('.icon');
         const displayText = display.querySelector('.text');
         
@@ -234,12 +247,9 @@ window.addEventListener('resize', () => {
         displayText.textContent = selectedName;
         display.classList.add('has-value');
         
-        // Remove all selected states
         options.forEach(opt => opt.classList.remove('selected'));
-        // Add selected state to current
         option.classList.add('selected');
         
-        // Auto-fill name and description
         if (nameInput) {
           nameInput.value = selectedName;
         }
@@ -248,7 +258,6 @@ window.addEventListener('resize', () => {
           descTextarea.value = `${selectedName} marker at this location. `;
         }
         
-        // Close dropdown
         display.classList.remove('active');
         dropdown.classList.remove('active');
         
@@ -258,21 +267,109 @@ window.addEventListener('resize', () => {
   }
 
   /**
+   * Initialize floor select events
+   */
+  function initFloorSelect() {
+    const floorSelect = document.getElementById('floorSelect');
+    if (!floorSelect) return;
+
+    floorSelect.addEventListener('change', (e) => {
+      const newFloorValue = e.target.value;
+      const currentActiveFloor = window.UndergroundManager?.activeFloor || 'surface';
+      
+      console.log('🎯 Floor changed to:', newFloorValue);
+      
+      // Jika pilih surface, tidak perlu reposition
+      if (newFloorValue === '') {
+        selectedFloor = '';
+        
+        // Switch ke surface jika belum
+        if (currentActiveFloor !== 'surface') {
+          window.UndergroundManager?.setActiveFloor('surface', false);
+        }
+        return;
+      }
+      
+      // Jika pilih underground floor
+      const floorId = FLOOR_OPTIONS.find(f => f.value === newFloorValue)?.id;
+      
+      // Check apakah sudah di floor yang tepat
+      if (currentActiveFloor === floorId) {
+        console.log('✅ Already on correct floor, no repositioning needed');
+        selectedFloor = newFloorValue;
+        return;
+      }
+      
+      // Perlu reposition!
+      console.log('🔄 Need to reposition marker on floor:', floorId);
+      startRepositioning(newFloorValue, floorId);
+    });
+  }
+
+  /**
+   * Start repositioning flow
+   */
+  function startRepositioning(floorValue, floorId) {
+    // Save form data
+    savedFormData = {
+      category_id: document.getElementById('categoryIdInput')?.value || '',
+      name: document.querySelector('input[name="name"]')?.value || '',
+      desc: document.querySelector('textarea[name="desc"]')?.value || '',
+      floor: floorValue
+    };
+    
+    // Set flag
+    isRepositioning = true;
+    selectedFloor = floorValue;
+    
+    // Close form
+    if (formOverlay) {
+      formOverlay.remove();
+      formOverlay = null;
+    }
+    
+    // Switch floor
+    if (window.UndergroundManager) {
+      window.UndergroundManager.setActiveFloor(floorId, false);
+    }
+    
+    // Update popup message
+    if (tempMarker) {
+      const floorName = FLOOR_OPTIONS.find(f => f.value === floorValue)?.name || 'Floor';
+      tempMarker.setPopupContent(`
+        <div class="marker-popup-controls">
+          <div class="marker-popup-info">
+            📍 Repositioning on <strong>${floorName}</strong><br>
+            Drag marker to new position
+          </div>
+          <div class="marker-popup-buttons">
+            <button class="marker-popup-confirm" onclick="MarkerAddSystem.confirmPosition()">
+              ✓ Confirm Position
+            </button>
+            <button class="marker-popup-cancel" onclick="MarkerAddSystem.cancelAddMode()">
+              ✕ Cancel
+            </button>
+          </div>
+        </div>
+      `);
+      tempMarker.openPopup();
+    }
+    
+    console.log('🎯 Repositioning mode active. Saved form data:', savedFormData);
+  }
+
+  /**
    * Generate unique marker ID
-   * @param {Array} existingMarkers - Array of existing markers
-   * @returns {Object} { key, id, point }
    */
   function generateUniqueId(existingMarkers) {
     const existingIds = new Set();
     
-    // Collect all existing IDs
     existingMarkers.forEach(marker => {
       if (marker.id) {
         existingIds.add(marker.id);
       }
     });
 
-    // Generate new unique ID
     let newId = 1;
     while (existingIds.has(String(newId).padStart(4, '0'))) {
       newId++;
@@ -291,7 +388,6 @@ window.addEventListener('resize', () => {
 
   /**
    * Fetch existing markers from API
-   * @returns {Promise<Array>}
    */
   async function fetchExistingMarkers() {
     try {
@@ -305,7 +401,6 @@ window.addEventListener('resize', () => {
       const data = await response.json();
       console.log(`✅ Fetched ${Object.keys(data).length} existing markers`);
       
-      // Convert to array format
       return Object.entries(data).map(([key, value]) => ({
         key,
         ...value
@@ -318,7 +413,6 @@ window.addEventListener('resize', () => {
 
   /**
    * Get current user profile
-   * @returns {Object|null}
    */
   function getCurrentUser() {
     if (typeof getUserProfile === 'function') {
@@ -335,7 +429,7 @@ window.addEventListener('resize', () => {
   // ==========================================
 
   /**
-   * Create add marker button (default icon style)
+   * Create add marker button
    */
   function createAddMarkerButton() {
     if (addMarkerBtn) return;
@@ -357,7 +451,6 @@ window.addEventListener('resize', () => {
 
   /**
    * Create popup controls for temp marker
-   * @returns {string} HTML string for popup
    */
   function createPopupControls() {
     return `
@@ -377,8 +470,6 @@ window.addEventListener('resize', () => {
 
   /**
    * Create marker form overlay
-   * @param {Object} position - { lat, lng }
-   * @param {Object} uniqueIds - { key, id, point }
    */
   function createMarkerForm(position, uniqueIds) {
     if (formOverlay) {
@@ -387,6 +478,9 @@ window.addEventListener('resize', () => {
 
     const userProfile = getCurrentUser();
     const ysId = userProfile?.inGameName || 'Unknown';
+    
+    // Get current floor
+    const currentFloor = selectedFloor || '';
 
     formOverlay = document.createElement('div');
     formOverlay.className = 'marker-form-overlay';
@@ -421,6 +515,14 @@ window.addEventListener('resize', () => {
 
             <div class="form-group">
               <label>
+                Floor / Layer <span class="required">*</span>
+              </label>
+              ${createFloorSelect(currentFloor)}
+              <small class="form-hint">⚠️ Selecting underground floor will require repositioning</small>
+            </div>
+
+            <div class="form-group">
+              <label>
                 Category <span class="required">*</span>
               </label>
               ${createCategorySelect()}
@@ -434,6 +536,7 @@ window.addEventListener('resize', () => {
                 type="text" 
                 name="name" 
                 placeholder="Will be set based on category"
+                value="${savedFormData?.name || ''}"
               >
             </div>
 
@@ -444,7 +547,7 @@ window.addEventListener('resize', () => {
               <textarea 
                 name="desc" 
                 placeholder="Description will be auto-filled based on category..."
-              ></textarea>
+              >${savedFormData?.desc || ''}</textarea>
             </div>
           </form>
         </div>
@@ -458,35 +561,51 @@ window.addEventListener('resize', () => {
       </div>
     `;
 
-    // Event listeners
     const closeBtn = formOverlay.querySelector('.marker-form-close');
     const cancelBtn = formOverlay.querySelector('.btn-cancel');
     const form = formOverlay.querySelector('#markerAddForm');
-    const nameInput = formOverlay.querySelector('input[name="name"]');
-    const descTextarea = formOverlay.querySelector('textarea[name="desc"]');
 
     closeBtn.addEventListener('click', closeForm);
     cancelBtn.addEventListener('click', closeForm);
     
-    // Click outside to close
     formOverlay.addEventListener('click', (e) => {
       if (e.target === formOverlay) {
         closeForm();
       }
     });
 
-    // Initialize custom category select
-    initCategorySelect();
-
-    // Form submit
     form.addEventListener('submit', handleFormSubmit);
 
     document.body.appendChild(formOverlay);
     console.log('✅ Marker form created');
     
-    // Initialize custom category select dengan delay
     setTimeout(() => {
       initCategorySelect();
+      initFloorSelect();
+      
+      // Restore category if repositioning
+      if (isRepositioning && savedFormData?.category_id) {
+        const hiddenInput = document.getElementById('categoryIdInput');
+        if (hiddenInput) {
+          hiddenInput.value = savedFormData.category_id;
+          
+          // Update display
+          const display = document.getElementById('categorySelectDisplay');
+          const selectedName = CATEGORY_NAMES[savedFormData.category_id];
+          const iconFile = ICON_CONFIG.overlays[savedFormData.category_id] || 'default.png';
+          const iconUrl = ICON_BASE_URL + iconFile;
+          
+          if (display) {
+            const displayIcon = display.querySelector('.icon');
+            const displayText = display.querySelector('.text');
+            
+            displayIcon.src = iconUrl;
+            displayIcon.style.display = 'block';
+            displayText.textContent = selectedName;
+            display.classList.add('has-value');
+          }
+        }
+      }
     }, 100);
   }
 
@@ -507,13 +626,12 @@ window.addEventListener('resize', () => {
 
     const center = window.map.getCenter();
     
-    // Create custom icon
-const icon = L.icon({
-  iconUrl: DEFAULT_ICON_URL,
-  iconSize: [64, 64],       // ukuran icon
-  iconAnchor: [32, 64],     // titik bawah tengah
-  popupAnchor: [0, -64]     // posisi popup
-});
+    const icon = L.icon({
+      iconUrl: DEFAULT_ICON_URL,
+      iconSize: [64, 64],
+      iconAnchor: [32, 64],
+      popupAnchor: [0, -64]
+    });
 
     tempMarker = L.marker(center, {
       icon: icon,
@@ -521,7 +639,6 @@ const icon = L.icon({
       zIndexOffset: 1000
     }).addTo(window.map);
 
-    // Bind popup with controls
     tempMarker.bindPopup(createPopupControls(), {
       closeButton: false,
       autoClose: false,
@@ -529,14 +646,11 @@ const icon = L.icon({
       className: 'marker-add-popup'
     }).openPopup();
 
-    // Event handlers
     tempMarker.on('dragstart', function() {
-      // Hide popup during drag
       tempMarker.closePopup();
     });
 
     tempMarker.on('dragend', function() {
-      // Show popup after drag stops
       tempMarker.openPopup();
     });
 
@@ -578,7 +692,6 @@ const icon = L.icon({
       return;
     }
 
-    // Check login
     const user = getCurrentUser();
     if (!user) {
       alert('Please login first to add markers!');
@@ -587,14 +700,11 @@ const icon = L.icon({
 
     isAddMode = true;
     
-    // Update button
     addMarkerBtn.classList.add('active');
     addMarkerBtn.title = 'Cancel adding marker';
     
-    // Zoom to level 6
     window.map.setZoom(6);
     
-    // Create temp marker
     createTempMarker();
 
     console.log('🎯 Entered add marker mode');
@@ -605,19 +715,20 @@ const icon = L.icon({
    */
   function exitAddMode() {
     isAddMode = false;
+    isRepositioning = false;
+    savedFormData = null;
+    selectedFloor = null;
     
-    // Update button
     addMarkerBtn.classList.remove('active');
     addMarkerBtn.title = 'Add new marker to map';
     
-    // Remove temp marker
     removeTempMarker();
 
     console.log('🚪 Exited add marker mode');
   }
 
   /**
-   * Cancel add mode (same as exit)
+   * Cancel add mode
    */
   function cancelAddMode() {
     exitAddMode();
@@ -637,7 +748,6 @@ const icon = L.icon({
 
     console.log('📍 Position confirmed:', position);
 
-    // Update popup to show loading
     tempMarker.setPopupContent(`
       <div class="marker-popup-controls">
         <div class="marker-popup-info">⏳ Loading...</div>
@@ -645,22 +755,22 @@ const icon = L.icon({
     `);
 
     try {
-      // Fetch existing markers
       const existingMarkers = await fetchExistingMarkers();
-      
-      // Generate unique ID
       const uniqueIds = generateUniqueId(existingMarkers);
       
       console.log('🆔 Generated unique ID:', uniqueIds);
 
-      // Show form
+      // Reset repositioning flag
+      if (isRepositioning) {
+        console.log('✅ Repositioning complete');
+        isRepositioning = false;
+      }
+
       createMarkerForm(position, uniqueIds);
 
     } catch (error) {
       alert('Failed to load marker data. Please try again.');
       console.error('❌ Error:', error);
-      
-      // Reset popup
       tempMarker.setPopupContent(createPopupControls());
     }
   }
@@ -669,7 +779,7 @@ const icon = L.icon({
   // FORM HANDLING
   // ==========================================
 
-  /**
+/**
    * Close marker form
    */
   function closeForm() {
@@ -681,86 +791,132 @@ const icon = L.icon({
   }
 
   /**
-   * Handle form submission
-   * @param {Event} e - Submit event
+   * Show custom success popup with image
+   * @param {string} imageUrl - URL gambar success
+   * @param {string} message - Pesan success
    */
-  async function handleFormSubmit(e) {
-    e.preventDefault();
+  function showSuccessPopup(imageUrl, message) {
+    // Remove old popup if exists
+    const oldPopup = document.querySelector('.marker-success-popup');
+    if (oldPopup) oldPopup.remove();
 
-    const form = e.target;
-    const formData = new FormData(form);
+    // Create popup overlay
+    const popup = document.createElement('div');
+    popup.className = 'marker-success-popup';
     
-    // Get submit button from the modal (not form)
-    const submitBtn = document.querySelector('.marker-form-footer .btn-submit');
-    
-    if (!submitBtn) {
-      console.error('❌ Submit button not found');
-      return;
-    }
+    popup.innerHTML = `
+      <div class="success-popup-overlay"></div>
+      <div class="success-popup-container">
+        <div class="success-popup-content">
+          <img src="${imageUrl}" alt="Success" class="success-image">
+          <p class="success-message">${message}</p>
+          <button class="success-close-btn" onclick="this.closest('.marker-success-popup').remove()">
+            OK
+          </button>
+        </div>
+      </div>
+    `;
 
-    // Validate
-    const categoryId = formData.get('category_id');
-    if (!categoryId) {
-      alert('Please select a category!');
-      return;
-    }
+    document.body.appendChild(popup);
 
-    const name = formData.get('name').trim();
-    if (!name) {
-      alert('Please enter a marker name!');
-      return;
-    }
+    // Show with animation
+    setTimeout(() => {
+      popup.classList.add('show');
+    }, 50);
 
-    // Build marker object
-    const markerData = {
-      id: formData.get('id'),
-      ys_id: formData.get('ys_id'),
-      name: name,
-      category_id: categoryId,
-      loc_type: "",
-      lat: formData.get('lat'),
-      lng: formData.get('lng'),
-      desc: formData.get('desc').trim() || "",
-      point: formData.get('point'),
-      number: "",
-      links_info: "[]",
-      images_info: "[]"
-    };
-
-    const markerKey = formData.get('key');
-
-    console.log('💾 Submitting marker:', { key: markerKey, data: markerData });
-
-    // Show loading
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="form-loading">Saving...</span>';
-
-    try {
-      // Submit to API/localStorage
-      await submitMarkerToAPI(markerKey, markerData);
-
-      console.log('✅ Marker saved successfully');
-      alert('✅ Marker added successfully!');
-
-      // Close form and exit mode
-      closeForm();
-
-      // Refresh markers if MarkerManager exists
-      if (window.MarkerManager?.refresh) {
-        window.MarkerManager.refresh();
-      }
-
-    } catch (error) {
-      console.error('❌ Failed to save marker:', error);
-      alert('❌ Failed to save marker. Please try again.');
-      
-      // Reset button
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = '💾 Save Marker';
-    }
+    // Auto close after 5 seconds
+    setTimeout(() => {
+      popup.classList.remove('show');
+      setTimeout(() => popup.remove(), 300);
+    }, 5000);
   }
 
-  /**
+
+// ==========================================
+// UBAH BAGIAN handleFormSubmit
+// ==========================================
+
+/**
+ * Handle form submission - UPDATED VERSION
+ */
+async function handleFormSubmit(e) {
+  e.preventDefault();
+
+  const form = e.target;
+  const formData = new FormData(form);
+  
+  const submitBtn = document.querySelector('.marker-form-footer .btn-submit');
+  
+  if (!submitBtn) {
+    console.error('❌ Submit button not found');
+    return;
+  }
+
+  const categoryId = formData.get('category_id');
+  if (!categoryId) {
+    alert('Please select a category!');
+    return;
+  }
+
+  const name = formData.get('name').trim();
+  if (!name) {
+    alert('Please enter a marker name!');
+    return;
+  }
+
+  const markerData = {
+    id: formData.get('id'),
+    ys_id: formData.get('ys_id'),
+    name: name,
+    category_id: categoryId,
+    loc_type: "",
+    lat: formData.get('lat'),
+    lng: formData.get('lng'),
+    desc: formData.get('desc').trim() || "",
+    point: formData.get('point'),
+    number: "",
+    floor: formData.get('floor') || "",
+    links_info: "[]",
+    images_info: "[]"
+  };
+
+  const markerKey = formData.get('key');
+
+  console.log('💾 Submitting marker:', { key: markerKey, data: markerData });
+
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="form-loading">Saving...</span>';
+
+  try {
+    await submitMarkerToAPI(markerKey, markerData);
+
+    console.log('✅ Marker saved successfully');
+    
+    // ✨ GANTI alert() dengan showSuccessPopup()
+    // GANTI URL_GAMBAR_ANDA dengan link gambar yang sebenarnya
+    showSuccessPopup(
+      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/hehe.webp', // <-- GANTI LINK INI
+      'Thank You!<br>We will review your marker.'
+    );
+
+    closeForm();
+
+    if (window.MarkerManager?.refresh) {
+      window.MarkerManager.refresh();
+    }
+
+  } catch (error) {
+    console.error('❌ Failed to save marker:', error);
+    alert('❌ Failed to save marker. Please try again.');
+    
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '💾 Save Marker';
+  }
+}
+
+
+
+/**
    * Submit marker to API
    * @param {string} key - Marker key
    * @param {Object} data - Marker data
@@ -844,7 +1000,8 @@ const icon = L.icon({
     console.log('🚀 Initializing MarkerAddSystem...');
     
     createAddMarkerButton();
-showAddButtonHint();
+    showAddButtonHint();
+    
     console.log('✅ MarkerAddSystem initialized');
   }
 
@@ -907,4 +1064,4 @@ if (document.readyState === 'loading') {
 // Global export
 window.MarkerAddSystem = MarkerAddSystem;
 
-console.log('✅ marker-add.js loaded');
+console.log('✅ marker-add.js loaded (with Floor Selection)');
