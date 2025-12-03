@@ -19,7 +19,7 @@ const filterGroupConfig = {
   hot : {
     title: 'Hot',
     icon: '',
-    categories: [2, 3, 13, 36, 37]  // Teleport + Treasure Chest
+    categories: [2, 3, 13, 24, 36, 37]  // Teleport + Treasure Chest
   },
   discover: {
     title: 'Discover',
@@ -39,7 +39,7 @@ const filterGroupConfig = {
   traveler: {
     title: 'Traveler',
     icon: '️',
-    categories: [21, 22, 23, 24]
+    categories: [21, 22, 23,]
   },
   combat: {
     title: 'Combat Challenge',
