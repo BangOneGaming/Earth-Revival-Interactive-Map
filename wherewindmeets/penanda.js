@@ -19,7 +19,7 @@ const filterGroupConfig = {
   hot : {
     title: 'Hot',
     icon: '',
-    categories: [2, 3, 13, 36]  // Teleport + Treasure Chest
+    categories: [2, 3, 13, 36, 37]  // Teleport + Treasure Chest
   },
   discover: {
     title: 'Discover',
@@ -363,7 +363,8 @@ getAllMarkers() {
     window.melodi,
     window.tebakan,
     window.gulat,
-    window.tehnik
+    window.tehnik,
+    window.innerwaylist
   ];
 
     sources.forEach(source => {
@@ -719,113 +720,188 @@ addMarkersBatch(markers, bounds) {
   addNextBatch();
 },
 
-/**
- * Create and add a marker to the map
- * @param {Object} markerData - The marker data
- * @param {number} lat - Latitude
- * @param {number} lng - Longitude
- * @param {string} markerKey - Unique key for the marker
- */
-createAndAddMarker(markerData, lat, lng, markerKey) {
-  // ✅ PERUBAHAN UTAMA: Gunakan special_icon jika ada
-  const specialIcon = markerData.special_icon || null;
-  
-  // Gunakan fungsi baru yang support special_icon
-  const icon = typeof getIconByCategoryWithSpecial !== 'undefined'
-    ? getIconByCategoryWithSpecial(markerData.category_id, specialIcon)
-    : getIconByCategory(markerData.category_id);
-  
-  const popupContent = this.createPopupContent(markerData);
 
-  const leafletMarker = L.marker([lat, lng], { icon })
-    .bindPopup(popupContent)
-    .addTo(this.map);
 
-  // Check if marker is visited and apply opacity
-  const visitedMarkers = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');
-  if (visitedMarkers[markerKey]) {
-    leafletMarker.setOpacity(0.5);
-  }
+  /**
+   * Create and add marker
+   */
+  createAndAddMarker(markerData, lat, lng, markerKey) {
+    const specialIcon = markerData.special_icon || null;
+    const markerFloor = markerData.floor || '';
 
-  // Store marker with its category ID and floor for easy filtering
-  leafletMarker.categoryId = markerData.category_id;
-  leafletMarker.markerKey = markerKey;
-  leafletMarker.floor = markerData.floor || '';
-  leafletMarker.specialIcon = specialIcon; // ← Simpan special_icon untuk reference
-  
-  this.activeMarkers[markerKey] = leafletMarker;
-},
+    const needsBadge = typeof UndergroundManager !== 'undefined'
+      ? UndergroundManager.needsFloorBadge(markerFloor)
+      : false;
 
-/**
- * Update markers visible in current view
- */
-updateMarkersInView() {
-  const bounds = this.getBufferedBounds();
-  const markers = this.getAllMarkers();
+    const baseIcon = typeof getIconByCategoryWithSpecial !== 'undefined'
+      ? getIconByCategoryWithSpecial(markerData.category_id, specialIcon)
+      : getIconByCategory(markerData.category_id);
 
-  this.removeOutOfBoundsMarkers(bounds);
-  this.addMarkersBatch(markers, bounds);
-},
-
-/**
- * Update stats display
- */
-updateStats() {
-  const statsEl = document.getElementById("filterStats");
-  if (!statsEl) return;
-
-  const count = Object.keys(this.activeMarkers).length;
-  
-  // Get floor info if available
-  let floorInfo = '';
-  if (typeof UndergroundManager !== 'undefined') {
-    const activeFloorData = UndergroundManager.getActiveFloorInfo();
-    if (activeFloorData) {
-      let floorName = activeFloorData.name;
-      if (floorName.includes('(')) {
-        floorName = floorName.split('(')[0].trim();
-      }
-      floorInfo = ` <span style="color: #f3d59b;">| ${floorName}</span>`;
+    // Add badge if needed
+    let finalIcon = baseIcon;
+    if (needsBadge) {
+      finalIcon = this.createIconWithBadge(baseIcon, markerFloor);
     }
+
+    const popupContent = this.createPopupContent(markerData);
+
+    const leafletMarker = L.marker([lat, lng], { icon: finalIcon })
+      .bindPopup(popupContent)
+      .addTo(this.map);
+
+    if (needsBadge) {
+      leafletMarker.on('click', () => {
+        this.map.closePopup();
+        UndergroundManager?.setActiveFloor(markerFloor);
+        this.showFloorSwitchNotification(markerFloor);
+      });
+    }
+
+    const visitedMarkers = JSON.parse(localStorage.getItem("visitedMarkers") || "{}");
+    if (visitedMarkers[markerKey]) {
+      leafletMarker.setOpacity(0.5);
+    }
+
+    leafletMarker.categoryId = markerData.category_id;
+    leafletMarker.markerKey = markerKey;
+    leafletMarker.floor = markerFloor;
+    leafletMarker.specialIcon = specialIcon;
+    leafletMarker.hasBadge = needsBadge;
+
+    this.activeMarkers[markerKey] = leafletMarker;
+  },
+
+  /**
+   * Create icon with floor badge
+   */
+  createIconWithBadge(baseIcon, markerFloor) {
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    const baseHtml = baseIcon.options.html || "";
+    const baseSize = baseIcon.options.iconSize || (isMobile ? [32, 32] : [48, 48]);
+    const badgeSize = Math.floor(baseSize[0] * 0.3);
+
+    return L.divIcon({
+      html: `
+        <div style="position:relative;width:${baseSize[0]}px;height:${baseSize[1]}px;">
+          ${baseHtml}
+          <img src="${ICON_BASE_URL}layericon.png"
+            style="
+              position:absolute;
+              bottom:0;
+              right:0;
+              width:${badgeSize}px;
+              height:${badgeSize}px;
+              border:2px solid rgba(0,0,0,0.5);
+              border-radius:50%;
+              background:rgba(0,0,0,0.7);
+              box-shadow:0 2px 4px rgba(0,0,0,0.5);
+              z-index:10;
+            ">
+        </div>
+      `,
+      iconSize: baseSize,
+      iconAnchor: baseIcon.options.iconAnchor,
+      popupAnchor: baseIcon.options.popupAnchor,
+      className: "no-default-icon-bg marker-with-badge"
+    });
+  },
+
+  /**
+   * Show notification when switching floor
+   */
+  showFloorSwitchNotification(floorId) {
+    const oldNotif = document.querySelector(".floor-switch-notification");
+    if (oldNotif) oldNotif.remove();
+
+    let floorName = "Unknown Floor";
+
+    if (typeof UndergroundManager !== "undefined") {
+      const floorInfo = UndergroundManager.floors.find(f => f.id === floorId);
+      if (floorInfo) floorName = floorInfo.name;
+    }
+
+    const notif = document.createElement("div");
+    notif.className = "floor-switch-notification";
+    notif.innerHTML = `
+      <img src="${ICON_BASE_URL}layericon.png" style="width:20px;height:20px;margin-right:8px;">
+      <span>Switched to <strong>${floorName}</strong></span>
+    `;
+    document.body.appendChild(notif);
+
+    notif.style.cssText = `
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.85);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      z-index: 10000;
+      animation: slideDown .3s ease-out;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    `;
+
+    setTimeout(() => {
+      notif.style.animation = "slideDown .3s ease-in reverse";
+      setTimeout(() => notif.remove(), 300);
+    }, 3000);
+  },
+
+  /**
+   * Update markers in view
+   */
+  updateMarkersInView() {
+    const bounds = this.getBufferedBounds();
+    const markers = this.getAllMarkers();
+
+    this.removeOutOfBoundsMarkers(bounds);
+    this.addMarkersBatch(markers, bounds);
+  },
+
+  /**
+   * Update stats
+   */
+  updateStats() {
+    const statsEl = document.getElementById("filterStats");
+    if (!statsEl) return;
+
+    const count = Object.keys(this.activeMarkers).length;
+
+    let floorInfo = "";
+    if (typeof UndergroundManager !== "undefined") {
+      const activeFloorData = UndergroundManager.getActiveFloorInfo();
+      if (activeFloorData) {
+        let floorName = activeFloorData.name.split("(")[0].trim();
+        floorInfo = ` <span style="color:#f3d59b;">| ${floorName}</span>`;
+      }
+    }
+
+    statsEl.innerHTML = `Showing <strong>${count}</strong> markers${floorInfo}`;
+  },
+
+  /**
+   * Refresh markers after floor change
+   */
+  forceRefreshMarkers() {
+    this.removeAllMarkers();
+    this.updateMarkersInView();
+  },
+
+  /**
+   * Debounce
+   */
+  debounce(fn, delay) {
+    let timeout;
+    return function (...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => fn.apply(this, args), delay);
+    };
   }
-  
-  statsEl.innerHTML = `Showing <strong>${count}</strong> markers${floorInfo}`;
-},
-
-/**
- * Force refresh all markers (untuk floor change)
- */
-/**
- * GANTI BAGIAN INI - Dari forceRefreshMarkers sampai window.copyToClipboard
- * 
- * PENTING: Tambahkan closing bracket }; setelah forceRefreshMarkers
- * dan SEBELUM window.copyToClipboard
- */
-
-/**
- * Force refresh all markers (untuk floor change)
- */
-forceRefreshMarkers() {
-  
-  this.removeAllMarkers();
-  this.updateMarkersInView();
-},
-
-/**
- * Debounce helper function
- * @param {Function} fn - Function to debounce
- * @param {number} delay - Delay in milliseconds
- * @returns {Function} Debounced function
- */
-debounce(fn, delay) {
-  let timeout;
-  return function(...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => fn.apply(this, args), delay);
-  };
-}
-}; // ← INI CLOSING BRACKET MarkerManager - HARUS ADA!
-
+}; // ✅ Penutup MarkerManager yang benar
 // ========================================
 // VISITED MARKER FUNCTIONS
 // ========================================

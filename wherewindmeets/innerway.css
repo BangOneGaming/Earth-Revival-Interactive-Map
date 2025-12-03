@@ -1,12 +1,12 @@
 /* ============================================
-   MYSTIC SKILL PANEL - FULL OVERLAY SYSTEM
+   INNER WAYS PANEL - FULL OVERLAY SYSTEM
    ============================================ */
 
-/* Tombol Toggle Mystic Skill - Fixed Position */
-#mysticToggleBtn {
+/* Tombol Toggle Inner Ways - Fixed Position */
+#innerWaysToggleBtn {
   position: fixed;
   top: 10px;
-  right: 44%;
+  right: 51%;
   width: 50px;
   height: 50px;
   z-index: 999;
@@ -22,26 +22,26 @@
   padding: 0;
 }
 
-#mysticToggleBtn img {
-  width: 28px;
-  height: 28px;
+#innerWaysToggleBtn img {
+  width: 35px;
+  height: 35px;
   object-fit: contain;
   filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.5));
 }
 
-#mysticToggleBtn:hover {
+#innerWaysToggleBtn:hover {
   background: linear-gradient(135deg, #DAA520 0%, #FFD700 100%);
   box-shadow: 0 6px 16px rgba(218, 165, 32, 0.6);
   transform: scale(1.05);
 }
 
-#mysticToggleBtn:active {
+#innerWaysToggleBtn:active {
   transform: scale(0.95);
   box-shadow: 0 2px 8px rgba(139, 105, 20, 0.4);
 }
 
 /* Overlay Fullscreen */
-#mysticOverlay {
+#innerWaysOverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -54,13 +54,13 @@
   transition: opacity 0.3s ease;
 }
 
-#mysticOverlay.active {
+#innerWaysOverlay.active {
   display: block;
   opacity: 1;
 }
 
 /* Container Utama */
-.mystic-container {
+.innerways-container {
   width: 100%;
   height: 100%;
   background: linear-gradient(180deg, #2C1810 0%, #1A0F08 100%);
@@ -69,7 +69,7 @@
 }
 
 /* Header Panel */
-.mystic-header {
+.innerways-header {
   background: linear-gradient(135deg, #8B6914 0%, #6B5310 100%);
   padding: 20px;
   border-bottom: 2px solid #DAA520;
@@ -79,7 +79,7 @@
   justify-content: space-between;
 }
 
-.mystic-title {
+.innerways-title {
   font-size: 24px;
   font-weight: bold;
   color: #FFD700;
@@ -90,7 +90,7 @@
   gap: 12px;
 }
 
-.mystic-title-icon {
+.innerways-title-icon {
   width: 40px;
   height: 40px;
   object-fit: contain;
@@ -98,7 +98,7 @@
 }
 
 /* Close Button */
-.mystic-close-btn {
+.innerways-close-btn {
   width: 40px;
   height: 40px;
   background: rgba(139, 69, 19, 0.3);
@@ -114,7 +114,7 @@
   font-weight: bold;
 }
 
-.mystic-close-btn:hover {
+.innerways-close-btn:hover {
   background: rgba(218, 165, 32, 0.5);
   transform: rotate(90deg);
   box-shadow: 0 0 12px rgba(218, 165, 32, 0.6);
@@ -123,18 +123,18 @@
 /* ============================================
    GRID VIEW - List Semua Icons
    ============================================ */
-.mystic-grid-view {
+.innerways-grid-view {
   display: block;
   height: calc(100% - 80px);
   overflow-y: auto;
   padding: 30px 20px;
 }
 
-.mystic-grid-view.hidden {
+.innerways-grid-view.hidden {
   display: none;
 }
 
-.mystic-grid-container {
+.innerways-grid-container {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 30px;
@@ -142,7 +142,7 @@
   margin: 0 auto;
 }
 
-.mystic-grid-item {
+.innerways-grid-item {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -156,7 +156,7 @@
   overflow: hidden;
 }
 
-.mystic-grid-item::before {
+.innerways-grid-item::before {
   content: '';
   position: absolute;
   top: 0;
@@ -167,18 +167,18 @@
   transition: left 0.5s ease;
 }
 
-.mystic-grid-item:hover::before {
+.innerways-grid-item:hover::before {
   left: 100%;
 }
 
-.mystic-grid-item:hover {
+.innerways-grid-item:hover {
   background: linear-gradient(135deg, rgba(139, 105, 20, 0.4) 0%, rgba(107, 83, 16, 0.4) 100%);
   border-color: #DAA520;
   box-shadow: 0 6px 20px rgba(218, 165, 32, 0.4);
   transform: translateY(-5px);
 }
 
-.mystic-grid-icon {
+.innerways-grid-icon {
   width: 100px;
   height: 100px;
   object-fit: contain;
@@ -187,11 +187,11 @@
   transition: transform 0.3s ease;
 }
 
-.mystic-grid-item:hover .mystic-grid-icon {
+.innerways-grid-item:hover .innerways-grid-icon {
   transform: scale(1.1);
 }
 
-.mystic-grid-name {
+.innerways-grid-name {
   font-size: 14px;
   font-weight: 600;
   color: #FFD700;
@@ -201,37 +201,37 @@
 }
 
 /* Empty State */
-.mystic-empty-state {
+.innerways-empty-state {
   text-align: center;
   padding: 80px 20px;
   color: rgba(255, 248, 220, 0.5);
 }
 
-.mystic-empty-icon {
+.innerways-empty-icon {
   font-size: 64px;
   margin-bottom: 20px;
   opacity: 0.3;
 }
 
-.mystic-empty-text {
+.innerways-empty-text {
   font-size: 18px;
 }
 
 /* ============================================
    DETAIL VIEW - Icon Besar + Desc
    ============================================ */
-.mystic-detail-view {
+.innerways-detail-view {
   display: none;
   height: calc(100% - 80px);
   padding: 0;
 }
 
-.mystic-detail-view.active {
+.innerways-detail-view.active {
   display: flex;
 }
 
 /* Back Button di Detail View */
-.mystic-back-btn {
+.innerways-back-btn {
   position: absolute;
   top: 20px;
   right: 80px;
@@ -252,14 +252,14 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
-.mystic-back-btn:hover {
+.innerways-back-btn:hover {
   background: linear-gradient(135deg, #DAA520 0%, #FFD700 100%);
   transform: scale(1.1);
   box-shadow: 0 6px 16px rgba(218, 165, 32, 0.6);
 }
 
 /* Detail Content Layout */
-.mystic-detail-content {
+.innerways-detail-content {
   display: flex;
   width: 100%;
   height: 100%;
@@ -268,14 +268,14 @@
 }
 
 /* Left Side - Text Content */
-.mystic-detail-left {
+.innerways-detail-left {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-.mystic-detail-header {
+.innerways-detail-header {
   font-size: 32px;
   font-weight: bold;
   color: #FFD700;
@@ -285,7 +285,7 @@
   border-bottom: 2px solid #DAA520;
 }
 
-.mystic-guide-label {
+.innerways-guide-label {
   font-size: 20px;
   font-weight: bold;
   color: #DAA520;
@@ -293,32 +293,32 @@
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-.mystic-detail-desc-container {
+.innerways-detail-desc-container {
   flex: 1;
   overflow-y: auto;
   padding-right: 15px;
 }
 
-.mystic-detail-desc-container::-webkit-scrollbar {
+.innerways-detail-desc-container::-webkit-scrollbar {
   width: 10px;
 }
 
-.mystic-detail-desc-container::-webkit-scrollbar-track {
+.innerways-detail-desc-container::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.3);
   border-radius: 5px;
 }
 
-.mystic-detail-desc-container::-webkit-scrollbar-thumb {
+.innerways-detail-desc-container::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #8B6914 0%, #DAA520 100%);
   border-radius: 5px;
 }
 
-.mystic-detail-desc-container::-webkit-scrollbar-thumb:hover {
+.innerways-detail-desc-container::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #DAA520 0%, #FFD700 100%);
 }
 
 /* Part Section */
-.mystic-part-section {
+.innerways-part-section {
   background: linear-gradient(135deg, rgba(139, 105, 20, 0.15) 0%, rgba(107, 83, 16, 0.15) 100%);
   border: 1px solid rgba(218, 165, 32, 0.3);
   border-radius: 10px;
@@ -326,7 +326,7 @@
   margin-bottom: 20px;
 }
 
-.mystic-part-header {
+.innerways-part-header {
   font-size: 18px;
   font-weight: bold;
   color: #FFD700;
@@ -336,19 +336,19 @@
   gap: 8px;
 }
 
-.mystic-part-divider {
+.innerways-part-divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, #DAA520, transparent);
   margin: 15px 0;
 }
 
 /* Video Player Container */
-.mystic-video-container {
+.innerways-video-container {
   width: 100%;
   margin-bottom: 15px;
 }
 
-.mystic-video-wrapper {
+.innerways-video-wrapper {
   position: relative;
   width: 100%;
   padding-bottom: 56.25%; /* 16:9 aspect ratio */
@@ -359,7 +359,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
-.mystic-video-wrapper iframe {
+.innerways-video-wrapper iframe {
   position: absolute;
   top: 0;
   left: 0;
@@ -370,18 +370,18 @@
 }
 
 /* Part Info */
-.mystic-part-info {
+.innerways-part-info {
   font-size: 14px;
   color: rgba(255, 248, 220, 0.7);
   margin-bottom: 8px;
 }
 
-.mystic-part-info strong {
+.innerways-part-info strong {
   color: #DAA520;
 }
 
 /* Skill Details Section */
-.mystic-details-section {
+.innerways-details-section {
   background: linear-gradient(135deg, rgba(139, 105, 20, 0.1) 0%, rgba(107, 83, 16, 0.1) 100%);
   border: 1px solid rgba(218, 165, 32, 0.2);
   border-radius: 8px;
@@ -389,7 +389,7 @@
   margin-bottom: 15px;
 }
 
-.mystic-details-header {
+.innerways-details-header {
   font-size: 16px;
   font-weight: bold;
   color: #FFD700;
@@ -398,7 +398,7 @@
   border-bottom: 1px solid rgba(218, 165, 32, 0.3);
 }
 
-.mystic-details-grid {
+.innerways-details-grid {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 8px 15px;
@@ -406,16 +406,16 @@
   line-height: 1.6;
 }
 
-.mystic-details-label {
+.innerways-details-label {
   color: #DAA520;
   font-weight: 600;
 }
 
-.mystic-details-value {
+.innerways-details-value {
   color: #FFF8DC;
 }
 
-.mystic-effect-text {
+.innerways-effect-text {
   margin-top: 10px;
   padding: 10px;
   background: rgba(0, 0, 0, 0.2);
@@ -426,12 +426,12 @@
 }
 
 /* Table Styles */
-.mystic-table-container {
+.innerways-table-container {
   margin-bottom: 15px;
   overflow-x: auto;
 }
 
-.mystic-table {
+.innerways-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
@@ -440,11 +440,11 @@
   overflow: hidden;
 }
 
-.mystic-table thead {
+.innerways-table thead {
   background: linear-gradient(135deg, #8B6914 0%, #6B5310 100%);
 }
 
-.mystic-table th {
+.innerways-table th {
   padding: 12px 10px;
   text-align: left;
   color: #FFD700;
@@ -452,22 +452,22 @@
   border-bottom: 2px solid #DAA520;
 }
 
-.mystic-table td {
+.innerways-table td {
   padding: 10px;
   color: #FFF8DC;
   border-bottom: 1px solid rgba(218, 165, 32, 0.2);
   vertical-align: top;
 }
 
-.mystic-table tbody tr:last-child td {
+.innerways-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-.mystic-table tbody tr:hover {
+.innerways-table tbody tr:hover {
   background: rgba(218, 165, 32, 0.1);
 }
 
-.mystic-tier-badge {
+.innerways-tier-badge {
   display: inline-block;
   background: linear-gradient(135deg, #DAA520 0%, #FFD700 100%);
   color: #1A0F08;
@@ -478,13 +478,13 @@
 }
 
 /* Empty cell untuk grouped rows */
-.mystic-table td.tier-grouped {
+.innerways-table td.tier-grouped {
   border-left: 3px solid #DAA520;
   padding-left: 15px;
 }
 
 /* Go to Location Button */
-.mystic-location-btn {
+.innerways-location-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -501,32 +501,32 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
-.mystic-location-btn:hover {
+.innerways-location-btn:hover {
   background: linear-gradient(135deg, #DAA520 0%, #FFD700 100%);
   color: #1A0F08;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(218, 165, 32, 0.5);
 }
 
-.mystic-location-icon {
+.innerways-location-icon {
   font-size: 16px;
 }
 
-.mystic-detail-desc {
+.innerways-detail-desc {
   font-size: 16px;
   line-height: 1.8;
   color: #FFF8DC;
   white-space: pre-wrap;
 }
 
-.mystic-detail-placeholder {
+.innerways-detail-placeholder {
   font-size: 16px;
   color: rgba(255, 248, 220, 0.5);
   font-style: italic;
 }
 
 /* Right Side - Icon Besar + Video */
-.mystic-detail-right {
+.innerways-detail-right {
   width: 40%;
   display: flex;
   flex-direction: column;
@@ -539,24 +539,24 @@
   box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.3);
   gap: 20px;
   overflow-y: auto;
-  max-height: 20%;
+  max-height: 100%;
 }
 
-.mystic-detail-right::-webkit-scrollbar {
+.innerways-detail-right::-webkit-scrollbar {
   width: 8px;
 }
 
-.mystic-detail-right::-webkit-scrollbar-track {
+.innerways-detail-right::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.3);
   border-radius: 4px;
 }
 
-.mystic-detail-right::-webkit-scrollbar-thumb {
+.innerways-detail-right::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #8B6914 0%, #DAA520 100%);
   border-radius: 4px;
 }
 
-.mystic-detail-icon-container {
+.innerways-detail-icon-container {
   width: 100%;
   display: flex;
   align-items: center;
@@ -564,23 +564,23 @@
   flex-shrink: 0;
 }
 
-.mystic-detail-icon {
+.innerways-detail-icon {
   max-width: 250px;
   max-height: 250px;
   width: auto;
   height: auto;
   object-fit: contain;
   filter: drop-shadow(4px 4px 8px rgba(0, 0, 0, 0.7));
-  animation: mysticIconFloat 3s ease-in-out infinite;
+  animation: innerWaysIconFloat 3s ease-in-out infinite;
 }
 
 /* Video Container in Right Panel */
-.mystic-detail-right .mystic-video-container {
+.innerways-detail-right .innerways-video-container {
   width: 100%;
   flex-shrink: 0;
 }
 
-@keyframes mysticIconFloat {
+@keyframes innerWaysIconFloat {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
 }
@@ -589,69 +589,69 @@
    MOBILE RESPONSIVE
    ============================================ */
 @media (max-width: 768px) {
-  #mysticToggleBtn {
-    top: 52vh;
+  #innerWaysToggleBtn {
+    top: 58vh;
     left: 10px;
     width: 45px;
     height: 45px;
   }
 
-  #mysticToggleBtn img {
+  #innerWaysToggleBtn img {
     width: 24px;
     height: 24px;
   }
 
-  .mystic-header {
+  .innerways-header {
     padding: 15px;
   }
 
-  .mystic-title {
+  .innerways-title {
     font-size: 18px;
     gap: 8px;
   }
 
-  .mystic-title-icon {
+  .innerways-title-icon {
     width: 30px;
     height: 30px;
   }
 
-  .mystic-close-btn {
+  .innerways-close-btn {
     width: 35px;
     height: 35px;
     font-size: 20px;
   }
 
   /* Grid View Mobile - 3 Kolom */
-  .mystic-grid-view {
+  .innerways-grid-view {
     padding: 20px 10px;
     height: calc(100% - 65px);
   }
 
-  .mystic-grid-container {
+  .innerways-grid-container {
     grid-template-columns: repeat(3, 1fr);
     gap: 15px;
   }
 
-  .mystic-grid-item {
+  .innerways-grid-item {
     padding: 15px 10px;
   }
 
-  .mystic-grid-icon {
+  .innerways-grid-icon {
     width: 70px;
     height: 70px;
     margin-bottom: 10px;
   }
 
-  .mystic-grid-name {
+  .innerways-grid-name {
     font-size: 12px;
   }
 
   /* Detail View Mobile - Vertical Layout */
-  .mystic-detail-view {
+  .innerways-detail-view {
     height: calc(100% - 65px);
   }
 
-  .mystic-back-btn {
+  .innerways-back-btn {
     top: 15px;
     right: 60px;
     width: 40px;
@@ -659,35 +659,35 @@
     font-size: 22px;
   }
 
-  .mystic-detail-content {
+  .innerways-detail-content {
     flex-direction: column;
     padding: 20px;
     gap: 20px;
   }
 
-  .mystic-detail-left {
+  .innerways-detail-left {
     flex: 1;
     order: 1;
   }
 
-  .mystic-detail-header {
+  .innerways-detail-header {
     font-size: 20px;
     margin-bottom: 15px;
     padding-bottom: 12px;
   }
 
-  .mystic-guide-label {
+  .innerways-guide-label {
     font-size: 16px;
     margin-bottom: 12px;
   }
 
-  .mystic-detail-desc {
+  .innerways-detail-desc {
     font-size: 14px;
     line-height: 1.6;
   }
 
   /* Panel kanan di bawah pada mobile */
-  .mystic-detail-right {
+  .innerways-detail-right {
     width: 100%;
     height: auto;
     min-height: 20%;
@@ -697,56 +697,56 @@
     order: 2;
   }
 
-  .mystic-detail-icon {
+  .innerways-detail-icon {
     max-width: 180px;
     max-height: 180px;
   }
 
-  .mystic-part-section {
+  .innerways-part-section {
     padding: 15px;
     margin-bottom: 15px;
   }
 
-  .mystic-part-header {
+  .innerways-part-header {
     font-size: 16px;
   }
 
-  .mystic-location-btn {
+  .innerways-location-btn {
     font-size: 13px;
     padding: 8px 12px;
   }
 
-  .mystic-table {
+  .innerways-table {
     font-size: 12px;
   }
 
-  .mystic-table th,
-  .mystic-table td {
+  .innerways-table th,
+  .innerways-table td {
     padding: 8px 6px;
   }
 
-  .mystic-details-grid {
+  .innerways-details-grid {
     font-size: 13px;
     gap: 6px 12px;
   }
 
-  .mystic-effect-text {
+  .innerways-effect-text {
     font-size: 13px;
   }
 
-  .mystic-part-info {
+  .innerways-part-info {
     font-size: 13px;
   }
 }
 
 /* Tablet */
 @media (min-width: 769px) and (max-width: 1024px) {
-  .mystic-grid-container {
+  .innerways-grid-container {
     grid-template-columns: repeat(4, 1fr);
     gap: 25px;
   }
 
-  .mystic-grid-icon {
+  .innerways-grid-icon {
     width: 85px;
     height: 85px;
   }

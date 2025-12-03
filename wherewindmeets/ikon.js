@@ -71,7 +71,8 @@ const ICON_CONFIG = {
     "33": "melody.webp",
     "34": "riddle.webp",
     "35": "summo.webp",
-    "36": "mystic.webp"
+    "36": "tehnik.webp",
+    "37": "innerway.webp"
   },
 
   names: {
@@ -110,7 +111,8 @@ const ICON_CONFIG = {
     "33": "Graceful Melody",
     "34": "Riddle",
     "35": "Sumo",
-    "36": "Mystic Skill"
+    "36": "Mystic Skill",
+    "37": "Inner Ways"
   },
 
   // Custom sizes per category
@@ -275,6 +277,13 @@ function createCompositeIconHTML(categoryId) {
  */
 function getIconUrlWithSpecial(categoryId, specialIcon) {
   if (specialIcon && specialIcon.trim() !== '') {
+
+    // KHUSUS category 37 = Inner Ways
+    if (String(categoryId) === "37") {
+      return `${ICON_BASE_URL}innerway/${specialIcon}.webp`;
+    }
+
+    // Selain Inner Ways tetap normal
     return `${ICON_BASE_URL}${specialIcon}.webp`;
   }
   
@@ -285,6 +294,15 @@ function getIconUrlWithSpecial(categoryId, specialIcon) {
 /**
  * Create composite icon dengan support special_icon
  */
+/**
+ * Create composite icon dengan support special_icon
+ * ✨ FIXED: Special icon TANPA background (langsung icon saja)
+ */
+/**
+ * Create composite icon dengan support special_icon
+ * ✨ FIXED: Special icon TANPA background (langsung icon saja)
+ * ✨ FIXED: Aspect ratio dijaga dengan object-fit: contain
+ */
 function createCompositeLeafletIconWithSpecial(categoryId, specialIcon) {
   const overlayUrl = getIconUrlWithSpecial(categoryId, specialIcon);
   const baseUrl = ICON_CONFIG.baseIcon;
@@ -294,11 +312,13 @@ function createCompositeLeafletIconWithSpecial(categoryId, specialIcon) {
   const anchor = special?.anchor || ICON_CONFIG.defaultAnchor;
   const popupAnchor = special?.popupAnchor || ICON_CONFIG.defaultPopupAnchor;
 
-  if (String(categoryId) === "1") {
+  // ✨ JIKA ADA SPECIAL ICON → TANPA BACKGROUND (seperti category 1)
+  if (specialIcon && specialIcon.trim() !== '') {
     return L.divIcon({
       html: `
         <div style="position:relative;width:${size[0]}px;height:${size[1]}px;">
-          <img src="${overlayUrl}" style="width:100%;height:100%;z-index:2;">
+          <img src="${overlayUrl}" 
+               style="width:100%;height:100%;object-fit:contain;z-index:2;">
         </div>
       `,
       iconSize: size,
@@ -308,6 +328,23 @@ function createCompositeLeafletIconWithSpecial(categoryId, specialIcon) {
     });
   }
 
+  // Category 1 (Teleport) juga tanpa background
+  if (String(categoryId) === "1") {
+    return L.divIcon({
+      html: `
+        <div style="position:relative;width:${size[0]}px;height:${size[1]}px;">
+          <img src="${overlayUrl}" 
+               style="width:100%;height:100%;object-fit:contain;z-index:2;">
+        </div>
+      `,
+      iconSize: size,
+      iconAnchor: anchor,
+      popupAnchor: popupAnchor,
+      className: "no-default-icon-bg"
+    });
+  }
+
+  // Kategori biasa → Background + Overlay
   return L.divIcon({
     html: `
       <div style="position:relative;width:${size[0]}px;height:${size[1]}px;">

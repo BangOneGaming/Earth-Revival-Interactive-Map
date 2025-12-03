@@ -1,9 +1,9 @@
 /**
- * Underground Floor Manager - Popup Version (FIXED Icons + Hint)
- * Container muncul di sebelah tombol (kiri bawah)
+ * Underground Floor Manager - WITH SEE ALL TOGGLE BUTTON
+ * Checkbox See All dipindah ke luar panel sebagai toggle button
  */
 
-console.log("🏔️ Loading underground-manager.js (Popup Version - FIXED)...");
+console.log("🏔️ Loading underground-manager.js (See All Toggle Button)...");
 
 const UndergroundManager = {
   map: null,
@@ -12,6 +12,7 @@ const UndergroundManager = {
   overlayData: null,
   isOpen: false,
   mapReady: false,
+  seeAllMode: true, // Default: checked
   
   floors: [
     { 
@@ -62,14 +63,11 @@ const UndergroundManager = {
   ],
 
   /**
-   * ✨ Apply visual effects to map (brightness + blur)
+   * Apply visual effects to map (brightness + blur)
    */
   applyMapEffects(brightness, blur) {
     if (!this.map) return;
     
-    const mapContainer = this.map.getContainer();
-    
-    // Get all tile layers (base map)
     const tileLayers = [];
     this.map.eachLayer(layer => {
       if (layer instanceof L.TileLayer) {
@@ -77,7 +75,6 @@ const UndergroundManager = {
       }
     });
     
-    // Apply effects to tile layers
     tileLayers.forEach(layer => {
       const element = layer.getContainer();
       if (element) {
@@ -88,7 +85,7 @@ const UndergroundManager = {
   },
 
   /**
-   * ✨ Reset map to normal (remove all effects)
+   * Reset map to normal (remove all effects)
    */
   resetMapEffects() {
     if (!this.map) return;
@@ -109,10 +106,8 @@ const UndergroundManager = {
   async init(map) {
     this.map = map;
     
-    // 🔥 WAIT for map to be fully ready
     await this.waitForMapReady();
     
-    // Check if DOM elements exist
     const panel = document.getElementById("undergroundPanel");
     const toggleBtn = document.getElementById("undergroundToggle");
     const content = document.getElementById("undergroundContent");
@@ -122,29 +117,28 @@ const UndergroundManager = {
       return;
     }
     
-    // Load overlay data
     console.log("⏳ Loading overlay data...");
     await this.loadOverlayData();
     console.log("✅ Overlay data loading complete");
     
-    // Setup UI
-    this.setupUI();
+    // Load saved state
+    const savedFloor = localStorage.getItem('activeFloor') || 'surface';
+    const savedSeeAll = localStorage.getItem('seeAllMode');
+    this.seeAllMode = savedSeeAll !== null ? savedSeeAll === 'true' : true;
     
-    // Setup event listeners
+    this.createSeeAllToggle();
+    this.setupUI();
     this.setupEventListeners();
     
-    // Load saved floor or default to surface
-    const savedFloor = localStorage.getItem('activeFloor') || 'surface';
     this.setActiveFloor(savedFloor, false);
     
-    // 🎯 Show hint after everything is loaded (delay 2 seconds)
     setTimeout(() => {
       this.showUndergroundHint();
     }, 2000);
   },
 
   /**
-   * 🔥 NEW: Wait for map to be fully ready
+   * Wait for map to be fully ready
    */
   async waitForMapReady() {
     return new Promise((resolve) => {
@@ -154,7 +148,6 @@ const UndergroundManager = {
         return;
       }
       
-      // Try every 100ms, max 5 seconds
       let attempts = 0;
       const maxAttempts = 50;
       
@@ -176,7 +169,7 @@ const UndergroundManager = {
   },
 
   /**
-   * 🔥 NEW: Check if map is ready
+   * Check if map is ready
    */
   isMapReady() {
     return this.map && 
@@ -232,8 +225,6 @@ const UndergroundManager = {
       }
       
       this.overlayData = await response.json();
-      
-      // Create overlay layers
       this.createOverlayLayers();
       
     } catch (error) {
@@ -243,7 +234,61 @@ const UndergroundManager = {
   },
 
   /**
-   * Setup floor selection UI
+   * ✨ Create See All toggle button (outside panel)
+   */
+  createSeeAllToggle() {
+    const container = document.querySelector('.underground-container');
+    if (!container) {
+      console.error("❌ underground-container not found!");
+      return;
+    }
+
+    // Check if already exists
+    if (document.getElementById('seeAllToggle')) return;
+
+    const seeAllBtn = document.createElement('button');
+    seeAllBtn.id = 'seeAllToggle';
+    seeAllBtn.className = 'see-all-toggle';
+    seeAllBtn.title = 'See All Deeper Levels';
+    seeAllBtn.innerHTML = `
+      <span class="see-all-icon ${this.seeAllMode ? 'active' : ''}">👁️</span>
+    `;
+    
+    // Insert after underground toggle button
+    const undergroundToggle = document.getElementById('undergroundToggle');
+    if (undergroundToggle && undergroundToggle.nextSibling) {
+      container.insertBefore(seeAllBtn, undergroundToggle.nextSibling);
+    } else {
+      container.appendChild(seeAllBtn);
+    }
+
+    this.updateSeeAllButton();
+    seeAllBtn.style.display = "none";
+  },
+
+  /**
+   * ✨ Update See All button visual state
+   */
+  updateSeeAllButton() {
+    const btn = document.getElementById('seeAllToggle');
+    if (!btn) return;
+
+    const icon = btn.querySelector('.see-all-icon');
+    if (!icon) return;
+
+    if (this.seeAllMode) {
+      icon.classList.add('active');
+      btn.style.background = 'linear-gradient(135deg, #f3d59b, #d4a74a)';
+      btn.style.borderColor = '#f3d59b';
+    } else {
+      icon.classList.remove('active');
+      btn.style.background = 'rgba(0, 0, 0, 0.7)';
+      btn.style.borderColor = 'rgba(244, 229, 192, 0.3)';
+    }
+  },
+
+  /**
+   * Setup floor selection UI (without checkbox)
    */
   setupUI() {
     const container = document.getElementById("undergroundContent");
@@ -254,6 +299,7 @@ const UndergroundManager = {
 
     container.innerHTML = '';
 
+    // Floor list only
     this.floors.forEach((floor, index) => {
       const isActive = this.activeFloor === floor.id;
       
@@ -261,7 +307,6 @@ const UndergroundManager = {
       floorItem.className = `floor-item ${isActive ? 'active' : ''}`;
       floorItem.dataset.floorId = floor.id;
       
-      // ✨ Add depth indicator for underground floors
       let depthIndicator = '';
       if (floor.id !== 'surface') {
         const depth = '▼'.repeat(parseInt(floor.id));
@@ -288,23 +333,42 @@ const UndergroundManager = {
   setupEventListeners() {
     const toggleBtn = document.getElementById("undergroundToggle");
     const panel = document.getElementById("undergroundPanel");
+    const seeAllBtn = document.getElementById("seeAllToggle");
 
     if (!toggleBtn || !panel) {
       console.error("❌ ERROR: Required elements not found!");
       return;
     }
 
-    // Toggle button
+    // Underground toggle button
     toggleBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       this.togglePanel();
     });
+
+    // ✨ See All toggle button
+    if (seeAllBtn) {
+      seeAllBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.seeAllMode = !this.seeAllMode;
+        localStorage.setItem('seeAllMode', this.seeAllMode);
+        
+        this.updateSeeAllButton();
+        
+        if (typeof MarkerManager !== 'undefined') {
+          MarkerManager.forceRefreshMarkers();
+        }
+        
+        this.showSeeAllNotification();
+      });
+    }
     
     // Close when clicking outside
     document.addEventListener("click", (e) => {
       if (this.isOpen && 
           !panel.contains(e.target) && 
-          !toggleBtn.contains(e.target)) {
+          !toggleBtn.contains(e.target) &&
+          !seeAllBtn?.contains(e.target)) {
         this.closePanel();
       }
     });
@@ -327,31 +391,63 @@ const UndergroundManager = {
   },
 
   /**
+   * ✨ Show notification when toggling See All
+   */
+showSeeAllNotification() {
+  const oldNotif = document.querySelector(".see-all-notification");
+  if (oldNotif) oldNotif.remove();
+
+  const notif = document.createElement("div");
+  notif.className = "see-all-notification";
+  notif.innerHTML = `
+    <span style="font-size:20px;margin-right:8px;">👁️</span>
+    <span>See All Mode: <strong>${this.seeAllMode ? 'ON' : 'OFF'}</strong></span>
+  `;
+  document.body.appendChild(notif);
+
+  // hilangkan inline style = gunakan CSS murni
+  // cukup tambahkan animasi reverse untuk close
+  setTimeout(() => {
+    notif.style.animation = "slideDown .3s ease-in reverse";
+    setTimeout(() => notif.remove(), 300);
+  }, 2000);
+},
+
+  /**
    * Toggle panel visibility
    */
-  togglePanel() {
-    this.isOpen = !this.isOpen;
-    
-    const panel = document.getElementById("undergroundPanel");
-    if (!panel) return;
-    
-    if (this.isOpen) {
-      panel.classList.add('visible');
-    } else {
-      panel.classList.remove('visible');
-    }
-  },
+togglePanel() {
+  this.isOpen = !this.isOpen;
+  
+  const panel = document.getElementById("undergroundPanel");
+  const seeAllBtn = document.getElementById("seeAllToggle");
+
+  if (!panel) return;
+
+  if (this.isOpen) {
+    panel.classList.add('visible');
+    if (seeAllBtn) seeAllBtn.style.display = "inline-flex"; // 👁️ MUNCUL
+  } else {
+    panel.classList.remove('visible');
+    if (seeAllBtn) seeAllBtn.style.display = "none";        // 👁️ HILANG
+  }
+},
 
   /**
    * Close panel
    */
-  closePanel() {
-    const panel = document.getElementById("undergroundPanel");
-    if (!panel) return;
-    
-    this.isOpen = false;
-    panel.classList.remove('visible');
-  },
+closePanel() {
+  const panel = document.getElementById("undergroundPanel");
+  const seeAllBtn = document.getElementById("seeAllToggle");
+
+  if (!panel) return;
+
+  this.isOpen = false;
+  panel.classList.remove('visible');
+
+  // Tambahkan ini
+  if (seeAllBtn) seeAllBtn.style.display = "none";
+},
 
   /**
    * Set active floor and update markers
@@ -360,7 +456,6 @@ const UndergroundManager = {
     const previousFloor = this.activeFloor;
     this.activeFloor = floorId;
     
-    // Get floor config for effects
     const floorConfig = this.floors.find(f => f.id === floorId);
     
     // Update UI
@@ -374,10 +469,9 @@ const UndergroundManager = {
       }
     });
     
-    // Save to localStorage
     localStorage.setItem('activeFloor', floorId);
     
-    // ✨ Apply visual effects BEFORE updating overlays
+    // Apply visual effects
     if (floorConfig) {
       if (floorId === 'surface') {
         this.resetMapEffects();
@@ -386,10 +480,8 @@ const UndergroundManager = {
       }
     }
     
-    // Update overlays
     this.updateOverlays(previousFloor, floorId);
     
-    // 🔥 FORCE REFRESH ALL MARKERS saat floor berubah
     if (updateMarkers && typeof MarkerManager !== 'undefined') {
       MarkerManager.forceRefreshMarkers();
     }
@@ -401,7 +493,6 @@ const UndergroundManager = {
    * Update map overlays based on active floor
    */
   updateOverlays(previousFloor, newFloor) {
-    // 🔥 SAFETY CHECK: Ensure map is ready
     if (!this.mapReady || !this.isMapReady()) {
       console.warn("⚠️ Map not ready, skipping overlay update");
       return;
@@ -439,31 +530,69 @@ const UndergroundManager = {
   },
 
   /**
-   * Update markers in current view
+   * ✨ Check if a marker should be visible (with See All logic)
    */
-  updateMarkersInView() {
-    if (typeof MarkerManager !== 'undefined' && MarkerManager.updateMarkersInView) {
-      MarkerManager.updateMarkersInView();
+  shouldShowMarker(marker) {
+    const markerFloor = marker.floor || '';
+    const currentFloorConfig = this.floors.find(f => f.id === this.activeFloor);
+    
+    if (!currentFloorConfig) return false;
+
+    const filterValue = currentFloorConfig.filterValue;
+
+    // Surface mode
+    if (filterValue === null) {
+      // Show surface markers
+      if (markerFloor === '' || markerFloor === null || markerFloor === undefined) {
+        return true;
+      }
+      
+      // See All mode: show underground markers with badge
+      if (this.seeAllMode) {
+        const markerLevel = parseInt(markerFloor);
+        return !isNaN(markerLevel) && markerLevel > 0;
+      }
+      
+      return false;
     }
+
+    // Exact match: always show
+    if (String(markerFloor) === String(filterValue)) {
+      return true;
+    }
+
+    // See All mode: show deeper levels only
+    if (this.seeAllMode) {
+      const currentLevel = parseInt(filterValue);
+      const markerLevel = parseInt(markerFloor);
+      
+      // Show if marker is in deeper level (higher number)
+      return !isNaN(markerLevel) && markerLevel > currentLevel;
+    }
+
+    return false;
   },
 
   /**
-   * Check if a marker should be visible based on current floor
+   * ✨ Check if marker needs badge (is from different floor)
    */
-  shouldShowMarker(marker) {
+  needsFloorBadge(markerFloor) {
+    if (!this.seeAllMode) return false;
+    
     const currentFloorConfig = this.floors.find(f => f.id === this.activeFloor);
     if (!currentFloorConfig) return false;
-
-    const markerFloor = marker.floor || '';
+    
+    const markerFloorStr = String(markerFloor || '');
     const filterValue = currentFloorConfig.filterValue;
-
-    // Surface: show markers without floor data
+    
+    // Surface mode: badge untuk semua underground markers
     if (filterValue === null) {
-      return markerFloor === '' || markerFloor === null || markerFloor === undefined;
+      return markerFloorStr !== '' && !isNaN(parseInt(markerFloorStr));
     }
-
-    // Underground levels: exact match
-    return String(markerFloor) === String(filterValue);
+    
+    // Underground mode: badge untuk marker yang berbeda floor
+    const currentFloorStr = String(filterValue);
+    return markerFloorStr !== currentFloorStr && markerFloorStr !== '';
   },
 
   /**
@@ -492,45 +621,37 @@ const UndergroundManager = {
   },
 
   /**
-   * 🎯 Show hint for underground toggle button
+   * Show hint for underground toggle button
    */
   showUndergroundHint() {
     const toggleBtn = document.getElementById("undergroundToggle");
     if (!toggleBtn) return;
     
-    // Hapus hint lama jika ada
     const old = document.querySelector('.underground-hint');
     if (old) old.remove();
     
-    // Create hint element
     const hint = document.createElement('div');
     hint.className = 'underground-hint';
     hint.textContent = 'Switch Underground Layer';
     document.body.appendChild(hint);
     
-    // Get button position
     const rect = toggleBtn.getBoundingClientRect();
     const isMobile = window.innerWidth <= 768;
     
-    // Set position based on device
     if (isMobile) {
-      // MOBILE: Hint di kanan tombol
       hint.style.position = "fixed";
       hint.style.left = (rect.right + 15) + "px";
       hint.style.top = (rect.top + rect.height / 2) + "px";
       hint.style.transform = "translateY(-50%)";
     } else {
-      // PC: Hint di bawah tombol
       hint.style.position = "fixed";
       hint.style.left = (rect.left + rect.width / 2) + "px";
       hint.style.top = (rect.bottom + 15) + "px";
       hint.style.transform = "translateX(-50%)";
     }
     
-    // Animasi muncul
     setTimeout(() => hint.classList.add('show'), 50);
     
-    // Hilang sendiri setelah 19 detik
     setTimeout(() => {
       hint.classList.remove('show');
       setTimeout(() => hint.remove(), 300);
@@ -541,18 +662,17 @@ const UndergroundManager = {
 // Make available globally
 window.UndergroundManager = UndergroundManager;
 
-// 🎯 Update hint position on window resize
+// Update hint position on window resize
 let undergroundHintResizeTimeout;
 window.addEventListener('resize', () => {
   clearTimeout(undergroundHintResizeTimeout);
   undergroundHintResizeTimeout = setTimeout(() => {
     const hint = document.querySelector('.underground-hint');
     if (hint && hint.classList.contains('show')) {
-      // Recreate hint with new position
       hint.remove();
       UndergroundManager.showUndergroundHint();
     }
   }, 250);
 });
 
-console.log("✅ underground-manager.js loaded successfully (FIXED + Hint)");
+console.log("✅ underground-manager.js loaded (See All Toggle Button)");

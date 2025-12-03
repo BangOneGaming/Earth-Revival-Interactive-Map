@@ -43,7 +43,8 @@ const DATA_ENDPOINTS = {
   melodi: `${API_BASE_URL}/melody`,
   tebakan: `${API_BASE_URL}/riddle`,
   gulat: `${API_BASE_URL}/summo`,
-  mysticlist: `${API_BASE_URL}/mysticlist`
+  mysticlist: `${API_BASE_URL}/mysticlist`,
+  innerwayslist: `${API_BASE_URL}/innerwayslist`
 };
 
 // Mapping endpoint keys to window global variables
@@ -83,7 +84,8 @@ const ENDPOINT_TO_GLOBAL = {
   melodi: 'melodi',
   tebakan: 'tebakan',
   gulat: 'gulat',
-  mysticlist: 'tehnik'
+  mysticlist: 'tehnik',
+  innerwayslist: 'innerwaylist'
 };
 
 const DataLoader = {
