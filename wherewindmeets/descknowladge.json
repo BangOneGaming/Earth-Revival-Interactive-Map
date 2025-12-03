@@ -4211,1404 +4211,1403 @@
     "desc_mandarin": "1.来此对话阿里，选择【花钱买消息】，然后用奇术【摄星拿月】取到他身上的道具-染血的红缨。\n2.回到磐婆婆那里，对话弄潮儿，将红缨悬挂在旁边的红缨枪上即可完成任务。",
     "desc_indo": "1. Datang ke sini untuk berbicara dengan Ali, pilih [Bayar untuk membeli informasi], lalu gunakan thaumaturgi [Foto Bintang dan Dapatkan Bulan] untuk mendapatkan penyangga di tubuhnya - rumbai merah berlumuran darah.\n2. Kembali ke Granny Pan, bicara dengan Nong Chao'er, dan gantungkan rumbai merah pada pistol rumbai merah di sebelahnya untuk menyelesaikan tugas."
   },
-
-  "100360": {
+  "100360__": {
     "desc": "The coachman traveling to and from Shenxiandu will tell you that business in Lirenlei will not be easy this year. The main road from the south of Shenxiandu to the outside world is occupied by unknown forces.\n\nZhao Weiye. You can gain insights by talking before burning the village (you can make up for the mistakes through friends online after burning the village): Business is difficult to do",
     "loctype": "神仙渡"
   },
-  "361181": {
+  "361181__": {
     "desc": "Everyone in Qinghe knows that Chunqiu Villa was once the leader in the Qinghe martial arts world. But few people know that there was an organization called Hanging Sword behind it. But since the sudden closure of the Spring and Autumn Annex three years ago, the Xuanjian organization seems to have disappeared from the world.\n\nHere you can listen to the two embroidered gold tower monsters talking and unlock the information: Hanging Sword",
     "loctype": "春秋别馆"
   },
-  "409109": {
+  "409109__": {
     "desc": "In ancient times, there was a cat-betrothal gift. Cat owners often fed the cats with dried small fish and other materials. If the cat accepted the dried small fish, it could take the kitten home.\n\nAfter unlocking the ability to communicate with all beasts, you can unlock the knowledge: The gift of hiring a cat by standing next to the cat after burning the village.",
     "loctype": "不羡仙"
   },
-  "609004": {
+  "609004__": {
     "desc": "There is a metal ring tied to the myna's leg. It looks like the ring is man-made. Could it be that someone is teaching these myna how to speak?\n\nA crow will appear under the boundary monument. If you pick it up, you can get a myna anklet and unlock the story: The man behind the scenes. Then open the Wulin Record - All Living Beings - Desolate Forest - Insights to get a group of clues.",
     "loctype": "荒蚀林"
   },
-  "701077": {
+  "701077__": {
     "desc": "The first pear tree in Shenxiandu was planted from a pear tree brought by Han Xiangxun from his hometown. Later, Uncle Zhou led the villagers to graft branches from this pear tree, creating this scene of gods crossing the pear blossoms.\n\nCome to the bottom of the tree to explore this big pear tree and unlock the knowledge: The first flower",
     "loctype": "神仙渡"
   },
-  "701079": {
+  "701079__": {
     "desc": "Every year during the Drunk Immortal Moon, Tian Bu Shua disappears for a period of time. Some people say that they once saw traces of Tian Bu Shua at the ferry. At that time, he was dressed as a fisherman. Where did Tian Bu Shua go?\n\nTalk to Yao Yaoyao and choose [Ask Uncle Tian] to get it",
     "loctype": "不羡仙"
   },
-  "1020585": {
+  "1020585__": {
     "desc": "Song Jiu's words remind you of a legend about the village. It is said that there is a deserted temple in the south, and its name is Ghost Temple. There are many evil spirits in the temple, and only by burning paper during festivals can we avoid their worries. The village keeps it secret and treats it as a forbidden area.\n\nSong Jiu. Dialogue Unlock Information: The Forbidden Land in the South",
     "loctype": "不羡仙"
   },
-  "1024002": {
+  "1024002__": {
     "desc": "When you drink from others, you will not envy the gods. If you want to drink the best Li Ren Tea, you must go to the Bu Xian Xian Inn opened by the founder of Li Ren Tea, Han Xiangxun. The greedy traveler narrated this incident in her travel diary. Take a look at what she wrote!\n\nI picked up the travel notes on the table·Don’t envy the immortals. Unlockable Insights: Wine Tasting Travel Notes",
     "loctype": "不羡仙"
   },
-  "1025008": {
+  "1025008__": {
     "desc": "Fog filled the entire village, and the madman in front of the village seemed to be talking about sending people on their way.\n\nmadman. Dialogue unlock information: Crazy words and crazy words",
     "loctype": "荒蚀林"
   },
-  "1025032": {
+  "1025032__": {
     "desc": "This is a cat owner who has been deliberately cultivating free food among humans through being cute. According to Cat Border Cat, it is very close to success!\n\nAfter unlocking the telepathic beasts, here you can trigger the knowledge of the cat next to you: Cat Master",
     "loctype": "神仙渡"
   },
-  "1025034": {
+  "1025034__": {
     "desc": "The villagers of Huanghun Village once believed in a god named Lu Xian. But later, this god disappeared without a trace, and the people in the village gradually developed a strange petrifying disease, and even eventually became crazy...\n\nUse rockets to shoot the incense burner in front of the Deer Fairy's painting. After stopping for a while, you can unlock the information: Deer Fairy Sacrifice. and clue one",
     "loctype": "荒蚀林"
   },
-  "1025035": {
+  "1025035__": {
     "desc": "It seems that only some clothes are buried in the tomb in Fenghe Village. The little white guy in the village, with his dog life, I guarantee that he definitely saw and smelled it right!\n\nAfter unlocking the mind and beasts, you can unlock the knowledge here: the tomb of clothes.",
     "loctype": "丰禾村"
   },
-  "1025037": {
+  "1025037__": {
     "desc": "An ambitious Brother Xiong is more than just dominating his own one-third of an acre of land. In order to meet the challenge, Brother Xiong decided to eat fish to replenish his body. It seems that the fat fish here is very beautiful!\n\nAfter learning how to communicate with all beasts, looking at the nearby bears will randomly trigger information: Brother Bear’s Ambition",
     "loctype": "将军祠"
   },
-  "1025039": {
+  "1025039__": {
     "desc": "Ah Huang is a puppy raised in the village, and you feed him frequently. Well, now I’m looking for you to hug me again!\n\nrhubarb. Recording unlocks the Housekeeper Dragon. After learning animal language, you can listen to the story here: The Fiery Ah Huang",
     "loctype": "神仙渡"
   },
-  "1025040": {
+  "1025040__": {
     "desc": "Those weird birds seem to be performing a mission to scare away outsiders. Who is the owner behind these birds and why do they do this.\n\nAfter unlocking the mind and beasts, if you come here and encounter the myna flying by chance, you can unlock the knowledge: the owner of the myna.",
     "loctype": "荒蚀林"
   },
-  "1025042": {
+  "1025042__": {
     "desc": "Some monks look like eminent monks during the day, but at night they cannot escape the fate of petting cats!\n\nAfter learning how to communicate with all kinds of animals, stop for a moment and unlock the knowledge: Cat Lugging Master",
     "loctype": "菩提苦海"
   },
-  "1025043": {
+  "1025043__": {
     "desc": "Rumor has it that as long as you can ride a white-haired goat and avoid being knocked down by them, you will have the opportunity to learn legendary martial arts moves. Of course, this is just a legend.\n\nAfter learning how to communicate with all beasts, you can unlock knowledge near this sheep: the art of domestication.",
     "loctype": "七伐坡"
   },
-  "1025044": {
+  "1025044__": {
     "desc": "The owner of Fuma Village seems to be able to communicate with these horses. If you hadn't been able to understand the language of animals, I'm afraid you would have already put the owner of Fumama Village on the list of hysterics!\n\n After learning to know all the beasts, you can unlock it next to the horses here.",
     "loctype": "伏马庄"
   },
-  "1025045": {
+  "1025045__": {
     "desc": "According to legend, a master once arrived in a stone boat and became an immortal. This legend is very similar to another story about Luo Shen. But Han Xiangxun once told you that the so-called fairy tales are just illusions.\n\nLu Kangge. Dialogue to gain information: Jiuqu Stone Ship",
     "loctype": "不羡仙"
   },
-  "1025047": {
+  "1025047__": {
     "desc": "It is said that the bells of the Taiping Bell Tower can determine peace, at least in the eyes of the rabbits in the mountains. There seem to be more bad guys in the mountains and fields, and even Rabbit is worried about his wealth and life.\n\nAfter unlocking the telepathic beasts, you can unlock the knowledge: The Vanishing Bell near the gray rabbit.",
     "loctype": "太平钟楼"
   },
-  "2101028": {
+  "2101028__": {
     "desc": "The rabbit in Cixin Town is puzzled by the people living in the holes in the village. Why would someone compare themselves to a mouse?\n\nAfter learning how to communicate with all beasts, you can unlock information near the cave rabbit: claiming to be a rat.",
     "loctype": "慈心镇"
   },
-  "2500056": {
+  "2500056__": {
     "desc": "Since the Zhenguan year, Yang Zunzhi, the ancestor of the Yang surname, led Zhou Zihui, Pan Zigang, Xie Zhisong and others to travel thousands of miles to Shanmiaozhou in Qinghe to study Buddhist carving skills. The four major surnames flourished here because of Buddhist carvings. Zhou, Pan and Xie were all headed by the surname Yang.\n\nYang family tree. Unlock the information after picking it up: Centennial Heritage",
     "loctype": "慈心镇"
   },
-  "5000252": {
+  "5000252__": {
     "desc": "\"Since the Buddhist extermination a few years ago, the stonemasons who carve Buddhas in the town have all disappeared. There are fewer and fewer boats coming to Cixin Town, but more and more people are going out by boat.\" The ferryman at the ferry said. Sejong's extermination of Buddhism brought disaster to this small town that relied on Buddhist carving craftsmanship.\n\nZhou Zhou. Dialogue can unlock insights: The end of inheritance",
     "loctype": "慈心镇"
   },
-  "5000260": {
+  "5000260__": {
     "desc": "Fenghe Village was established only four or five years ago. According to the villagers, Fenghe Village was originally a wasteland, but a great benefactor helped them build the village so they had a place to stay.\n\nThere are many swallows and valleys. Dialogue unlock information: The great benefactor of Fenghe Village",
     "loctype": "丰禾村"
   },
-  "5000265": {
+  "5000265__": {
     "desc": "For some reason, the villagers in Fenghe Village did not believe that the Northern Expedition had failed. They worked hard to grow food, believing that the food they planted would help the Northern Expedition.\n\nYan Quanding. Dialogue can unlock knowledge: Northern Expedition and Food",
     "loctype": "丰禾村"
   },
-  "5000275": {
+  "5000275__": {
     "desc": "There is a mysterious granary in Fenghe Village. It is said that the food saved by the whole village in the past few years is stored there... It is heavily guarded and no ordinary people can approach it.\n\nfarmer. Dialogue to unlock information: The mysterious granary",
     "loctype": "丰禾村"
   },
-  "5000283": {
+  "5000283__": {
     "desc": "Yan Xiaochui from Fenghe Village is an orphan picked up by blacksmith Yan Tiechui from the battlefield in Saibei. Yan Xiaochui no longer has much impression of his hometown, but he wholeheartedly wants to return to Yanbei to retrieve his parents' ashes.\n\nYan Xiaochui. Dialogue can unlock information: the child picked up.",
     "loctype": "丰禾村"
   },
-  "5000286": {
+  "5000286__": {
     "desc": "It is said that Yan Chi, the head of Fenghe Village, is an old servant of Chunqiu Villa.\n\nYan Xiaocao, Yan Xiaofang. Eavesdropping to unlock: The origin of the village chief",
     "loctype": "丰禾村"
   },
-  "5000289": {
+  "5000289__": {
     "desc": "The villagers of Fenghe Village were very sad when Emperor Sejong passed away, until the village chief Yanchi came to Fenghe Village... Yanchi seemed to have found a new direction for the villagers.\n\nYan Sigui. Dialogue Unlock Information: Sad Fish",
     "loctype": "丰禾村"
   },
-  "5000292": {
+  "5000292__": {
     "desc": "The villagers in Fenghe Village have a common determination to hoard food. They would rather tighten their belts and live a better life, but also save food rations and hoard them.\n\nYan Zhun, Yan Chi. Noon. Eavesdropping yields insights: Shared determination.",
     "loctype": "丰禾村"
   },
-  "5000296": {
+  "5000296__": {
     "desc": "Yan Chi, the head of Fenghe Village, came to Fenghe Village only three years ago and became the village head not long after he arrived. Although it didn't last long, the villagers all recognized the village chief.\n\nSwallow butterfly. Dialogue to unlock knowledge: The amazing village chief",
     "loctype": "丰禾村"
   },
-  "5000307": {
+  "5000307__": {
     "desc": "Vendors who come to Fenghe Village to do business say that Wuhe wine, a specialty of Saibei, sells particularly well in Fenghe Village.\n\nXiao Yao. Dialogue can unlock information: Saibei Wuhe, and Natural History: Perfume Shop",
     "loctype": "丰禾村"
   },
-  "5000309": {
+  "5000309__": {
     "desc": "Fenghe Village's attitude toward the Northern Expedition was completely different from that of the outside world. Outsiders think that the Northern Expedition has failed, and Fenghe Village should accept this reality. But the villagers don't agree... They feel that the Northern Expedition will one day be realized. Although their strength is meager, they can help a little bit.\n\nYan Xiaoer. Dialogue provides insights: useless or useful",
     "loctype": "丰禾村"
   },
-  "5000311": {
+  "5000311__": {
     "desc": "Villager Yan Pengniu seems to have a key to the granary of Fenghe Village.\n\nYan holds the cow. Conversations unlock insights: where is the key.",
     "loctype": "丰禾村"
   },
-  "5000315": {
+  "5000315__": {
     "desc": "In addition to doing farm work, the villagers in Fenghe Village also practice martial arts from time to time. It is said that in case they need to fight in the future, they can answer the call and go to take back Yanbei together.\n\nCoach Yan. After the dialogue, you will unlock the information: the reason for practicing martial arts.",
     "loctype": "丰禾村"
   },
-  "6200266": {
+  "6200266__": {
     "desc": "According to rumors, a few days ago, the Star Picker who stole the Canglang Sword Manual appeared in Zhao Pu's house. Where there are star-catchers, there must be Canglang sword manual. Now many people in the world are staring at Zhao Pu's house, preparing to steal the sword manual.\n\nChen Guang, Wu Sheng. Unlock insights after eavesdropping: Canglang Sword Manual\n--Note: The NPC will disappear after completing the Heroic Traces [Volume 4: Shadow of the Sword on the Railing].",
     "loctype": "寿昌坊"
   },
-  "6200270": {
+  "6200270__": {
     "desc": "The belated wages of the craftsmen finally started to be paid, and all the craftsmen thanked the general who had been relieved of his military duties.\nYou can get it by talking to NPC Wudutou.",
     "loctype": "梓匠居"
   },
-  "6200429": {
+  "6200429__": {
     "desc": "Many officers and soldiers in Kaifeng City are strictly investigating the private soldiers. Anyone who carries them will be confiscated by the government.\n\nCai Yucheng. Unlock the information after the dialogue: Private soldiers are strictly prohibited",
     "loctype": "梓匠居"
   },
-  "6200431": {
+  "6200431__": {
     "desc": "Nowadays, the world values ​​literature over martial arts, and many people in the world abandon martial arts and follow literature. The disciples of Wenjin Hall have their own opinions on this.\n\nWen Yu. After selecting the third option in the dialogue, \"Settling one's life with military force and establishing one's life with literature,\" the knowledge will be unlocked: Emphasis on literature and restraint on martial arts.",
     "loctype": "御苑北"
   },
-  "6200432": {
+  "6200432__": {
     "desc": "Da Dao Chen, the owner of the fish dumpling stall, seems to be hiding some identity. He intercepted the drawings from a high-level craftsman a few days ago and is currently trading with people in the world.\n\nNo, Da Dao Chen. Unlocking information after eavesdropping: Warship Blueprint·2",
     "loctype": "御苑北"
   },
-  "6200433": {
+  "6200433__": {
     "desc": "At the mountain climbing bazaar, Xu Ran was praising the scenery of the Royal Garden as beautiful as Jiangnan, but when asked if he had been to Jiangnan, he hurriedly denied it. He claimed that he had inferred the scenery of Jiangnan from the clothes of the tribute envoy, and left in a hurry.\n\nXu Ran. Unlock the information after the conversation: Jiangnan Sui Gong",
     "loctype": "御苑北"
   },
-  "6200435": {
+  "6200435__": {
     "desc": "The emperor gave a banquet to the new scholars in the Yuyuan Banquet Hall. But before the banquet started, there were already vendors at the mountaineering market vying to sell the same wine as the Shizi Banquet.\n\nZheng Qian. Unlock the information after the dialogue: Qiong Lin gives a banquet",
     "loctype": "御苑北"
   },
-  "6200436": {
+  "6200436__": {
     "desc": "In order to build the imperial mausoleum, building materials were piled inside and outside the city, and workers worked day and night.\n\nSun Dalu. Unlock the information after the dialogue: Daxing Construction · 2",
     "loctype": "金明池"
   },
-  "6200437": {
+  "6200437__": {
     "desc": "Workers at Yiqiumen kept transporting the materials needed to build the imperial mausoleum day and night. However, we learned from the workers’ chats that most of the building materials were shipped to the navy base.\n\nWang Dazhuang. Unlock the information after the dialogue: Daxing Construction · 1",
     "loctype": "金明池"
   },
-  "6200438": {
+  "6200438__": {
     "desc": "Official Chen Sheng was carefully instructing the forbidden soldiers who were transporting food and wages, and mentioned that many spies from other forces had been captured recently among the people on spring outings.\n\nChen Sheng. Insights on unlocking after eavesdropping: mixed personnel · 2",
     "loctype": "金明池"
   },
-  "6200439": {
+  "6200439__": {
     "desc": "Wonton stall owner Wang Dacai has been suffering from a headache recently. For some reason this year, many strange spring tourists came. Instead of ordering wontons, they asked about the drawings of the grain trucks. It was really puzzling.\n\nWang Dacai. Unlock the information after the dialogue: Mixed people · 1",
     "loctype": "金明池"
   },
-  "6200445": {
+  "6200445__": {
     "desc": "Recently, a man came to the outing market who claimed to be proficient in astrology, attracting girls to flock to him.\n\nXing Xuan. Unlocked after the conversation: Insights: Astrology Scholar",
     "loctype": "金明池"
   },
-  "6200562": {
+  "6200562__": {
     "desc": "It seems that a businessman with a Bashu accent is searching for warship blueprints. The merchant also mentioned that someone sent them to investigate the navy of the Song Dynasty in depth.\n\nLiu Xing. Unlocking information after eavesdropping: Warship blueprint·1",
     "loctype": "御苑北"
   },
-  "6200571": {
+  "6200571__": {
     "desc": "The Wu Temple enshrines military generals from past dynasties and is an important place in the Song Dynasty. The Song Dynasty placed heavy troops to guard this place to show respect for the generals.\n\nFang Qing. After the dialogue, you will unlock the information: The martial temple is very strict.",
     "loctype": "武成王庙"
   },
-  "6200577": {
+  "6200577__": {
     "desc": "Some visitors noticed something strange about the martial arts temple. The Wucheng Temple has been completed, but it is heavily guarded and guarded. The Wucheng Hall does not allow anyone to enter... If it is just a temple, why is it like this?\n\nLiu Hai. After the dialogue, you will unlock the information: Strange Events in the Martial Temple",
     "loctype": "武成王庙"
   },
-  "6200594": {
+  "6200594__": {
     "desc": "After releasing their military power over a glass of wine, several powerful founding generals resigned from their military posts one after another and retired due to illness. According to the soldiers, these generals often come and go here. I don’t know if it’s for worship, or if it’s something else?\n\nChen Xu. Unlock the information after eavesdropping: Secret secrets of military commanders",
     "loctype": "武成王庙"
   },
-  "6200608": {
+  "6200608__": {
     "desc": "In Qionglin Garden, someone once witnessed a big bird flying in the sky. It is unknown who built it.\n\nDu San. Unlock the information after the conversation: The Big Bird",
     "loctype": "望淮南崖"
   },
-  "6200623": {
+  "6200623__": {
     "desc": "According to Jinmingchi Central News, General Murong, who is in charge of the navy, has not been seen for a long time.\n\nZhao Xiaoliu and Wang Dajiu. Insights Unlocked after Eavesdropping: The Faceless General",
     "loctype": "望淮南崖"
   },
-  "6200629": {
+  "6200629__": {
     "desc": "The Wude Division received an informant's report that Shi Shouxin used the guise of building a martial arts temple to privately own arms and refuse to pay military expenses, so he sent a spy here to investigate the case.\n\nSu Du and Chen Qilai. Unlock the information after the conversation: Ordnance private casting case",
     "loctype": "武成王庙"
   },
-  "6200637": {
+  "6200637__": {
     "desc": "The \"iron goods\" secretly traded in the arena are actually hoarded in the hands of officers and soldiers.\n\nTian Ye. Insights on unlocking after eavesdropping: Iron Goods·Part 3",
     "loctype": "梓匠居"
   },
-  "6200638": {
+  "6200638__": {
     "desc": "Craftsmen from all over the country who were ordered to come to Beijing to build imperial gardens have already filled the inns in the west of the city.\n\nTian Meiniang. Unlocked after the conversation: Overcrowded",
     "loctype": "梓匠居"
   },
-  "6200640": {
+  "6200640__": {
     "desc": "The belated wages of the craftsmen were not sufficient, and the amount of money collected by the gentleman who was not leading the army was not enough to pay all the back wages.\n\nWang Ai. Uncovering insights after eavesdropping: Late payment of food·Part 2",
     "loctype": "梓匠居"
   },
-  "6200646": {
+  "6200646__": {
     "desc": "The hilltop where the Martial Arts Temple is located is where the \"iron goods\" secretly flow out.\n\nWang beard. Insights on unlocking after eavesdropping: Iron Goods·Part 2",
     "loctype": "梓匠居"
   },
-  "6200649": {
+  "6200649__": {
     "desc": "The general named Rong Yuan was a disciple who rebelled from Moshan Dao. He betrayed his master and also betrayed the \"non-attack\" discipline.\n\nXu Hao. Unlock the information after eavesdropping: The Traitor of Momen",
     "loctype": "梓匠居"
   },
-  "6200650": {
+  "6200650__": {
     "desc": "The clay pots carrying stone fat are flammable at the touch of a touch and are an important part of Jinmingchi's armament. Compared with the previous orders placed by Murong Yanzhao, Rong Yuan needed a lot more for some reason.\n\nHu Hu. Unlock the information after the conversation: Clay Pot Order",
     "loctype": "梓匠居"
   },
-  "6200651": {
+  "6200651__": {
     "desc": "Since the completion of the Martial Arts Temple, the legend of \"the god of death leaves the temple and the soldiers are hidden in the arsenal\" has been circulating in the world.\n\nLiu Shizhu. Shen Shi’s eavesdropping revealed the story: The God of Death left the temple",
     "loctype": "梓匠居"
   },
-  "6200653": {
+  "6200653__": {
     "desc": "The grotto excavated at the foot of Wumiao Mountain is a supporting cave for Wumiao Temple. The main statue in the center is King Jiang Taigong of Wucheng. Bai Qi is not among the supporting statues of \"Ten Philosophers of Wumiao Temple\".\n\nFollow the road. Unlock the information after the conversation: Statue of Wu Temple",
     "loctype": "造像处"
   },
-  "6200655": {
+  "6200655__": {
     "desc": "The market formed by the settlement of craftsmen who were summoned to Beijing has a dazzling array of dyes, and many painters and craftsmen buy here.\n\nAxiu. Unlock the information after the conversation: Lottery City",
     "loctype": "梓匠居"
   },
-  "6200659": {
+  "6200659__": {
     "desc": "Near the craftsmen's settlement, a batch of items called \"iron goods\" are being circulated. The matter is kept secret and they have to be accepted privately. All forces want to take advantage of it.\n\nWang Zhi. Unlocking experience after eavesdropping: Iron goods·Part 1",
     "loctype": "梓匠居"
   },
-  "6200682": {
+  "6200682__": {
     "desc": "The ore sold in the lottery market has been sold at extremely low prices recently. Rumor has it that due to the civil unrest in Jinghu, the mine owners are looking for a way to sell their goods and sell them at low prices.\n\nRuan Alu. Unlock the information after the conversation: Jinghu Mine",
     "loctype": "梓匠居"
   },
-  "6200684": {
+  "6200684__": {
     "desc": "Among the tributes sent by Bashu, in addition to strange playthings, there were also a lot of grain, rice, gold and silver.\n\nStone sea. Unlocked after dialogue: Tribute",
     "loctype": "飞花渡"
   },
-  "6200686": {
+  "6200686__": {
     "desc": "Recently, many cargo ships carrying tribute from Bashu have stopped at Feihua Ferry.\n\nNiu Wu. Unlock the information after the dialogue: Tribute from Bashu",
     "loctype": "飞花渡"
   },
-  "6200688": {
+  "6200688__": {
     "desc": "Kaifeng has recently gathered many craftsmen from all over the world.\n\nQin Dali. Unlock the information after the conversation: Foreign Artisan",
     "loctype": "飞花渡"
   },
-  "6200690": {
+  "6200690__": {
     "desc": "This canal diverts water from Kaifeng and flows into Pipa Valley. According to the canal builder, this canal is much wider than ordinary canals.\n\nZhang Yu. Unlock the information after the conversation: Opening canals and diverting water",
     "loctype": "鸿沟古渠"
   },
-  "6200692": {
+  "6200692__": {
     "desc": "The workers changed shifts once a day, and the canal repair work continued day and night.\n\nDalin. Unlock the information after the conversation: Canal construction day and night",
     "loctype": "鸿沟古渠"
   },
-  "6200694": {
+  "6200694__": {
     "desc": "In the middle section of the ancient canal, there is a large banyan tree that has encroached on the river channel. The roots of the tree have been exposed and were temporarily reinforced with scaffolding. Due to the construction of the canal, this ancient tree, which is believed by the surrounding villagers, will soon be removed.\n\nMr. Qin. Unlock the information after the conversation: The Sacred Tree",
     "loctype": "鸿沟古渠"
   },
-  "6200713": {
+  "6200713__": {
     "desc": "In this generation, the wheat fields that farmers once had were moved to the east after the government requisitioned the canals, but the wheat fields there were in trouble.\n\nMinon. Unlock the information after the conversation: Farmland Catastrophe",
     "loctype": "鸿沟古渠"
   },
-  "6200715": {
+  "6200715__": {
     "desc": "Looking at the foot of the Huainan cliff, there is a drunken old man who is very skilled in martial arts. He is no match for the best warriors in the army. Maybe he can compete with him.\n\nLiu Niuer. Unlock the information after the conversation: Drunk old man",
     "loctype": "望淮南崖"
   },
-  "6200824": {
+  "6200824__": {
     "desc": "The Feilaishou construction project at Pipa Valley has stalled, and people who want to go to the imperial garden can only take a detour through the mountain road.\n\nZhang Chunhua. After the conversation, you can unlock the information: Flying cable.",
     "loctype": "琵琶沟"
   },
-  "6400176": {
+  "6400176__": {
     "desc": "The hardness of Kaifeng mountain rocks varies, so there are many test caves left in the mountains. Folk rumors say that the test exploration of the rocks was caused by dividing gold and fixing caves to find the dragon veins and caves of the New Dynasty.\n\nCui Chun. Unlock the information after the conversation: Xunlong Branch Meridian",
     "loctype": "造像处"
   },
-  "6800318": {
+  "6800318__": {
     "desc": "The West Relic Pagoda of Daxiangguo Temple enshrines the body relics of Zen Master Huiyun, the founder of the temple. Many people come here to pray around the pagoda for longevity. The monks Jingqing disagreed with this. The Buddha's bones existed because of Nirvana. For all living beings, there is no essential difference between Nirvana and death, and time is nothing but a shackle for those who have experienced the suffering of the world.\n\nPure and pure. Unlock the information after talking to Youshi: Buddha Bones",
     "loctype": "勾栏瓦肆"
   },
-  "6800319": {
+  "6800319__": {
     "desc": "There is a severe drought in various states this year, and not long ago, there was even a fire at the Daxiangguo Temple. The pure wisdom of the monks cannot bear the suffering of all living beings. They chant sutras and pray for blessings every day, but only hope that the weather will be smooth. Not long ago, the emperor visited the Daxiangguo Temple and prayed for rain with eels, and the drought actually eased.\n\nPure wisdom. Unlock the information after the conversation with Chenshi: Praying for Rain",
     "loctype": "勾栏瓦肆"
   },
-  "6800320": {
+  "6800320__": {
     "desc": "The fire-headed monk of the Daxiangguo Temple secretly hid meat and meat, and was punished by Zen Master Hongjing to dredge the Bianshui River. The temple's Dianzao had to do the fasting for the past few days, which was really hard to swallow. But there seems to be another hidden reason behind the fire-headed monk's hiding of meat and fish.\n\nPure wisdom and pure thoughts. Unlock insights after eavesdropping: Punishment",
     "loctype": "勾栏瓦肆"
   },
-  "6800321": {
+  "6800321__": {
     "desc": "There was a famine in Huainan, many people died of hunger in Yangzhou and Yangzhou, and famines continued year after year. Many devout believers in Kaifeng went to the Daxiangguo Temple to pray for blessings in the hope that the disaster will be eliminated early, dry poplars will bloom, the weather will be smooth, the grain will be abundant, and a good year will come as soon as possible.\n\nLi Tianyun. Unlock the information after talking to Shen Shi: Year of Disaster",
     "loctype": "勾栏瓦肆"
   },
-  "6800327": {
+  "6800327__": {
     "desc": "The chivalrous girl Qi Yuqin has withdrawn from the world in recent years, focusing on taking care of her daughter Xiao Taozi, but she doesn't want the people from Gui Fanlou to kidnap Xiao Taozi without her warning. Not long ago, Qi Yuqin finally rescued her daughter and vowed to make the culprit pay the price one day.\n\nFang Chengtian, Fang Shanlin, and Ma Dazhuang. Unlock the information after the conversation: Ghost Fan Tower",
     "loctype": "勾栏瓦肆"
   },
-  "6800332": {
+  "6800332__": {
     "desc": "Two young men gathered in front of the Yulong Manyan and whispered. It turned out that these two people participated in the construction of the Yulong Manyan, and the Yulong Manyan in Wazi was not the real Yulong Manyan. They seemed to have built it for a list. The real Yulong Manyan had been lost long ago.\n\nLiang Sa and Kuang Anping. Unlocking insights after eavesdropping: Yulongmanyan",
     "loctype": "勾栏瓦肆"
   },
-  "6800334": {
+  "6800334__": {
     "desc": "Look at the sandy place at the ferry, how many people are crossing the world. Everyone knows the name of Bianshui River, but no one knows the bones under the mud. The now prosperous city of Kaifeng has also experienced the baptism of war countless times.\n\nLiang Jing. Unlock the information after talking to Youshi: Bianshui",
     "loctype": "勾栏瓦肆"
   },
-  "6800337": {
+  "6800337__": {
     "desc": "Wei Zi, the King of Flowers, came from Wei Renpu Mansion. When this flower first appeared, people who wanted to see the flowers had to pay dozens of coins to board a boat and cross the pond to the flower place. However, Xianggong Wei had always been quiet and frugal, but he didn't know what the money was used for.\n\nNing Xixi. Unlock the information after talking during the day: Wei Zi",
     "loctype": "勾栏瓦肆"
   },
-  "6800341": {
+  "6800341__": {
     "desc": "There was a well-known storyteller in Kaifeng Prefecture, named Qianqiu Gongzi. However, because this person liked to end his books with tragedy, people also called him \"Qianqiu Gongzi\".\n\nChi Xiaonan. Unlock the information after the conversation: Mr. Qianqiu Part 1",
     "loctype": "勾栏瓦肆"
   },
-  "6800347": {
+  "6800347__": {
     "desc": "Qi Tianyuan from the Thirteenth Floor got acquainted with Jiang Yishui from the Tianjing Ferry Pier. Jiang Yishui came from Baigongfang and seemed to be ordered by a young master to bring news to Qi Tianyuan. Maybe the Thirteenth Floor also had his own secrets.\n\nQi Tianyuan. Disguise yourself as Jiang Yishui (by the river) and after talking to him, you will unlock the information: Thirteen Rooms",
     "loctype": "勾栏瓦肆"
   },
-  "6800348": {
+  "6800348__": {
     "desc": "Xianqiao Teahouse is an old shop in Wazili. The owner, Mrs. Zhou, is a strange woman and stipulates that the teahouse only accepts female customers. There are rumors that Mrs. Zhou will get sick when she meets men, but rumors are just rumors after all, and no one has ever seen Mrs. Zhou actually get sick.\n\nKingly man. Unlock the information after the conversation: Xianqiao Tea House",
     "loctype": "勾栏瓦肆"
   },
-  "6800349": {
+  "6800349__": {
     "desc": "Jiuliu Sect disciples Wang Lezheng and Han Qingyang were stationed at the oil umbrella station in Wazinei, observing the actions of the Khitan envoys in Huaixin Station every day. Wang Lezheng was bored, while Han Qingyang was full of motivation and thought his work was quite meaningful.\n\nWang Lezheng, Han Qingyang. Unlocked after the conversation: Insights: Surveillance",
     "loctype": "勾栏瓦肆"
   },
-  "6800351": {
+  "6800351__": {
     "desc": "The imperial court built Baigongfang. Wang Xiaotu, an apprentice at the carpentry shop, was very excited when he heard about it. He asked his master Wang Xiuzhu whether they would move to Baigongfang, but his master poured cold water on it.\n\nWang Xiuzhu, Wang Xiaotu. Insights on unlocking after eavesdropping: Bai Gongfang",
     "loctype": "勾栏瓦肆"
   },
-  "6800354": {
+  "6800354__": {
     "desc": "Chen Sheng came from Shezhou, and Jin Kui, the owner of Nanshi Restaurant, asked him about the current situation in Jiangnan. Although there was no war in the south of the Yangtze River, there was a serious money shortage, so iron money was issued as a last resort. However, the Central Plains did not recognize iron money, and the business of many travelers from the south was affected.\n\nChen Sheng. Unlock the information after talking to Sishi: Money shortage",
     "loctype": "勾栏瓦肆"
   },
-  "6800356": {
+  "6800356__": {
     "desc": "A few days ago, the Wuyou Gang took the waterway directly to Xinghan, robbed many passers-by's belongings, knocked over several river lanterns, and caused a small fire. Sun She from the perfume shop went to see Yulong Manyan that day, and also suffered a terrible disaster.\n\nZhang Jinghuai. Unlock the information after talking to Xu Shi: Leaking the water",
     "loctype": "勾栏瓦肆"
   },
-  "6800358": {
+  "6800358__": {
     "desc": "Many people were affected by the imperial court's ban on iron money, and those small shops with no financial resources had to close down long ago. Some sensible merchants know that long-term pain is worse than short-term pain, and the temporary pain is better than the long-term harm of iron money.\n\nSun Yongan. Unlock the information after the conversation: Iron Money",
     "loctype": "勾栏瓦肆"
   },
-  "6800359": {
+  "6800359__": {
     "desc": "Young Master Qianqiu Shen Miaoqian is a woman, and few people know about this. Shen Miaoqian received a lot of letters in the past two days, most of which were ridiculous and helpless.\n\nWan Jingming and Shen Miaoqian. Unlock the information after the conversation: Mr. Qianqiu·Part 2",
     "loctype": "勾栏瓦肆"
   },
-  "6800363": {
+  "6800363__": {
     "desc": "When troupe member Yi Xiaowu was packing up props and clothes, a gaudy and colorful monster jumped out of Huaixin Station. The monster had horns on its head and was extremely fast. Judging from Yi Xiaowu's description, he might have seen a Khitan shaman.\n\nYi Xiaowu. Unlock the information after the conversation: Encountering a ghost during the day",
     "loctype": "勾栏瓦肆"
   },
-  "6800408": {
+  "6800408__": {
     "desc": "Master Huiming in Xiu Lane worships Buddha at home all day long, not to pray for blessings, but to atone for her sins. For relatives, for friends, and for the people of the world. The friend in her words is none other than Liu Anran, and Liu Anran's \"crime\" seems to involve an past event.\n\nMaster Huiming. Disguise yourself as an umbrella shop at noon and talk to Liu Anran to unlock the information: Atonement",
     "loctype": "勾栏瓦肆"
   },
-  "6800987": {
+  "6800987__": {
     "desc": "Wu Shisanniang from Wubi Inn found out that recently, the Jiuliumen and Zuihuayin sects had been secretly cooperating with the purpose of seizing something from the Liao people, but they didn't know what the reason was for the two sects to choose to cooperate. Wu Desi seems to be planning to sit back and watch this matter.\n\nWu Shisanniang. Uncovering the information after eavesdropping in Haishi: Similar desires converge",
     "loctype": "南门大街"
   },
-  "6800989": {
+  "6800989__": {
     "desc": "The Incomparable Inn indeed has a secret. Yi Shuyun, a disciple of Guyun, discovered that many spaces in Wubi Inn were hidden, and the shopkeeper didn't look like an ordinary person. He probably had some skills on his side.\n\nYi Shuyun. Unlock the information after the conversation: Wubi Inn",
     "loctype": "南门大街"
   },
-  "6801018": {
+  "6801018__": {
     "desc": "The thief Yan Shuang'er broke into Room No. 1 of Wude Si Tianzi at night. According to her, Wude Si's treasure is hidden here. In other words, the real owner of Wubi Inn is Wude Si. But it seems...she was tricked by her senior brother Kong Konger.\n\nYan Shuang'er. Unlock the information after the conversation in the guest room on the third floor of Zishi: The Thief Ye Yan",
     "loctype": "南门大街"
   },
-  "6801047": {
+  "6801047__": {
     "desc": "The abandoned small building in Siwei Garden is called Lanke Building. One of its walls is dedicated to poems, and many people’s calligraphy has been left behind. This building originally belonged to Ruixiang Garden. After the establishment of the Song Dynasty, the officials heard about the origin of Ruixiang Garden and changed it to \"Siwei Garden\". They demolished the useless and extravagant things in the garden and returned most of the land to the people. The land once occupied by the park has returned to the hands of the people in another way, and the area near the immortal tree has gradually become a place for hundreds of residents to play.\n\nAll bright. Unlock the information after the dialogue: Siwei Garden·Part 2",
     "loctype": "南门大街"
   },
-  "6900017": {
+  "6900017__": {
     "desc": "Wu Desi has been active recently, exploring the situation within the Forbidden Army to prevent conspiracy and disruption. Although it was mainly aimed at the generals on guard duty in front of the palace, the three military compartments in the east of the city belonged to the imperial army and were also the targets of Wude Division's investigation. People within the Forbidden Army were panicking.\n\nLiu Baiyu, Wu Zhong. Unlock the information after the noon conversation: Takeshi",
     "loctype": "勾栏瓦肆"
   },
-  "6900022": {
+  "6900022__": {
     "desc": "There lived an arrogant poet in the corner gate, who used the suffering of the people as a source of inspiration.\n\nZhang Daxian. Unlock the information after the conversation: The Arrogant Poet",
     "loctype": "角门里"
   },
-  "6900088": {
+  "6900088__": {
     "desc": "There lived a man named Li Datou in Jiaomen. He was once the son of a landlord. However, during the class turmoil during the Five Dynasties and Ten Kingdoms, he lost everything and lived in Jiaomen, living a desolate life.\n\nLi Datou. Unlock the information after the conversation: Son of the Landlord",
     "loctype": "角门里"
   },
-  "6900285": {
+  "6900285__": {
     "desc": "Before Lord Hong Si appeared, Wuyou Cave was just a gathering place for a group of extremely vicious people. They occupy this place, but each is their own king, like a ball of scattered sand.\n\nMorning thirty, morning four-one. Unlocking the information after eavesdropping: Hongsi rectifies the Wuyou Gang",
     "loctype": "角门里"
   },
-  "6900290": {
+  "6900290__": {
     "desc": "A few days ago, the Taoist master of Jiuliu Sect broke into the den of thieves of the Wuyou Gang. The people in Jiaomen are all waiting for the Taoist Master to rescue them.\n\nZhu Xiaozhi, Jing Tiantian. Unlocking the information after eavesdropping: Jiuliumen attacks the Wuyou Gang",
     "loctype": "角门里"
   },
-  "6900296": {
+  "6900296__": {
     "desc": "According to the neighbors in Jiaomen, Wen Ying and her grandma have lived here for several years. The two depend on each other and have a very good relationship\n\nYe Xian. Unlock the information after the conversation: Yingying and Grandma",
     "loctype": "角门里"
   },
-  "6900302": {
+  "6900302__": {
     "desc": "The government's violent collection of money has made things worse for the already poor people in Jiaomen. People's lives are miserable.\n\nLou Xiaoying. Unlock the information after the conversation: Inside the Poverty Corner Gate",
     "loctype": "角门里"
   },
-  "6900309": {
+  "6900309__": {
     "desc": "The people who come to Kaifeng from other places to make a living have their own bitter stories behind them. In order to save some money, they would rather live in a dilapidated corner gate.\n\nChen Xianyu. Unlock the information after the dialogue: Discussing life",
     "loctype": "角门里"
   },
-  "6900319": {
+  "6900319__": {
     "desc": "There is a place called Ghost Fan Tower in Wuyou Cave, where the singing, dancing and fine wine are all excellent. But without the token, you can't enter the gate of Guifan Tower.\n\nFang Chengtian, Fang Shanlin, and Ma Dazhuang. Unlock the information after the conversation: Ghost Fan Tower",
     "loctype": "角门里"
   },
-  "6900322": {
+  "6900322__": {
     "desc": "Jiaomenli was originally part of Baifang, but it was destroyed by the Khitan siege more than ten years ago.\n\nHong Zhizhi. Unlock the information after the conversation: The History of Jiaomenli",
     "loctype": "角门里"
   },
-  "6900338": {
+  "6900338__": {
     "desc": "The Taoist master of Gui Shizi is a monster with three heads and six arms, and is said to have terrifying fighting power.\n\nWujiang River. Unlock the information after the conversation: Taoist Master",
     "loctype": "角门里"
   },
-  "6900359": {
+  "6900359__": {
     "desc": "The Wuyou Gang occupies the underground area of ​​​​Jiaomenli. In the past, people from the government would come here to pay taxes. However, the underground terrain is complex, and officers and soldiers suffer numerous casualties every time they come to clear the enemy. Gradually they gave up their jurisdiction over the area.\n\nLao Yu. Unlock the information after the dialogue: Official attitude",
     "loctype": "角门里"
   },
-  "6900371": {
+  "6900371__": {
     "desc": "Underneath Jiaomenli, there is also the station of Jiuliumen. Many Jianghu people and businessmen covet the ghost market and official wealth shop below.\n\nZhu Rui, Chen Xianglan. Unlocking experience after eavesdropping: Gui Shizi",
     "loctype": "角门里"
   },
-  "6900534": {
+  "6900534__": {
     "desc": "Deep in the Wuyou Cave, there is a mysterious trading place. I heard there are many ghost slaves inside.\n\nWu Feng, Zhang Qian. Unlock the information after eavesdropping: the mysterious trading place",
     "loctype": "角门里"
   },
-  "6900705": {
+  "6900705__": {
     "desc": "Obtained from talking to Qi Wuyu\nInsights·Fan Tower Scenery\nZuihuayin is famous for its twelve scenes among flowers. Some people think that each of the twelve scenes has its own charm, but others think that Fan Tower ranks first among them. Not only is the \"goddess pouring wine and flying fairies dancing and playing music\" unique and charming, but the \"bead curtains with embroidered foreheads and octagonal halls\" also seem to echo some of the scenery of the prosperous Tang Dynasty.",
     "loctype": "醉花阴"
   },
-  "6900726": {
+  "6900726__": {
     "desc": "Talk to Zhuo Yulin on the first floor of Fan Tower\nInsights·Romance in the prosperous Tang Dynasty\nZuihuayin comes from Guangling, Jiangnan. The identity of the original founder is a mystery, but it is rumored that she was probably the sworn sister of Empress Liezu. Her origins and her relationship with Jiangnan Kingdom may be important reasons why Zui Huayin can interpret the romance of the Tang Dynasty.",
     "loctype": "醉花阴"
   },
-  "6900779": {
+  "6900779__": {
     "desc": "Although both are famous for singing and dancing, Liyuan advocates pure and elegant music, emphasizing on sticking to one's heart and abandoning glitz. Therefore, Master Liyuan usually does not allow his disciples to enter the Fan Tower. Violators may be severely punished.\n\nYe Zhiqiu and Xu Lijun are on the first floor. Unlock the information after the conversation: Liyuan Zhixing",
     "loctype": "醉花阴"
   },
-  "6900826": {
+  "6900826__": {
     "desc": "Talk to Ji Shuiyun on the third floor of Fan Tower\nInsights·Fan Lou plaque\nThe phrase \"The flowery moon and the spring breeze\" on the plaque in the middle of the Fan Tower are exactly the handwriting of Mr. Nanzhu. It is said that this is also proof of the deep friendship between the young master and the master of Fan Tower.",
     "loctype": "醉花阴"
   },
-  "6900850": {
+  "6900850__": {
     "desc": "The products in Zuihuayinhong's sales shop are highly sought after by wealthy businessmen, and top-notch products often trigger panic buying across the city. Some people saw business opportunities and started the business of purchasing goods on behalf of others.\n\nYu Hui, Li Pan. Unlock the information after the conversation: Red Sales Purchasing Agency",
     "loctype": "醉花阴"
   },
-  "6900866": {
+  "6900866__": {
     "desc": "Using river lanterns to find the right person is a long-standing entertainment in Zuihuayin. Write your thoughts and wishes on a piece of paper, put it in a river lantern, and wait quietly, maybe you will meet a destined person and receive a reply from afar.\n\nYue Lanfang. Unlock the information after the conversation: River Lantern Connection",
     "loctype": "醉花阴"
   },
-  "6900897": {
+  "6900897__": {
     "desc": "Just talk to Si Zhounuan\nSeeing and hearing·Qunfang comes out of Xiu\nQunfangtie is the necessary identification to participate in the gathering of heroes. It is said that \"when all the beauties come out, all the heroes will take their seats.\" This is Zuihuayin's consistent rule.",
     "loctype": "醉花阴"
   },
-  "6900921": {
+  "6900921__": {
     "desc": "The top contestants in Tanchunfang will have the opportunity to perform in Fanlou. The selection there is even more difficult. As many famous actors come out from there, there are just as many people who pretend to be fake and the building collapses in an instant, and they have no money from now on.\n\nHuo Tinglan, Mu Huaishan. Unlock the information after the dialogue: Fang Fei chooses again",
     "loctype": "醉花阴"
   },
-  "6900935": {
+  "6900935__": {
     "desc": "In the Zhuohua Hall, starting from the master, there are two disciples, Bai Yaoyao and Bai Zhenzhen. It is said that both of them have supernatural powers. Yaoyao can create a thousand-mile love relationship with a piece of Taoyao post. Zhen Zhen, on the other hand, has clairvoyance and can see the other person’s life deeds and lifelong marriage.\n\nBai Zhenzhen. After the conversation, you will unlock the information: Attendant of Burning Flower.",
     "loctype": "醉花阴"
   },
-  "6900961": {
+  "6900961__": {
     "desc": "Chunshui Pavilion in Zuihuayin is deeply loved by Tianquan disciples in Northeast China. From the day it opened its doors to welcome guests, it has been crowded with Tianquan disciples and has almost become an unofficial Kaifeng Tianquan branch.\n\nGao Ning. Unlock the information after the conversation: Tianquan Branch",
     "loctype": "醉花阴"
   },
-  "6901039": {
+  "6901039__": {
     "desc": "Every few days, Zuihuayin holds a fireworks display at night. Rich people and relatives in Kaifeng love to celebrate important events by naming them. During this period, guests from all over the world came together, and there were countless red envelopes and wine banquets, creating a gorgeous and prosperous scene under the spectacular fireworks.\n\nZhao Rui, Sun Jinyuan. After the conversation, you will unlock the information: Fireworks Festival",
     "loctype": "醉花阴"
   },
-  "6901055": {
+  "6901055__": {
     "desc": "Fanhuaju is not only the living place for Zuihuayin disciples, but also their rehearsal room. You can get first-hand information on all kinds of news including the Heroes Meeting here. Therefore, from time to time, media outlets come to inquire about information, but for some unknown reason, this information is almost never leaked.\n\nPower and strategy. After talking to Zi Shi, you will unlock the information: Flowery Residence",
     "loctype": "醉花阴"
   },
-  "6901094": {
+  "6901094__": {
     "desc": "Different from the luxury, wealth, splendor and bustle of Fan Tower, Yunhua Tower is located in a corner, quiet, elegant, tranquil and leisurely, which is very popular among literati.\n\nGe Nanxing, Wenxiu. Unlock the information after the dialogue: Literary Interests",
     "loctype": "醉花阴"
   },
-  "6901117": {
+  "6901117__": {
     "desc": "The owner of Fan Tower has a matching fan named \"Boundless Wind and Moon\". It is said that it is something that can only be used by the leader of the flowers in Zuihuayin. When it is opened, it is like a hundred flowers blooming, and it is like a wind and moon that is boundless and unparalleled in the world!\n\nMulberry Luyun, Shen Ling. Unlock the information after the conversation: The Endless Love",
     "loctype": "醉花阴"
   },
-  "6901146": {
+  "6901146__": {
     "desc": "Tao Yao Tie is Zhuohua Pavilion's unique way of attracting people. People in the museum will find a match for the person based on his temperament, preferences and self-recommendations written on the post. However, this is only about fate, not destiny. Whether this fate is deep or shallow, good or bad, ultimately depends on the intention of the person seeking fate.\n\nBai Yaoyao. Unlock the information after the conversation: Tao Yao’s quest for fate",
     "loctype": "醉花阴"
   },
-  "6901149": {
+  "6901149__": {
     "desc": "The previous owner of Yanle Square, Han Wei, and Jiang Yi were once known as the two most powerful musicians in the world. The two often held piano discussions in the square and by the lake, and left many masterpieces. Unfortunately, on the night of the Chenqiao Mutiny two years ago, Han Wei died suddenly. And this too coincidental timing also left some unexplainable conjectures for future generations.\n\nDong Lanting is on the first floor. Unlock the information after the conversation: Han Wei’s legacy",
     "loctype": "醉花阴"
   },
-  "6901232": {
+  "6901232__": {
     "desc": "Opening a forum every quarter to review the music scores, and hanging the best ones at a high place in the square, was a custom established by Han Wei, the previous owner of Yanle Square, who imitated the Lunar New Year appraisal in the Eastern Han Dynasty. His disciple Ling Yuming took over and followed the good customs. After several years, it took several years to achieve the full-court fragrance in the square today.\n\nKong Shan, on the first floor. Unlock the information after the conversation: Qu Le Liu Fang",
     "loctype": "醉花阴"
   },
-  "6901452": {
+  "6901452__": {
     "desc": "There are many Shu people near Yuyi Tower, and it is said that they came to Kaifeng with the Shu prince. The Prince of Shu came to pay his salary, and ostensibly negotiated with the Northern Song Dynasty court about the extradition of the Twelve Immortals back to Shu, but he was also secretly hunting down the Twelve Immortals.\n\nXiang Baian. Unlock the information after eavesdropping: Visitors from Shu Kingdom",
     "loctype": "醉花阴"
   },
-  "7000562": {
+  "7000562__": {
     "desc": "There was soft singing and graceful dancing in Yuyi Tower. The waitress at Yuyi Tower said that all the music in the building was composed by Zuihua Yinjiang Yi, and the dances were even composed by Empress Dazhou herself. There seems to be an extraordinary relationship between the two.\n\nDivision Thirteen. Unlock the information after the conversation: Yuyilou·Part 2",
     "loctype": "醉花阴"
   },
-  "7000580": {
+  "7000580__": {
     "desc": "Talk to Tai Xuan. Thirty years ago, there was a tomb robbery case in Kaifeng. The tomb robbers dug up Zheng's tomb. It is said that the gambling saint of Kaifeng once dealt with the tomb robber Mo Jinxiaowei and got a fine dagger from that man.\n\nTai Xuan. Unlock the information after the dialogue: Stealing but not seeing the stolen goods · Part 2",
     "loctype": "百工坊"
   },
-  "7000593": {
+  "7000593__": {
     "desc": "The imperial court demolished Xifang and rebuilt Baigongfang, and compensated each household with a certain amount of money. During the demolition last year, someone in Xifang conspired to embezzle the demolition fee of \"madman\" Ding Pu.\n\nDyer. Insights unlocked after eavesdropping: Demolition fees",
     "loctype": "百工坊"
   },
-  "7000597": {
+  "7000597__": {
     "desc": "Many people in Xifang know about Ding Pu. It is said that Ding Pu’s wife had a dystocia when giving birth to Ding Muer and died very early. At Mrs. Ding Pu’s funeral, an unexpected person appeared - Kaifeng Gambling Saint.\n\nLady Yuan and Grandma Duan. Unlock the information after the dialogue: Old things in Xifang·Part 3",
     "loctype": "百工坊"
   },
-  "7000607": {
+  "7000607__": {
     "desc": "Thirty years ago, near the Zheng Family Courtyard, a pregnant lady was hit by someone. The person who hit her was the criminal who was involved in the famous Zheng Family Tomb theft case. The doctor said that the lady later gave birth to a smart baby girl.\n\nZheng Zhonglin. Unlock the information after the conversation: Touching the Gold Captain·Part 3",
     "loctype": "百工坊"
   },
-  "7000612": {
+  "7000612__": {
     "desc": "A hundred years ago, Mrs. Zheng passed away, and the Zheng family held a grand funeral. The cemetery is in the southwest of Kaifeng City. There are rumors in Kaifeng city that there are rare treasures among the funerary objects of Mrs. Zheng, which are envied by the people. But the treasure that was once rumored to be sealed in the tomb now appears in the Strange Objects Prison.\n\nShao Qing. Unlock the information after the dialogue: Xingyang Zheng Family·Part 2",
     "loctype": "百工坊"
   },
-  "7000620": {
+  "7000620__": {
     "desc": "A strange incident is recorded in the Xifang files. A gambling sage from Kaifeng was once caught by the government in Xifang, but the stolen goods turned out to be a bunch of children's toys.\n\nHe Zhi. Unlock the information after the dialogue: Stealing but not seeing the stolen goods·Part 3",
     "loctype": "百工坊"
   },
-  "7000629": {
+  "7000629__": {
     "desc": "In August of the third year of Qianfu, Wang Xianzhi invaded Henan and defeated eight counties in ten days. When the news reached Kaifeng, the second son of the Zheng family evacuated Fengcheng with his family members, and everyone in Xifang Courtyard also moved away. Later, a man named Zheng Mao came back occasionally to worship his ancestors. But fifteen years ago, Zheng Miao also disappeared and never appeared again.\n\nDou said. Insights on unlocking after eavesdropping: Xingyang Zhengshi·Part 3",
     "loctype": "百工坊"
   },
-  "7000633": {
+  "7000633__": {
     "desc": "A shop owner in Linheli has been running a teahouse for decades, and he always remembers the two customers who took the wrong packages. The reason for remembering it is very simple. One of them is a young gambling sage from Kaifeng, and the other side is Ding Pu and his wife. At that time, Ding Pu’s wife was still pregnant with Liujia.\n\nLu Jingzong. Unlock the information after the dialogue: Old things in Xifang·Part 1",
     "loctype": "百工坊"
   },
-  "7000634": {
+  "7000634__": {
     "desc": "The theft of Zheng's tomb thirty years ago caused quite a stir. The tomb robber was very unlucky back then. Not only did he bump into the real owner of the tomb, but he also accidentally sneaked into the deserted Zheng family's courtyard after escaping to Xifang, and bumped into the Zheng family's children who were chasing him.\n\ncatch fast. Unlocking information after eavesdropping: Touching the Golden Colonel · Part 2",
     "loctype": "百工坊"
   },
-  "7000640": {
+  "7000640__": {
     "desc": "When chatting with others, Lu Xi, a junior at the tea house, mentioned that thirty years ago, a pregnant lady was hit by a thief. Thanks to the son of the Zheng family, she was sent to the hospital.\n\nLu Xi. Unlock the information after the dialogue: Old things in Xifang·Part 2",
     "loctype": "百工坊"
   },
-  "7000693": {
+  "7000693__": {
     "desc": "The tomb robber's notes record that a branch of the Zheng family of Xingyang, a wealthy family, was buried near Kaifeng. Thirty years ago, a senior known as the \"Captain Touching Gold\" caused quite a stir in the tomb.\n\nGrave robber. Unlocking the story after eavesdropping in Xu Shi: Touching the Gold Captain · Part 1",
     "loctype": "百工坊"
   },
-  "7000696": {
+  "7000696__": {
     "desc": "People in Xifang said that two years ago, a secret room was discovered underground in the Zheng family courtyard in Xifang, which contained a batch of treasures buried a hundred years ago. Therefore, the imperial court built a rare objects prison on the spot to collect the treasures.\n\nChai Fang. After the conversation, you will unlock the information: Supervisor of Strange Objects.",
     "loctype": "百工坊"
   },
-  "7000699": {
+  "7000699__": {
     "desc": "There used to be a villa of the Zheng family in Xingyang in Xifang. Today, the Zheng family's land is used for the building and rare objects room.\n\nJing Yu. Unlock the information after the conversation: Xingyang Zheng Family 1",
     "loctype": "百工坊"
   },
-  "7100295": {
+  "7100295__": {
     "desc": "Kaifeng Gambling Saint got acquainted with Taoist Master Zhu Yousheng before Jiuliumen was established, and a lot of stolen goods passed through the hands of Gambling Saint and flowed into Gui Shizi. This man was so bold that he dared to commit crimes when he was being chased. Yet this man actually gained the admiration of many disciples of the Nine-Liu Sect.\n\nLe Ming. Unlock the information after the dialogue: Stealing but not seeing the stolen goods · Part 1",
     "loctype": "百工坊"
   },
-  "7100297": {
+  "7100297__": {
     "desc": "The coffin, which should have been plain, was painted a joyful bright red. It looks like the heroine surnamed Zhang who has returned from Yannan is sleeping. It looks like a disciple named Wan who was once astonishingly talented and beautiful in the Jiuliu Sect is lying on his back.\n\nAll bets are off. Unlock the information after the noon conversation: The Coffin",
     "loctype": "白马津"
   },
-  "7100300": {
+  "7100300__": {
     "desc": "The unknown grave commemorates the unknown people in history. Some people say that the people buried in the tomb are martyrs who died in the battle; some say that they are the survivors of Yanyun who would rather die than surrender; others say that they are just refugees who fled to their deaths.\n\nWhen you are young, follow Wanshixiu around here or stay for a while to unlock the information: Tomb of the Unknown",
     "loctype": "白马津"
   },
-  "7100317": {
+  "7100317__": {
     "desc": "A secret report from Kaifeng Prefecture revealed that there was a detailed work coming from the north. Someone with knowledge of the matter said that this person might be the miraculous \"He Bo\".\n\nYan Xiaoliu. Unlock the information after the noon conversation: Beibei Seizaku",
     "loctype": "白马津"
   },
-  "7100323": {
+  "7100323__": {
     "desc": "Baimayiyicheng has nothing to do with the white horse \"Lingxue\", and he has the beauty of Yannan, which is thousands of miles away. But after returning from the north, everything stopped and the horse was no longer galloping. There was nothing left here to regret the neighing of the horse.\n\nAn Suoji. Unlock the information after talking to Zi Shi: Yi Cheng’s White Horse",
     "loctype": "白马津"
   },
-  "7100324": {
+  "7100324__": {
     "desc": "A few days ago, the boatmen here carried an extremely heavy coffin, which weighed two people.\n\nTriggered by eavesdropping on Wang Sanshui's conversation at night.",
     "loctype": "白马津"
   },
-  "7100333": {
+  "7100333__": {
     "desc": "A Ji and A Nian were born in Yannan, and came to Baimayi eight years ago after being rescued by Wan Shixiu. Aji was so young when he left home that he could barely remember what his family looked like. He only remembered that the torches in the hands of the Khitan people destroyed their hometown, which they could not return to.",
     "loctype": "白马津"
   },
-  "7100443": {
+  "7100443__": {
     "desc": "According to Bai Kong'er, the money-cutting man of Baimayi, the reason why business has been booming in recent days is due to the turmoil in Khitan in the north.",
     "loctype": "白马津"
   },
-  "7100445": {
+  "7100445__": {
     "desc": "From the mouth of Luo Xiaoxiang, a tea doctor at Longmen Teahouse in the north of the city, news came that He Bo was about to return. I don’t know if it’s the real news from Sekiryudo, or a smoke bomb to confuse the enemy’s lover.\n\nQiu San. Unlock the information after the dialogue: The Return of He Bo·Part 1",
     "loctype": "万胜镇"
   },
-  "7100446": {
+  "7100446__": {
     "desc": "There was once a woman in black who looked at the Jinming Pond in Wansheng Town. She said bluntly that it was like a gluttonous monster, eating insatiably. Today, it is delivering food every day. When the day comes, it will be the life of all the people. Some people say that they once saw a woman in black knocking on the door of the residence of Moshan Dao disciple Que.\n\nFeng Yan. Unlock the information after the conversation: The Woman in Black",
     "loctype": "万胜镇"
   },
-  "7100447": {
+  "7100447__": {
     "desc": "Wansheng Town is an important water transportation town on the Bianhe River and is occupied by Qingjiaotang. In recent years, as the Zhao and Song dynasties actively prepared for war and developed naval forces, Wansheng Town used the equipment left over from Moshan Road to process military rations and prospered.\n\nFan Fan. After talking to him who came back to resist the army rations, you will unlock the information: the army rations town",
     "loctype": "万胜镇"
   },
-  "7100451": {
+  "7100451__": {
     "desc": "The citizens of Wansheng Town, led by Qingjiaotang, are all hard-working and simple, and will \"volunteer\" to do more during their daily work. Although the income has not increased due to this extra effort, at least the job will not be ruined due to inactivity.\n\nYu Xian. Unlock the information after talking to Zi Shi: It’s a waste of effort",
     "loctype": "万胜镇"
   },
-  "7100455": {
+  "7100455__": {
     "desc": "There is a master of Moshan Dao in the Longjiao Gang, who is the master of mechanism \"que\". All hydraulic equipment in the Longjiao Gang are his handiwork. Qingsu has a good relationship with the leader of Chilongtang. Since the Longjiao Gang split, Quesu has stopped coming to Qingjiaotang. Nearly three years have passed, but the turning equipment at the gate is still running as usual. There is no need for maintenance at all, which is a miracle work.\n\nMo Shuilu. Unlock the information after the conversation: Bird",
     "loctype": "万胜镇"
   },
-  "7100457": {
+  "7100457__": {
     "desc": "Many of the hungry people who came to Qingjiao Hall were desperate people. However, according to the old rules of the Longjiao Gang, all those who join the gang, regardless of high or low, are brothers in the world. Bangxia Qingjiaotang is no exception.\n\nWang Qingsheng. Unlock the information after the conversation: Brothers from the Four Seas",
     "loctype": "万胜镇"
   },
-  "7100459": {
+  "7100459__": {
     "desc": "Wansheng Town is as prosperous as it is today, all because Qingjiaotang surrendered to the Song Dynasty court. Although the Longjiao Gang had enmity with the Song Dynasty court, if they put down their dignity and regard the past as garbage, wouldn't it be a sudden change in the future?\n\nZhang Sheng and Wang Yidao. Unlock the information after the conversation: The bent Qingjiao Hall",
     "loctype": "万胜镇"
   },
-  "7100461": {
+  "7100461__": {
     "desc": "\"North of the Yellow River, south of Yanyun, on the edge of the Song Dynasty, on the soil of Khitan.\" News from Kuanglan revealed where He Bo went north. But the reason why he went north was worth ten thousand jars of Shenxiandu wine.\n\nLi Baihui. Unlock the information after the dialogue: The Return of He Bo·Part 2",
     "loctype": "万胜镇"
   },
-  "7100465": {
+  "7100465__": {
     "desc": "What everyone in the Longjiao Gang misses most is a bowl of hot spicy soup. Rumor has it that the pinnacle of Hu spicy soup comes from He Bo's bowl of fish soup, which is also the favorite of Zhu Yu, the former leader of the Longjiao Clan, Feng Ruzhi, the leader of the Red Dragon Hall, and the leader of the Qingjiao Clan.\n\nA lot of Zhang. Unlock the information after the conversation: Hu spicy soup",
     "loctype": "万胜镇"
   },
-  "7100485": {
+  "7100485__": {
     "desc": "A few days ago, a noble man secretly went to Fuxi Mountain. I don't know why. It may be related to the chaos in the Xuanyuan Sect these days.",
     "loctype": "万胜镇"
   },
-  "7100690": {
+  "7100690__": {
     "desc": "In the wilds to the east of the city, strange cold bacteria suddenly appeared. If anyone touches them, they will get chills.\n\nLi Minzhi. Unlock the information after the conversation: Strange Cold Bacteria",
     "loctype": "万胜镇"
   },
-  "7100771": {
+  "7100771__": {
     "desc": "What the painter Dong Danqing regards as a treasure is the color material specially customized for the Wu Temple murals. But there are no murals on the four walls of the Wu Temple. The murals mentioned by the Twelve Immortals' cloth strips are unknown...\n\nWhile doing the Unjust Event [Twelve Immortals], explore the dye vat here and unlock the information: Martial Temple Color Materials.\nIt can also be unlocked by talking to the nearby dyehouse worker here.",
     "loctype": "梓匠居"
   },
-  "7100776": {
+  "7100776__": {
     "desc": "One of the seven sufferings from heaven. If you want to recruit the cheapest workers, go to Tianlaidu. Industrial workers are cheap and simple, so they are the best candidates for work.\n\nShopkeeper Huo. Unlock the information after the dialogue: Seven kinds of suffering come from heaven, hard work is cheap",
     "loctype": "天上来"
   },
-  "7100778": {
+  "7100778__": {
     "desc": "One of the seven sufferings from heaven. Cheap wine mixed with water is best sold, with a clear price tag for a penny per bottle. It's just that for such a fine wine, I don't know whether it tastes like water in the wine or tastes like wine in the water...\n\nJiu Liu Niang. Unlock the information after the dialogue: Seven Bitternesses from Heaven·Drinking into Sorrow",
     "loctype": "天上来"
   },
-  "7100779": {
+  "7100779__": {
     "desc": "One of the seven sufferings from heaven. In the ferry from the sky, the smelly salted fish is the best to sell, because it is very cheap, only 20% of the original price. Some people even say that the smell of salty fish is very similar to the smell of the missing Longjiao Gang leader and current Hebo Boss Feng, which has the effect of seeing things and thinking about others...\n\nSister-in-law Fish. Unlock the information after the dialogue: Seven Sufferings from Heaven·Salted Fish Turns Back",
     "loctype": "天上来"
   },
-  "7100781": {
+  "7100781__": {
     "desc": "In just two years, the situation in heaven has changed. For some reason, Feng Yi and Zhu Yu, the talkers of the Longjiao Gang, disappeared.\n\nSu Ming. Unlocked after dialogue: Insights: Borderlands",
     "loctype": "天上来"
   },
-  "7100783": {
+  "7100783__": {
     "desc": "In the past, people's ancestors found fertile land by the Yellow River and lived and worked in peace and contentment. People believed that everything was born with their own hands, not a gift from the gods. The sky is jealous of the prosperity of the world and is afraid of the collapse of faith, so it rains heavily. Heavy rain fell, the Yellow River burst, and the floods surged into the sky. People had no choice but to beg for mercy from the gods in the sky, but there was no reply... In the heavy rain, someone stood up, and that was the first \"He Bo\" of the Yellow River.\n\nGranny Pan, Hu Zi. Unlock the information after the dialogue: Secrets of the Longjiao Gang·Legend of Hebo",
     "loctype": "天上来"
   },
-  "7100784": {
+  "7100784__": {
     "desc": "Cao Xie, a disciple of the Nine-Liu Sect, regards deceiving the rich as his career. After succeeding in Tianquan several times, he earned a certain amount of money and wanted to live freely in the world. However, he was touched by the sufferings of the people from heaven. Recalling his childhood, he actually squandered all his family wealth here. He was afraid of being laughed at by his brothers, so he euphemistically called it \"long-term investment\".\n\nCao Xie. After the dialogue, you will unlock the information: Seven sufferings come from heaven, and you must suffer the consequences.",
     "loctype": "天上来"
   },
-  "7100787": {
+  "7100787__": {
     "desc": "Longjiao Clan Rules: Anyone who joins the Clan will wear it with a Nuo face. Green is the green dragon, red is the red dragon. Those who are not members of the gang should not be admired, but there are exceptions: those who have made great contributions to their gang and are regarded as close friends by He Bo can also be admired.\n\nNuo Lao. Unlock the information after the dialogue: Secrets of Longjiao Gang·Nuo Mian",
     "loctype": "天上来"
   },
-  "7100795": {
+  "7100795__": {
     "desc": "General Rong in Jinmingchi has the ability to build a five-toothed ship, and he often takes the wooden kite as his trust. For some reason, General Rong's wooden kite appeared in Miss Que's house.\n\nCui Xiaolian. Unlock the information after the conversation: Secrets of the Longjiao Gang·Xiao Muyuan",
     "loctype": "天上来"
   },
-  "7100799": {
+  "7100799__": {
     "desc": "A disaster two years ago caused misfortune to Mrs. Aguo's family. Her husband passed away and Mrs. Aguo also lost the ability to stand up in this disaster. At a young age, A Cai and Guo'er shouldered everything with faltering steps.\n\nMrs. Aguo. After the dialogue, you will unlock the information: Seven Sufferings from Heaven, Standing in a Cone without Land",
     "loctype": "天上来"
   },
-  "7100800": {
+  "7100800__": {
     "desc": "The flood two years ago was the real culprit from heaven for our current situation. But according to the people from heaven, behind the natural disasters, there are also unknown \"man-made disasters\" hidden.\n\nLi Ya. Unlock the information after the dialogue: Seven Sufferings from Heaven·Natural and Man-made Disasters",
     "loctype": "天上来"
   },
-  "7100801": {
+  "7100801__": {
     "desc": "The beggars in Kaifeng City, if they can get dozens of coins, they always like to come to Tianlai Ferry to experience the feeling of being rich and being regarded as the God of Wealth.\n\nBeggar Zhang. Unlock the information after the dialogue: Secrets of the Longjiao Gang·Beggar God of Wealth",
     "loctype": "天上来"
   },
-  "7100804": {
+  "7100804__": {
     "desc": "When crossing the northeast, there are bandits who are plundering rampantly. Among them, all the bandits are defectors from the Longjiao Gang. Gang leader Zhu has passed away, Boss Feng has disappeared, the Longjiao Gang has split, and the group is leaderless. No one cares about the gangsters here.\n\nUncle Ah Shui. After the dialogue, you will unlock the information: Secrets of the Longjiao Gang and Robbery on the Road.",
     "loctype": "天上来"
   },
-  "7100805": {
+  "7100805__": {
     "desc": "There are four \"gold treasures\" in Jiuliumen. These are the treasures of the sect. It is said that they were left by Zhu Hai, the ancestor of the Zhu family during the Spring and Autumn Period and the Warring States Period. If you get them, you can realize the great truth. Fifteen years ago, there was a strange man in the world who collected four of them, and after enlightenment, he was named the \"Dung Master\" of Kaifeng. It seems that someone in the sky has seen this treasure...\n\nShi Jinquan. Unlock the information after the dialogue: Secrets of the Longjiao Gang·Dung Master Jinbao",
     "loctype": "天上来"
   },
-  "7100820": {
+  "7100820__": {
     "desc": "The shopkeeper of Hongxiu Zhao Restaurant, Hong Sanniang, brews excellent wine and has won the reputation of \"Red Sleeves Add Fragrance\" among the merchants. But after the depression came to the sky, things and people in this place also changed, leaving only sick children and widowed mothers.\n\nHuang Dalang. Unlock the information after the dialogue: Secrets of the Longjiao Gang·Red Sleeves Add Fragrance",
     "loctype": "天上来"
   },
-  "7100821": {
+  "7100821__": {
     "desc": "In order to tide over the difficulties, Tianshang came to Chilongtang to carry out a centralized food supply system so that everyone could have a sip of thin porridge.\n\nJiang Xiong. Unlock the information after the dialogue: Secrets of Longjiao Gang·Souping",
     "loctype": "天上来"
   },
-  "7100923": {
+  "7100923__": {
     "desc": "There are many shops in Kaifeng city that only recruit workers under the age of thirty-five.\n\nWang Shunzi. Unlock the information after the conversation with Chenshi: Seven Sufferings from Heaven·Thirty-five Years of Unemployment",
     "loctype": "天上来"
   },
-  "7100927": {
+  "7100927__": {
     "desc": "According to the servants of the Martial Temple, after the military power was released over a glass of wine, many generals who retired with General Shi often visited the Martial Temple and talked about the Northern Expedition.\n\nZhang Xiaowu. Insights unlocked after eavesdropping: Meeting in the Martial Temple",
     "loctype": "武成王庙"
   },
-  "7200112": {
+  "7200112__": {
     "desc": "In order to prepare for the war, Zhao Song ignored the truth about the blood feud twelve years ago and directly transferred the plains to the people of Cheng'en Town. This move made the Zheng clan very disappointed with Zhao Song.\n\nZheng Zonghua. Unlocking the information after eavesdropping: collecting food for payment",
     "loctype": "达安村"
   },
-  "7200119": {
+  "7200119__": {
     "desc": "In the past few years, Village Chief Xie seemed to go out a lot, often going to Da'an Village, and sometimes going to Shanting to sit alone. A few days ago, he went to Changpingcang. My wife always felt that Village Chief Xie was hiding something from her.\n\nWang Fang. Unlocked information after talking to Wei Shi: The homeless person",
     "loctype": "承恩镇"
   },
-  "7200126": {
+  "7200126__": {
     "desc": "Village Chief Xie likes to tell stories to his little daughter. These stories have happy endings and teach three principles: good deeds and evil deeds are rewarded, mistakes can be corrected, and mutual help.\n\nXie Lanzhi. Unlock the information after the lunch conversation: the story of coaxing a child",
     "loctype": "承恩镇"
   },
-  "7200130": {
+  "7200130__": {
     "desc": "As the Autumn Society Day approaches, the harvest festival in Chengen Town is very lively, and many villagers are making preparations there.\n\nSun Qiqi. Unlock the information after the conversation: Autumn Society Day",
     "loctype": "承恩镇"
   },
-  "7200163": {
+  "7200163__": {
     "desc": "Xie Yuanting, the mayor of Cheng'en Town, and He Yuezhi, the sword leader of He Daozhai, were once brothers who worshiped each other. However, the two eventually parted ways for unknown reasons.\n\nWang Zhenzhen. Unlock the information after the dialogue: The brother who worships you",
     "loctype": "承恩镇"
   },
-  "7200213": {
+  "7200213__": {
     "desc": "In the face of an epidemic that many talented and talented senior doctors could not eradicate, Zheng Zhaixu, a disciple of Qingxi and the doctor of the Imperial Medical Office, knew that his talents were limited, but he always worked tirelessly and entrusted his long-cherished wish of peace and benefit to future generations and the future.\n\nZhai Xi. Unlock the information after the conversation with Chenshi: Peaceful Wishes",
     "loctype": "清心圃"
   },
-  "7200295": {
+  "7200295__": {
     "desc": "Zhai Chun is the manager of Lingxingcun medicinal materials processing workshop. He has stepped forward to shoulder important responsibilities during several natural and man-made disasters. Everyone praised her and respected her, but they gradually forgot that her perseverance and dignity today were all tempered by suffering.\n\nZhai Chun. Unlock the information after the conversation: Baicao Guanshi",
     "loctype": "清心圃"
   },
-  "7200306": {
+  "7200306__": {
     "desc": "Since last year, Lingxing Village, under the leadership of Song Yu and Zhai Xu, has been studying the \"meat-introducing method\" of poria cocos cultivation based on Qingxi hand scrolls.\n\nShu Shu. After talking to her wandering around, you will unlock the information: Yinrou Fuling",
     "loctype": "清心圃"
   },
-  "7200401": {
+  "7200401__": {
     "desc": "After the Yellow River receded, a very fertile land was left in the north of Lingxing Village. Zhai Jing, a villager in Lingxing Village, led the people to develop melon and fruit cultivation here. The cold melons harvested were very popular among the nobles in the north of the city.\n\nZhai quinoa. Unlock the information after the conversation: Seize the beach for planting",
     "loctype": "清心圃"
   },
-  "7200404": {
+  "7200404__": {
     "desc": "Recently, a distinguished person in Jianlong Temple went up to the mountain and asked the immortal in the temple to prepare a \"Chen Zhen Ceremony Fight\" for him. This noble dragon has its head but not its tail, and few Taoist priests in the temple have seen its true appearance.\n\nDao Ling. Unlock the information after the conversation: Asama Reito",
     "loctype": "浮戏山"
   },
-  "7200406": {
+  "7200406__": {
     "desc": "In the recent \"Chaozhen Ritual Fight\", it is necessary to recite the \"Beidou Sutra\". The Lord of the Big Dipper is the cardinal of creation, the master of humans and gods, and can eliminate disasters and overcome disasters.\n\nBlessing. Unlock knowledge after dialogue: Beidou Sutra",
     "loctype": "浮戏山"
   },
-  "7200407": {
+  "7200407__": {
     "desc": "It is said that Taoist Tan from the south of the Yangtze River has Taoist medical skills, and his talisman water can cure all diseases. Some people also saw that Taoist Tan secretly sprinkled medicinal powder into the talisman water...\n\nWang Yaoniang. Unlock the information after the conversation: Fu Shui",
     "loctype": "浮戏山"
   },
-  "7200411": {
+  "7200411__": {
     "desc": "Years of war have caused Kaifeng Temple to flourish. People who do not believe in God will kowtow and pray for even a glimmer of hope.\n\nGuo Yuanwai. Unlock the information after the conversation: Do not believe in God",
     "loctype": "浮戏山"
   },
-  "7200415": {
+  "7200415__": {
     "desc": "It is widely rumored that throwing money into the spring eyes of Jianlongguan to make wishes is very effective. Only the Taoist priests in the temple suffered from headaches because the copper coins blocked the well water eyes.\n\nDaosu. Unlock the information after the conversation: Make a wish",
     "loctype": "浮戏山"
   },
-  "7200417": {
+  "7200417__": {
     "desc": "According to Dao Xian, at midnight, the Xuanyuan Sect appeared in Sanqing Hall. When several senior brothers went to investigate afterwards, there was no trace of the Xuanyuan Sect.\n\nTaoism. Unlock the information after talking to Shen Shi: The disappeared Xuanyuan Sect",
     "loctype": "浮戏山"
   },
-  "7200429": {
+  "7200429__": {
     "desc": "The things refined by Taoists are said to have the effect of prolonging life. However, there are also many Taoist priests who refine the golden elixir that explodes... It is very powerful when it explodes, and it may have other uses.\n\nTongyu. Unlock the information after the conversation: The magical effect of golden elixir",
     "loctype": "浮戏山"
   },
-  "7200460": {
+  "7200460__": {
     "desc": "When the flood started two years ago, several Taoist priests went down the mountain to find relief. However, it was difficult for manpower to disobey God's will, so some Taoists practiced astronomy hard in order to turn things around.\n\nDaoyin. Unlock the information after the conversation: Road up and down the mountain",
     "loctype": "浮戏山"
   },
-  "7200462": {
+  "7200462__": {
     "desc": "Recently, there have been many Xuanyuan sects near Jianlong Temple, or nobles coming to worship on the mountain.\n\nMiao Xun. Unlock the information after the conversation: The Evil Trace of Xuanyuan",
     "loctype": "浮戏山"
   },
-  "7200518": {
+  "7200518__": {
     "desc": "The young master who went up the mountain with Ma Shao lost his trace for some reason. This young master was dressed in white and was called \"Jin Zhongyuan\".\n\nMa Shao. Unlock the information after the conversation: Missing Mr. Jin",
     "loctype": "浮戏山"
   },
-  "7200519": {
+  "7200519__": {
     "desc": "In the morning he was a farmhouse man, and in the evening he ascended to the Emperor's Hall. Everyone has the desire to learn. With the influence of the academy and the growing literary style in Kaifeng, the gatekeepers also have the desire to learn.\n\nQi Wei. Unlock the knowledge after the dialogue in Xu Shi: The Heart of Learning",
     "loctype": "开封西郊"
   },
-  "7200532": {
+  "7200532__": {
     "desc": "Mrs. Wang of the Fu family often dreamed of her husband being injured during the Northern Expedition, so she only hoped that her son would put down his thoughts of wielding swords and guns and stay in Kaifeng to be an idle husband and live a happy and peaceful life.\n\nLady Wang. Unlock the information after talking to Youshi: The Idle Man",
     "loctype": "开封西郊"
   },
-  "7200534": {
+  "7200534__": {
     "desc": "Qingjiao Tangtang advocated Wrong's private residence. No idlers were allowed to enter, but it was only open to literati. This was the reason why Hall Master Zhang liked to chat with literati the most. According to unknown sources, Hall Master Zhang has recruited a group of literati and seems to be compiling and restoring a long-lost martial arts secret book...\n\nLiu Xiaohe. Unlock information after dialogue: except scholar",
     "loctype": "开封西郊"
   },
-  "7200536": {
+  "7200536__": {
     "desc": "There is a rumor in the world that Longjiao helped Master Zhang of Qingjiao Hall recruit scholars to spell out a lost magical skill from the Yellow River. But he didn't expect that this magical power was from an ancient book - \"Shuibu Shi\", a water conservancy work in the Tang Dynasty. As the saying goes: The great cause of water control will last for a long time.\n\nZhang Sheng. Unlock the information after the dialogue: Ancient Books of Sanyi",
     "loctype": "开封西郊"
   },
-  "7200661": {
+  "7200661__": {
     "desc": "When Xu Tangchang supported the merchants in Ganqian and Bianluo, he saw Jinshi walking around, and he went out and sighed: \"This is how you should give birth to a child.\" The chaos in the later Tang Dynasty was all due to the military power of those who controlled the world. The prosperity of the Zhao and Song Dynasties may be different. The reason for the current dynasty is the country of Japan.\n\nXu Tang. Unlock the information after the conversation: This is how you should give birth to a child",
     "loctype": "开封西郊"
   },
-  "7200678": {
+  "7200678__": {
     "desc": "Liu Feibao and his wife are very loving, but they have always been taboo about mentioning his past name in front of his wife.\n\nWang Bingjie. Unlock the information after the conversation: Old things and old names",
     "loctype": "平野原"
   },
-  "7200684": {
+  "7200684__": {
     "desc": "Sun Yue thought of selling her daughter because there was no food at home.\n\nSun Yue. Unlock the information after the conversation with Chenshi: Selling food and buying people",
     "loctype": "平野原"
   },
-  "7200700": {
+  "7200700__": {
     "desc": "Zhong Mo suspected that the villagers of Cheng'en Town had tampered with their fields, causing disaster in their fields, and told everyone he met his suspicions.\n\nZhong Mo. After the dialogue, you can unlock the knowledge: Containing evil intentions",
     "loctype": "平野原"
   },
-  "7200707": {
+  "7200707__": {
     "desc": "The package that Grandma Yang brought to worship the land contained the best food in her family. She firmly believed that if she offered the best food to the land, she would definitely get the best reward. The more calamitous the year, the best food would always be in front of the gods.\n\nGrandma Yang. Unlock the information after the conversation: Land Blessing",
     "loctype": "平野原"
   },
-  "7200751": {
+  "7200751__": {
     "desc": "Zhou Xi is a well-known lazy guy from all over the country, but his younger brother Zhou Yue is extremely tolerant of him, which Zhang Jiqiang doesn't understand very much.\n\nZhou Yue. Unlock the information after the conversation: Born to be lazy",
     "loctype": "平野原"
   },
-  "7200788": {
+  "7200788__": {
     "desc": "The Zhao brothers went to Kaifeng to look for their distant relative Zhao Ya and returned home for the funeral, but there was no news about the person they were looking for. Zhao Xiaokai somewhat suspected that Zhao Ya had had an accident.\n\nZhao Xiaokai. Unlock the information after the dialogue: Looking for relatives is nowhere to be found",
     "loctype": "平野原"
   },
-  "7901202": {
+  "7901202__": {
     "desc": "The collection of Tang Dynasty money in Kaifeng City caused turmoil. Many Kaifeng people left the city to seek a way to survive. The houses in the city were vacant and the shops closed down.\n\nSun smiled. Unlock the information after the conversation: It’s hard to laugh today",
     "loctype": "平野原"
   },
-  "8000332": {
+  "8000332__": {
     "desc": "Feng Sandao, who pretended to be looking for the sachet, turned out to be the Inspector of Wude in disguise. The case of the Shi family's private soldiers may have gone to heaven.\n\nSeal three swords. After eavesdropping, you can unlock the information: Private Soldier Inspection.\n--Know everything beforehand [The bird is gone and the bow is hidden], and you must wait for the NPC to reach the position in the picture without exposing yourself.",
     "loctype": "望淮南崖"
   },
-  "8000337": {
+  "8000337__": {
     "desc": "The two famous mouthmen in Kaifeng both rely on their iron mouth to travel around the world. \"Poluo Zuier\" is famous for his scolding, while \"Tie Zuisheng\" is known as \"the whole body is iron-tongued and tough.\" The two were not sworn enemies at first. After getting this strange book, they studied it together, but unexpectedly they began to cherish each other.\n\nWang Tiezui and Fang Babei. After the two talk to each other separately (you can just pass by and listen to what they have to say), you will unlock the information: \"Poluozuier\" and \"Tiezuisheng\"",
     "loctype": "开封府"
   },
-  "8000342": {
+  "8000342__": {
     "desc": "Liu Zhiran, a disciple of the Wenjin Hall, was well-read in classics and history and had great literary talents. However, he always spoke so boringly during lectures that his students fell asleep and woke up as if they had \"amnesia.\" Therefore, his disciples nicknamed him \"Liu Amnesia\" and later, for some unknown reason, became known as \"Liu Shiyi.\"\n\nLiu Zhiran. Unlock the information after the conversation: Liu Shiyi",
     "loctype": "开封府"
   },
-  "8000361": {
+  "8000361__": {
     "desc": "Su Bu, a disciple of Wenjin Hall, was born in Kuaiji, Wuyue. His family had a tradition of litigants for several generations. Su Bu had been exposed to the tradition of litigants since he was a child, and he was good at writing complaints. Every time he finished writing, his pen became bald, so he was nicknamed \"Master Bald Pen\".\n\nSu Bu. Unlock the information after the conversation: Mr. Bald Bi",
     "loctype": "开封府"
   },
-  "8000362": {
+  "8000362__": {
     "desc": "The Zhu Yu Decoction drank by the people outside the city was originally the \"Ginseng Lotus Intermittent Decoction\" in Qingxi Gate. When the Khitan invaded, Zhu Yu worked hard to save the people in the city and removed all the expensive and precious medicines in the prescription. Instead, they used the common medicinal materials. The effect was even better.\n\nCheng Miao, Lian Xin. Unlock the information after the dialogue: Planting dogwood all over Part 3",
     "loctype": "开封府"
   },
-  "8000371": {
+  "8000371__": {
     "desc": "The Imperial Medical Office is the official office in charge of medicine all over the world. It has the title of Feng Yu and several officials from the Hanlin Medical Clinic. Its copies are not open to the common people. This is because when the Khitan invaded, Zhu Yu, a disciple of Qingxi, and several benevolent doctors hung pots to help the people and relieve the victims. During the founding of the Zhou Dynasty, this tradition was extended to promote the medical style.\n\nWind and waves. Unlock the information after the conversation: Imperial Medical Office",
     "loctype": "开封府"
   },
-  "8000376": {
+  "8000376__": {
     "desc": "The Zhuyu Pavilion, also known as the \"Zhu Yu Pavilion\", is said to have been built by Emperor Shizong to commemorate the meaning of the Zhuyu Hanging Pot. It was named because of the Zhu Yu Pavilion planted beside the pavilion. Qingxi disciples often planted Zhu Yu Pavilion under the pavilion to commemorate it.\n\nForsythia. Unlock the information after the dialogue: Planting Dogwood · Part 1",
     "loctype": "开封府"
   },
-  "8000514": {
+  "8000514__": {
     "desc": "The wife of the Wang family in the north of the city suddenly suffered from a heart attack, and all the doctors in the city were helpless. Only Dr. An Ziliang of the Imperial Medical Office could alleviate the disease. Everyone in the city knew that Dr. An had rejuvenated her with his wonderful skills, but only Mrs. Wang knew that her heart ailment was caused by lovesickness.\n\nAn Ziliang, Wang Liuyue. Unlock the information after the conversation: Lovesickness",
     "loctype": "开封府"
   },
-  "8000523": {
+  "8000523__": {
     "desc": "The \"Xie Zhi\" is engraved on the screen wall of Kaifeng Mansion. It is said that it was set up by Wang Pu when the former dynasty rebuilt Kaifeng Mansion. He intended to use this mythical animal to show justice in the world. There is also a rumor that originated from unknown sources. It is said that Wang Xianggong has a Xie Zhi in his carriage, and he can judge the case impartially, so that no prisoner will die unjustly in the prison.\n\nWei Zheng. Unlock the information after the conversation: Haizhi",
     "loctype": "开封府"
   },
-  "8000571": {
+  "8000571__": {
     "desc": "There is a Zhaoxue Tianting Drum in front of the Kaifeng Mansion. It is said that it was set up by King Pu of Shizong of the previous dynasty. If the people have suffered great injustice, they can beat the drum to cry out their grievances and go up to heaven to hear it. However, those who beat the drum will be beaten to show their ambition. In the past three years, only one person has played this drum. It is said that the drum he played has been \"abandoned\" on the mountainside of Fuxi...\n\nZhang Zhen. Unlock the information after the conversation: Zhaoxue Tianting",
     "loctype": "开封府"
   },
-  "8000575": {
+  "8000575__": {
     "desc": "The main entrance to the backyard of Kaifeng Mansion cannot be passed except by Lord Fu Yin and His Majesty. There are rumors in the world that this gate is called Dragon Gate, and only the real dragon emperor can pass there.\n\nStop for a moment, listen to the low-pitched beep of the Yamen servant, and then trigger the information: Mr. Fu Yin can pass.",
     "loctype": "开封府"
   },
-  "8000586": {
+  "8000586__": {
     "desc": "There are rumors in the world that a bride recently died in vain because of her unfaithful husband, and the ghost of the wronged woman haunted her widow. She left a pair of embroidered shoes and a letter in blood to make the unfaithful person pay for her life.\n\nWang Chengjin. After the dialogue (choose \"Don't die!\"), unlock the information: Ghost Bride Part 1·Embroidered Shoes",
     "loctype": "开封府"
   },
-  "8000587": {
+  "8000587__": {
     "desc": "Captain Lin was fined for three months because of his inability to solve the case. If you want to exchange the corpse within the mansion, there must be an informant in Kaifeng Mansion to help.\n\nLin Zhiyuan. Unlock the information after the conversation: Ghost Bride Part 3·Informant",
     "loctype": "开封府"
   },
-  "8000593": {
+  "8000593__": {
     "desc": "The location of Kaifeng Fuyin's residence is very strange. It is adjacent to the prison to the west and the prison to the east. There are rumors that this is a situation of \"using good to suppress evil\". There are also rumors in the rivers and lakes that the house contains a treasure left by the former Kaifeng Prefecture Yin Wang Pu, so it is kept secret.\n\nInsights unlocked after eavesdropping at noon: Evil prevails over good",
     "loctype": "开封府"
   },
-  "8000599": {
+  "8000599__": {
     "desc": "Recently, the masters who \"came to Suzhou to study\" and \"Tongwenyi Xue\" wanted to use the Hanlin venue to set up mock exams for children's subjects. Many children in the city studied hard for this purpose.\n\nLiang Shengshu. Unlock the information after the dialogue: Kaifeng Same Trial",
     "loctype": "开封府"
   },
-  "8000705": {
+  "8000705__": {
     "desc": "It is rumored that there are six strange people in the Kaifeng Mansion. Although they are in the Jianghu, they are recruited by the Kaifeng Mansion to handle difficult cases. They are: Liu Baiyu, the \"white jade is flawless\", Gu Huanyuan, who \"talks nonsense\", Zhang Cuo, who \"continues right and wrong\", Tang Jingchou, who \"severely punishes but does not lend money\", Zhuge Jing, who \"stands still\", and Shi Gu, who is \"half dead\".\n\nZhang Dayuan, Ma San. Unlock the information after the noon conversation: Liubu Yamen",
     "loctype": "开封府"
   },
-  "8000734": {
+  "8000734__": {
     "desc": "Foreign envoys came to visit the Song Dynasty, and Yiluan Si was ordered to organize a banquet with Zhao Pu. However, because of the incompatibility between the military generals and the civil servants, the Yiluan Division was worried about this.\n\nZhang Sheng, Chen Qi. Unlocking the story after eavesdropping: The storm is surging",
     "loctype": "寿昌坊"
   },
-  "8000756": {
+  "8000756__": {
     "desc": "According to rumors, there is a folk team in Shouchangfang called \"Birds, Beasts, Insects and Fish\" who go around doing chivalry and justice. There are many people in the street who are counting on the members of the team to come forward and punish the lawless Fourth Young Master of Jinjie.\n\nLost. Unlock the information after the conversation: Birds, beasts, insects, fish",
     "loctype": "寿昌坊"
   },
-  "8000760": {
+  "8000760__": {
     "desc": "It is said that Xianningfang has been very uneasy recently. A few days ago, another Hu merchant disappeared in Dongliyuan.\n\nZhang Chengyuan. Unlock the information after the conversation: Inn situation",
     "loctype": "寿昌坊"
   },
-  "8000772": {
+  "8000772__": {
     "desc": "For some unknown reason, none of Hu Shang's companions who went missing reported the case and seemed unwilling to make it public.\n\nChen Xiaochen. Unlock the information after the conversation: The Mystery of Hu Shang",
     "loctype": "寿昌坊"
   },
-  "8000786": {
+  "8000786__": {
     "desc": "It is said that the missing foreign businessman in Dongliyuan is actually a foreign spy. He took advantage of the civil and military struggle in Kaifeng to steal Kaifeng city defense plans.\n\nYe Wangcai. Unlock the information after the conversation: Take advantage of the opportunity",
     "loctype": "寿昌坊"
   },
-  "8000788": {
+  "8000788__": {
     "desc": "According to the craftsmen in the Ordnance Supervision, the technicians here disappeared because they were involved in civil and military struggles.\n\nDu Xiaochuan. Unlock the information after the dialogue: Unexpected disaster (be careful to avoid inspection by officers and soldiers)",
     "loctype": "寿昌坊"
   },
-  "8000804": {
+  "8000804__": {
     "desc": "A talented technician from the Ordnance Supervisor has been missing for many days. The Ordnance Supervisor has reported it to Kaifeng Mansion, but there are currently no clues about the case.\n\nFan Yuanling. Unlock the information after the conversation: The Worry of the Weapons Supervisor",
     "loctype": "寿昌坊"
   },
-  "8000813": {
+  "8000813__": {
     "desc": "The civil servants headed by Zhao Pu suspected that the assassin who assassinated Zhao Pu that night was a military general, and the generals in the introduction department had harbored them.\n\nHe Yi, Secretary Changqing. Unlocking insights after eavesdropping: Assassin’s aftermath",
     "loctype": "寿昌坊"
   },
-  "8000821": {
+  "8000821__": {
     "desc": "His friend reported that he had been missing for many days, and He Panshan was worried about this.\n\nHo Pan Mountain. Unlock the information after the conversation: The Mystery of the Technician",
     "loctype": "寿昌坊"
   },
-  "8000851": {
+  "8000851__": {
     "desc": "It is said that many years ago, there was a master thief named Star Picker, who was very skilled in light martial arts, robbed the rich and gave to the poor, and was highly respected by the people.\n\nChen San. Unlock the information after the conversation: You can pick up the stars with your hands",
     "loctype": "寿昌坊"
   },
-  "8000958": {
+  "8000958__": {
     "desc": "After the incident of releasing military power over a glass of wine, civilian officials took over, military generals lost power, and the conflict between the two parties intensified.\n\nChen Jingrong, Eavesdropping Unlocked: Civil and Military Fights.\n--Prerequisite: Complete All Things Know-[Chi Yu Lin Mu]",
     "loctype": "寿昌坊"
   },
-  "8001101": {
+  "8001101__": {
     "desc": "The male prisoner in the prison kept crying and howling. Listening carefully to his voice, it turned out that due to some strange combination of circumstances, his dead wife who had been killed by her husband came back to life, while the male prisoner who was wrongly convicted was unwilling to leave the cell for some reason.\n\nZhao Dayan, Wang Anning. Unlock the information after the dialogue: Ghost Bride Part 2·Killing Wife",
     "loctype": "开封府"
   },
-  "8001104": {
+  "8001104__": {
     "desc": "Wen Jin Guan claimed to be the Wen Zong of the world. Although he did not enter the temple, he took it as his own responsibility to preach and receive teachings. He opened schools, gave lectures, and tutored countless people.\n\nWen Zi Jing. Unlock knowledge after dialogue: Preaching and Teaching",
     "loctype": "开封府"
   },
-  "8001105": {
+  "8001105__": {
     "desc": "Madam Wang, who lives in the Wang residence, has recently suffered from heart disease, and all the doctors in Kaifeng City are helpless. Madam Wang said that the disease can only be relieved by An Hanlin's prescription from the Imperial Medical Office...\n\nMoon and stars. Insights unlocked after eavesdropping at noon: Heart disease is difficult to cure",
     "loctype": "开封府"
   },
-  "8001255": {
+  "8001255__": {
     "desc": "Dr. Liang Conglu of the Imperial Medical Office was famous for his \"Golden Needle Diagnosis\", which he specialized in treating internal injuries of martial artists.\n\nChen Zhaoyu, Shen Bao, Shen Yangshu. Unlock the information after the conversation: Jin Zhendu",
     "loctype": "开封府"
   },
-  "8001262": {
+  "8001262__": {
     "desc": "With the wheat fields of Pingyeyuan, the water transportation of Linjin Ferry, and the support of the government, Chengen Wheat Store has developed extremely rapidly in the past two years, and is now the largest wheat store in Kaifeng.\n\nZhao Xiusui. Unlock the information after the conversation: Chengen Maihang",
     "loctype": "开封南郊"
   },
-  "8001274": {
+  "8001274__": {
     "desc": "Due to the imperial grain harvest, famine in the south of the Yangtze River, and the lack of harvest in Pingye Plains this year, the price of wheat at Cheng'en Wheat Company has continued to rise, which has brought a considerable burden to merchants and people.\n\nLi Junwei. Unlock information after the conversation: Rising wheat prices",
     "loctype": "开封南郊"
   },
-  "8001307": {
+  "8001307__": {
     "desc": "According to a helper at Cheng'en Wheat Shop, when you are short of money, you can try your luck at the black market in the city, and you might be able to buy cheap grain—or high-quality grain from Pingye Plains! But at a time when food prices are rising across the city, the origin of this wheat is a bit questionable.\n\nGranny Shen, Ge Shun. Unlock the information after the conversation: Cheap food on the black market",
     "loctype": "开封南郊"
   },
-  "8001347": {
+  "8001347__": {
     "desc": "Relatives and friends of He Yuexing, the head of Mohang, seem to have an old grudge against Chengen Town. Many years later, He Yuexing no longer wanted to mention the past, but it was obvious that those old friends were unwilling to let him go.\n\nHe Yuexing, Dou Min. Uncovering insights after eavesdropping: The owner of Mo Xing",
     "loctype": "开封南郊"
   },
-  "8001393": {
+  "8001393__": {
     "desc": "Facing the tragic situation of famine in the south of the Yangtze River, Shen Yilun, the Minister of Household Affairs and Changping envoy, wrote a petition, hoping that the counties could loan their military grain reserves to civilians. Unfortunately, the proposal was temporarily rejected by the court.\n\nYao Yan. Unlock the information after the dialogue: Chang Ping Shen Jun’s letter",
     "loctype": "开封南郊"
   },
-  "8001396": {
+  "8001396__": {
     "desc": "Compared with the price of wheat, the price increase of rice in Maixiangji is even more exaggerated. Due to the tight supply caused by the famine in Jiangnan, the price of rice has more than doubled.\n\nFeng Yu. Unlock information after the conversation: Skyrocketing rice prices",
     "loctype": "开封南郊"
   },
-  "8001404": {
+  "8001404__": {
     "desc": "After Changping envoy Shen Yilun submitted a memorial to lend grain to the people, he was suddenly assassinated on his way back to Kaifeng from Jiangnan. He is still recovering from his injuries at Qiu Mingju near Changpingcang. Who exactly carried out this murder? This sudden assassination makes people dare not think deeply.\n\nYe Liang. Unlock the story after the conversation: The assassination of Shen Jun in Changping",
     "loctype": "开封南郊"
   },
-  "8001466": {
+  "8001466__": {
     "desc": "Zheng Youan, the owner of Maixiangji Zhengjia Fried Cake, is indeed a descendant of the Zheng family in Kaifeng, with five surnames and seven hopes, but for him, the illustrious glory of his ancestors has long since disappeared with the changes of the times. I just don’t know why some villagers in Chengen Town have been entangled with him over this past incident.\n\nZheng Youan. Unlock the information after the conversation: Kaifeng Zheng Family",
     "loctype": "开封南郊"
   },
-  "8001513": {
+  "8001513__": {
     "desc": "Many pedestrians greet and say goodbye at the Yangliu Pavilion outside the south gate of Kaifeng. Therefore, some flower girls gather here to solicit business.\n\nGe Ruofei. Unlock the information after the conversation: The Flower Girl of Yangliuting",
     "loctype": "开封南郊"
   },
-  "8001552": {
+  "8001552__": {
     "desc": "The red flag camp at Linjin Ferry was led by Wang Haizhou. The squeeze and price cut by You Haobo and others made their lives extremely difficult. But out of gratitude for You Haomiao's kindness, they still tried their best to endure.\n\nThe pool is clean. Unlock the information after the noon conversation: Imjin Red Flag",
     "loctype": "平野原"
   },
-  "8001556": {
+  "8001556__": {
     "desc": "Since the Linjin Ferry was jointly run by the imperial court and Chengen Town, and most of the goods transported back and forth were grain, the ferry had always been operated by Chengen Town, and many of the people involved in the cargo trade were from here.\n\nWu Zhigang. Unlock the information after the conversation: Chengen Cargo Store",
     "loctype": "平野原"
   },
-  "8001565": {
+  "8001565__": {
     "desc": "A few years ago, Zhou Lijuan, a girl from a wealthy family in Kaifeng, fell in love at first sight with Li Meng from Chengen Town, and the two got married. However, Li Meng has no other merits except a handsome face. As a result, their marriage gradually came to a point where they were separated and broke up.\n\nZhou Lijuan. Unlock the information after the conversation: The hairpin breaks the mirror",
     "loctype": "平野原"
   },
-  "8001596": {
+  "8001596__": {
     "desc": "The donkey cart business at Linjin Ferry has chaotic charges and is mostly run by eloquent brokers. It is easy for people who are new to Kaifeng to be fooled.\n\nWang Hu. Unlock the information after the conversation: Donkey Cart Business",
     "loctype": "平野原"
   },
-  "8100194": {
+  "8100194__": {
     "desc": "In the third year of Jianlong's reign, there was a famine in Huainan. There were many deaths from starvation in Yangzhou, Shandong and other states.\n\nLi Ding. Unlocked after dialogue: Famine in the South",
     "loctype": "平野原"
   },
-  "8100207": {
+  "8100207__": {
     "desc": "Anjiyuan behind the Huimin Bureau is a place where doctors temporarily treat poor and critically ill patients. Doctors take the benefit of the people as their original intention and provide the people with the help they can.\n\nAkishino. Unlock the information after the conversation: Anji Yangmin",
     "loctype": "开封东郊"
   },
-  "8100294": {
+  "8100294__": {
     "desc": "Rehmannia glutinosa, yam, chrysanthemum and other medicinal materials of Heji Bureau come from Lingxing Village in the north. The medicinal materials there are not only of high quality, but also reasonably priced.\n\nDeng Yuan. Unlock the information after the conversation: Listening to Xing’s Good Medicine",
     "loctype": "开封东郊"
   },
-  "8100301": {
+  "8100301__": {
     "desc": "There are rumors in the world that the secret treasure in the Hidden Mist Forest can make people immune to all poisons, bring people back to life, and make them immortal. Qingxi, Wuxingu, and Xiujinlou have been fighting for it for many years, and this has attracted countless people from all walks of life to come here, just to get a piece of the pie.\n\nBu Jingqiu. Unlock the information after the conversation: Strange Treasures in the Mist Forest",
     "loctype": "开封东郊"
   },
-  "8100358": {
+  "8100358__": {
     "desc": "The notice booth in Changxingji is filled with numerous recruitment orders related to treasure hunting in the foggy forest. It's just that these recruitment orders are mixed between true and false, so in order to find the real masters of martial arts, you must carefully screen them.\n\nYuhang. Unlock the information after the conversation: Treasure Hunt Recruitment",
     "loctype": "开封东郊"
   },
-  "8100370": {
+  "8100370__": {
     "desc": "The vendors at Changxingji near Zhenbao Pavilion are all good at telling stories. It's a pity that the items sold in these shops are 10% fake and 10% genuine and they refuse to return or exchange them.\n\nFu Bing and Wu Tianming. Unlock insights after listening: True and False Changxing",
     "loctype": "开封东郊"
   },
-  "8500487": {
+  "8500487__": {
     "desc": "Due to a dispute over the pricing of medicinal materials, the Lin brothers opened two drug stores with similar names in Changxingji to fight against each other. Regular customers generally call them \"DaLin Pharmacy\" and \"XiaoLin Pharmacy\" to distinguish them.\n\nYuan Li. Unlock the information after the dialogue: Repaying kindness with gratitude",
     "loctype": "开封东郊"
   },
-  "9100181": {
+  "9100181__": {
     "desc": "The villagers of Lingxing Village were able to settle down and live here with the help of Qingxi and other doctors. In order to thank them for their help, the two sisters, Fu Ling and Fu Xuan, and the villagers jointly established Futian Yuan to help others after the incident, and made a promise of \"one life, one price, one porridge, one night; the same day and night, and never change customs.\"\n\nFuling. Unlock the information after the conversation: Qingxi Promise",
     "loctype": "清心圃"
   },
-  "9100324": {
+  "9100324__": {
     "desc": "Zhai Qiu is the talker of Lingxingcun Pharmacy. With a fierce nature, her heart has always been in the world, and she only stopped for the sake of her relatives, friends and hometown. However, although the world is far away and her dreams are not broken, she is still full of expectations for the future.\n\nZhai Qiao. Unlock the information after talking to Youshi on a sunny day: The manager of the pharmacy",
     "loctype": "清心圃"
   },
-  "9100329": {
+  "9100329__": {
     "desc": "Linjin Duhuo Co., Ltd. is headed by Liu Feihu from Chengen Town. He was very envious of his brother and sister-in-law's simple and happy life. Working hard, he married Lu Yufang from Yinzi Shop and brought home a life where his wife and children lived on the hot bed.\n\nLiu Feihu. Unlock the information after the conversation: The owner of the goods store",
     "loctype": "平野原"
   },
-  "9100333": {
+  "9100333__": {
     "desc": "There are two owners of Linjin Dujiao shop. My sister Lu Yufang is good at making fragrant drinks. Liu Feihu, who works at the store next door, admires her for her gentleness, thoughtfulness and sweetness.\n\nLu Yufang. Unlock the information after the conversation: The second boss of Imjin Dujiao Store",
     "loctype": "平野原"
   },
-  "9100416": {
+  "9100416__": {
     "desc": "There are two owners of Linjin Dujiao shop. My sister Lu Guifang is good at making glutinous rice noodles. She has a generous and enthusiastic nature. Although she has experienced various hardships such as running away from home and losing her husband, she has always lived an optimistic and strong life.\n\nLu Guifang. Unlock the information after the conversation: The big boss of Imjin Dujiao Store",
     "loctype": "平野原"
   },
-  "9100418": {
+  "9100418__": {
     "desc": "All doctors at Huimin and the Pharmacy Bureau are required to take the monthly examination of the Imperial Medical Office. So every time before the exam, many people would study hard all night in the backyard library.\n\nWang Guangyou. Unlock the information after the noon conversation: Medical Clinic Monthly Examination.",
     "loctype": "开封东郊"
   },
-  "9400124": {
+  "9400124__": {
     "desc": "Wang Guangyou is the head doctor of Heji Bureau. Every day, he will carefully check the prescriptions for difficult and complicated diseases issued by the Huimin Bureau, and fill the prescriptions after confirming that they are correct. He tried his best to reduce the possibility of misdiagnosis, because he saw the patients' joys and sorrows in his eyes.\n\nWang Guangyou. Unlock the information after talking to Zi Shi: Heji Anmin",
     "loctype": "开封东郊"
   },
-  "9400193": {
+  "9400193__": {
     "desc": "You learned from Gu Sange that Han Xiangxun once left his hometown for some reason, and later brought pear tree branches from his hometown to plant. Perhaps the name Liren Tears came from because Han Xiangxun was also a Liren.\n\nBrother Gu. Appears when applying. Dialogue Unlocking Information: Lichou Farewell",
     "loctype": "神仙渡"
   },
-  "9700239": {
+  "9700239__": {
     "desc": "The wealthy businessman Wang in Kaifeng, although he was arrogant and did his own thing, he rarely showed any filial piety. Ever since Mrs. Wang was diagnosed with heart disease by Dr. Shang, Shopkeeper Wang wanted to spend all her family wealth to save her mother's life. But there seems to be something fishy here...\n\nTian Yunniang. Unlock the information after the conversation: Heart Disease",
     "loctype": "开封府"
   },
-  "9700241": {
+  "9700241__": {
     "desc": "Repairing the Gouzi embankment cost a lot of money, but Chilongtang's savings were already stretched thin and it was difficult to complete the embankment.\n\nShen Zhuer. Insights unlocked after the conversation: The gap is hard to fill.",
     "loctype": "鱼柏川"
   },
-  "9700245": {
+  "9700245__": {
     "desc": "In order to cover the cost of repairing the Huzi Embankment and purchase 50,000 sandbags for flood fighting and rescue operations, Feng Ruzhi, the leader of Chilongtang, pawned all the dowry prepared by his parents for him.\n\nDu Lian. Unlock the information after the conversation: The pawned dowry",
     "loctype": "鱼柏川"
   },
-  "9700249": {
+  "9700249__": {
     "desc": "The former eldest lady of the Longjiao Gang, after the gang split, she single-handedly supported the Red Dragon Hall and was loved by the people.\n\nJiayu is prosperous. Unlock the information after the conversation: The eldest lady",
     "loctype": "鱼柏川"
   },
-  "9700253": {
+  "9700253__": {
     "desc": "Que, a disciple of Moshan Dao, is the project supervisor of Gonggong Diao and Gouzi Jindi.\n\nShiliu'er. Unlock the information after the conversation: Bird",
     "loctype": "鱼柏川"
   },
-  "9700261": {
+  "9700261__": {
     "desc": "Two years ago, Zhu Yu, the leader of the Longjiao Gang, died near Jindi in Gouzi.\n\nLittle crab. Unlock the information after the dialogue: The traces of Gang Leader Zhu",
     "loctype": "鱼柏川"
   },
-  "9700308": {
+  "9700308__": {
     "desc": "Two years ago, there was a great flood, and many people died in the water and sea. After the flood receded, many people appeared under the Yubai River looking for corpses for burial.\n\nOld Dingtou. Unlock the information after the conversation: Collecting Bones",
     "loctype": "鱼柏川"
   },
-  "9700312": {
+  "9700312__": {
     "desc": "Recently, strange sounds have often been heard in Yubai River. There are rumors that this is the \"dragon's roar\", and there may be a rare treasure hidden under the water, attracting all the knights to come and search for the treasure.\n\nTian Heng. Unlock insights after eavesdropping: Strange noises",
     "loctype": "鱼柏川"
   },
-  "9700316": {
+  "9700316__": {
     "desc": "According to legend, He Bo had a rare treasure in his hand, called the \"Four Sea Treasure Baht\". He had severely defeated the Khitan army fifteen years ago, and if he got it, he could control the wind and rain.\n\nThe night is still late. Unlock the information after the conversation: Si Hai Bao Baht",
     "loctype": "鱼柏川"
   },
-  "9700318": {
+  "9700318__": {
     "desc": "According to the storyteller, He Bo had a bad life. He was infected with the poison of cold bacteria and suffered from the impending flood. At this time, there was actually a yellow bird behind him. As the saying goes: when the house leaks, it rains all night, and when the boat is late, it encounters a strong wind.\n\nHalf-finger fairy. Unlock the information after the conversation: The house leaked and it rained all night",
     "loctype": "鱼柏川"
   },
-  "9700322": {
+  "9700322__": {
     "desc": "He Bo in the storytellers' mouths is ever-changing. He is good at martial arts, Qihuang, fan dancing, and heavy swords... Is there really such a person in the world?\n\nHua Tuan'er. Unlock the information after the conversation: He Bo?",
     "loctype": "鱼柏川"
   },
-  "9700328": {
+  "9700328__": {
     "desc": "In Taogang on the outskirts of Ubo River, stall owner Banzhixian told everyone anecdotes about He Bo, but the beggar on the side didn't seem to take it seriously.\n\nBeggar Xiaozhi. Unlocked after the conversation: Storyteller",
     "loctype": "鱼柏川"
   },
-  "9700335": {
+  "9700335__": {
     "desc": "Just talk to the Taoist spirit on the roadside\nInsights·Xuan Yuan’s Traces\nRecently, there have been many elusive Xuanyuan Sect disciples in Fuxi Mountain, coming for unknown reasons.",
     "loctype": "星隐野"
   },
-  "9700348": {
+  "9700348__": {
     "desc": "Fifteen years ago, the Khitan invaded, and the \"Seven Swords of Taiqing\" were ordered to go down the mountain to save the world. Those who are good at refining elixirs can rejuvenate themselves, and those who are highly skilled in martial arts can defeat prisoners and kill enemies. But it is: give up the magic of Lingxu, but seek to be worthy of the world.\n\nHu Yuniang. Unlock the information after the noon conversation: Seven Swords of Taiqing",
     "loctype": "星隐野"
   },
-  "9700351": {
+  "9700351__": {
     "desc": "Just talk to Mrs. Zhang under the big tree outside the Zhang family's old house.\nInsights·Zhu Ranhongxiu\nAccording to folk rumors, the Zhang family of Bolangsha has been harming the people for a long time. Fortunately, Zhu Yu, a disciple of Qingxi, took action and beheaded him before he was able to convince the public.",
     "loctype": "星隐野"
   },
-  "9700353": {
+  "9700353__": {
     "desc": "Just talk to Liang Mengjin outside the Zhang family's old house.\nInsights·Old friends here\nA few years ago, four teenagers worked together to explore the old house of the Zhang family. In the meantime, the man in green turned out to be an orphan of the Zhang family. What he was looking for was just a thin letter and an answer. Suddenly, several years have passed, and the old house remains the same, with no more old friends coming back.",
     "loctype": "星隐野"
   },
-  "9700366": {
+  "9700366__": {
     "desc": "The Heshi Le in the north of the city is a place for Goulan jokes. It has a very unique position to watch the opera. You need to go to the elegant seat of the flower boat on the river to watch it, which has a lot of flavor.\n\nLu Sheng. Unlock the information after the conversation: He Shi Le",
     "loctype": "开封北郊"
   },
-  "9700379": {
+  "9700379__": {
     "desc": "Guanyin is the number one signature of Heshi Music. It has a unique style of music and top-notch dance skills. However, the dragon appears but never ends. It is often protected by the Red Dragon Hall, but for some reason it has not appeared for a long time.\n\nSu Daan. Unlock the information after the conversation: Breaking the Gong Guanyin",
     "loctype": "开封北郊"
   },
-  "9700385": {
+  "9700385__": {
     "desc": "The rude man who is busy with music in Heshi is a thug from Sekiryudo who went out to work due to financial difficulties. This job opportunity seems to have been matched by the eldest lady of Sekiryudo.\n\nBig money. Unlock the information after the noon conversation: Red Dragon Hall",
     "loctype": "开封北郊"
   },
-  "9700399": {
+  "9700399__": {
     "desc": "In the music of the river market, a young man came to admire the \"Broken Gong Guanyin\", but he couldn't see the beautiful lady. He wanted to buy flowers and fill the flower boat, waiting for the beautiful lady's return with a pomp of \"full courtyard\".\n\nFeng Lanxiang. Unlock the information after the conversation: Man Tingfang",
     "loctype": "开封北郊"
   },
-  "9700411": {
+  "9700411__": {
     "desc": "Thanks to the shopkeeper of Di's store, Heshi Le's little song has a place to stay. Thanks to the fame of Po Luo Guanyin, Heshi Music has a foothold.\n\nLittle song. Unlock the information after the conversation: Dog Friend",
     "loctype": "开封北郊"
   },
-  "9700420": {
+  "9700420__": {
     "desc": "The sisters of the Shi family who run a bookstore originally lived in the city, but their family fell into ruin due to Mr. Shi's collection of money from the Tang Dynasty. Fortunately, they were rescued by \"Broken Luo Guanyin\" and were able to settle down outside the city.\n\nShi Cunqing. Unlock the information after the conversation: The Shi Family Sisters",
     "loctype": "开封北郊"
   },
-  "9700428": {
+  "9700428__": {
     "desc": "Rumors in the rivers and lakes and the creation of music in the rivers and lakes were inspired by Fan Lou. Some villagers saw that Fan Lou was making money every day, so they imitated him in acting. Although he was not glamorous, he was more than funny, and he became famous.\n\nYue Xiaobao. Unlock the information after the conversation: Dong Shi Xiaoqian",
     "loctype": "开封北郊"
   },
-  "9700439": {
+  "9700439__": {
     "desc": "All the actors in Heshi Le are quite extraordinary in their skills. They are not like a theater troupe that specializes in this art, but more like practitioners who have been practicing martial arts since childhood.\n\nPei Yuan'er. Unlock the information after talking to Xu Shi: Martial Arts Practice",
     "loctype": "开封北郊"
   },
-  "9700450": {
+  "9700450__": {
     "desc": "Are there ghosts and gods in the world? Some children actually said that they had seen two red and green ghosts throwing themselves into the well when the moon was dark and the wind was high. I wonder if this was true.\n\nMulberry flower. Unlock the information after the conversation: Red and Green Ghosts",
     "loctype": "开封北郊"
   },
-  "9700452": {
+  "9700452__": {
     "desc": "Qingxi Sect has a long-standing principle of \"one life, one price\". How to fulfill the contract only depends on one's heart. There are doctors who change lives with a thousand pieces of gold, and there are doctors who change lives of others with their own lives.\n\nLingquan. Unlock the information after the conversation: One life, one price",
     "loctype": "开封北郊"
   },
-  "9700477": {
+  "9700477__": {
     "desc": "Zhu Yu Decoction was originally made fifteen years ago when Zhu Yu was fighting Khitan. It tasted pungent and refreshing, so it had a refreshing effect. Since then, it has been imitated by many people and has become a trend.\n\nSister-in-law Wang. Unlock the information after the conversation: Dogwood Soup",
     "loctype": "开封北郊"
   },
-  "9700487": {
+  "9700487__": {
     "desc": "Li Jiutian, the bully of the Wuyou Gang, came to provoke Pan Xinniang because he seemed to be in love with her. As a native of Kaifeng, he didn't know when he learned the Khitan dialect.\n\nTian Erxiao. Unlock the information after the dialogue: Khitan dialect",
     "loctype": "开封北郊"
   },
-  "9700494": {
+  "9700494__": {
     "desc": "The Jianghu people who are silent during the day secretly listen to people in the corner at night. Not only can they hear the Khitan accent in their words, but upon closer inspection, they seem to be colluding with the Wuyou Gang...\n\nJia Sancai is in the inn during the day and on the roof at night. Unlocking insights after eavesdropping: The oriole is behind",
     "loctype": "开封北郊"
   },
-  "9700587": {
+  "9700587__": {
     "desc": "Fifteen years ago, Long Jiao helped Zhu Yu drive the Khitan to Fengqiu Village and hid the Khitan secret treasure here. As of today, it has become a legend.\n\nMo Xiaomi. Unlock the information after the conversation: Khitan Secret Treasure",
     "loctype": "开封北郊"
   },
-  "9700590": {
+  "9700590__": {
     "desc": "The stone for the statue was originally quarried for building the racket pole of Jinmingchi, but was later used for other purposes after the ship was repaired.\n\nAhu. Unlock the information after the conversation: Big Ship Shooting Rod",
     "loctype": "造像处"
   },
-  "9700592": {
+  "9700592__": {
     "desc": "The Mohist giant's tablet, which was once highly valued by the world, has been abandoned like a worn-out shoe by who knows who. The ideal of non-aggression and love, but I don’t know when it will be realized.\n\nZhu Liuer. Unlock the information after the conversation: Mozi’s Tablet",
     "loctype": "梓匠居"
   },
-  "9700609": {
+  "9700609__": {
     "desc": "It is very strange that there is a horse dealer in front of the restaurant. If you don't deal with it, you will not be able to buy horses.\n\nQuan Yiren. Unlock the information after the conversation: The mysterious horse dealer",
     "loctype": "飞花渡"
   },
-  "9800029": {
+  "9800029__": {
     "desc": "In Fengqiu Village, I don't know who organized a competition to recruit brides, and the people taking part in the fun were resting on the roadside. The dogwood soup, which was originally in poor sales, became very popular in Kaifeng.\n\nYan Chu. Unlock the information after the conversation: Business Wizards",
     "loctype": "开封北郊"
   },
-  "9800031": {
+  "9800031__": {
     "desc": "Shedian used to be a place for garrison training. I heard that new weapons are being developed in the Shedian House.\n\nNo chapter left. Unlock the information after the conversation: Past of Shedian",
     "loctype": "御苑南"
   },
-  "9800033": {
+  "9800033__": {
     "desc": "The banquet hall that was supposed to be under construction was now occupied by a group of Zuihuayin disciples for unknown reasons.\n\nWuyou. Unlock the information after the conversation: Banquet Hall",
     "loctype": "御苑南"
   },
-  "10100088": {
+  "10100088__": {
     "desc": "In the past, only the royal family and officials could enter the imperial garden. In recent years, it has been opened to the common people for spring outings.\n\nWu two hundred. Unlock the information after the conversation: Yuyuan",
     "loctype": "御苑南"
   },
-  "10100089": {
+  "10100089__": {
     "desc": "The farmland on the other side of the mountain is being infested by a strange disease. Although Chengen Town is having a good year this year, some Chengen Town villagers are still worried that the strange agricultural damage will spread.\n\nWu Meilian. Insights unlocked after eavesdropping at noon: Hidden worries in a good year",
     "loctype": "承恩镇"
   },
-  "10100090": {
+  "10100090__": {
     "desc": "Wang Lingyue's two brothers want to find her a son-in-law. They are currently more interested in Zhang Xukang, but Zhang Xukang seems to have gotten into some trouble recently.\n\nZhang Xiping. Unlocking the information after eavesdropping in Xu Shi: Recruiting a son-in-law",
     "loctype": "承恩镇"
   },
-  "10100093": {
+  "10100093__": {
     "desc": "Faced with the hidden concern of reduced food production, some villagers had the idea in advance of abandoning the elderly, weak, women and children to reduce food consumption. There seems to be a precedent for this kind of incident in Chengen Town.\n\nZhang Xiucai. Unlock the information after the noon conversation: Abandoning wife and daughter",
     "loctype": "承恩镇"
   },
-  "10100095": {
+  "10100095__": {
     "desc": "Chengen Town has had a change of village chief once. The original village chief's surname was He. He was expelled by the villagers for some reasons, but he has been waiting for an opportunity to retaliate after being expelled.\n\nZhang Xiucai. Unlock the information after talking to Zi Shi: Change of village chief",
     "loctype": "承恩镇"
   },
-  "10100096": {
+  "10100096__": {
     "desc": "There have been some sneaky people in Cheng'en Town recently. The adults in the village seem to know why. The children are very dissatisfied with you for telling the children to ignore this matter.\n\nVillage child. Unlock the information after the dialogue: The bad guy at the entrance of the village",
     "loctype": "承恩镇"
   },
-  "10100097": {
+  "10100097__": {
     "desc": "Chang Pingshi, the steward of Changpingcang, is said to be from Chengen Town, but some villagers in the town seem to have had an unpleasant past with Chang Pingshi.\n\nYang Xing. Unlock the information after the conversation with Chenshi: Chang Ping Envoy",
     "loctype": "承恩镇"
   },
-  "10100098": {
+  "10100098__": {
     "desc": "Village Chief Xie seems to want to return part of the land to the people of Da'an Village, but the villagers have great objections to this, and the people of Da'an Village don't seem to be satisfied either.\n\nEavesdropping on villagers' conversations to unlock insights: Returning the Land",
     "loctype": "承恩镇"
   },
-  "10100099": {
+  "10100099__": {
     "desc": "Chen Tiezhu went out secretly some time ago, but his wife caught him red-handed. She kept pressing him for several nights and refused to let him go out. Who knew who had been waiting for him for several nights.\n\nChen Tiezhu. Unlock the information after the noon conversation: Private meeting at night",
     "loctype": "承恩镇"
   },
-  "10100100": {
+  "10100100__": {
     "desc": "Most of the boatmen on Linjin Ferry are from Bolangsha. However, due to internal conflicts within the Longjiao Gang, the boatmen here were also divided into two factions, and they were constantly at odds with each other.\n\nPan Hanning. Unlocked after the conversation: Ferry Boatman",
     "loctype": "平野原"
   },
-  "10100124": {
+  "10100124__": {
     "desc": "The Green Flag camp at Linjin Ferry was led by the You brothers. Compared to his gentle brother You Haomiao, his younger brother You Haobo is more radical and determined to drive out all the people from the sky.\n\nYou Haobo. Unlock the information after the conversation: Imjin Green Flag",
     "loctype": "平野原"
   },
-  "10100125": {
+  "10100125__": {
     "desc": "Fertilizer production from Xiaohe mud was originally a more common agricultural fertilizer production technology in the Jiangnan area. After being recorded on the Qingxi hand scroll, it was promoted in Lingxing Village after Zhai Xu’s study. With the help of mud and fertilizer, Qingxinpu, which was originally not fertile, ushered in a bumper harvest of medicinal materials, and the villagers gradually settled down.\n\nZhai Bo. Unlock the information after the conversation: Making fertilizer from clay",
     "loctype": "清心圃"
   },
-  "10100126": {
+  "10100126__": {
     "desc": "The rehmannia seedlings and planting methods in Lingxing Village came from Qingxi. With the help of doctors, the villagers gradually planted large fields of rehmannia glutinosa.\n\nZhai Li. Unlock the information after the conversation: Qingxi Medicine Seed",
     "loctype": "清心圃"
   },
-  "10100128": {
+  "10100128__": {
     "desc": "What happened in the Liuji Pavilion during the flood night two years ago remains a mystery to this day. Afterwards, Xiu Jinlou and other Jianghu forces occupied the ruins, making it impossible for the villagers to get to the bottom of it.\n\nFu Erbo. Unlock the information after the conversation: Six Diseases and Mysteries",
     "loctype": "清心圃"
   },
-  "10100130": {
+  "10100130__": {
     "desc": "Some villagers whose food harvests were poor due to strange diseases plan to find another way out, and this other way out seems to be related to the past of Chengen Town.\n\nCheng Xiaojie, Liu Shou. You can gain insights after eavesdropping on Chenshi: find another way out",
     "loctype": "平野原"
   },
-  "10100132": {
+  "10100132__": {
     "desc": "The Taiping Academy in Lingxing Village is a free school and is presided over by Zhai Xu of the Imperial Medical Office. Regardless of their origin, children who are eager to learn can learn pharmacological knowledge here.\n\nZhai Sanniang. Unlock the information after the conversation: Taiping Academy",
     "loctype": "清心圃"
   },
-  "10100133": {
+  "10100133__": {
     "desc": "The cooked rehmannia glutinosa in Lingxing Village needs to be steamed and dried for nine times. The quality is excellent and it is well received in the world.\n\nZhai Siniang. Unlock the information after the conversation: Rehmannia glutinosa preparation",
     "loctype": "清心圃"
   },
-  "10100135": {
+  "10100135__": {
     "desc": "The Liuji Pavilion to the east of Lingxing Village was once the original site of the village. After the epidemic broke out eight years ago, the villagers moved here with the help of doctors.\n\nFu old man. Unlock the information after the conversation: Ling Xing’s original address",
     "loctype": "清心圃"
   },
-  "10100188": {
+  "10100188__": {
     "desc": "The source of the disease is Sun Buqi, a poisonous doctor who is notorious in the world for his research on dream puppets.\n\nMulberry night. Unlock the information after the conversation: Source of Cold Bacteria",
     "loctype": "清心圃"
   },
-  "10100191": {
+  "10100191__": {
     "desc": "The proprietress of Jiyulou, Chu Shiyiniang, is known as \"the one who stops when it rains\" in the world. No matter how loud the noise is caused by the visitor, as long as he enters this place, the clouds can stop the rain and the disputes can be cut off.\n\nShangyu. Unlock the information after the conversation: Stop when it rains",
     "loctype": "开封东郊"
   },
-  "10100193": {
+  "10100193__": {
     "desc": "People who are interested in going to the Hidden Mist Forest to hunt for treasures will often come to the tea stalls in Changxingji to inquire about information. It's just up to everyone to find out what the news is and whether the news is true or false.\n\nChangfeng. Unlock the information after the conversation: Tea Stall Secrets",
     "loctype": "开封东郊"
   },
-  "10100199": {
+  "10100199__": {
     "desc": "The owner of Changxing Jiji Weapon Shop's heart is not beating, and Gui Shizi's unblinking eyes are a pair of notorious brothers. After the news of the secret treasure hidden in the Hidden Mist Forest spread throughout the world, he moved his shop here in a heartbeat in order to use the Jianghu people who came to die to test his sword.\n\nChaihe, Shizhen. Unlock insights after listening in: Jianghu Trial Knife",
     "loctype": "开封东郊"
   },
-  "10100283": {
+  "10100283__": {
     "desc": "The Huimin Bureau is managed by Wang Congyun, a doctor from the Imperial Medical Office. It insists on selling medicines and providing diagnosis and treatment at affordable prices, and is well received among the people.\n\nYan Sanniang. Unlock the information after the dialogue: Benefiting the People",
     "loctype": "开封东郊"
   },
-  "11300191": {
+  "11300191__": {
     "desc": "When Zhang Tiemeng was pursuing Chen Tongrou, he learned to weave flower and grass wreaths to make her happy. Years later, he still retained this habit.\n\nZhang Tiemeng. After the conversation, you will unlock the information: Husband and wife friendship.\n--Know everything beforehand [Crop Talk]",
     "loctype": "平野原"
   },
-  "12200017": {
+  "12200017__": {
     "desc": "You come across Kuanglan knights secretly drinking in Qufang. You recall what Uncle Jiang said in the past. Kuanglan knights are usually the most addicted to alcohol. Even the way they test their disciples is mostly related to alcohol.\n\nOne cup at a time. Dialogue Unlock Information: Alcoholic Frenzy",
     "loctype": "神仙渡"
   },
-  "1000170363": {
+  "1000170363__": {
     "desc": "Recently, in order to supply food to Jinmingchi, Qingjiao Hall has been short of manpower and has often gone to the city to recruit workers.\n\nLu Lang. Insights from unlocking after eavesdropping: Manpower shortage",
     "loctype": "万胜镇"
   },
-  "1000170367": {
+  "1000170367__": {
     "desc": "There are traces of traces left in the deserted house. Judging from the appearance of the traces, it seems that a fierce fight took place here, and some people were even injured.\n\nExploring the traces on the ground can provide you with information: traces of fighting",
     "loctype": "荒蚀林"
   },
-  "1000170372": {
+  "1000170372__": {
     "desc": "There are several books in the deserted village medical center, and the contents recorded in these books are all strange and weird.\n\nExploring the books on the second floor, you can get information: Weird medical books",
     "loctype": "荒蚀林"
   },
-  "1000170454": {
+  "1000170454__": {
     "desc": "Chu Wuming once had a benefactor who saved his life. Chu Qingquan, Chu Daxia, this person's name is enough for Chu Wuming to remember him for a lifetime.\n\nChu Wuming. You can only talk to you when you need it, and unlock the knowledge: Paying homage to the benefactor",
     "loctype": "神仙渡"
   },
-  "1000170455": {
+  "1000170455__": {
     "desc": "The villagers usually put the dustpan on the roof, and when the pear blossoms fall, they naturally fall into the dustpan on the roof. Every year during the Zuixian month, the villagers would take off the pear blossoms and brew them into sweet tears of separation.\n\nExplore the roof and unlock insights: Flying flowers reach the top",
     "loctype": "神仙渡"
   },
-  "1000170456": {
+  "1000170456__": {
     "desc": "A group of guests with southern accents came to Shenxiandu, and Song Wuzheng was proud of the unprecedented grand occasion of Zuixianyue.\n\nSong Wu. You can gain insights by talking before burning the village (you can make up for the mistakes through friends online after burning the village): Southern accent.",
     "loctype": "神仙渡"
   },
-  "1000170460": {
+  "1000170460__": {
     "desc": "Yuansheng discovered an incredible treasure, but you discovered that this treasure seemed to come from a Tianquan disciple, and that Tianquan disciple seemed to have passed away not long ago.\n\nYuan Sheng's baby. Gain knowledge after picking it up: Treasure Secret Treasure",
     "loctype": "不羡仙"
   },
-  "1008615245": {
+  "1008615245__": {
     "desc": "On the wedding night, the villagers who went crazy due to petrified disease attacked each other. After that, the villagers stopped marrying outsiders. Only when they were no longer in this world would they tie up a thatched bride to comfort themselves.\n\nExploring the book behind The Thatched Bride will reveal information: The Thatched Bride. and clue shop",
     "loctype": "荒蚀林"
   },
-  "1630210195": {
+  "1630210195__": {
     "desc": "Rong Zhishui, the owner of Changxing Jizhenbao Pavilion, looks weak and weak, but in fact he has unique vision and ruthless moves. It is said that he has a close relationship with the owner of Gui Shizi's stolen goods. No matter how hot the red goods or black goods in the hands of the customers are, this boss Rong can eat them.\n\nRong Zhishui. Unlock the information after the conversation: Treasure sold as stolen goods",
     "loctype": "开封东郊"
   },
-  "1630210199": {
+  "1630210199__": {
     "desc": "It is said that Thousand Buddha Village was once a prosperous Buddhist village, but its beliefs were heretical. During the Xiande period, after Qianfo Village was destroyed, officials took it as an example and erected a monument to warn the world.\n\nObserve the stone tablet and unlock the knowledge: Imprisoned by Buddha.",
     "loctype": "千佛村"
   },
-  "1630230550": {
+  "1630230550__": {
     "desc": "A few years ago, a piece of extraterrestrial flint accidentally landed in Qianfo Village, triggering a long-lasting fire that burned the entire village to ashes. People around said that this was the retribution of Thousand Buddha Village.\n\nObserve the stone to unlock insights: Catastrophe of Skyfire.",
     "loctype": "千佛村"
   },
-  "1631302047": {
+  "1631302047__": {
     "desc": "In April of the first year of Qianyou, a man named Zheng Mao once forged a Tang sword at the old blacksmith in Xifang. The name of the sword was \"Judging Crime\".\n\nOld ledger. Unlock the information after investigation: One of the Zheng’s children",
     "loctype": "百工坊"
   },
-  "1631302048": {
+  "1631302048__": {
     "desc": "In the fourth year of his fortune, the Khitans invaded. Zheng Miao was rescued by a teenage girl, but the girl remained on the battlefield forever.\n\nZheng Miao's note. Unlock the information after investigation: The Zheng family's children·Part 2",
     "loctype": "百工坊"
   },
-  "1631502387": {
+  "1631502387__": {
     "desc": "After the Khitan destroyed hundreds of buildings, an ancient tree was left behind. Most of it was withered and blackened, but one branch sprouted new buds. The people thought it was magical and called it the tree of immortality. After Liu Zhiyuan stole Bianzhou and made it the capital of the Later Han Dynasty, Bianzhou officials forced the people to move away from the area where the immortal tree was located. They decorated the withered branches with oil paper flowers and built an \"Auspicious Garden\" around it to congratulate the Later Han Dynasty for their eternal prosperity.\n\nImmortal tree. Unlock the information after investigation: Siwei Garden·Part 1",
     "loctype": "南门大街"
   },
-  "1631502388": {
+  "1631502388__": {
     "desc": "At the beginning of the Ding Dynasty, the Khitans invaded Tokyo, burned, killed and looted, causing countless casualties. There are hundreds of squares in South Street, where the knights and the people are united to fight against the Khitan. More than a month later, the Lord of Liao was defeated and the people rebuilt the city. They were surprised to see that the old tree in the northwest had survived the fire and sprouted new buds on its withered body. They thought it was miraculous and it was called an immortal tree.\n\nLiu Zhiyuan established the Han Dynasty and proclaimed himself emperor, seized Tokyo, and used the immortal tree as an auspicious sign. He forcibly expelled the nearby people, decorated the burnt branches with oil paper and hundreds of flowers, and built an auspicious garden. It was dedicated to the Han emperor to wish the king a long and prosperous future. However, if Liu Han was killed in his second generation, how could he achieve the merits of a hundred generations? If we sincerely know that the rise and fall of a dynasty does not depend on good or bad things, how can a king in troubled times dare to do whatever he wants out of fear?\n\nAt the beginning of the New Song Dynasty, the world was divided, and the sentiment of the whole country was no better than that of the previous Han Dynasty. When the emperor heard about the old story of Ruixiang Garden, he took it as a warning and ordered the garden to be rebuilt. It was renamed as \"Thinking of Danger\" to return it to the people, with the intention of diligently cultivating virtuous government, thinking of danger and being cautious, and protecting the country and the people.\n\nXinwei was established in the seventh month of the first year of Jianlong\n\n\n\nStone tablet. Unlock insights after investigation",
     "loctype": "南门大街"
   },
-  "1631502389": {
+  "1631502389__": {
     "desc": "The \"Thousand-Character Classic\", \"Nine Chapters of Arithmetic\" and other contents are written messily on the loess ground. It can be seen that the residents of Baifang were rich and poor. Many people could not afford paper and ink, so they could only write on the ground. Later, the more they learned, the ground was scratched into shapes and the handwriting became increasingly unclear.\n\nScratches on the ground. Unlock insights after exploration: Come to Sumeng to learn",
     "loctype": "南门大街"
   },
-  "1632212632": {
+  "1632212632__": {
     "desc": "In the third year of Qianyou's reign, Zheng Mao went north to Qinghe. Since then, there has been no news. The former second son of the Zheng family may have completely disappeared.\n\nMiscellaneous notes on forging leisure. Unlock the information after investigation: The Zheng family’s children·Part 3",
     "loctype": "百工坊"
   },
-  "1632212633": {
+  "1632212633__": {
     "desc": "On the first floor of the Imperial Medical Office is an ancient folding fan. Among the landscape paintings on the fan remain traces of blood and the inscription of Zhu Yu, a disciple of Qingxi.\n\nFolding fan (second floor). Unlock the information after exploration: Planting dogwood everywhere·Part 2",
     "loctype": "开封府"
   },
@@ -6168,67 +6167,67 @@
     "desc": "Go to the area around the Bird Rock and observe He Qiu who is praying to unlock it.",
     "loctype": "绝嶂岭"
   },
-  "1020029;9400006": {
+  "1020029;9400006__": {
     "desc": "Foreign merchants brought what they had seen along the way, saying that envoys from the Tang State in the south had recently come to Qinghe. According to legend, these envoys came to obtain scriptures!\n\nCui Daniu, you can gain insights by talking to him before burning the village (you can make up for the mistakes through friends online after burning the village): Messenger of the Southern Tang Dynasty",
     "loctype": "神仙渡"
   },
-  "1020184;1026088": {
+  "1020184;1026088__": {
     "desc": "The profiteer Tang Bao comes to Bu Xian Xian to fight against the autumn wind again, but this time he tells you that he intends to buy the formula for making Li Ren Tears and pays ten times the price. But you know, Uncle Zhou will not sell it to him.\n\nTang Bao. Dialogue can unlock information: Request for purchase recipe.",
     "loctype": "不羡仙"
   },
-  "1020224;9400040": {
+  "1020224;9400040__": {
     "desc": "Many years ago, a mysterious thief appeared in the Immortal Crossing and stole Han Xiangxun's most precious treasure. The villagers are spreading the word that Han Xiangxun has been looking for that treasure for a long time.\n\nZhang Dazhuang. Talk before burning the village to gain insights (after burning the village, you can connect with friends to make up for the omissions): Shenxiandu was stolen.",
     "loctype": "神仙渡"
   },
-  "1020252;9400010": {
+  "1020252;9400010__": {
     "desc": "It is not easy to make wine songs that make people cry. The pear flower petals need to be collected with a wind bag first, and then ground into powder. Finally, the pear flower powder is mixed into the koji powder to make koji. With the help of distiller's yeast, Liren's Tears can be successfully made.\n\nShuang'er. After burning the village, you can get information from this dialogue: Lihua Liquor.",
     "loctype": "神仙渡"
   },
-  "1020254;9400014": {
+  "1020254;9400014__": {
     "desc": "During the Khitan War, it was Han Xiangxun who took in those wandering people. Slowly, together they built today's Shenxiandu.\n\nTian Gu. Dialogue can help you trace past events. And what we have seen: wandering has something to offer.",
     "loctype": "神仙渡"
   },
-  "1020255;9400005": {
+  "1020255;9400005__": {
     "desc": "People in the village all remember Jiang Daxia who left Shenxiandu. Some villagers even hoped that it would be great if Jiang Daxia and Han Xiangxun were a couple. But since Jiang Daxia left the world, no one in the village has seen him again.\n\nUncle Mi. Talk before burning the village to gain insights (after burning the village, you can connect with friends to make up for the omissions): The missing person.",
     "loctype": "神仙渡"
   },
-  "1020437;9400013": {
+  "1020437;9400013__": {
     "desc": "Shenxiandujin has two specialties, one is Liren Tears and the other is Lihualin. The tears of the departed people make the drink fragrant, the pear blossoms in the forest are as white as snow, and if the Drunk Fairy Moon comes, it will be a grand scene in the world, which I believe is joyful.\n\nSong Wu. You can gain insights by talking before burning the village (you can make up for the mistakes through friends online after burning the village): Southern accent.\nPay attention to the Geography·Shenxiandu on the stool in front. After picking it up, you can unlock the knowledge: customs and history.\nThere are also props from Wanshizhi [Abyss of Desire] and [One Book with Wanli Profits] that should be picked up.",
     "loctype": "神仙渡"
   },
-  "1020548;9400004": {
+  "1020548;9400004__": {
     "desc": "On the Immortal Crossing at night, two weird-looking guys are whispering to each other. You accidentally get a map of the Immortal Crossing from them, and you don’t know what their purpose is.\n\nAs an outsider, before burning the village, use Star Photographer to get the map of the Immortal Crossing on him to unlock the information: Sneaky Traces",
     "loctype": "神仙渡"
   },
-  "1020557;1020559;1020561;9400193": {
+  "1020557;1020559;1020561;9400193__": {
     "desc": "Take the sweet and fragrant pear flowers and store them in raw silk bags. Dip them into three buckets of drink. The fragrance will be clear and unstained.\n\nExploring the facilities next to the natural history can unlock information: Agarwood Pear Chips",
     "loctype": "神仙渡"
   },
-  "1020574;9400012": {
+  "1020574;9400012__": {
     "desc": "You accidentally heard that the old rooster in the Fairy Crossing told you that he had seen a thief steal Jia Fu's money bag.\n\nIf you have the ability to communicate with all beasts here, you can also trigger the knowledge of the river frog next to it: the treasure thief.",
     "loctype": "神仙渡"
   },
-  "1020607;2500370": {
+  "1020607;2500370__": {
     "desc": "Every year, Han Xiangxun brings the first jar of wine here to worship an old friend. You have seen the tombstone and know that it is the tomb of brother Han Xiangxun. But Han Xiangxun never told you what kind of person her brother was and why there was a tomb here.\n\nExploring the tombstone here, you will get information: The long-dead person.",
     "loctype": "不羡仙"
   },
-  "1040185;9400009": {
+  "1040185;9400009__": {
     "desc": "Suddenly there are some strange guys in Shenxiandu. Some are asking for the entrance to the village, some are exploring the floods at the mouth of the river, and some are grabbing children and insisting on asking why Zuixianyue was founded. If you meet them again, you must give them a show!\n\nUncle Zhang Jiu. Conversation unlocks natural history and knowledge: inquiring about information",
     "loctype": "神仙渡"
   },
-  "2500108;2500082;2510022;2500096": {
+  "2500108;2500082;2510022;2500096__": {
     "desc": "Hundreds of people in the town lost their livelihoods after Emperor Shizong ordered to exterminate the Buddha. They didn't understand why their good deeds throughout their lives led to such bad consequences. So A Huai, a Buddhist carver named Yang, proposed to go to the Bodhi Sea of ​​Bitterness to find out what happened. Something terrible must have happened there, causing all the Buddhist carvers to never return.\n\nPanming Mine. If you talk to You Shi while drinking here, you can unlock the story: The Tragedy of the Sea of ​​Bitterness. (If that doesn’t work, go and talk to Yang Shanpo again later)",
     "loctype": "慈心镇"
   },
-  "2510025;2510036;2500041": {
+  "2510025;2510036;2500041__": {
     "desc": "One day, the messenger of Buddha flowers came to the town with his believers, telling everyone about the benefits of worshiping Buddha flowers. Perhaps in order to find some solace in their poor life, the common people who had no way to make a living due to the decline of Buddhist carving craftsmanship chose to obey and gradually fell into the seductive temptation.\n\nBuddhist believers. After talking to most of the townspeople (especially the four Buddha Flower Believers to learn about Buddha Flowers, Chen Shizhou's dialogue with Miao Xin, Xie Wangshan at night, and Little Chisel to learn about Ci Xin Town), you can unlock the knowledge: Buddha Flower Belief",
     "loctype": "慈心镇"
   },
-  "3611781630230540": {
+  "3611781630230540__": {
     "desc": "There are four major surnames in Cixin Town: Yang, Zhou, Pan, and Xie. For some reason, the Yang family is marginalized by the Zhou family. The behavior of adults affected the children, and the children in the town were very unfriendly to Yang Xiaoyao. What did the Yang family do wrong?\n\nShen Shi talks to three children: Zhou Miaoxin, Xie Deyi, and Pan Faxin. Unlockable Insight: The Bullied Child",
     "loctype": "慈心镇"
   },
-  "7800031;7800033": {
+  "7800031;7800033__": {
     "desc": "Hongxian's mother passed away early, and Uncle Zhou had no control over Hongxian. Gradually, Hongxian became a naughty and crazy girl in the eyes of the villagers.\n\nYueniang, after burning the village, talk to unlock the information: the red line to be strong.",
     "loctype": "神仙渡"
   },
@@ -6244,31 +6243,31 @@
     "desc": "Go to the dock on the lower left side of the Millennium Crossing Monument and talk to Li Qiantu to unlock it.",
     "loctype": "千年渡"
   },
-  "1020551;9400007": {
+  "1020551;9400007__": {
     "desc": "A group of strange pigeons appeared on the Immortal Crossing, with secret messages from a mysterious organization tied to their legs. The letter said: Holding the token with the flame dragon pattern, you can connect with the organization's hidden line at the dock of Buxianxian.\n\nCarp girl. After the conversation, you can unlock the information: Strange Pigeon Secret Message.",
     "loctype": "神仙渡"
   },
-  "1025061;9400011": {
+  "1025061;9400011__": {
     "desc": "The female guest in green clothes, who is more attractive than the pear blossoms, seems to know the pear blossoms planted by Shenxiandu. They are the pear blossoms transplanted by Han Xiangxun from his hometown.\n\nXia Aze. After the conversation, you will unlock the information: Hometown Pear Blossom.",
     "loctype": "神仙渡"
   },
-  "6900800;6901284": {
+  "6900800;6901284__": {
     "desc": "Talk to Qi Qin on the second floor of Fan Tower\nInsights·Guests from all over the world\nZuihuayin's singing and dancing are famous all over the world. Guests from all over the world will travel thousands of miles to Kaifeng to enjoy the feast together.",
     "loctype": "醉花阴"
   },
-  "6900980;6900983": {
+  "6900980;6900983__": {
     "desc": "Talk to She Bo on the third floor of Fan Tower\nInsights: Duxiu Pavilion in Fanlou\nThe most luxurious wing on the third floor of Fan Tower is called Duxiu Pavilion, which means \"a cluster of flowers, with peonies at the head; a gathering of heroes, a single branch stands out\". Those who can occupy the Duxiu Pavilion are all extraordinary figures in the court.",
     "loctype": "醉花阴"
   },
-  "6901306;6901363;6901295": {
+  "6901306;6901363;6901295__": {
     "desc": "A few years ago, Qin Mo Bingxian and Duan Zhen met with the rhythm geniuses Jiang Yi and Hua Xinfeng Han Wei at the beautiful lake of Drunken Flower Yin, and agreed to determine the winner with ten pieces of music. Unfortunately, due to various reasons, nine of the ten songs ended that year, but even so, this appointment is still a legendary event that is talked about in the martial arts and music circles.\n\nWen Chang, Xiang Pengyuan. Unlock the information after the conversation: Ten Songs of Yanhu",
     "loctype": "醉花阴"
   },
-  "2500092;2500099": {
+  "2500092;2500099__": {
     "desc": "Zhiwenliu. It is said that during the previous dynasty, Sejong had a meeting with Elder Le, the director of the Wenjin Museum, and decided to use this to leave scholars from all over the world here to advise the country.\n\nwillow. Unlock knowledge after exploration: Yanagi Chihiro",
     "loctype": "开封府"
   },
-  "6800984;6800986": {
+  "6800984;6800986__": {
     "desc": "The food menu of Wubi Inn seems to hide some secret. All menus are composed of place name, grade and food. The latest dish is Kaifeng's top spicy pig ears - this corresponds to the monitoring of public opinion in Kaifeng, and if necessary, those who spread rebellious remarks can be killed on the spot.\n\nWu Twelve Niangs. Unlock the information after the conversation: Secret food list",
     "loctype": "南门大街"
   },
