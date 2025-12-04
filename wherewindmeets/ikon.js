@@ -9,7 +9,7 @@
  */
 
 // Base URL for icons
-const ICON_BASE_URL = "https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/";
+const ICON_BASE_URL = "https://tiles.bgonegaming.win/wherewindmeet/Simbol/";
 
 // Detect device size
 const isMobile = window.matchMedia("(max-width: 768px)").matches;
@@ -36,9 +36,9 @@ const ICON_CONFIG = {
   baseIcon: `${ICON_BASE_URL}default.png`,
 
   overlays: {
-    "1": "batuteleport.webp?updatedAt=1762879575407",
-    "2": "petiharta.webp?updatedAt=1762879575344",
-    "3": "strange.webp?updatedAt=1762879614618",
+    "1": "batuteleport.webp",
+    "2": "petiharta.webp",
+    "3": "strange.webp",
     "4": "soundofheaven.webp",
     "5": "gua.webp",
     "6": "windingpathinsearchoftranquility.webp",

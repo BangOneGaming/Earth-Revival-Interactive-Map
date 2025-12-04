@@ -11,7 +11,7 @@ const MAP_CONFIG = {
     max: 8
   },
   tiles: {
-    url: "https://ik.imagekit.io/k3lv5clxs/wherewindmeet/tiles/{z}_{x}_{y}.webp",
+    url: "https://tiles.bgonegaming.win/wherewindmeet/tiles/{z}_{x}_{y}.webp",
     errorTileUrl: ""
   },
   // Versi tile, ubah setiap kali ada pembaruan di ImageKit
@@ -60,7 +60,7 @@ function initializeMap() {
       maxNativeZoom: 7,
       noWrap: true,
       crossOrigin: true,
-      errorTileUrl: "https://ik.imagekit.io/k3lv5clxs/wherewindmeet/tiles/7_127_126.webp"
+      errorTileUrl: "https://tiles.bgonegaming.win/wherewindmeet/tiles/7_127_126.webp"
   }).addTo(map);
 
   return map;

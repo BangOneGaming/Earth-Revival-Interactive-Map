@@ -148,3 +148,6 @@ const DescriptionLoader = {
 
 // Export to window for global access
 window.DescriptionLoader = DescriptionLoader;
+
+// ❌ HAPUS AUTO-INITIALIZE - Biar gak loading sendiri duluan
+// Loading akan diatur dari main.js dengan urutan yang benar
