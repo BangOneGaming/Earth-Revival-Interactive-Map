@@ -38,7 +38,7 @@ const ICON_CONFIG = {
   overlays: {
     "1": "batuteleport.webp",
     "2": "petiharta.webp",
-    "3": "strange.webp",
+    "3": "aneh.webp",
     "4": "soundofheaven.webp",
     "5": "gua.webp",
     "6": "windingpathinsearchoftranquility.webp",
