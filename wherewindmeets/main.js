@@ -31,13 +31,12 @@
    */
   function startEmotionFlip() {
     const emotions = [
-      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/impressed.webp', // Ganti dengan URL gambar pertama
-      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/cry.webp', // Ganti dengan URL gambar kedua
-      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/hehe.webp', // Ganti dengan URL gambar ketiga
-      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/well.webp', // Ganti dengan URL gambar keempat
-      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/thinking.webp'  // Ganti dengan URL gambar kelima
+      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/impressed.webp',
+      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/cry.webp',
+      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/hehe.webp',
+      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/well.webp',
+      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/thinking.webp'
     ];
-
 
     const emotionImg = document.getElementById('preloadEmotionIcon');
     if (!emotionImg) return;
@@ -57,14 +56,14 @@
         emotionImg.classList.remove('flip-animation');
         currentIndex = (currentIndex + 1) % emotions.length;
         emotionImg.src = emotions[currentIndex];
-      }, 600); // Flip selesai dulu baru ganti
+      }, 600);
       
-    }, 800); // Interval 800ms (flip 600ms + jeda 200ms)
+    }, 800);
 
     // Stop animasi saat loading selesai
     setTimeout(() => {
       clearInterval(flipInterval);
-    }, 5000); // Total loading 5 detik
+    }, 5000);
   }
 
   /**
@@ -98,8 +97,8 @@
     if (!barFill || !barPercent) return;
 
     let progress = 0;
-    const totalDuration = 5000; // 5 detik
-    const intervalTime = 50; // Update setiap 50ms
+    const totalDuration = 5000;
+    const intervalTime = 50;
     const increment = (100 / totalDuration) * intervalTime;
 
     const loadingInterval = setInterval(() => {
@@ -110,7 +109,6 @@
         clearInterval(loadingInterval);
       }
 
-      // Update bar width dan percent text
       barFill.style.width = progress + '%';
       barPercent.textContent = Math.floor(progress) + '%';
     }, intervalTime);
@@ -125,7 +123,7 @@
       setTimeout(() => {
         console.log("%c✅ Loading complete (100%)", "color:lime;font-weight:bold;");
         resolve();
-      }, 5000); // Total 5 detik
+      }, 5000);
     });
   }
 
@@ -142,13 +140,25 @@
       if (typeof initializeIcons !== "function") throw new Error("initializeIcons not found");
       if (typeof initializeMap !== "function") throw new Error("initializeMap not found");
 
-      // Load data from API first
+      // ✅ STEP 1: Load DATA MARKER dulu dari API
       if (typeof DataLoader !== "undefined" && DataLoader.init) {
-        console.log("%c⏳ Loading marker data from API...", "color:#FFA500;font-weight:bold;");
+        console.log("%c⏳ [1/2] Loading marker data from API...", "color:#FFA500;font-weight:bold;");
         await DataLoader.init();
-        console.log("%c✓ Data loaded from API", "color:#4CAF50;");
+        console.log("%c✓ [1/2] Marker data loaded successfully", "color:#4CAF50;font-weight:bold;");
       } else {
         console.warn("%c⚠️ DataLoader not found, using static data files", "color:orange;");
+      }
+
+      // ✅ STEP 2: Load DESCRIPTION data dan merge (SETELAH marker data ready)
+      if (typeof DescriptionLoader !== "undefined") {
+        console.log("%c⏳ [2/2] Loading descriptions...", "color:#02a0c5;font-weight:bold;");
+        await DescriptionLoader.init();
+        console.log("%c✓ [2/2] Descriptions loaded", "color:#4CAF50;");
+        
+        // Merge descriptions ke marker data
+        console.log("%c⏳ Merging descriptions into markers...", "color:#02a0c5;");
+        DescriptionLoader.mergeAllDescriptions();
+        console.log("%c✓ Descriptions merged successfully", "color:#4CAF50;font-weight:bold;");
       }
 
       // Initialize icons
