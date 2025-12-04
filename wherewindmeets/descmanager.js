@@ -148,29 +148,3 @@ const DescriptionLoader = {
 
 // Export to window for global access
 window.DescriptionLoader = DescriptionLoader;
-
-/**
- * Auto-initialize after DataLoader completes
- * This ensures descriptions are loaded and merged after markers are loaded
- */
-(function() {
-  // Wait for DataLoader to complete
-  const originalInit = window.DataLoader?.init;
-  
-  if (originalInit) {
-    window.DataLoader.init = async function() {
-      // Call original init
-      const result = await originalInit.call(this);
-      
-      // Then load and merge descriptions
-      try {
-        await DescriptionLoader.init();
-        DescriptionLoader.mergeAllDescriptions();
-      } catch (error) {
-        console.error('Failed to load descriptions:', error);
-      }
-      
-      return result;
-    };
-  }
-})();
