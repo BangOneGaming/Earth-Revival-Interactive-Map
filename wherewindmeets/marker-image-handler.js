@@ -1,12 +1,14 @@
 /**
- * Marker Image Handler Module v5.0
+ * Marker Image Handler Module v5.1
  * 
  * STRATEGY:
  * 1. Saat halaman load → GET /WWMupload/all → Simpan di localStorage
  * 2. Saat buka marker → Ambil dari localStorage → TIDAK ADA GET
  * 3. localStorage bertahan sampai user clear browser
  * 
- * @version 5.0.0
+ * TEMPORARY: Upload disabled until December 20th due to quota limits
+ * 
+ * @version 5.1.0
  */
 
 const MarkerImageHandler = (function() {
@@ -25,7 +27,9 @@ const MarkerImageHandler = (function() {
     allowedFormats: ['image/png', 'image/jpeg', 'image/webp'],
     maxFileSize: 5 * 1024 * 1024,
     cacheKey: 'wwm_marker_images',
-    cacheVersionKey: 'wwm_marker_images_version'
+    cacheVersionKey: 'wwm_marker_images_version',
+    uploadEnabled: false, // TEMPORARY: Set to true after Dec 20
+    uploadResumeDate: 'December 20th'
   };
 
   // In-memory cache (loaded from localStorage)
@@ -394,96 +398,104 @@ const MarkerImageHandler = (function() {
   // ==========================================
 
   function triggerUpload(markerKey) {
+    // Check if upload is enabled
+    if (!CONFIG.uploadEnabled) {
+      showNotification(
+        `⚠️ Image upload is temporarily unavailable due to server quota limits. Service will resume on ${CONFIG.uploadResumeDate}. Thank you for your patience!`,
+        'error'
+      );
+      return;
+    }
+
     if (typeof isLoggedIn === 'function' && !isLoggedIn()) {
       if (typeof showLoginPopup === 'function') showLoginPopup();
       else showNotification('❌ Please login to upload', 'error');
       return;
     }
+    
     const input = document.getElementById(`imageInput_${markerKey}`);
     if (input) input.click();
   }
 
-async function checkServerQuota() {
-  try {
-    const res = await fetch(CONFIG.authEndpoint, {
-      method: 'GET',
-      headers: { 'Authorization': `Bearer ${getUserToken()}` }
-    });
-
-    // Jika server blokir karena limit
-    if (res.status === 429 || res.status === 503) {
-      throw new Error("quota");
-    }
-
-    // Jika server kirim pesan error khusus
-    const data = await res.json();
-    if (data.error && (
-      data.error.includes("limit") ||
-      data.error.includes("quota") ||
-      data.error.includes("exceed")
-    )) {
-      throw new Error("quota");
-    }
-
-    return data; // aman
-  } catch (e) {
-    throw new Error("quota");
-  }
-}
-
-
-async function handleFileSelect(event, markerKey) {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const validation = validateFile(file);
-  if (!validation.valid) {
-    showNotification(`❌ ${validation.error}`, 'error');
-    event.target.value = '';
-    return;
-  }
-
-  const container = document.querySelector(`.marker-image-container[data-marker-key="${markerKey}"]`);
-
-  try {
-    if (container) container.classList.add('uploading');
-
-    // ======================================================
-    // 🔥 CEK QUOTA DULU — kalau limit, langsung batal!
-    // ======================================================
+  async function checkServerQuota() {
     try {
-      await checkServerQuota();
-    } catch (err) {
-      if (err.message === "quota") {
-        showNotification(
-          "❌ Sorry! Our server is out of daily quota. Please come back tomorrow.",
-          "error"
-        );
-        event.target.value = ""; // Reset input
-        return; // Stop — jangan upload ke ImageKit!
+      const res = await fetch(CONFIG.authEndpoint, {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${getUserToken()}` }
+      });
+
+      // Jika server blokir karena limit
+      if (res.status === 429 || res.status === 503) {
+        throw new Error("quota");
       }
+
+      // Jika server kirim pesan error khusus
+      const data = await res.json();
+      if (data.error && (
+        data.error.includes("limit") ||
+        data.error.includes("quota") ||
+        data.error.includes("exceed")
+      )) {
+        throw new Error("quota");
+      }
+
+      return data; // aman
+    } catch (e) {
+      throw new Error("quota");
     }
-
-    showNotification('⏳ Uploading...', 'info');
-
-    // Jika lolos quota → lanjut upload
-    const imageUrl = await uploadToImageKit(file, markerKey);
-    const format = file.type.replace('image/', '');
-    await saveImageUrlToServer(markerKey, imageUrl, format);
-
-    if (container) {
-      container.dataset.uiLoaded = 'false';
-    }
-    loadImages(markerKey);
-    showNotification('✅ Upload success!', 'success');
-  } catch (error) {
-    console.error('Upload failed:', error);
-    showNotification(`❌ ${error.message}`, 'error');
-  } finally {
-    if (container) container.classList.remove('uploading');
-    event.target.value = '';
   }
-}
+
+  async function handleFileSelect(event, markerKey) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const validation = validateFile(file);
+    if (!validation.valid) {
+      showNotification(`❌ ${validation.error}`, 'error');
+      event.target.value = '';
+      return;
+    }
+
+    const container = document.querySelector(`.marker-image-container[data-marker-key="${markerKey}"]`);
+
+    try {
+      if (container) container.classList.add('uploading');
+
+      // Check quota first
+      try {
+        await checkServerQuota();
+      } catch (err) {
+        if (err.message === "quota") {
+          showNotification(
+            `⚠️ Server quota exceeded. Upload service will resume on ${CONFIG.uploadResumeDate}. Please try again later.`,
+            "error"
+          );
+          event.target.value = "";
+          return;
+        }
+      }
+
+      showNotification('⏳ Uploading...', 'info');
+
+      // Upload process
+      const imageUrl = await uploadToImageKit(file, markerKey);
+      const format = file.type.replace('image/', '');
+      await saveImageUrlToServer(markerKey, imageUrl, format);
+
+      if (container) {
+        container.dataset.uiLoaded = 'false';
+      }
+      loadImages(markerKey);
+      showNotification('✅ Upload success!', 'success');
+    } catch (error) {
+      console.error('Upload failed:', error);
+      showNotification(`❌ ${error.message}`, 'error');
+    } finally {
+      if (container) container.classList.remove('uploading');
+      event.target.value = '';
+    }
+  }
+
   // ==========================================
   // FULL VIEW MODAL
   // ==========================================
@@ -587,6 +599,7 @@ async function handleFileSelect(event, markerKey) {
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('📦 IMAGE CACHE DEBUG');
     console.log('isLoaded:', isLoaded);
+    console.log('Upload enabled:', CONFIG.uploadEnabled);
     console.log('Total markers:', Object.keys(imageCache).length);
     console.log('Last updated:', new Date(getLastUpdated()).toLocaleString());
     Object.entries(imageCache).forEach(([key, images]) => {
@@ -615,34 +628,39 @@ async function handleFileSelect(event, markerKey) {
   // INIT
   // ==========================================
 
-async function init() {
-  console.log('🚀 MarkerImageHandler v5.0 initializing...');
+  async function init() {
+    console.log('🚀 MarkerImageHandler v5.1 initializing...');
+    
+    if (!CONFIG.uploadEnabled) {
+      console.warn(`⚠️ Upload temporarily disabled until ${CONFIG.uploadResumeDate}`);
+    }
 
-  // Preload langsung (tidak menunggu map)
-  await preloadAllImages();
+    // Preload langsung (tidak menunggu map)
+    await preloadAllImages();
 
-  console.log('✨ Preload complete:', Object.keys(imageCache).length, 'markers');
+    console.log('✨ Preload complete:', Object.keys(imageCache).length, 'markers');
 
-  // Pasang listener popup (kalau map belum ada, error dicegah)
-  try {
-    MarkerManager.map.on('popupopen', function (e) {
-      const content = e.popup.getElement();
-      if (!content) return;
+    // Pasang listener popup (kalau map belum ada, error dicegah)
+    try {
+      MarkerManager.map.on('popupopen', function (e) {
+        const content = e.popup.getElement();
+        if (!content) return;
 
-      const container = content.querySelector('.marker-image-container');
-      if (container) {
-        const markerKey = container.dataset.markerKey;
-        loadImages(markerKey);
-      }
-    });
+        const container = content.querySelector('.marker-image-container');
+        if (container) {
+          const markerKey = container.dataset.markerKey;
+          loadImages(markerKey);
+        }
+      });
 
-    console.log('📌 Popup listener attached');
-  } catch (err) {
-    console.warn('⚠️ Map not ready yet, but preload is done. Listener skipped.');
+      console.log('📌 Popup listener attached');
+    } catch (err) {
+      console.warn('⚠️ Map not ready yet, but preload is done. Listener skipped.');
+    }
+
+    console.log('✅ MarkerImageHandler v5.1 ready');
   }
 
-  console.log('✅ MarkerImageHandler v5.0 ready');
-}
   return {
     init,
     createImageContainerHTML,
@@ -667,4 +685,4 @@ async function init() {
 })();
 
 window.MarkerImageHandler = MarkerImageHandler;
-console.log('✅ MarkerImageHandler module loaded v5.0.0');
+console.log('✅ MarkerImageHandler module loaded v5.1.0');
