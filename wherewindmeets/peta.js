@@ -1,8 +1,5 @@
 /**
- * ======================================================
- * COMBINED: Leaflet Map + Embedded Service Worker
- * Caching Optimized for Cloudflare R2
- * ======================================================
+ * Map initialization module
  */
 
 // Map configuration
@@ -14,49 +11,45 @@ const MAP_CONFIG = {
     max: 8
   },
   tiles: {
-    url: "https://tiles.bgonegaming.win/wherewindmeet/tiles/{z}_{x}_{y}.webp",
-    errorTileUrl: ""
+    url: "https://tiles.bgonegaming.win/wherewindmeet/tiles/{z}_{x}_{y}.webp"
   },
-  tileVersion: "20251121" // MUST match cache version
+  tileVersion: "20251121" // Pastikan sama dengan SW
 };
 
-let map;
+const TILE_VERSION = MAP_CONFIG.tileVersion;
+const CACHE_NAME = "wwm-tiles-" + TILE_VERSION;
 
-/* ======================================================
-   1. REGISTER SERVICE WORKER (INLINE BLOB VERSION)
-====================================================== */
-function registerInlineServiceWorker() {
-  if (!("serviceWorker" in navigator)) {
-    console.warn("SW not supported");
-    return;
-  }
-
+/* =====================================================
+   SERVICE WORKER — INLINE BLOB (Pengganti sw.js)
+   ===================================================== */
+if ("serviceWorker" in navigator) {
   const swCode = `
-    const TILE_VERSION = "${MAP_CONFIG.tileVersion}";
-    const CACHE_NAME = "wwm-tiles-" + TILE_VERSION;
+    const CACHE_NAME = "${CACHE_NAME}";
+
+    console.log("[SW] Loaded. Cache name:", CACHE_NAME);
 
     self.addEventListener("install", (event) => {
-      console.log("[SW] Install version:", TILE_VERSION);
+      console.log("[SW] Installing...");
       self.skipWaiting();
     });
 
     self.addEventListener("activate", (event) => {
-      console.log("[SW] Activated. Using cache:", CACHE_NAME);
-
+      console.log("[SW] Activating...");
       event.waitUntil(
-        caches.keys().then((keys) =>
-          Promise.all(
+        caches.keys().then((keys) => {
+          console.log("[SW] Existing caches:", keys);
+          return Promise.all(
             keys
               .filter((key) => key.startsWith("wwm-tiles-") && key !== CACHE_NAME)
-              .map((oldKey) => {
-                console.log("[SW] Deleting old cache:", oldKey);
-                return caches.delete(oldKey);
+              .map((key) => {
+                console.log("[SW] Deleting old cache:", key);
+                return caches.delete(key);
               })
-          )
-        )
+          );
+        })
       );
-
       self.clients.claim();
+      console.log("[SW] Ready.");
     });
 
     self.addEventListener("fetch", (event) => {
@@ -67,27 +60,25 @@ function registerInlineServiceWorker() {
       event.respondWith(
         caches.open(CACHE_NAME).then(async (cache) => {
           const cached = await cache.match(event.request);
-
           if (cached) {
-            console.log("[SW] Cache hit:", url);
+            console.log("SW: CACHE HIT →", url);
             return cached;
           }
 
-          console.log("[SW] Cache miss → fetch:", url);
-
           try {
-            const response = await fetch(event.request, { mode: "cors" });
+            console.log("SW: NETWORK FETCH →", url);
+            const fetchResponse = await fetch(event.request, { mode: "cors" });
 
-            if (response.ok) {
-              cache.put(event.request, response.clone());
-              console.log("[SW] Stored to cache:", url);
+            if (fetchResponse.ok) {
+              console.log("SW: CACHED →", url);
+              cache.put(event.request, fetchResponse.clone());
             } else {
-              console.warn("[SW] Network error:", response.status, url);
+              console.warn("SW: NETWORK ERROR (status not OK) →", url);
             }
 
-            return response;
+            return fetchResponse;
           } catch (err) {
-            console.error("[SW] Fetch failed, fallback to cache:", url);
+            console.error("SW: NETWORK FAIL → fallback to cache:", url);
             return cached || Response.error();
           }
         })
@@ -95,21 +86,25 @@ function registerInlineServiceWorker() {
     });
   `;
 
-  // Buat blob file sw dari kode string
   const blob = new Blob([swCode], { type: "application/javascript" });
   const swURL = URL.createObjectURL(blob);
 
   navigator.serviceWorker.register(swURL).then(() => {
-    console.log("[SW] Registered via Blob URL");
-  }).catch(err => {
-    console.error("[SW] Registration failed:", err);
+    console.log("Service Worker (inline) registered! URL:", swURL);
+  }).catch((err) => {
+    console.error("SW Registration Failed:", err);
   });
 }
 
-/* ======================================================
-   2. INITIALIZE LEAFLET MAP
-====================================================== */
+/* =====================================================
+   LEAFLET MAP INITIALIZATION
+   ===================================================== */
+
+let map;
+
 function initializeMap() {
+  console.log("[MAP] Initializing Leaflet map...");
+
   const TILE_BOUNDS = {
     minX: 0,
     maxX: 256,
@@ -128,7 +123,7 @@ function initializeMap() {
     transformation: new L.Transformation(1, 0, 1, 0)
   });
 
-  map = L.map('map', {
+  map = L.map("map", {
     crs: crsSimple,
     minZoom: MAP_CONFIG.zoom.min,
     maxZoom: MAP_CONFIG.zoom.max,
@@ -141,39 +136,18 @@ function initializeMap() {
     MAP_CONFIG.zoom.initial
   );
 
-  // Tile layer with version
-  const tileURL = MAP_CONFIG.tiles.url + `?v=${MAP_CONFIG.tileVersion}`;
-  const tileLayer = L.tileLayer(tileURL, {
+  console.log("[MAP] Adding tile layer:", MAP_CONFIG.tiles.url);
+
+  L.tileLayer(MAP_CONFIG.tiles.url + `?v=${MAP_CONFIG.tileVersion}`, {
     minZoom: MAP_CONFIG.zoom.min,
     maxZoom: MAP_CONFIG.zoom.max,
     maxNativeZoom: 7,
     noWrap: true,
     crossOrigin: true,
-    errorTileUrl: "https://tiles.bgonegaming.win/wherewindmeet/tiles/7_127_126.webp"
-  });
+    errorTileUrl:
+      "https://tiles.bgonegaming.win/wherewindmeet/tiles/7_127_126.webp"
+  }).addTo(map);
 
-  // Add Leaflet load logs
-  tileLayer.on("tileloadstart", (e) => {
-    console.log("[Leaflet] Start loading:", e.tile.src);
-  });
-
-  tileLayer.on("tileload", (e) => {
-    console.log("[Leaflet] Tile loaded:", e.tile.src);
-  });
-
-  tileLayer.on("tileerror", (e) => {
-    console.error("[Leaflet] Tile failed:", e.tile.src);
-  });
-
-  tileLayer.addTo(map);
-
+  console.log("[MAP] Map ready.");
   return map;
 }
-
-/* ======================================================
-   3. AUTO EXECUTE WHEN PAGE LOADS
-====================================================== */
-window.addEventListener("load", () => {
-  registerInlineServiceWorker();
-  initializeMap();
-});
