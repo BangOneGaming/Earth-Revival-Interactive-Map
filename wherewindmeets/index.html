@@ -617,6 +617,13 @@ btnClose.addEventListener("click", function(e) {
   main.defer = true;
   document.body.appendChild(main);
 </script>
-  
+<script>
+if ("serviceWorker" in navigator) {
+  const v = Date.now();
+  navigator.serviceWorker.register(`/sw.js?v=${v}`)
+    .then(() => console.log("✅ SW registered"))
+    .catch(err => console.error("❌ SW registration failed:", err));
+}
+</script>
 </body>  
 </html>
