@@ -1,59 +1,70 @@
-const CACHE_NAME = "wwm-tiles-20251121";
+// ===============================
+//  CONFIG
+// ===============================
+const TILE_VERSION = "20251121"; // Samakan dengan peta.js
+const CACHE_NAME = "wwm-tiles-" + TILE_VERSION;
 
-console.log("[SW] Loaded. Cache =", CACHE_NAME);
+const TILE_URL_PREFIX = "https://tiles.bgonegaming.win/wherewindmeet/tiles/";
 
+// ===============================
+//  INSTALL
+// ===============================
 self.addEventListener("install", (event) => {
-  console.log("[SW] Installing...");
+  console.log("[SW] Installed");
   self.skipWaiting();
 });
 
+// ===============================
+//  ACTIVATE
+// ===============================
 self.addEventListener("activate", (event) => {
-  console.log("[SW] Activating...");
+  console.log("[SW] Activated");
   event.waitUntil(
-    caches.keys().then((keys) => {
-      console.log("[SW] Existing caches:", keys);
-      return Promise.all(
-        keys
-          .filter((key) => key.startsWith("wwm-tiles-") && key !== CACHE_NAME)
-          .map((key) => {
-            console.log("[SW] Deleting old cache:", key);
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys.map((key) => {
+          if (key.startsWith("wwm-tiles-") && key !== CACHE_NAME) {
+            console.log("[SW] Delete old cache:", key);
             return caches.delete(key);
-          })
-      );
-    })
+          }
+        })
+      )
+    )
   );
   self.clients.claim();
-  console.log("[SW] Activated.");
 });
 
+// ===============================
+//  FETCH INTERCEPTOR
+// ===============================
 self.addEventListener("fetch", (event) => {
   const url = event.request.url;
 
-  // Hanya cache tiles
-  if (!url.includes("/wherewindmeet/tiles/")) return;
+  // Hanya intercept tile
+  if (!url.startsWith(TILE_URL_PREFIX)) {
+    return; // biarkan request lain
+  }
 
   event.respondWith(
     caches.open(CACHE_NAME).then(async (cache) => {
-      const cached = await cache.match(event.request);
+      const cachedResponse = await cache.match(event.request);
 
-      if (cached) {
-        console.log("SW: CACHE HIT →", url);
-        return cached;
+      if (cachedResponse) {
+        console.log("🟡 [SW] TILE from CACHE:", url);
+        return cachedResponse;
       }
 
+      console.log("🟢 [SW] TILE from SERVER:", url);
+
       try {
-        console.log("SW: NETWORK →", url);
-        const response = await fetch(event.request, { mode: "cors" });
-
-        if (response.ok) {
-          console.log("SW: SAVED →", url);
-          cache.put(event.request, response.clone());
+        const fetchResponse = await fetch(event.request);
+        if (fetchResponse.status === 200) {
+          cache.put(event.request, fetchResponse.clone());
         }
-
-        return response;
-      } catch (err) {
-        console.error("SW: NETWORK FAIL → using cache", url);
-        return cached || Response.error();
+        return fetchResponse;
+      } catch (e) {
+        console.error("🔴 [SW] Network error:", e);
+        return cachedResponse || Response.error();
       }
     })
   );

@@ -15,7 +15,7 @@ const DescriptionLoader = {
       console.log('📖 Loading description data...');
       
       // Load descknowladge.json from local file
-      const response = await fetch('./descknowladge.json');
+      const response = await fetch(`${API_BASE_URL}/desckknowladge`);
       
       if (!response.ok) {
         throw new Error(`Failed to load descknowladge.json: ${response.status}`);

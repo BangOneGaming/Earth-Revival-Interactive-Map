@@ -688,7 +688,7 @@
 
   /* Panel kanan di bawah pada mobile */
   .mystic-detail-right {
-    width: 100%;
+    width: 80%;
     height: auto;
     min-height: 20%;
     max-height: none;
@@ -737,6 +737,11 @@
   .mystic-part-info {
     font-size: 13px;
   }
+  
+.mystic-video-wrapper {
+  
+  width: auto;
+}
 }
 
 /* Tablet */

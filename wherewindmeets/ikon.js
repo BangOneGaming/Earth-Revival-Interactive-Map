@@ -38,7 +38,7 @@ const ICON_CONFIG = {
   overlays: {
     "1": "batuteleport.webp",
     "2": "petiharta.webp",
-    "3": "aneh.webp",
+    "3": "strange.webp",
     "4": "soundofheaven.webp",
     "5": "gua.webp",
     "6": "windingpathinsearchoftranquility.webp",
@@ -72,7 +72,8 @@ const ICON_CONFIG = {
     "34": "riddle.webp",
     "35": "summo.webp",
     "36": "tehnik.webp",
-    "37": "innerway.webp"
+    "37": "innerway.webp",
+    "38": "NPC.webp"
   },
 
   names: {
@@ -112,7 +113,8 @@ const ICON_CONFIG = {
     "34": "Riddle",
     "35": "Sumo",
     "36": "Mystic Skill",
-    "37": "Inner Ways"
+    "37": "Inner Ways",
+    "38": "Old Friend"
   },
 
   // Custom sizes per category

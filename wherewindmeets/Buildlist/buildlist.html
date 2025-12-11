@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Build List Creator - Where Winds Meet</title>
+<!-- Google Sign-In -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<!-- Shared Auth Helper (HARUS PERTAMA) -->
+<script src="../shared-auth.js"></script>
+  <link rel="stylesheet" href="buildlist.css">
+    <link rel="stylesheet" href="login-checker.css">
+  <link rel="stylesheet" href="build-tab.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="build-header">
+    <h1 class="build-title">
+      ⚔️ Build List Creator
+    </h1>
+    <button class="build-save-btn" id="saveBuildBtn">💾 Save Build</button>
+  </div>
+
+  <!-- Main Container -->
+  <div class="build-container">
+    
+    <!-- Weapon & Accessory Wrapper -->
+    <div class="build-weapon-accessory-wrapper">
+      
+      <!-- Weapons Grid Container (2 weapons side by side) -->
+      <div class="weapons-grid-container">
+        
+        <!-- Weapon Slot 1 -->
+        <div class="weapon-slot" data-slot="1">
+          <div class="weapon-image-container" id="weaponSlot1">
+            <div class="weapon-placeholder">
+              <span>+</span>
+              <p>Select Weapon 1</p>
+            </div>
+          </div>
+          <div class="weapon-info" id="weaponInfo1">
+            <div class="weapon-name">-</div>
+            <div class="weapon-meta">
+              <span class="weapon-role">-</span> | 
+              <span class="weapon-path">-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weapon Slot 2 -->
+        <div class="weapon-slot" data-slot="2">
+          <div class="weapon-image-container" id="weaponSlot2">
+            <div class="weapon-placeholder">
+              <span>+</span>
+              <p>Select Weapon 2</p>
+            </div>
+          </div>
+          <div class="weapon-info" id="weaponInfo2">
+            <div class="weapon-name">-</div>
+            <div class="weapon-meta">
+              <span class="weapon-role">-</span> | 
+              <span class="weapon-path">-</span>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      <!-- End Weapons Grid -->
+
+      <!-- Accessory & Armor Container (Side by Side) -->
+      <div class="accessory-armor-container">
+        
+        <!-- Accessory Sets Section (2 SLOTS - Vertical) -->
+        <div class="accessory-section">
+          <h3 class="accessory-title">🎭 Accessory Sets</h3>
+          <div class="accessory-grid-vertical">
+            <div class="accessory-slot" data-slot="1" data-type="accessory">
+              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/accessories/Disc1.webp" class="slot-placeholder" alt="Accessory 1" style="opacity: 0.3; filter: grayscale(100%);">
+              <div class="slot-badge" style="display: none;"></div>
+            </div>
+            <div class="accessory-slot" data-slot="2" data-type="accessory">
+              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/accessories/Disc2.webp" class="slot-placeholder" alt="Accessory 2" style="opacity: 0.3; filter: grayscale(100%);">
+              <div class="slot-badge" style="display: none;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Armor Set Section (4 SLOTS - 2x2 Grid) -->
+        <div class="armor-section">
+          <h3 class="armor-title">🛡️ Armor Sets</h3>
+          <div class="armor-grid">
+            <div class="armor-slot" data-slot="1" data-type="armor">
+              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/accessories/Helm.webp" class="slot-placeholder" alt="Armor 1" style="opacity: 0.3; filter: grayscale(100%);">
+              <div class="slot-badge" style="display: none;"></div>
+            </div>
+            <div class="armor-slot" data-slot="2" data-type="armor">
+              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/accessories/Body.webp" class="slot-placeholder" alt="Armor 2" style="opacity: 0.3; filter: grayscale(100%);">
+              <div class="slot-badge" style="display: none;"></div>
+            </div>
+            <div class="armor-slot" data-slot="3" data-type="armor">
+              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/accessories/Bracers.webp" class="slot-placeholder" alt="Armor 3" style="opacity: 0.3; filter: grayscale(100%);">
+              <div class="slot-badge" style="display: none;"></div>
+            </div>
+            <div class="armor-slot" data-slot="4" data-type="armor">
+              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/accessories/Greaves.webp" class="slot-placeholder" alt="Armor 4" style="opacity: 0.3; filter: grayscale(100%);">
+              <div class="slot-badge" style="display: none;"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!-- End Accessory & Armor Container -->
+
+    </div>
+    <!-- End Weapon & Accessory Wrapper -->
+
+    <!-- Right Side: Martial Arts Container -->
+    <div class="build-martial-section">
+      
+      <!-- Inner Ways Container -->
+      <div class="martial-container innerways-container">
+        <h3 class="martial-title">
+          🧘 Inner Ways (Select 4)
+        </h3>
+        <div class="martial-grid" id="innerwaysGrid">
+          <!-- 4 slots for Inner Ways -->
+          <div class="martial-slot" data-type="innerway" data-slot="1">
+            <div class="martial-placeholder">+</div>
+          </div>
+          <div class="martial-slot" data-type="innerway" data-slot="2">
+            <div class="martial-placeholder">+</div>
+          </div>
+          <div class="martial-slot" data-type="innerway" data-slot="3">
+            <div class="martial-placeholder">+</div>
+          </div>
+          <div class="martial-slot" data-type="innerway" data-slot="4">
+            <div class="martial-placeholder">+</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mystic Skills Container -->
+      <div class="martial-container mystic-container">
+        <h3 class="martial-title">
+          ✨ Mystic Skills (Select 8)
+        </h3>
+        <div class="martial-grid mystic-grid" id="mysticGrid">
+          <!-- Left Diamond (4 slots) -->
+          <div class="mystic-slot-container">
+            <div class="martial-slot" data-type="mystic" data-slot="1">
+              <div class="martial-placeholder">+</div>
+            </div>
+            <div class="martial-slot" data-type="mystic" data-slot="2">
+              <div class="martial-placeholder">+</div>
+            </div>
+            <div class="martial-slot" data-type="mystic" data-slot="3">
+              <div class="martial-placeholder">+</div>
+            </div>
+            <div class="martial-slot" data-type="mystic" data-slot="4">
+              <div class="martial-placeholder">+</div>
+            </div>
+          </div>
+          
+          <!-- Right Diamond (4 slots) -->
+          <div class="mystic-slot-container">
+            <div class="martial-slot" data-type="mystic" data-slot="5">
+              <div class="martial-placeholder">+</div>
+            </div>
+            <div class="martial-slot" data-type="mystic" data-slot="6">
+              <div class="martial-placeholder">+</div>
+            </div>
+            <div class="martial-slot" data-type="mystic" data-slot="7">
+              <div class="martial-placeholder">+</div>
+            </div>
+            <div class="martial-slot" data-type="mystic" data-slot="8">
+              <div class="martial-placeholder">+</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Weapon Selection Modal -->
+  <div class="build-modal" id="weaponModal">
+    <div class="build-modal-content">
+      <div class="build-modal-header">
+        <h2>⚔️ Select Weapon</h2>
+        <button class="build-modal-close" id="closeWeaponModal">×</button>
+      </div>
+      <div class="build-modal-body" id="weaponModalBody">
+        <!-- Weapon list will be populated here -->
+      </div>
+    </div>
+  </div>
+<!-- Sets Selection Modal -->
+<div class="build-modal" id="setsModal">
+  <div class="build-modal-content">
+    <div class="build-modal-header">
+      <h2>🎨 Select Weapon Set</h2>
+      <button class="build-modal-close" id="closeSetsModal">×</button>
+    </div>
+    <div class="build-modal-body" id="setsModalBody">
+      <!-- Sets akan muncul di sini -->
+    </div>
+  </div>
+</div>
+
+  <!-- Accessory Selection Modal -->
+  <div class="build-modal" id="accessoryModal">
+    <div class="build-modal-content">
+      <div class="build-modal-header">
+        <h2>🎭 Select Accessory Set</h2>
+        <button class="build-modal-close" id="closeAccessoryModal">×</button>
+      </div>
+      <div class="build-modal-body" id="accessoryModalBody">
+        <!-- Accessory items will be populated here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Armor Selection Modal -->
+  <div class="build-modal" id="armorModal">
+    <div class="build-modal-content">
+      <div class="build-modal-header">
+        <h2>🛡️ Select Armor Set</h2>
+        <button class="build-modal-close" id="closeArmorModal">×</button>
+      </div>
+      <div class="build-modal-body" id="armorModalBody">
+        <!-- Armor items will be populated here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Inner Ways Selection Modal -->
+  <div class="build-modal" id="innerwayModal">
+    <div class="build-modal-content">
+      <div class="build-modal-header">
+        <h2>🧘 Select Inner Way</h2>
+        <button class="build-modal-close" id="closeInnerwayModal">×</button>
+      </div>
+      <div class="build-modal-body" id="innerwayModalBody">
+        <!-- Inner ways list will be populated here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Mystic Skill Selection Modal -->
+  <div class="build-modal" id="mysticModal">
+    <div class="build-modal-content">
+      <div class="build-modal-header">
+        <h2>✨ Select Mystic Skill</h2>
+        <button class="build-modal-close" id="closeMysticModal">×</button>
+      </div>
+      <div class="build-modal-body" id="mysticModalBody">
+        <!-- Mystic skills list will be populated here -->
+      </div>
+    </div>
+  </div>
+<!-- Tambahkan setelah <body> di buildlist/index.html -->
+
+<!-- Top Login Button -->
+<button id="topLoginBtn" style="position: fixed; top: 20px; right: 20px; z-index: 9999; padding: 10px 20px; background: linear-gradient(145deg, #4CAF50, #45a049); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);">
+  Login
+</button>
+
+<!-- User Profile Display (Hidden by default) -->
+<div id="userProfileDisplay" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 9999; background: rgba(255,255,255,0.95); padding: 12px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px;">
+  <img id="userAvatar" src="" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%;">
+  <div>
+    <div id="userDisplayName" style="font-weight: bold; font-size: 14px; color: #333;"></div>
+    <div id="userRole" style="font-size: 12px; color: #666;"></div>
+  </div>
+  <button id="logoutBtn" style="padding: 6px 12px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Logout</button>
+</div>
+
+<!-- Login Modal -->
+<div id="loginModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+  <div id="loginContent" style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); max-width: 400px; width: 90%; position: relative;">
+    <button id="closeLogin" style="position: absolute; top: 10px; right: 10px; font-size: 24px; background: none; border: none; cursor: pointer; color: #666;">&times;</button>
+    
+    <div id="loginOverlay">
+      <h2 style="text-align: center; margin-bottom: 20px; color: #333;">Login to Continue</h2>
+      
+      <!-- GSI Onload -->
+      <div id="g_id_onload"
+           data-client_id="712617149675-2rufcnh8bdq0oo35812no2cgivm81pqp.apps.googleusercontent.com"
+           data-context="signin"
+           data-ux_mode="popup"
+           data-callback="handleGoogleLogin"
+           data-auto_prompt="false">
+      </div>
+      
+      <div class="g_id_signin"
+           data-type="standard"
+           data-size="large"
+           data-theme="outline"
+           data-text="sign_in_with"
+           data-shape="rectangular"
+           data-logo_alignment="left">
+      </div>
+    </div>
+
+    <p style="margin-top: 20px; font-size: 13px; color: #666; text-align: center;">
+      Your login is shared across all BGone Gaming pages
+    </p>
+  </div>
+</div>
+  <!-- Eruda Debug Console -->  
+  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>  
+  <script>  
+    eruda.init();
+    console.log("✅ Eruda aktif!");  
+  </script>
+  
+
+  
+  <script src="build.js"></script>
+    <script src="weapon.js"></script>
+  <script src="accessories.js"></script>
+  <script src="innerway.js"></script>
+  <script src="mystic.js"></script>
+  <script src="armor.js"></script>
+  <script src="results-set.js"></script>
+  <script src="set-description.js"></script>
+  <script src="login-checker.js"></script>
+  <script src="build-api.js"></script>
+  <script src="build-tab.js"></script>
+</body>
+</html>

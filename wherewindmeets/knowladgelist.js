@@ -18,7 +18,7 @@ const KnowledgePanel = {
   },
 
 createElements() {
-  const iconUrl = 'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/knoweverything.webp';
+  const iconUrl = 'https://tiles.bgonegaming.win/wherewindmeet/Simbol/knoweverything.webp';
 
   const toggleBtn = document.createElement('button');
   toggleBtn.id = 'knowledgeToggleBtn';
@@ -149,7 +149,7 @@ createElements() {
 
     document.getElementById('knowledgeCountBadge').textContent = array.length;
 
-    const iconUrl = 'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/knoweverything.webp';
+    const iconUrl = 'https://tiles.bgonegaming.win/wherewindmeet/Simbol/knoweverything.webp';
 
     this.listContainer.innerHTML = array
       .map(item => {

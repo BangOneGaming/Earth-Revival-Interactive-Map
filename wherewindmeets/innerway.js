@@ -528,53 +528,71 @@ const InnerWaysPanel = {
     }, interval);
   },
 
-  /**
-   * Render skill details (type, cost, cooldown, effect)
-   */
-  renderDetails(part) {
-    if (!part.details || part.details.trim() === '') return '';
+/**
+ * Render skill details (rarity, path, tags, effect)
+ */
+renderDetails(part) {
+  if (!part.details || part.details.trim() === '') return '';
 
-    try {
-      const details = JSON.parse(part.details);
-      
-      let html = '<div class="innerways-details-section">';
-      html += '<div class="innerways-details-header">⚔️ Skill Details</div>';
-      html += '<div class="innerways-details-grid">';
+  try {
+    const details = JSON.parse(part.details);
+    
+    let html = '<div class="innerways-details-section">';
+    html += '<div class="innerways-details-header">⚔️ Skill Details</div>';
+    html += '<div class="innerways-details-grid">';
 
-      if (details.type) {
-        html += `<div class="innerways-details-label">Type:</div>`;
-        html += `<div class="innerways-details-value">${details.type}</div>`;
-      }
-
-      if (details.tags) {
-        html += `<div class="innerways-details-label">Tags:</div>`;
-        html += `<div class="innerways-details-value">${details.tags}</div>`;
-      }
-
-      if (details.cost_tier4) {
-        html += `<div class="innerways-details-label">Cost (T4):</div>`;
-        html += `<div class="innerways-details-value">${details.cost_tier4}</div>`;
-      }
-
-      if (details.cooldown_tier4) {
-        html += `<div class="innerways-details-label">Cooldown (T4):</div>`;
-        html += `<div class="innerways-details-value">${details.cooldown_tier4}</div>`;
-      }
-
-      html += '</div>'; // end grid
-
-      if (details.effect) {
-        html += `<div class="innerways-effect-text"><strong>Effect:</strong> ${details.effect}</div>`;
-      }
-
-      html += '</div>'; // end section
-
-      return html;
-    } catch (e) {
-      console.error('Failed to parse details:', e);
-      return '';
+    // Rarity
+    if (details.rarity) {
+      let rarityClass = details.rarity.toLowerCase();
+      html += `<div class="innerways-details-label">Rarity:</div>`;
+      html += `<div class="innerways-details-value"><span class="rarity-badge rarity-${rarityClass}">${details.rarity}</span></div>`;
     }
-  },
+
+    // Path
+    if (details.path) {
+      html += `<div class="innerways-details-label">Path:</div>`;
+      html += `<div class="innerways-details-value">${details.path}</div>`;
+    }
+
+    // Tags
+    if (details.tags) {
+      html += `<div class="innerways-details-label">Tags:</div>`;
+      html += `<div class="innerways-details-value">${details.tags}</div>`;
+    }
+
+    // Type (jika ada - untuk backward compatibility)
+    if (details.type) {
+      html += `<div class="innerways-details-label">Type:</div>`;
+      html += `<div class="innerways-details-value">${details.type}</div>`;
+    }
+
+    // Cost (jika ada)
+    if (details.cost_tier4) {
+      html += `<div class="innerways-details-label">Cost (T4):</div>`;
+      html += `<div class="innerways-details-value">${details.cost_tier4}</div>`;
+    }
+
+    // Cooldown (jika ada)
+    if (details.cooldown_tier4) {
+      html += `<div class="innerways-details-label">Cooldown (T4):</div>`;
+      html += `<div class="innerways-details-value">${details.cooldown_tier4}</div>`;
+    }
+
+    html += '</div>'; // end grid
+
+    // Effect
+    if (details.effect) {
+      html += `<div class="innerways-effect-text"><strong>Effect:</strong> ${details.effect}</div>`;
+    }
+
+    html += '</div>'; // end section
+
+    return html;
+  } catch (e) {
+    console.error('Failed to parse details:', e);
+    return '';
+  }
+},
 
   /**
    * Render breakthrough table
@@ -612,16 +630,32 @@ const InnerWaysPanel = {
   /**
    * Render requirements table dengan grouping by tier
    */
-  renderRequirementsTable(part) {
-    if (!part.requirements || part.requirements.trim() === '' || part.requirements === '[]') return '';
+/**
+ * Render requirements table - Support dua format
+ */
+renderRequirementsTable(part) {
+  if (!part.requirements || part.requirements.trim() === '' || part.requirements === '[]') return '';
 
-    try {
-      const requirements = JSON.parse(part.requirements);
-      
-      if (!Array.isArray(requirements) || requirements.length === 0) return '';
+  try {
+    const requirements = JSON.parse(part.requirements);
+    
+    if (!Array.isArray(requirements) || requirements.length === 0) return '';
 
-      let html = '<div class="innerways-table-container">';
-      html += '<div class="innerways-details-header">📦 Material Requirements</div>';
+    // CEK FORMAT: Apakah format lama (tier/rank/materials) atau format baru (requirement)?
+    const isNewFormat = requirements[0].hasOwnProperty('requirement');
+
+    let html = '<div class="innerways-table-container">';
+    html += '<div class="innerways-details-header">📦 Requirements</div>';
+
+    if (isNewFormat) {
+      // FORMAT BARU: Simple list
+      html += '<ul class="innerways-requirements-list">';
+      requirements.forEach(item => {
+        html += `<li>${item.requirement}</li>`;
+      });
+      html += '</ul>';
+    } else {
+      // FORMAT LAMA: Table dengan tier/rank/materials
       html += '<table class="innerways-table">';
       html += '<thead><tr><th>Tier</th><th>Rank</th><th>Materials</th></tr></thead>';
       html += '<tbody>';
@@ -634,7 +668,6 @@ const InnerWaysPanel = {
         
         html += '<tr>';
         
-        // Tier column - hanya tampilkan badge di row pertama setiap tier
         if (isNewTier) {
           html += `<td><span class="innerways-tier-badge">Tier ${tier}</span></td>`;
           currentTier = tier;
@@ -642,10 +675,8 @@ const InnerWaysPanel = {
           html += `<td class="tier-grouped"></td>`;
         }
         
-        // Rank column
         html += `<td>${item.rank}</td>`;
         
-        // Materials column
         let materials = item.materials;
         if (Array.isArray(materials)) {
           materials = materials.join(', ');
@@ -655,14 +686,17 @@ const InnerWaysPanel = {
         html += '</tr>';
       });
 
-      html += '</tbody></table></div>';
-
-      return html;
-    } catch (e) {
-      console.error('Failed to parse requirements:', e);
-      return '';
+      html += '</tbody></table>';
     }
+
+    html += '</div>';
+
+    return html;
+  } catch (e) {
+    console.error('Failed to parse requirements:', e);
+    return '';
   }
+}
 };
 
 // Auto-initialize when DOM is ready

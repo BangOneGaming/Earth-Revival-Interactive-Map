@@ -39,7 +39,7 @@ const filterGroupConfig = {
   traveler: {
     title: 'Traveler',
     icon: '️',
-    categories: [21, 22, 23,]
+    categories: [21, 22, 23, 38]
   },
   combat: {
     title: 'Combat Challenge',
@@ -364,27 +364,29 @@ getAllMarkers() {
     window.tebakan,
     window.gulat,
     window.tehnik,
-    window.innerwaylist
+    window.innerwaylist,
+    window.npc,
+    window.terbaru
   ];
 
-    sources.forEach(source => {
-      if (source && typeof source === 'object') {
-        Object.keys(source).forEach(key => {
-          const marker = { ...source[key], _key: key };
-          
-          if (markerEdits[key]) {
-            if (markerEdits[key].x) marker.x = markerEdits[key].x;
-            if (markerEdits[key].y) marker.y = markerEdits[key].y;
-            if (markerEdits[key].desc !== undefined) marker.desc = markerEdits[key].desc;
-          }
-          
-          allMarkers.push(marker);
-        });
-      }
-    });
+sources.forEach(source => {
+    if (source && typeof source === 'object') {
+      Object.keys(source).forEach(key => {
+        const marker = { ...source[key], _key: key };
+        
+        if (markerEdits[key]) {
+          if (markerEdits[key].x) marker.x = markerEdits[key].x;
+          if (markerEdits[key].y) marker.y = markerEdits[key].y;
+          if (markerEdits[key].desc !== undefined) marker.desc = markerEdits[key].desc;
+        }
+        
+        allMarkers.push(marker);
+      });
+    }
+  });
 
-    return allMarkers;
-  },
+  return allMarkers;
+},
 
   getBufferedBounds() {
     let bounds = this.map.getBounds();

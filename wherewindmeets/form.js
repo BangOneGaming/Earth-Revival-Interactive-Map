@@ -29,7 +29,7 @@ const MarkerAddSystem = (function() {
   let savedFormData = null; // Simpan data form saat reposition
   
   const API_URL = 'https://autumn-dream-8c07.square-spon.workers.dev/terbaru';
-  const ICON_BASE_URL = 'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/';
+  const ICON_BASE_URL = 'https://tiles.bgonegaming.win/wherewindmeet/Simbol/';
   const DEFAULT_ICON_URL = ICON_BASE_URL + 'default.png';
   
   // Icon Config (from ikon.js)

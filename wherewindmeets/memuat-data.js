@@ -1,12 +1,12 @@
 /**
  * Data loader module for fetching marker data from API endpoints
- * Now optimized with batch loading
+ * Now optimized with batch loading + support for /terbaru endpoint
  */
 
 // Base URL for API
 const API_BASE_URL = 'https://autumn-dream-8c07.square-spon.workers.dev';
 
-// API endpoints configuration (kept for backward compatibility)
+// API endpoints configuration
 const DATA_ENDPOINTS = {
   list: `${API_BASE_URL}/list`,
   batu: `${API_BASE_URL}/batu`,
@@ -44,7 +44,9 @@ const DATA_ENDPOINTS = {
   tebakan: `${API_BASE_URL}/riddle`,
   gulat: `${API_BASE_URL}/summo`,
   mysticlist: `${API_BASE_URL}/mysticlist`,
-  innerwayslist: `${API_BASE_URL}/innerwayslist`
+  innerwayslist: `${API_BASE_URL}/innerwayslist`,
+  npc: `${API_BASE_URL}/npclist`,
+  terbaru: `${API_BASE_URL}/terbaru` // ✅ Tambah endpoint baru
 };
 
 // Mapping endpoint keys to window global variables
@@ -85,14 +87,16 @@ const ENDPOINT_TO_GLOBAL = {
   tebakan: 'tebakan',
   gulat: 'gulat',
   mysticlist: 'tehnik',
-  innerwayslist: 'innerwaylist'
+  innerwayslist: 'innerwaylist',
+  npc: 'npc',
+  terbaru: 'terbaru' // ✅ Tambah mapping global
 };
 
 const DataLoader = {
   loadedData: {},
   loadingProgress: {},
   isLoading: false,
-  useBatchLoading: true, // Toggle untuk batch loading
+  useBatchLoading: true,
 
   async init() {
     this.showLoadingSpinner(true);
@@ -131,10 +135,8 @@ const DataLoader = {
 
   async loadAllEndpoints() {
     if (this.useBatchLoading) {
-      // Use batch endpoint - HEMAT 93% REQUEST!
       await this.loadBatch();
     } else {
-      // Fallback: load individually (for debugging)
       const promises = Object.keys(DATA_ENDPOINTS).map(key =>
         this.loadEndpoint(key, DATA_ENDPOINTS[key])
       );
@@ -142,56 +144,79 @@ const DataLoader = {
     }
   },
 
-async loadBatch() {
-  try {
-    // ✅ Extract path dari URL, bukan pakai key
-    const endpointPaths = Object.entries(DATA_ENDPOINTS).map(([key, url]) => ({
-      key: key,
-      path: new URL(url).pathname.slice(1) // remove leading "/"
-    }));
+  async loadBatch() {
+    try {
+      const endpointPaths = Object.entries(DATA_ENDPOINTS).map(([key, url]) => ({
+        key: key,
+        path: new URL(url).pathname.slice(1)
+      }));
 
-    console.log(`📦 Loading ${endpointPaths.length} endpoints via batch...`);
+      console.log(`📦 Loading ${endpointPaths.length} endpoints via batch...`);
 
-    // Kirim path URL ke batch
-    const response = await fetch(`${API_BASE_URL}/batch`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        endpoints: endpointPaths.map(e => e.path) // ["list", "batu", "specialstrange", "healingpot", ...]
-      })
-    });
+      const response = await fetch(`${API_BASE_URL}/batch`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          endpoints: endpointPaths.map(e => e.path)
+        })
+      });
 
-    if (!response.ok) {
-      throw new Error(`Batch request failed: ${response.status}`);
+      if (!response.ok) {
+        throw new Error(`Batch request failed: ${response.status}`);
+      }
+
+      const batchData = await response.json();
+
+      endpointPaths.forEach(({ key, path }) => {
+        let data = batchData[path] || {};
+        
+        // ✅ FILTER khusus untuk endpoint terbaru
+        if (key === 'terbaru') {
+          data = this.filterApprovedMarkers(data);
+          console.log(`✅ Filtered terbaru: ${Object.keys(data).length} approved markers`);
+        }
+        
+        this.loadedData[key] = data;
+
+        const globalVar = ENDPOINT_TO_GLOBAL[key];
+        if (globalVar) {
+          window[globalVar] = data;
+        }
+      });
+
+      console.log(`✅ Batch loading complete: ${Object.keys(batchData).length} endpoints loaded`);
+
+    } catch (error) {
+      console.error('❌ Batch loading failed, falling back to individual requests:', error);
+      
+      this.useBatchLoading = false;
+      const promises = Object.keys(DATA_ENDPOINTS).map(key =>
+        this.loadEndpoint(key, DATA_ENDPOINTS[key])
+      );
+      await Promise.all(promises);
     }
+  },
 
-    const batchData = await response.json();
-
-    // ✅ Map response back ke frontend key
-    endpointPaths.forEach(({ key, path }) => {
-      const data = batchData[path] || {};
-      this.loadedData[key] = data;
-
-      const globalVar = ENDPOINT_TO_GLOBAL[key];
-      if (globalVar) {
-        window[globalVar] = data;
+  /**
+   * ✅ Filter marker yang approved === true
+   */
+  filterApprovedMarkers(data) {
+    if (!data || typeof data !== 'object') return {};
+    
+    const filtered = {};
+    Object.keys(data).forEach(key => {
+      const marker = data[key];
+      // Hanya ambil marker dengan approved === true (strict check)
+      if (marker && marker.approved === true) {
+        filtered[key] = marker;
       }
     });
-
-    console.log(`✅ Batch loading complete: ${Object.keys(batchData).length} endpoints loaded`);
-
-  } catch (error) {
-    console.error('❌ Batch loading failed, falling back to individual requests:', error);
     
-    this.useBatchLoading = false;
-    const promises = Object.keys(DATA_ENDPOINTS).map(key =>
-      this.loadEndpoint(key, DATA_ENDPOINTS[key])
-    );
-    await Promise.all(promises);
-  }
-},
+    return filtered;
+  },
+
   async loadEndpoint(key, url) {
     try {
       const response = await fetch(url);
@@ -200,7 +225,13 @@ async loadBatch() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
+      let data = await response.json();
+
+      // ✅ FILTER khusus untuk endpoint terbaru
+      if (key === 'terbaru') {
+        data = this.filterApprovedMarkers(data);
+        console.log(`✅ Filtered terbaru: ${Object.keys(data).length} approved markers`);
+      }
 
       this.loadedData[key] = data;
 
@@ -268,7 +299,8 @@ async loadBatch() {
       loadedEndpoints: Object.keys(this.loadedData).length,
       totalEndpoints: Object.keys(DATA_ENDPOINTS).length,
       endpoints: Object.keys(DATA_ENDPOINTS),
-      batchMode: this.useBatchLoading
+      batchMode: this.useBatchLoading,
+      terbaruCount: this.loadedData.terbaru ? Object.keys(this.loadedData.terbaru).length : 0
     };
   }
 };

@@ -380,49 +380,99 @@
   color: #DAA520;
 }
 
-/* Skill Details Section */
+/* Skill Details Section - Enhanced */
 .innerways-details-section {
-  background: linear-gradient(135deg, rgba(139, 105, 20, 0.1) 0%, rgba(107, 83, 16, 0.1) 100%);
-  border: 1px solid rgba(218, 165, 32, 0.2);
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 15px;
+  background: linear-gradient(135deg, rgba(139, 105, 20, 0.15) 0%, rgba(107, 83, 16, 0.15) 100%);
+  border: 1px solid rgba(218, 165, 32, 0.3);
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .innerways-details-header {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: bold;
   color: #FFD700;
-  margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(218, 165, 32, 0.3);
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid rgba(218, 165, 32, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .innerways-details-grid {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 8px 15px;
+  gap: 10px 18px;
   font-size: 14px;
-  line-height: 1.6;
+  line-height: 1.7;
+  margin-bottom: 12px;
 }
 
 .innerways-details-label {
   color: #DAA520;
   font-weight: 600;
+  text-transform: capitalize;
 }
 
 .innerways-details-value {
   color: #FFF8DC;
+  font-weight: 400;
 }
 
+/* Rarity Badge Styles */
+.rarity-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.rarity-common {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  color: white;
+  border: 1px solid #495057;
+}
+
+.rarity-rare {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  border: 1px solid #0056b3;
+}
+
+.rarity-epic {
+  background: linear-gradient(135deg, #9c27b0 0%, #6a1b9a 100%);
+  color: white;
+  border: 1px solid #6a1b9a;
+}
+
+.rarity-legendary {
+  background: linear-gradient(135deg, #ff9800 0%, #e65100 100%);
+  color: white;
+  border: 1px solid #e65100;
+}
+
+/* Effect Text Box */
 .innerways-effect-text {
-  margin-top: 10px;
-  padding: 10px;
-  background: rgba(0, 0, 0, 0.2);
+  margin-top: 12px;
+  padding: 12px 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 4px solid #DAA520;
   border-radius: 6px;
   font-size: 14px;
-  line-height: 1.7;
+  line-height: 1.8;
   color: #FFF8DC;
+}
+
+.innerways-effect-text strong {
+  color: #FFD700;
+  font-weight: 700;
 }
 
 /* Table Styles */
@@ -482,7 +532,45 @@
   border-left: 3px solid #DAA520;
   padding-left: 15px;
 }
+/* Requirements List - Simple Format */
+.innerways-requirements-list {
+  margin: 0;
+  padding: 12px 0 0 0;
+  list-style: none;
+}
 
+.innerways-requirements-list li {
+  position: relative;
+  padding: 10px 12px 10px 35px;
+  margin-bottom: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-left: 3px solid #4CAF50;
+  border-radius: 6px;
+  line-height: 1.7;
+  color: #FFF8DC;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.innerways-requirements-list li:before {
+  content: "✓";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #4CAF50;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.innerways-requirements-list li:hover {
+  background: rgba(76, 175, 80, 0.1);
+  border-left-color: #66BB6A;
+}
+
+.innerways-requirements-list li:last-child {
+  margin-bottom: 0;
+}
 /* Go to Location Button */
 .innerways-location-btn {
   display: inline-flex;
@@ -736,6 +824,42 @@
 
   .innerways-part-info {
     font-size: 13px;
+  }
+  /* Details & Requirements Mobile */
+  .innerways-details-section {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .innerways-details-header {
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+
+  .innerways-details-grid {
+    font-size: 13px;
+    gap: 8px 12px;
+  }
+
+  .innerways-effect-text {
+    font-size: 13px;
+    padding: 10px 12px;
+    line-height: 1.6;
+  }
+
+  .rarity-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+  }
+
+  .innerways-requirements-list li {
+    padding: 8px 10px 8px 30px;
+    font-size: 13px;
+  }
+
+  .innerways-requirements-list li:before {
+    left: 10px;
+    font-size: 16px;
   }
 }
 
