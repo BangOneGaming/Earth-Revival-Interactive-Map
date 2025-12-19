@@ -29,7 +29,7 @@ const MarkerImageHandler = (function() {
     cacheKey: 'wwm_marker_images',
     cacheVersionKey: 'wwm_marker_images_version',
     uploadEnabled: false, // TEMPORARY: Set to true after Dec 20
-    uploadResumeDate: 'December 20th'
+    uploadResumeDate: '1 January 2026'
   };
 
   // In-memory cache (loaded from localStorage)
