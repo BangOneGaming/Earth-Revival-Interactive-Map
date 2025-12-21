@@ -472,11 +472,14 @@ const BuildTabsModule = {
     // Extract build info
     const buildInfo = this.extractBuildInfo(build.buildData);
     
+    // FIXED: Use inGameName instead of Google name
+    const displayName = build.userGameProfile?.inGameName || build.userName;
+    
     card.innerHTML = `
       <div class="build-card-header">
-        <img src="${build.userPicture}" alt="${build.userName}" class="build-user-pic">
+        <img src="${build.userPicture}" alt="${displayName}" class="build-user-pic">
         <div class="build-user-info">
-          <span class="build-user-name">${build.userName}</span>
+          <span class="build-user-name">${displayName}</span>
           <span class="build-user-weapon">${build.userWeapon} • ${build.userRole}</span>
         </div>
         ${isOwner ? `<button class="delete-build-btn" data-id="${build.id}">🗑️</button>` : ''}
@@ -496,81 +499,76 @@ const BuildTabsModule = {
         </div>
 
         <!-- Visual Equipment Summary -->
-<div class="build-equipment-summary">
+        <div class="build-equipment-summary">
+          
+          <!-- Weapons -->
+          ${buildInfo.weapons.length > 0 ? `
+            <div class="equipment-row">
+              <span class="equipment-label">⚔️</span>
+              <div class="equipment-icons">
+                ${buildInfo.weapons.map(w => `
+                  <img src="${w.icon}" alt="${w.name}" class="equipment-icon" title="${w.name}" onerror="this.src='${this.ICON_BASE}default.png'">
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
 
-  <!-- Weapons -->
-  ${buildInfo.weapons.length > 0 ? `
-    <div class="equipment-row">
-      <img src="${BuildListManager.ICON_BASE_URL}jutsu.webp" class="equipment-label-icon" alt="Weapon Type">
-      <div class="equipment-icons">
-        ${buildInfo.weapons.map(w => `
-          <img src="${w.icon}" alt="${w.name}" class="equipment-icon" title="${w.name}" 
-               onerror="this.src='${this.ICON_BASE}default.png'">
-        `).join('')}
-      </div>
-    </div>
-  ` : ''}
+          <!-- Weapon/Accessory Sets -->
+          ${buildInfo.weaponSets.length > 0 ? `
+            <div class="equipment-row">
+              <span class="equipment-label">🎨</span>
+              <div class="equipment-icons">
+                ${buildInfo.weaponSets.map(set => `
+                  <div class="set-badge-mini" title="${set.name} (${set.count}/4)">
+                    <img src="${set.badge}" alt="${set.name}" class="equipment-icon" onerror="this.src='${this.ICON_BASE}badge/default.webp'">
+                    <span class="set-count-mini">${set.count}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
 
-  <!-- Weapon/Accessory Sets -->
-  ${buildInfo.weaponSets.length > 0 ? `
-    <div class="equipment-row">
-      <img src="${BuildListManager.ICON_BASE_URL}batutele.webp" class="equipment-label-icon" alt="Weapon & Accessories Sets">
-      <div class="equipment-icons">
-        ${buildInfo.weaponSets.map(set => `
-          <div class="set-badge-mini" title="${set.name} (${set.count}/4)">
-            <img src="${set.badge}" alt="${set.name}" class="equipment-icon" 
-                 onerror="this.src='${this.ICON_BASE}badge/default.webp'">
-            <span class="set-count-mini">${set.count}</span>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  ` : ''}
+          <!-- Armor Sets -->
+          ${buildInfo.armorSets.length > 0 ? `
+            <div class="equipment-row">
+              <span class="equipment-label">🛡️</span>
+              <div class="equipment-icons">
+                ${buildInfo.armorSets.map(set => `
+                  <div class="set-badge-mini" title="${set.name} (${set.count}/4)">
+                    <img src="${set.badge}" alt="${set.name}" class="equipment-icon" onerror="this.src='${this.ICON_BASE}badge/default.webp'">
+                    <span class="set-count-mini">${set.count}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
 
-  <!-- Armor Sets -->
-  ${buildInfo.armorSets.length > 0 ? `
-    <div class="equipment-row">
-      <img src="${BuildListManager.ICON_BASE_URL}accessories/Body.webp" class="equipment-label-icon" alt="Armor Sets">
-      <div class="equipment-icons">
-        ${buildInfo.armorSets.map(set => `
-          <div class="set-badge-mini" title="${set.name} (${set.count}/4)">
-            <img src="${set.badge}" alt="${set.name}" class="equipment-icon" 
-                 onerror="this.src='${this.ICON_BASE}badge/default.webp'">
-            <span class="set-count-mini">${set.count}</span>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  ` : ''}
+          <!-- Inner Ways -->
+          ${buildInfo.innerways.length > 0 ? `
+            <div class="equipment-row">
+              <span class="equipment-label">🧘</span>
+              <div class="equipment-icons">
+                ${buildInfo.innerways.slice(0, 4).map(iw => `
+                  <img src="${iw.icon}" alt="${iw.name}" class="equipment-icon-small" title="${iw.name}" onerror="this.src='${this.ICON_BASE}default.png'">
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
 
-  <!-- Innerways -->
-  ${buildInfo.innerways.length > 0 ? `
-    <div class="equipment-row">
-      <img src="${BuildListManager.ICON_BASE_URL}innerway.webp" class="equipment-label-icon" alt="Innerway">
-      <div class="equipment-icons">
-        ${buildInfo.innerways.slice(0, 4).map(iw => `
-          <img src="${iw.icon}" alt="${iw.name}" class="equipment-icon-small" 
-               title="${iw.name}" onerror="this.src='${this.ICON_BASE}default.png'">
-        `).join('')}
-      </div>
-    </div>
-  ` : ''}
+          <!-- Mystic Skills -->
+          ${buildInfo.mystics.length > 0 ? `
+            <div class="equipment-row">
+              <span class="equipment-label">✨</span>
+              <div class="equipment-icons">
+                ${buildInfo.mystics.slice(0, 4).map(m => `
+                  <img src="${m.icon}" alt="${m.name}" class="equipment-icon-small" title="${m.name}" onerror="this.src='${this.ICON_BASE}default.png'">
+                `).join('')}
+                ${buildInfo.mystics.length > 4 ? `<span class="more-count">+${buildInfo.mystics.length - 4}</span>` : ''}
+              </div>
+            </div>
+          ` : ''}
 
-  <!-- Mystic Skills -->
-  ${buildInfo.mystics.length > 0 ? `
-    <div class="equipment-row">
-      <img src="${BuildListManager.ICON_BASE_URL}tehnik.webp" class="equipment-label-icon" alt="Mystic Skill">
-      <div class="equipment-icons">
-        ${buildInfo.mystics.slice(0, 4).map(m => `
-          <img src="${m.icon}" alt="${m.name}" class="equipment-icon-small" 
-               title="${m.name}" onerror="this.src='${this.ICON_BASE}default.png'">
-        `).join('')}
-        ${buildInfo.mystics.length > 4 ? `<span class="more-count">+${buildInfo.mystics.length - 4}</span>` : ''}
-      </div>
-    </div>
-  ` : ''}
-
-</div>
+        </div>
       </div>
       
       <div class="build-card-footer">
@@ -668,8 +666,13 @@ const BuildTabsModule = {
    * Show build detail modal
    */
   showBuildDetailModal(build) {
-    console.log('👁️ Show build detail for:', build.id);
-    alert('👁️ Build detail view coming soon!');
+    console.log('👁️ Opening build detail modal for:', build.id);
+    if (window.BuildDetailModal) {
+      BuildDetailModal.open(build);
+    } else {
+      console.error('❌ BuildDetailModal not loaded!');
+      alert('Build detail viewer not available. Please refresh the page.');
+    }
   },
 
   /**

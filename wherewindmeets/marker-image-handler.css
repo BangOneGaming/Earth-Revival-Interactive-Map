@@ -1,7 +1,7 @@
 /**
- * Marker Image Handler Styles
- * Styles for image upload, carousel, lazy load, and full view modal
- * @version 2.1.0
+ * Marker Image Handler Styles v2.3
+ * Added: Dashed border paste zone (desktop only)
+ * @version 2.3.0
  */
 
 /* ==========================================
@@ -58,11 +58,6 @@
   to { transform: rotate(360deg); }
 }
 
-/* Hide loading when loaded */
-.marker-image-container[data-loaded="true"] .marker-image-loading {
-  display: none;
-}
-
 /* ==========================================
    UPLOADING STATE
    ========================================== */
@@ -71,24 +66,37 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.8);
   z-index: 10;
 }
 
 .marker-image-container.uploading::before {
-  content: '⏳';
+  content: '🔄 Compressing...';
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 32px;
+  font-size: 18px;
+  color: #f3d59b;
+  font-weight: 600;
   z-index: 11;
   animation: pulse 1s ease-in-out infinite;
+  background: rgba(26, 26, 46, 0.9);
+  padding: 15px 25px;
+  border-radius: 12px;
+  border: 2px solid #f3d59b;
+  box-shadow: 0 8px 32px rgba(243, 213, 155, 0.3);
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.1); }
+  0%, 100% { 
+    opacity: 1; 
+    transform: translate(-50%, -50%) scale(1); 
+  }
+  50% { 
+    opacity: 0.8; 
+    transform: translate(-50%, -50%) scale(1.05); 
+  }
 }
 
 /* ==========================================
@@ -103,7 +111,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: 5;
@@ -117,7 +125,10 @@
   transform: scale(1.05);
 }
 
-/* Overlay Buttons */
+/* ==========================================
+   UPLOAD BUTTON
+   ========================================== */
+
 .marker-image-btn {
   padding: 10px 20px;
   border: none;
@@ -163,8 +174,81 @@
   box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
 }
 
-.marker-image-btn:active {
+/* ==========================================
+   NEW: PASTE ZONE (Dashed Border Style)
+   Desktop Only - Hidden on Mobile
+   ========================================== */
+
+.marker-paste-zone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 24px;
+  border: 2px dashed rgba(100, 181, 246, 0.6);
+  border-radius: 12px;
+  background: rgba(100, 181, 246, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 200px;
+}
+
+.marker-paste-zone:hover {
+  border-color: #64b5f6;
+  background: rgba(100, 181, 246, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(100, 181, 246, 0.3);
+}
+
+.marker-paste-zone:active {
   transform: translateY(0);
+}
+
+.paste-zone-icon {
+  font-size: 24px;
+  opacity: 0.9;
+}
+
+.paste-zone-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+}
+
+.paste-zone-title {
+  color: #64b5f6;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.paste-zone-subtitle {
+  color: rgba(100, 181, 246, 0.8);
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+/* Compact version (when images exist) */
+.marker-paste-zone.compact {
+  padding: 10px 16px;
+  min-width: 150px;
+  gap: 8px;
+}
+
+.marker-paste-zone.compact .paste-zone-icon {
+  font-size: 18px;
+}
+
+.marker-paste-zone.compact .paste-zone-subtitle {
+  font-size: 10px;
+}
+
+/* Hide paste zone on mobile */
+@media (max-width: 768px) {
+  .marker-paste-zone {
+    display: none !important;
+  }
 }
 
 /* ==========================================
@@ -410,7 +494,7 @@
 }
 
 /* ==========================================
-   FALLBACK STATE
+   FALLBACK STATE (No Images)
    ========================================== */
 
 .marker-image-container[data-is-fallback="true"] .marker-popup-img {
@@ -419,25 +503,10 @@
 
 .marker-image-container[data-is-fallback="true"] .marker-image-overlay {
   background: rgba(0, 0, 0, 0.7);
-}
-/* ==========================================
-   ALWAYS SHOW UPLOAD BUTTON WHEN NO IMAGES
-   ========================================== */
-
-.marker-image-container[data-is-fallback="true"] .marker-image-overlay {
-  opacity: 1 !important;        /* Selalu tampil */
-  pointer-events: all;          /* Bisa diklik walau tidak hover */
+  opacity: 1 !important;
+  pointer-events: all;
 }
 
-.marker-image-container[data-is-fallback="true"] .marker-image-btn.upload-btn {
-  opacity: 1;
-  cursor: pointer;              /* Tetap bisa diklik */
-}
-
-/* Kalau kamu ingin tombol upload selalu muncul TANPA hover di fallback */
-.marker-image-container[data-is-fallback="true"] .marker-image-wrapper:hover .marker-image-overlay {
-  opacity: 1;
-}
 /* ==========================================
    RESPONSIVE
    ========================================== */
@@ -446,7 +515,8 @@
   .marker-image-btn {
     padding: 8px 16px;
     font-size: 12px;
-    min-width: 130px;
+    min-width: 120px;
+    gap: 6px;
   }
 
   .marker-image-nav {
@@ -474,4 +544,16 @@
 
   .fullview-nav.prev { left: 10px; }
   .fullview-nav.next { right: 10px; }
+}
+
+/* ==========================================
+   ACCESSIBILITY
+   ========================================== */
+
+.marker-image-btn:focus,
+.marker-image-nav:focus,
+.fullview-nav:focus,
+.marker-paste-zone:focus {
+  outline: 2px solid #f3d59b;
+  outline-offset: 2px;
 }

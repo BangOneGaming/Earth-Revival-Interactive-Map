@@ -1,14 +1,13 @@
 /**
- * Marker Image Handler Module v5.1
+ * Marker Image Handler Module v5.3
  * 
- * STRATEGY:
- * 1. Saat halaman load → GET /WWMupload/all → Simpan di localStorage
- * 2. Saat buka marker → Ambil dari localStorage → TIDAK ADA GET
- * 3. localStorage bertahan sampai user clear browser
+ * NEW FEATURES v5.3:
+ * - Desktop-only paste zone (dashed border style)
+ * - Click paste zone = open file browser
+ * - Ctrl+V = direct upload
+ * - Mobile: only Upload button visible
  * 
- * TEMPORARY: Upload disabled until December 20th due to quota limits
- * 
- * @version 5.1.0
+ * @version 5.3.0
  */
 
 const MarkerImageHandler = (function() {
@@ -25,16 +24,26 @@ const MarkerImageHandler = (function() {
     },
     fallbackImage: 'https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg',
     allowedFormats: ['image/png', 'image/jpeg', 'image/webp'],
-    maxFileSize: 5 * 1024 * 1024,
+    maxFileSize: 15 * 1024 * 1024, // 15MB
+    webpQuality: 0.85,
+    maxDimension: 1920,
     cacheKey: 'wwm_marker_images',
     cacheVersionKey: 'wwm_marker_images_version',
-    uploadEnabled: false, // TEMPORARY: Set to true after Dec 20
-    uploadResumeDate: '1 January 2026'
+    uploadEnabled: false,
+    uploadResumeDate: 'January 1st'
   };
 
-  // In-memory cache (loaded from localStorage)
   let imageCache = {};
   let isLoaded = false;
+  let pasteListeners = new Map();
+
+  // ==========================================
+  // DEVICE DETECTION
+  // ==========================================
+
+  function isMobile() {
+    return window.matchMedia("(max-width: 768px)").matches;
+  }
 
   // ==========================================
   // LOCALSTORAGE FUNCTIONS
@@ -78,13 +87,136 @@ const MarkerImageHandler = (function() {
   }
 
   // ==========================================
+  // IMAGE COMPRESSION TO WEBP
+  // ==========================================
+
+  async function compressToWebP(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      
+      reader.onload = (e) => {
+        const img = new Image();
+        
+        img.onerror = () => reject(new Error('Failed to load image'));
+        
+        img.onload = () => {
+          try {
+            let width = img.width;
+            let height = img.height;
+            
+            if (width > CONFIG.maxDimension || height > CONFIG.maxDimension) {
+              if (width > height) {
+                height = Math.round((height * CONFIG.maxDimension) / width);
+                width = CONFIG.maxDimension;
+              } else {
+                width = Math.round((width * CONFIG.maxDimension) / height);
+                height = CONFIG.maxDimension;
+              }
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            canvas.toBlob(
+              (blob) => {
+                if (!blob) {
+                  reject(new Error('Failed to create WebP blob'));
+                  return;
+                }
+                
+                const originalSize = file.size;
+                const compressedSize = blob.size;
+                const savingsPercent = ((1 - compressedSize / originalSize) * 100).toFixed(1);
+                
+                console.log(`📊 Compression: ${formatBytes(originalSize)} → ${formatBytes(compressedSize)} (${savingsPercent}% saved)`);
+                
+                resolve({
+                  blob,
+                  originalSize,
+                  compressedSize,
+                  savings: savingsPercent
+                });
+              },
+              'image/webp',
+              CONFIG.webpQuality
+            );
+          } catch (error) {
+            reject(error);
+          }
+        };
+        
+        img.src = e.target.result;
+      };
+      
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function formatBytes(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  }
+
+  // ==========================================
+  // CLIPBOARD PASTE HANDLER
+  // ==========================================
+
+  async function handlePaste(event, markerKey) {
+    const items = event.clipboardData?.items;
+    if (!items) return;
+
+    for (let item of items) {
+      if (item.type.indexOf('image') !== -1) {
+        event.preventDefault();
+        
+        const file = item.getAsFile();
+        if (!file) continue;
+
+        console.log('📋 Pasted image:', file.type, formatBytes(file.size));
+        
+        await processImageUpload(file, markerKey, true);
+        return;
+      }
+    }
+  }
+
+  function attachPasteListener(markerKey) {
+    if (pasteListeners.has(markerKey)) {
+      document.removeEventListener('paste', pasteListeners.get(markerKey));
+    }
+
+    const listener = (e) => handlePaste(e, markerKey);
+    document.addEventListener('paste', listener);
+    pasteListeners.set(markerKey, listener);
+
+    console.log(`📋 Paste listener attached for ${markerKey}`);
+  }
+
+  function removePasteListener(markerKey) {
+    if (pasteListeners.has(markerKey)) {
+      document.removeEventListener('paste', pasteListeners.get(markerKey));
+      pasteListeners.delete(markerKey);
+    }
+  }
+
+  // ==========================================
   // PRELOAD ALL IMAGES
   // ==========================================
 
   async function preloadAllImages() {
     if (isLoaded) return;
 
-    // Load from localStorage first
     const hasLocalData = loadFromLocalStorage();
     const localLastUpdated = getLastUpdated();
 
@@ -99,17 +231,12 @@ const MarkerImageHandler = (function() {
       const data = await response.json();
       
       if (data.success && data.markers) {
-        // Check if server has newer data
         if (data.lastUpdated > localLastUpdated || !hasLocalData) {
           imageCache = data.markers;
           saveToLocalStorage();
           setLastUpdated(data.lastUpdated);
-          
-        } else {
-
         }
       }
-
     } catch (e) {
       console.error('❌ Preload failed:', e);
       if (!hasLocalData) {
@@ -121,7 +248,7 @@ const MarkerImageHandler = (function() {
   }
 
   // ==========================================
-  // GET IMAGES (from cache only)
+  // GET IMAGES
   // ==========================================
 
   function getImages(markerKey) {
@@ -153,12 +280,12 @@ const MarkerImageHandler = (function() {
     return await response.json();
   }
 
-  async function uploadToImageKit(file, markerKey) {
-    const filename = generateFilename(markerKey, file.type);
+  async function uploadToImageKit(blob, markerKey) {
+    const filename = generateFilename(markerKey, 'webp');
     const auth = await getImageKitAuth();
     
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', blob, filename);
     formData.append('fileName', filename);
     formData.append('folder', CONFIG.imageKit.folder);
     formData.append('publicKey', auth.publicKey);
@@ -180,7 +307,7 @@ const MarkerImageHandler = (function() {
     return result.url;
   }
 
-  async function saveImageUrlToServer(markerKey, imageUrl, format) {
+  async function saveImageUrlToServer(markerKey, imageUrl) {
     const token = typeof getUserToken === 'function' ? getUserToken() : null;
     if (!token) throw new Error('Not authenticated');
 
@@ -193,7 +320,7 @@ const MarkerImageHandler = (function() {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({ markerKey, imageUrl, format })
+      body: JSON.stringify({ markerKey, imageUrl, format: 'webp' })
     });
 
     if (!response.ok) {
@@ -201,13 +328,11 @@ const MarkerImageHandler = (function() {
       throw new Error(error.error || 'Failed to save');
     }
 
-    // Update local cache
     if (!imageCache[markerKey]) {
       imageCache[markerKey] = [];
     }
     imageCache[markerKey].push({ url: imageUrl, uploadedBy: uploaderName });
     
-    // Save to localStorage
     saveToLocalStorage();
     setLastUpdated(Date.now());
 
@@ -215,16 +340,67 @@ const MarkerImageHandler = (function() {
   }
 
   // ==========================================
+  // PROCESS IMAGE UPLOAD
+  // ==========================================
+
+  async function processImageUpload(file, markerKey, fromPaste = false) {
+    const container = document.querySelector(`.marker-image-container[data-marker-key="${markerKey}"]`);
+
+    try {
+      if (container) container.classList.add('uploading');
+
+      try {
+        await checkServerQuota();
+      } catch (err) {
+        if (err.message === "quota") {
+          showNotification(
+            `⚠️ Server quota exceeded. Upload will resume on ${CONFIG.uploadResumeDate}.`,
+            "error"
+          );
+          return;
+        }
+      }
+
+      const source = fromPaste ? 'clipboard' : 'file';
+      showNotification(`⏳ Compressing ${source} image...`, 'info');
+
+      const compressed = await compressToWebP(file);
+      
+      showNotification(
+        `✨ Compressed ${compressed.savings}% • Uploading...`,
+        'info'
+      );
+
+      const imageUrl = await uploadToImageKit(compressed.blob, markerKey);
+      await saveImageUrlToServer(markerKey, imageUrl);
+
+      if (container) {
+        container.dataset.uiLoaded = 'false';
+      }
+      loadImages(markerKey);
+      
+      showNotification(
+        `✅ Upload success! (${formatBytes(compressed.compressedSize)})`,
+        'success'
+      );
+    } catch (error) {
+      console.error('Upload failed:', error);
+      showNotification(`❌ ${error.message}`, 'error');
+    } finally {
+      if (container) container.classList.remove('uploading');
+    }
+  }
+
+  // ==========================================
   // UTILITY
   // ==========================================
 
-  function generateFilename(markerKey, mimeType) {
+  function generateFilename(markerKey, ext = 'webp') {
     const timestamp = Date.now();
     const profile = typeof getUserProfile === 'function' ? getUserProfile() : null;
     const username = profile?.inGameName || 'anonymous';
     const sanitizedUsername = username.replace(/[^a-zA-Z0-9]/g, '_');
     const sanitizedKey = markerKey.replace(/[^a-zA-Z0-9_-]/g, '_');
-    const ext = mimeType.replace('image/', '');
     return `${sanitizedKey}_${timestamp}_${sanitizedUsername}.${ext}`;
   }
 
@@ -233,17 +409,60 @@ const MarkerImageHandler = (function() {
       return { valid: false, error: 'Format tidak valid. Gunakan PNG, JPG, atau WebP' };
     }
     if (file.size > CONFIG.maxFileSize) {
-      return { valid: false, error: 'File terlalu besar. Maksimal 5MB' };
+      return { valid: false, error: `File terlalu besar. Maksimal ${formatBytes(CONFIG.maxFileSize)}` };
     }
     return { valid: true };
   }
 
+  async function checkServerQuota() {
+    try {
+      const token = typeof getUserToken === 'function' ? getUserToken() : null;
+      if (!token) throw new Error('Not authenticated');
+
+      const res = await fetch(CONFIG.authEndpoint, {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (res.status === 429 || res.status === 503) {
+        throw new Error("quota");
+      }
+
+      const data = await res.json();
+      if (data.error && (
+        data.error.includes("limit") ||
+        data.error.includes("quota") ||
+        data.error.includes("exceed")
+      )) {
+        throw new Error("quota");
+      }
+
+      return data;
+    } catch (e) {
+      throw new Error("quota");
+    }
+  }
+
   // ==========================================
-  // UI COMPONENTS
+  // UI COMPONENTS (NEW: PASTE ZONE STYLE!)
   // ==========================================
 
   function createImageContainerHTML(markerData) {
     const markerKey = markerData._key;
+    const mobile = isMobile();
+    
+    // Paste zone hanya untuk desktop
+    const pasteZoneHTML = !mobile ? `
+      <div class="marker-paste-zone" 
+           onclick="MarkerImageHandler.triggerUpload('${markerKey}')"
+           title="Click to browse files or press Ctrl+V to paste">
+        <div class="paste-zone-icon">📋</div>
+        <div class="paste-zone-text">
+          <div class="paste-zone-title">Drop or Paste Image</div>
+          <div class="paste-zone-subtitle">Click to browse • Ctrl+V to paste</div>
+        </div>
+      </div>
+    ` : '';
     
     return `
       <div class="marker-image-container" 
@@ -264,12 +483,12 @@ const MarkerImageHandler = (function() {
           
           <div class="marker-image-overlay">
             <button class="marker-image-btn upload-btn" onclick="MarkerImageHandler.triggerUpload('${markerKey}')">
-              📤 Upload Image
+              📤 Upload
             </button>
+            ${pasteZoneHTML}
           </div>
           
           <div class="marker-image-nav-container"></div>
-          
           <div class="marker-image-uploader"></div>
         </div>
         
@@ -283,30 +502,27 @@ const MarkerImageHandler = (function() {
     `;
   }
 
-  /**
-   * Load and display images for popup (NO FETCH - from cache only)
-   */
   function loadImages(markerKey) {
     const container = document.querySelector(`.marker-image-container[data-marker-key="${markerKey}"]`);
     if (!container) return;
 
-    // UI already loaded? Skip
-    if (container.dataset.uiLoaded === 'true') {
-
-      return;
-    }
+    if (container.dataset.uiLoaded === 'true') return;
 
     const img = container.querySelector('.marker-popup-img');
     const overlay = container.querySelector('.marker-image-overlay');
     const navContainer = container.querySelector('.marker-image-nav-container');
     const uploaderEl = container.querySelector('.marker-image-uploader');
 
-    // Get from cache (NO FETCH)
     const images = getImages(markerKey);
+    const mobile = isMobile();
     
-    // Mark UI as loaded
     container.dataset.uiLoaded = 'true';
     container.dataset.images = JSON.stringify(images);
+
+    // Attach paste listener (desktop only)
+    if (!mobile) {
+      attachPasteListener(markerKey);
+    }
 
     if (images.length > 0) {
       img.onerror = () => {
@@ -315,23 +531,33 @@ const MarkerImageHandler = (function() {
       };
       img.src = images[0].url;
 
-      // Show uploader name
       if (uploaderEl) {
         uploaderEl.textContent = `📷 ${images[0].uploadedBy}`;
         uploaderEl.style.display = 'block';
       }
 
-      // Update overlay buttons
+      // Paste zone hanya desktop
+      const pasteZoneHTML = !mobile ? `
+        <div class="marker-paste-zone compact" 
+             onclick="MarkerImageHandler.triggerUpload('${markerKey}')"
+             title="Click to browse or Ctrl+V to paste">
+          <div class="paste-zone-icon">📋</div>
+          <div class="paste-zone-text">
+            <div class="paste-zone-subtitle">Click or Ctrl+V</div>
+          </div>
+        </div>
+      ` : '';
+
       overlay.innerHTML = `
         <button class="marker-image-btn upload-btn" onclick="MarkerImageHandler.triggerUpload('${markerKey}')">
-          📤 Upload Image
+          📤 Upload
         </button>
+        ${pasteZoneHTML}
         <button class="marker-image-btn fullview-btn" onclick="MarkerImageHandler.openFullView('${markerKey}')">
           🔍 Full View
         </button>
       `;
 
-      // Add navigation if multiple images
       if (images.length > 1) {
         navContainer.innerHTML = `
           <button class="marker-image-nav prev" onclick="MarkerImageHandler.prevImage('${markerKey}')">‹</button>
@@ -346,10 +572,24 @@ const MarkerImageHandler = (function() {
     } else {
       container.dataset.isFallback = 'true';
       if (uploaderEl) uploaderEl.style.display = 'none';
+      
+      const pasteZoneHTML = !mobile ? `
+        <div class="marker-paste-zone" 
+             onclick="MarkerImageHandler.triggerUpload('${markerKey}')"
+             title="Click to browse files or press Ctrl+V to paste">
+          <div class="paste-zone-icon">📋</div>
+          <div class="paste-zone-text">
+            <div class="paste-zone-title">Drop or Paste Image</div>
+            <div class="paste-zone-subtitle">Click to browse • Ctrl+V to paste</div>
+          </div>
+        </div>
+      ` : '';
+      
       overlay.innerHTML = `
         <button class="marker-image-btn upload-btn" onclick="MarkerImageHandler.triggerUpload('${markerKey}')">
-          📤 Upload Image
+          📤 Upload
         </button>
+        ${pasteZoneHTML}
       `;
     }
   }
@@ -398,10 +638,9 @@ const MarkerImageHandler = (function() {
   // ==========================================
 
   function triggerUpload(markerKey) {
-    // Check if upload is enabled
     if (!CONFIG.uploadEnabled) {
       showNotification(
-        `⚠️ Image upload is temporarily unavailable due to server quota limits. Service will resume on ${CONFIG.uploadResumeDate}. Thank you for your patience!`,
+        `⚠️ Upload temporarily unavailable until ${CONFIG.uploadResumeDate}.`,
         'error'
       );
       return;
@@ -417,34 +656,6 @@ const MarkerImageHandler = (function() {
     if (input) input.click();
   }
 
-  async function checkServerQuota() {
-    try {
-      const res = await fetch(CONFIG.authEndpoint, {
-        method: 'GET',
-        headers: { 'Authorization': `Bearer ${getUserToken()}` }
-      });
-
-      // Jika server blokir karena limit
-      if (res.status === 429 || res.status === 503) {
-        throw new Error("quota");
-      }
-
-      // Jika server kirim pesan error khusus
-      const data = await res.json();
-      if (data.error && (
-        data.error.includes("limit") ||
-        data.error.includes("quota") ||
-        data.error.includes("exceed")
-      )) {
-        throw new Error("quota");
-      }
-
-      return data; // aman
-    } catch (e) {
-      throw new Error("quota");
-    }
-  }
-
   async function handleFileSelect(event, markerKey) {
     const file = event.target.files[0];
     if (!file) return;
@@ -456,44 +667,8 @@ const MarkerImageHandler = (function() {
       return;
     }
 
-    const container = document.querySelector(`.marker-image-container[data-marker-key="${markerKey}"]`);
-
-    try {
-      if (container) container.classList.add('uploading');
-
-      // Check quota first
-      try {
-        await checkServerQuota();
-      } catch (err) {
-        if (err.message === "quota") {
-          showNotification(
-            `⚠️ Server quota exceeded. Upload service will resume on ${CONFIG.uploadResumeDate}. Please try again later.`,
-            "error"
-          );
-          event.target.value = "";
-          return;
-        }
-      }
-
-      showNotification('⏳ Uploading...', 'info');
-
-      // Upload process
-      const imageUrl = await uploadToImageKit(file, markerKey);
-      const format = file.type.replace('image/', '');
-      await saveImageUrlToServer(markerKey, imageUrl, format);
-
-      if (container) {
-        container.dataset.uiLoaded = 'false';
-      }
-      loadImages(markerKey);
-      showNotification('✅ Upload success!', 'success');
-    } catch (error) {
-      console.error('Upload failed:', error);
-      showNotification(`❌ ${error.message}`, 'error');
-    } finally {
-      if (container) container.classList.remove('uploading');
-      event.target.value = '';
-    }
+    await processImageUpload(file, markerKey, false);
+    event.target.value = '';
   }
 
   // ==========================================
@@ -597,17 +772,13 @@ const MarkerImageHandler = (function() {
   
   function debugCache() {
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('📦 IMAGE CACHE DEBUG');
+    console.log('📦 IMAGE CACHE DEBUG v5.3');
     console.log('isLoaded:', isLoaded);
     console.log('Upload enabled:', CONFIG.uploadEnabled);
+    console.log('Device:', isMobile() ? 'Mobile' : 'Desktop');
     console.log('Total markers:', Object.keys(imageCache).length);
     console.log('Last updated:', new Date(getLastUpdated()).toLocaleString());
-    Object.entries(imageCache).forEach(([key, images]) => {
-      console.log(`  ${key}: ${images.length} images`);
-      images.forEach((img, i) => {
-        console.log(`    [${i}] ${img.uploadedBy}`);
-      });
-    });
+    console.log('Active paste listeners:', pasteListeners.size);
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   }
 
@@ -616,6 +787,12 @@ const MarkerImageHandler = (function() {
     localStorage.removeItem(CONFIG.cacheKey);
     localStorage.removeItem(CONFIG.cacheVersionKey);
     isLoaded = false;
+    
+    pasteListeners.forEach((listener, key) => {
+      document.removeEventListener('paste', listener);
+    });
+    pasteListeners.clear();
+    
     console.log('🗑️ Cache cleared');
   }
 
@@ -624,24 +801,26 @@ const MarkerImageHandler = (function() {
     await preloadAllImages();
   }
 
-  // ==========================================
+// ==========================================
   // INIT
   // ==========================================
 
   async function init() {
-    console.log('🚀 MarkerImageHandler v5.1 initializing...');
+    console.log('🚀 MarkerImageHandler v5.3 initializing...');
     
     if (!CONFIG.uploadEnabled) {
       console.warn(`⚠️ Upload temporarily disabled until ${CONFIG.uploadResumeDate}`);
     }
 
-    // Preload langsung (tidak menunggu map)
+    console.log(`📱 Device: ${isMobile() ? 'Mobile (paste disabled)' : 'Desktop (paste enabled)'}`);
+
     await preloadAllImages();
 
     console.log('✨ Preload complete:', Object.keys(imageCache).length, 'markers');
 
     // Pasang listener popup (kalau map belum ada, error dicegah)
     try {
+      // Popup open
       MarkerManager.map.on('popupopen', function (e) {
         const content = e.popup.getElement();
         if (!content) return;
@@ -653,13 +832,29 @@ const MarkerImageHandler = (function() {
         }
       });
 
-      console.log('📌 Popup listener attached');
+      // Popup close - cleanup paste listener
+      MarkerManager.map.on('popupclose', function (e) {
+        const content = e.popup.getElement();
+        if (!content) return;
+
+        const container = content.querySelector('.marker-image-container');
+        if (container) {
+          const markerKey = container.dataset.markerKey;
+          removePasteListener(markerKey);
+        }
+      });
+
+      console.log('📌 Popup listeners attached');
     } catch (err) {
-      console.warn('⚠️ Map not ready yet, but preload is done. Listener skipped.');
+      console.warn('⚠️ Map not ready yet, popup listener skipped.');
     }
 
-    console.log('✅ MarkerImageHandler v5.1 ready');
+    console.log('✅ MarkerImageHandler v5.3 ready');
   }
+
+  // ==========================================
+  // PUBLIC API
+  // ==========================================
 
   return {
     init,
@@ -682,7 +877,8 @@ const MarkerImageHandler = (function() {
     CONFIG
   };
 
-})();
+})(); // ← IIFE close
 
+// Global expose
 window.MarkerImageHandler = MarkerImageHandler;
-console.log('✅ MarkerImageHandler module loaded v5.1.0');
+console.log('✅ MarkerImageHandler module loaded v5.3.0');

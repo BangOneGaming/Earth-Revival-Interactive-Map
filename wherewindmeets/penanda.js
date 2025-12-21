@@ -450,14 +450,29 @@ createPopupContent(markerData, editState = {}) {
   
   const coordX = hasCoords ? parseFloat(markerData.x).toFixed(2) : '';
   const coordY = hasCoords ? parseFloat(markerData.y).toFixed(2) : '';
-const hasValidLink =
-  markerData.links_info &&
-  markerData.links_info !== "0" &&
-  markerData.links_info !== 0 &&
-  markerData.links_info !== "[]" &&
-  markerData.links_info !== "null" &&
-  markerData.links_info !== "undefined" &&
-  markerData.links_info.trim() !== "";
+  
+  const hasValidLink =
+    markerData.links_info &&
+    markerData.links_info !== "0" &&
+    markerData.links_info !== 0 &&
+    markerData.links_info !== "[]" &&
+    markerData.links_info !== "null" &&
+    markerData.links_info !== "undefined" &&
+    markerData.links_info.trim() !== "";
+  
+  // SVG Icons
+  const SVG_ICONS = {
+    location: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`,
+    description: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>`,
+    save: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>`,
+    cancel: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`,
+    copy: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`,
+    check: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
+    link: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`,
+    comment: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>`,
+    alert: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
+    email: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>`
+  };
   
   // Coordinates section HTML
   let coordsHTML = '';
@@ -465,7 +480,10 @@ const hasValidLink =
     coordsHTML = `
       <div class="marker-popup-coords">
         <div class="marker-popup-section-header">
-          <div class="marker-popup-coords-title">📍 In-Game Coordinates (Editing)</div>
+          <div class="marker-popup-coords-title">
+            ${SVG_ICONS.location}
+            <span>In-Game Coordinates (Editing)</span>
+          </div>
         </div>
         <div class="marker-popup-coords-edit">
           <div class="marker-popup-coord-edit-field">
@@ -479,10 +497,12 @@ const hasValidLink =
         </div>
         <div class="marker-popup-section-actions">
           <button class="marker-popup-edit-btn editing" onclick="saveEdit('${markerKey}', 'coords')">
-            💾 Save
+            ${SVG_ICONS.save}
+            <span>Save</span>
           </button>
           <button class="marker-popup-edit-btn cancel" onclick="cancelEdit('${markerKey}')">
-            ✖ Cancel
+            ${SVG_ICONS.cancel}
+            <span>Cancel</span>
           </button>
         </div>
       </div>
@@ -491,7 +511,10 @@ const hasValidLink =
     coordsHTML = `
       <div class="marker-popup-coords">
         <div class="marker-popup-section-header">
-          <div class="marker-popup-coords-title">📍 In-Game Coordinates</div>
+          <div class="marker-popup-coords-title">
+            ${SVG_ICONS.location}
+            <span>In-Game Coordinates</span>
+          </div>
           <button class="marker-popup-section-edit-btn" data-tooltip="Edit Coordinates" onclick="event.stopPropagation(); startEdit('${markerKey}', 'coords')">
             <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/edit.png?updatedAt=1762987960006" alt="Edit">
           </button>
@@ -500,12 +523,12 @@ const hasValidLink =
           <div class="marker-popup-coord-item" onclick="copyToClipboard('${coordX}', 'X')" title="Click to copy X coordinate">
             <span class="marker-popup-coord-label">X:</span>
             <span class="marker-popup-coord-value">${coordX}</span>
-            <span class="marker-popup-copy-icon">📋</span>
+            <span class="marker-popup-copy-icon">${SVG_ICONS.copy}</span>
           </div>
           <div class="marker-popup-coord-item" onclick="copyToClipboard('${coordY}', 'Y')" title="Click to copy Y coordinate">
             <span class="marker-popup-coord-label">Y:</span>
             <span class="marker-popup-coord-value">${coordY}</span>
-            <span class="marker-popup-copy-icon">📋</span>
+            <span class="marker-popup-copy-icon">${SVG_ICONS.copy}</span>
           </div>
         </div>
       </div>
@@ -514,7 +537,10 @@ const hasValidLink =
     coordsHTML = `
       <div class="marker-popup-coords marker-popup-coords-empty">
         <div class="marker-popup-section-header">
-          <div class="marker-popup-coords-title">📍 In-Game Coordinates</div>
+          <div class="marker-popup-coords-title">
+            ${SVG_ICONS.location}
+            <span>In-Game Coordinates</span>
+          </div>
           <button class="marker-popup-section-edit-btn" onclick="event.stopPropagation(); startEdit('${markerKey}', 'coords')" title="Edit Coordinates">
             <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/edit.png?updatedAt=1762987960006" alt="Edit">
           </button>
@@ -532,15 +558,20 @@ const hasValidLink =
     descHTML = `
       <div class="marker-popup-desc">
         <div class="marker-popup-section-header">
-          <div class="marker-popup-desc-title">📝 Description (Editing)</div>
+          <div class="marker-popup-desc-title">
+            ${SVG_ICONS.description}
+            <span>Description (Editing)</span>
+          </div>
         </div>
         <textarea id="editDesc_${markerKey}" class="marker-popup-desc-edit" placeholder="Enter description...">${description !== 'No description available' ? description : ''}</textarea>
         <div class="marker-popup-section-actions">
           <button class="marker-popup-edit-btn editing" onclick="saveEdit('${markerKey}', 'desc')">
-            💾 Save
+            ${SVG_ICONS.save}
+            <span>Save</span>
           </button>
           <button class="marker-popup-edit-btn cancel" onclick="cancelEdit('${markerKey}')">
-            ✖ Cancel
+            ${SVG_ICONS.cancel}
+            <span>Cancel</span>
           </button>
         </div>
       </div>
@@ -549,7 +580,10 @@ const hasValidLink =
     descHTML = `
       <div class="marker-popup-desc">
         <div class="marker-popup-section-header">
-          <div class="marker-popup-desc-title">📝 Description</div>
+          <div class="marker-popup-desc-title">
+            ${SVG_ICONS.description}
+            <span>Description</span>
+          </div>
           <button class="marker-popup-section-edit-btn" onclick="event.stopPropagation(); startEdit('${markerKey}', 'desc')" title="Edit Description">
             <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/edit.png?updatedAt=1762987960006" alt="Edit">
           </button>
@@ -588,44 +622,49 @@ const hasValidLink =
       <!-- Description Section -->
       ${descHTML}
       
-<!-- Footer Section (Visited + ys_id + links_info) -->
-<div class="marker-popup-footer">
-  
-  <!-- Left: Visited -->
-  <div class="marker-popup-visited" onclick="event.stopPropagation(); toggleVisited('${markerKey}')">
-    <input type="checkbox" ${isVisited ? 'checked' : ''} onchange="event.stopPropagation()">
-    <span class="marker-popup-visited-label">✓ Visited</span>
-  </div>
+      <!-- Footer Section (Visited + ys_id + links_info) -->
+      <div class="marker-popup-footer">
+        
+        <!-- Left: Visited -->
+        <div class="marker-popup-visited" onclick="event.stopPropagation(); toggleVisited('${markerKey}')">
+          <input type="checkbox" ${isVisited ? 'checked' : ''} onchange="event.stopPropagation()">
+          <span class="marker-popup-visited-label">
+            ${SVG_ICONS.check}
+            <span>Visited</span>
+          </span>
+        </div>
 
-  <!-- Right container: LINK + YSID -->
-  <div class="footer-right-group">
+        <!-- Right container: LINK + YSID -->
+        <div class="footer-right-group">
 
-    <!-- Link dulu -->
-    ${hasValidLink ? `
-      <div class="marker-popup-link-info">
-        <a href="${markerData.links_info}" 
-           target="_blank" 
-           class="marker-popup-link-btn">
-          🔗 Videos Hint
-        </a>
+          <!-- Link dulu -->
+          ${hasValidLink ? `
+            <div class="marker-popup-link-info">
+              <a href="${markerData.links_info}" 
+                 target="_blank" 
+                 class="marker-popup-link-btn">
+                ${SVG_ICONS.link}
+                <span>Videos Hint</span>
+              </a>
+            </div>
+          ` : ''}
+
+          <!-- Baru YSID -->
+          ${markerData.ys_id ? `
+            <div class="marker-popup-ysid">
+              <span class="marker-popup-ysid-label">@${markerData.ys_id}</span>
+            </div>
+          ` : ''}
+
+        </div>
+
       </div>
-    ` : ''}
-
-    <!-- Baru YSID -->
-    ${markerData.ys_id ? `
-      <div class="marker-popup-ysid">
-        <span class="marker-popup-ysid-label">@${markerData.ys_id}</span>
-      </div>
-    ` : ''}
-
-  </div>
-
-</div>
       
-      <!-- Comments Section (NEW!) -->
+      <!-- Comments Section -->
       <div class="marker-popup-comments-section">
         <button class="marker-popup-comments-btn" onclick="event.stopPropagation(); openCommentsModal('${markerKey}')">
-          💬 Comments
+          ${SVG_ICONS.comment}
+          <span>Comments</span>
         </button>
       </div>
       
@@ -634,7 +673,8 @@ const hasValidLink =
         <button 
           class="marker-popup-report-btn"
           onclick="event.stopPropagation(); toggleReportPopup('${markerKey}')">
-          ⚠ Report
+          ${SVG_ICONS.alert}
+          <span>Report</span>
         </button>
         <div class="report-popup" data-report="${markerKey}">
           <a class="report-link" href="https://discord.gg/Mt65qFprs" target="_blank">
@@ -651,7 +691,8 @@ const hasValidLink =
           </a>
           <a class="report-link"
             href="mailto:square.spon@gmail.com?subject=Report%20Marker%20|%20Key:%20${markerKey}%20|%20Category:%20${markerData.category_id}&body=Hello,%0D%0AI want to report a marker.%0D%0A%0D%0AKey: ${markerKey}%0D%0ACategory ID: ${markerData.category_id}%0D%0AReason:%0D%0A">
-            📧 Email
+            ${SVG_ICONS.email}
+            Email
           </a>
         </div>
       </div>
@@ -956,6 +997,11 @@ window.toggleVisited = function (markerKey) {
   if (markerData) marker.getPopup().setContent(MarkerManager.createPopupContent(markerData));
 };
 
+/**
+ * Visited Marker Functions - Enhanced with Hidden Marker Support
+ * Updated to support both dimmed and hidden visited markers
+ */
+
 // ========================================
 // SYNC PROTECTION FLAGS
 // ========================================
@@ -964,17 +1010,63 @@ let lastSyncTime = 0;
 const SYNC_COOLDOWN = 5000; // 5 detik cooldown
 
 /**
- * Load visited markers - BATCH VERSION
- * ✅ Mengirim semua marker sekaligus dalam 1 request
+ * Toggle visited status - SAVE LOCAL ONLY
+ * @param {string} markerKey - Marker key
+ */
+window.toggleVisited = function (markerKey) {
+  const visitedMarkers = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');
+  const newStatus = !visitedMarkers[markerKey];
+  
+  // Save to local
+  visitedMarkers[markerKey] = newStatus;
+  localStorage.setItem('visitedMarkers', JSON.stringify(visitedMarkers));
+  
+  // Update marker based on hidden setting
+  const marker = MarkerManager.activeMarkers[markerKey];
+  if (!marker) return;
+  
+  const isHiddenEnabled = window.SettingsManager && window.SettingsManager.isHiddenMarkerEnabled();
+  
+  if (newStatus) {
+    // Marker is now visited
+    if (isHiddenEnabled) {
+      // Hide completely
+      marker.remove();
+      console.log(`🙈 Marker ${markerKey} hidden (visited)`);
+    } else {
+      // Dim opacity
+      marker.setOpacity(0.5);
+      console.log(`🌗 Marker ${markerKey} dimmed (visited)`);
+    }
+  } else {
+    // Marker is now unvisited
+    if (!marker._map) {
+      marker.addTo(MarkerManager.map);
+    }
+    marker.setOpacity(1.0);
+    console.log(`✨ Marker ${markerKey} restored (unvisited)`);
+  }
+  
+  // Refresh popup
+  const markerData = MarkerManager.getAllMarkers().find(m => m._key === markerKey);
+  if (markerData) {
+    marker.getPopup().setContent(MarkerManager.createPopupContent(markerData));
+  }
+};
+
+/**
+ * Load visited markers - BATCH VERSION with Hidden Marker Support
+ * ✅ Send all markers at once in 1 request
+ * ✅ Support hidden marker setting
  */
 async function loadVisitedMarkersFromServer() {
-  // ✅ Proteksi: Cegah jika sedang loading
+  // ✅ Protection: Prevent if already syncing
   if (isLoadingVisitedMarkers) {
     console.log("⏭️ Already syncing visited markers, skipping...");
     return;
   }
   
-  // ✅ Cooldown untuk mencegah spam
+  // ✅ Cooldown to prevent spam
   const now = Date.now();
   if (now - lastSyncTime < SYNC_COOLDOWN) {
     console.log("⏱️ Sync cooldown active, skipping...");
@@ -982,12 +1074,26 @@ async function loadVisitedMarkersFromServer() {
   }
   
   const localVisited = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');
+  const isHiddenEnabled = window.SettingsManager && window.SettingsManager.isHiddenMarkerEnabled();
   
-  // Jika belum login, hanya update opacity dari lokal
+  // If not logged in, only update from local
   if (!isLoggedIn()) {
-    Object.entries(localVisited).forEach(([key, v]) => {
+    Object.entries(localVisited).forEach(([key, isVisited]) => {
       const marker = MarkerManager.activeMarkers[key];
-      if (marker) marker.setOpacity(v ? 0.5 : 1.0);
+      if (!marker) return;
+      
+      if (isVisited) {
+        if (isHiddenEnabled) {
+          marker.remove();
+        } else {
+          marker.setOpacity(0.5);
+        }
+      } else {
+        if (!marker._map) {
+          marker.addTo(MarkerManager.map);
+        }
+        marker.setOpacity(1.0);
+      }
     });
     return;
   }
@@ -1019,12 +1125,12 @@ async function loadVisitedMarkersFromServer() {
     
     localStorage.setItem("visitedMarkers", JSON.stringify(merged));
     
-    // ✅ Cari perbedaan untuk sync
+    // ✅ Find differences to sync
     const keysToSync = Object.keys(localVisited).filter(key => 
       localVisited[key] !== serverVisited[key]
     );
     
-    // ✅ KIRIM BATCH (bukan satu per satu!)
+    // ✅ SEND BATCH (not one by one!)
     if (keysToSync.length > 0) {
       console.log(`📤 Syncing ${keysToSync.length} markers to server (BATCH)...`);
       
@@ -1050,7 +1156,7 @@ async function loadVisitedMarkersFromServer() {
           const errorText = await batchRes.text();
           console.error("❌ Batch sync failed:", batchRes.status, errorText);
           
-          // Fallback: jika batch gagal, coba satu per satu (backward compatible)
+          // Fallback: if batch fails, try one by one (backward compatible)
           console.log("⚠️ Falling back to individual requests...");
           await fallbackIndividualSync(keysToSync, localVisited, token);
         }
@@ -1058,7 +1164,7 @@ async function loadVisitedMarkersFromServer() {
       } catch (err) {
         console.error("❌ Batch request error:", err);
         
-        // Fallback ke individual sync
+        // Fallback to individual sync
         console.log("⚠️ Falling back to individual requests...");
         await fallbackIndividualSync(keysToSync, localVisited, token);
       }
@@ -1067,19 +1173,55 @@ async function loadVisitedMarkersFromServer() {
       console.log("✅ No changes to sync");
     }
     
-    // Update opacity semua marker
-    Object.entries(merged).forEach(([key, v]) => {
+    // Update marker visibility based on hidden setting
+    console.log(`🔄 Applying markers (hidden mode: ${isHiddenEnabled ? 'ON' : 'OFF'})...`);
+    
+    Object.entries(merged).forEach(([key, isVisited]) => {
       const marker = MarkerManager.activeMarkers[key];
-      if (marker) marker.setOpacity(v ? 0.5 : 1.0);
+      if (!marker) return;
+      
+      if (isVisited) {
+        if (isHiddenEnabled) {
+          // Hide completely
+          marker.remove();
+        } else {
+          // Dim opacity
+          if (!marker._map) {
+            marker.addTo(MarkerManager.map);
+          }
+          marker.setOpacity(0.5);
+        }
+      } else {
+        // Unvisited - always visible
+        if (!marker._map) {
+          marker.addTo(MarkerManager.map);
+        }
+        marker.setOpacity(1.0);
+      }
     });
+    
+    console.log(`✅ Applied visibility to ${Object.keys(merged).length} markers`);
     
   } catch (err) {
     console.error("❌ Error syncing visited markers:", err);
     
-    // Fallback: update dari lokal saja
-    Object.entries(localVisited).forEach(([key, v]) => {
+    // Fallback: update from local only
+    Object.entries(localVisited).forEach(([key, isVisited]) => {
       const marker = MarkerManager.activeMarkers[key];
-      if (marker) marker.setOpacity(v ? 0.5 : 1.0);
+      if (!marker) return;
+      
+      if (isVisited) {
+        if (isHiddenEnabled) {
+          marker.remove();
+        } else {
+          marker.setOpacity(0.5);
+        }
+      } else {
+        if (!marker._map) {
+          marker.addTo(MarkerManager.map);
+        }
+        marker.setOpacity(1.0);
+      }
     });
   } finally {
     // ✅ Reset flag
@@ -1089,7 +1231,7 @@ async function loadVisitedMarkersFromServer() {
 
 /**
  * Fallback: Individual sync (backward compatible)
- * Dipanggil jika batch endpoint gagal
+ * Called if batch endpoint fails
  */
 async function fallbackIndividualSync(keysToSync, localVisited, token) {
   let successCount = 0;
@@ -1117,7 +1259,7 @@ async function fallbackIndividualSync(keysToSync, localVisited, token) {
         failCount++;
       }
       
-      // Delay untuk avoid rate limit
+      // Delay to avoid rate limit
       if (i < keysToSync.length - 1) {
         await new Promise(resolve => setTimeout(resolve, 50));
       }
@@ -1130,6 +1272,8 @@ async function fallbackIndividualSync(keysToSync, localVisited, token) {
   
   console.log(`✅ Fallback sync complete: ${successCount} success, ${failCount} failed`);
 }
+
+
 // ========================================
 // MARKER EDITING FUNCTIONS
 // ========================================
@@ -1221,3 +1365,11 @@ function showNotification(message, type = 'success') {
     setTimeout(() => document.body.removeChild(notification), 300);
   }, 2000);
 }
+// ========================================
+// GLOBAL EXPORTS
+// ========================================
+window.MarkerManager = MarkerManager;
+window.loadVisitedMarkersFromServer = loadVisitedMarkersFromServer;
+
+console.log('✅ MarkerManager exported to window');
+console.log('✅ loadVisitedMarkersFromServer exported to window');

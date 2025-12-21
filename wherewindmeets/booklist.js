@@ -18,7 +18,7 @@ const BookPanel = {
   },
 
 createElements() {
-  const iconUrl = "https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/book.webp";
+  const iconUrl = "https://tiles.bgonegaming.win/wherewindmeet/Simbol/book.webp";
 
   const toggleBtn = document.createElement('button');
   toggleBtn.id = 'bookToggleBtn';

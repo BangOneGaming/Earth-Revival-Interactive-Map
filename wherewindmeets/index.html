@@ -88,7 +88,9 @@
       'ui.css',
       'login.css',
       'comment.css',
-      'profile-container.css'
+      'profile-container.css',
+      'setting.css',
+      'donate.css'
     ];
     
     cssFiles.forEach(file => {
@@ -192,7 +194,7 @@
 <div class="underground-container" id="undergroundContainer">
   <!-- Toggle Button -->
   <button id="undergroundToggle" class="underground-toggle" title="Toggle Underground Floors">
-    <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/layericon.png" alt="Underground">
+    <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/layericon.png" alt="Underground">
   </button>
   
   <!-- Panel -->
@@ -265,48 +267,60 @@
   <div class="patch-popup">
     <!-- Close Button -->
     <button class="patch-close" onclick="closePatchPopup()">&times;</button>
-    
+
     <!-- Header -->
     <div class="patch-header">
       <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/BangOne.webp" alt="Update" class="patch-image">
-      <h2 class="patch-title">🎉 Map Updated!</h2>
-      <p class="patch-subtitle">Latest Changes & Improvements</p>
+      <h2 class="patch-title">🗺️ Map Update Live!</h2>
+      <p class="patch-subtitle">New Features & Quality of Life Improvements</p>
     </div>
-    
+
     <!-- Content -->
     <div class="patch-content">
       <h3>✨ What's New</h3>
       <ul>
         <li>
-          <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/knoweverything.webp" alt="Wander Tales" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;">
-          <strong> Wander Tales List Available</strong> - New button on map for easy access! All markers now have clear descriptions in popups (more descriptions coming soon for all markers)
+          <strong>🧘 Inner Ways & Mystic Skills Added</strong> – 
+          Inner Way locations and Mystic Skill markers are now available on the map.
         </li>
+
         <li>
-          <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/book.webp" alt="Knowledge List" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;">
-          <strong> Knowledge List Added</strong> - New map button! Collect notes across all of Jianghua more easily with the organized knowledge list
+          <strong>⚙️ New Settings Menu</strong> – 
+          A new settings panel has been added for better control and customization.
         </li>
-        <li><strong>🎨 Fixed Button UI Position</strong> - UI is now cleaner and no longer overlapping. Better organized interface!</li>
+
+        <li>
+          <strong>🔄 Reset Visited Markers (Login Required)</strong> – 
+          Logged-in users can now reset all visited markers directly from the settings menu.
+        </li>
+
+        <li>
+          <strong>🚫 Hide Visited Markers Completely</strong> – 
+          Visited markers can now be fully hidden instead of becoming semi-transparent.
+          Enable this option from the settings menu.
+        </li>
+
+        <li>
+          <strong>🕳️ Underground Marker Toggle</strong> – 
+          Underground markers can now be shown or hidden using the Underground toggle button.
+        </li>
       </ul>
-      
-      <h3>🔮 Upcoming Updates</h3>
+
+      <h3>🎯 Improvements</h3>
       <ul>
-        <li><strong>📝 Full Description Coverage</strong> - Descriptions will soon be available for all markers</li>
-        <li><strong>⚡ Server Quota Fix</strong> - Submission limits will be fixed early next month or this week</li>
-        <li><strong>🧘 Inner Way & Mystic Skill Locations</strong> - Coming very soon!</li>
+        <li><strong>🧭 Better Marker Control</strong> – Cleaner filtering options for a smoother exploration experience.</li>
+        <li><strong>⚡ Performance Tweaks</strong> – Improved marker handling and visibility logic.</li>
       </ul>
-      
-      <h3>🎯 Previous Updates</h3>
+
+      <h3>🕘 Previous Updates</h3>
       <ul>
-        <li><strong>🔐 Login System Improved</strong> - You can now skip profile creation if it fails. No more stuck at login!</li>
-        <li><strong>📸 Image Upload Beta</strong> - Upload images directly to markers (experimental feature, report bugs if found)</li>
-        <li><strong>💾 Offline Marker Tracking</strong> - Your visited markers now work offline. Progress saved locally!</li>
-        <li><strong>📱 Mobile Optimization</strong> - Best experience now available on mobile web desktop mode</li>
-        <li><strong>🗺️ Enhanced Map Quality</strong> - Zoom in max level without losing map details</li>
-        <li>Added <strong>Tiangxing</strong> region with full location coverage</li>
-        <li>All mini game locations now discoverable (Fishing, Pitch Pot, Miaodao, Archery, and more)</li>
+        <li><strong>🔐 Improved Login System</strong> – Login flow is more stable and no longer blocks users.</li>
+        <li><strong>💾 Offline Visited Markers</strong> – Your visited progress is saved locally and works offline.</li>
+        <li><strong>📱 Mobile Optimization</strong> – Better experience on mobile (desktop mode recommended).</li>
+        <li><strong>🗺️ Enhanced Map Detail</strong> – Maximum zoom level improved without losing quality.</li>
       </ul>
     </div>
-    
+
     <!-- Footer -->
     <div class="patch-footer">
       <p><strong>Report bugs or suggest features:</strong></p>
@@ -326,13 +340,13 @@
       </div>
     </div>
     
+
     <!-- Brand -->
     <div class="patch-brand">
-      Made with ❤️ by <strong>Bangone Gaming</strong>
+      Made with ❤️ by <strong>BangOne Gaming</strong>
     </div>
+  </div>
 </div>
-</div>
-
 <!-- Sticky AdSense Container -->
 <div id="sticky-ad-container">
   
@@ -602,6 +616,8 @@ btnClose.addEventListener("click", function(e) {
     "dev_tools.js",
     "comment.js",
     "patchnote.js",
+    "setting.js",
+    "donate.js",
   ];
 
   // Load all scripts

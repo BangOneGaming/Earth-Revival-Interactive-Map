@@ -1,14 +1,16 @@
 /**
  * Profile Container Module
  * Modular system for displaying player profile with visited markers stats
+ * NOW WITH SETTINGS INTEGRATION
  * 
  * Dependencies:
  * - login.js (for currentUser, isLoggedIn, getUserProfile)
  * - ikon.js (for ICON_CONFIG)
  * - penanda.js (for MarkerManager)
+ * - setting.js (for SettingsManager) - OPTIONAL
  * 
  * @author Your Name
- * @version 1.1.0 - Fixed category detection
+ * @version 1.2.0 - Added Settings integration
  */
 
 const ProfileContainer = (function() {
@@ -232,8 +234,8 @@ const CATEGORY_ICONS = {
       console.log(`📋 Initialized ${Object.keys(counts).length} categories from ICON_CONFIG`);
     } else {
       console.warn('⚠️ ICON_CONFIG.names not found! Using fallback categories...');
-      // Fallback: Initialize all 28 categories
-      for (let i = 1; i <= 28; i++) {
+      // Fallback: Initialize all 36 categories
+      for (let i = 1; i <= 36; i++) {
         counts[String(i)] = 0;
       }
     }
@@ -364,11 +366,11 @@ const CATEGORY_ICONS = {
    * @returns {HTMLElement}
    */
   function createStatItem(categoryId, count) {
-  const categoryName = CATEGORY_NAMES[categoryId] || `Category ${categoryId}`;
-const iconFile = CATEGORY_ICONS[categoryId] || "default.png";
+    const categoryName = CATEGORY_NAMES[categoryId] || `Category ${categoryId}`;
+    const iconFile = CATEGORY_ICONS[categoryId] || "default.png";
 
-const ICON_BASE = "https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/";
-const iconUrl = ICON_BASE + iconFile;
+    const ICON_BASE = "https://tiles.bgonegaming.win/wherewindmeet/Simbol/";
+    const iconUrl = ICON_BASE + iconFile;
 
     const statItem = document.createElement('div');
     statItem.className = 'profile-stat-item';
@@ -535,61 +537,69 @@ const iconUrl = ICON_BASE + iconFile;
    * Initialize and create profile container
    * @param {Object} options - Configuration options
    */
-function create(options = {}) {
-  remove();
+  function create(options = {}) {
+    remove();
 
-  if (typeof isLoggedIn !== 'function' || !isLoggedIn()) {
-    return;
+    if (typeof isLoggedIn !== 'function' || !isLoggedIn()) {
+      return;
+    }
+
+    const profile = typeof getUserProfile === 'function' ? getUserProfile() : window.currentUser?.gameProfile;
+
+    if (!profile || !profile.weaponType) {
+      return;
+    }
+
+    const weaponData = window.WWM_WEAPONS?.[profile.weaponType];
+    if (!weaponData) {
+      return;
+    }
+
+    const visitedCounts = getVisitedCountsByCategory();
+    const totalVisited = getTotalVisitedCount();
+
+    container = document.createElement('div');
+    container.id = CONFIG.containerId;
+    container.className = CONFIG.animationClass;
+
+    if (options.position) {
+      Object.assign(CONFIG.position, options.position);
+    }
+
+    const titleBg = createTitleBackground(weaponData.title);
+    const content = document.createElement('div');
+    content.className = 'profile-content';
+
+    const header = createHeader(profile, weaponData);
+    const statsWrapper = createStatsSection(visitedCounts);
+
+    if (options.showTotal !== false) {
+      const totalCounter = createTotalCounter(totalVisited);
+      content.appendChild(header);
+      content.appendChild(totalCounter);
+      content.appendChild(statsWrapper);
+    } else {
+      content.appendChild(header);
+      content.appendChild(statsWrapper);
+    }
+
+    if (options.toggleButton) {
+      const toggleBtn = createToggleButton();
+      container.appendChild(toggleBtn);
+    }
+
+    container.appendChild(titleBg);
+    container.appendChild(content);
+    document.body.appendChild(container);
+
+    // ✅ INITIALIZE SETTINGS BUTTON (for logged-in users)
+    if (window.SettingsManager) {
+      setTimeout(() => {
+        window.SettingsManager.init();
+        console.log('⚙️ Settings initialized for profile');
+      }, 100);
+    }
   }
-
-  const profile = typeof getUserProfile === 'function' ? getUserProfile() : window.currentUser?.gameProfile;
-
-  if (!profile || !profile.weaponType) {
-    return;
-  }
-
-  const weaponData = window.WWM_WEAPONS?.[profile.weaponType];
-  if (!weaponData) {
-    return;
-  }
-
-  const visitedCounts = getVisitedCountsByCategory();
-  const totalVisited = getTotalVisitedCount();
-
-  container = document.createElement('div');
-  container.id = CONFIG.containerId;
-  container.className = CONFIG.animationClass;
-
-  if (options.position) {
-    Object.assign(CONFIG.position, options.position);
-  }
-
-  const titleBg = createTitleBackground(weaponData.title);
-  const content = document.createElement('div');
-  content.className = 'profile-content';
-
-  const header = createHeader(profile, weaponData);
-  const statsWrapper = createStatsSection(visitedCounts);
-
-  if (options.showTotal !== false) {
-    const totalCounter = createTotalCounter(totalVisited);
-    content.appendChild(header);
-    content.appendChild(totalCounter);
-    content.appendChild(statsWrapper);
-  } else {
-    content.appendChild(header);
-    content.appendChild(statsWrapper);
-  }
-
-  if (options.toggleButton) {
-    const toggleBtn = createToggleButton();
-    container.appendChild(toggleBtn);
-  }
-
-  container.appendChild(titleBg);
-  container.appendChild(content);
-  document.body.appendChild(container);
-}
 
   /**
    * Update profile container
@@ -627,6 +637,14 @@ function create(options = {}) {
     }
 
     console.log('🔄 Profile container updated');
+    
+    // ✅ Always re-initialize settings after update (to fix button disappearing)
+    if (window.SettingsManager && typeof isLoggedIn === 'function' && isLoggedIn()) {
+      setTimeout(() => {
+        window.SettingsManager.init();
+        console.log('🔄 Settings button re-initialized after update');
+      }, 100);
+    }
   }
 
   /**
@@ -634,6 +652,11 @@ function create(options = {}) {
    */
   function remove() {
     if (container && container.parentNode) {
+      // ✅ Destroy settings first if exists
+      if (window.SettingsManager) {
+        window.SettingsManager.destroy();
+      }
+      
       container.remove();
       container = null;
       console.log('❌ Profile container removed');
@@ -723,4 +746,4 @@ window.createProfileContainer = ProfileContainer.create;
 window.updateProfileContainer = ProfileContainer.update;
 window.removeProfileContainer = ProfileContainer.remove;
 
-console.log('✅ ProfileContainer module loaded');
+console.log('✅ ProfileContainer module loaded (with Settings support)');

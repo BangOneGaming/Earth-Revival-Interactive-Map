@@ -1,6 +1,7 @@
 /**
  * BUILD API MODULE
  * Handles all build CRUD operations and interactions (like, comment)
+ * FIXED: Now includes userGameProfile for inGameName support
  */
 
 const BuildAPIModule = {
@@ -10,10 +11,25 @@ const BuildAPIModule = {
    * Save new build or update existing
    */
   async saveBuild(buildData) {
-    const user = AuthModule.getCurrentUser();
+    // Check both auth systems
+    let user = null;
+    if (window.sharedAuth && window.sharedAuth.isLoggedIn()) {
+      user = window.sharedAuth.getUser();
+      console.log('🔐 Using sharedAuth user');
+    } else if (AuthModule && AuthModule.getCurrentUser()) {
+      user = AuthModule.getCurrentUser();
+      console.log('🔐 Using AuthModule user');
+    }
+    
     if (!user) {
       throw new Error('User not logged in');
     }
+
+    console.log('📋 User data:', {
+      name: user.name,
+      email: user.email,
+      gameProfile: user.gameProfile
+    });
 
     const payload = {
       buildData: buildData,
@@ -21,8 +37,20 @@ const BuildAPIModule = {
       userEmail: user.email,
       userPicture: user.picture,
       userWeapon: user.gameProfile?.weaponVariant || 'Unknown',
-      userRole: user.gameProfile?.role || 'Unknown'
+      userRole: user.gameProfile?.role || 'Unknown',
+      // ✅ FIXED: Include full game profile for inGameName
+      userGameProfile: user.gameProfile ? {
+        inGameName: user.gameProfile.inGameName || user.name,
+        weaponVariant: user.gameProfile.weaponVariant || 'Unknown',
+        role: user.gameProfile.role || 'Unknown'
+      } : null
     };
+
+    console.log('📤 Sending payload:', {
+      userName: payload.userName,
+      userEmail: payload.userEmail,
+      userGameProfile: payload.userGameProfile
+    });
 
     try {
       const response = await fetch(this.ENDPOINT, {
@@ -40,7 +68,7 @@ const BuildAPIModule = {
       }
 
       const result = await response.json();
-      console.log('✅ Build saved:', result);
+      console.log('✅ Build saved to server:', result);
       return result;
     } catch (error) {
       console.error('❌ Error saving build:', error);
@@ -60,6 +88,7 @@ const BuildAPIModule = {
       }
 
       const result = await response.json();
+      console.log(`📦 Fetched ${result.builds?.length || 0} builds for ${email}`);
       return result.builds || [];
     } catch (error) {
       console.error('❌ Error fetching user builds:', error);
@@ -79,6 +108,7 @@ const BuildAPIModule = {
       }
 
       const result = await response.json();
+      console.log(`📦 Fetched ${result.builds?.length || 0} total builds`);
       return result.builds || [];
     } catch (error) {
       console.error('❌ Error fetching all builds:', error);
@@ -90,7 +120,14 @@ const BuildAPIModule = {
    * Toggle like/dislike on build
    */
   async toggleLike(buildId, action) {
-    const user = AuthModule.getCurrentUser();
+    // Check both auth systems
+    let user = null;
+    if (window.sharedAuth && window.sharedAuth.isLoggedIn()) {
+      user = window.sharedAuth.getUser();
+    } else if (AuthModule && AuthModule.getCurrentUser()) {
+      user = AuthModule.getCurrentUser();
+    }
+    
     if (!user) {
       throw new Error('User not logged in');
     }
@@ -114,7 +151,7 @@ const BuildAPIModule = {
       }
 
       const result = await response.json();
-      console.log('✅ Like toggled:', result);
+      console.log(`✅ ${action} toggled for build ${buildId}`);
       return result;
     } catch (error) {
       console.error('❌ Error toggling like:', error);
@@ -126,10 +163,20 @@ const BuildAPIModule = {
    * Add comment to build
    */
   async addComment(buildId, commentText) {
-    const user = AuthModule.getCurrentUser();
+    // Check both auth systems
+    let user = null;
+    if (window.sharedAuth && window.sharedAuth.isLoggedIn()) {
+      user = window.sharedAuth.getUser();
+    } else if (AuthModule && AuthModule.getCurrentUser()) {
+      user = AuthModule.getCurrentUser();
+    }
+    
     if (!user) {
       throw new Error('User not logged in');
     }
+
+    // Use inGameName for comments if available
+    const displayName = user.gameProfile?.inGameName || user.name;
 
     try {
       const response = await fetch(`${this.ENDPOINT}/comment`, {
@@ -140,7 +187,7 @@ const BuildAPIModule = {
         },
         body: JSON.stringify({
           buildId: buildId,
-          userName: user.name,
+          userName: displayName, // ✅ Use inGameName
           userEmail: user.email,
           userPicture: user.picture,
           text: commentText
@@ -152,7 +199,7 @@ const BuildAPIModule = {
       }
 
       const result = await response.json();
-      console.log('✅ Comment added:', result);
+      console.log('✅ Comment added to build', buildId);
       return result;
     } catch (error) {
       console.error('❌ Error adding comment:', error);
@@ -164,7 +211,14 @@ const BuildAPIModule = {
    * Delete build
    */
   async deleteBuild(buildId) {
-    const user = AuthModule.getCurrentUser();
+    // Check both auth systems
+    let user = null;
+    if (window.sharedAuth && window.sharedAuth.isLoggedIn()) {
+      user = window.sharedAuth.getUser();
+    } else if (AuthModule && AuthModule.getCurrentUser()) {
+      user = AuthModule.getCurrentUser();
+    }
+    
     if (!user) {
       throw new Error('User not logged in');
     }
@@ -182,7 +236,7 @@ const BuildAPIModule = {
       }
 
       const result = await response.json();
-      console.log('✅ Build deleted:', result);
+      console.log('✅ Build deleted:', buildId);
       return result;
     } catch (error) {
       console.error('❌ Error deleting build:', error);
@@ -192,3 +246,4 @@ const BuildAPIModule = {
 };
 
 window.BuildAPIModule = BuildAPIModule;
+console.log('✅ BuildAPIModule loaded with userGameProfile support');
