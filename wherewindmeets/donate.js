@@ -1,10 +1,10 @@
 /**
  * Donation System Module
- * Shows donation popup after 5 minutes of usage
+ * Shows donation popup after specified time
  * Supports multiple payment gateways
  * 
  * @author Where Wind Meet Map
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 const DonationManager = (function() {
@@ -15,8 +15,8 @@ const DonationManager = (function() {
   // ==========================================
   
   const CONFIG = {
-    showDelay: 300000, // 5 minutes in milliseconds (300000ms = 5min)
-    storageKey: 'wwm_donation_shown_session', // sessionStorage key
+    showDelay: 60000, // 15 seconds for testing (300000ms = 5min for production)
+    storageKey: 'wwm_donation_shown',
     modalId: 'donationModal'
   };
 
@@ -27,21 +27,21 @@ const DonationManager = (function() {
   const DONATION_LINKS = {
     paypal: {
       name: 'PayPal',
-      url: 'https://paypal.me/IrvanNazmudin', // ⚠️ GANTI DENGAN URL PAYPAL ANDA
+      url: 'https://paypal.me/IrvanNazmudin',
       icon: '💳',
       color: '#0070ba',
       description: 'International - Credit/Debit Card'
     },
     kofi: {
       name: 'Ko-fi',
-      url: 'https://ko-fi.com/bangonegaming', // ⚠️ GANTI DENGAN URL KO-FI ANDA
+      url: 'https://ko-fi.com/bangonegaming',
       icon: '☕',
       color: '#ff5e5b',
       description: 'International - Coffee Donation'
     },
     trakteer: {
       name: 'Trakteer',
-      url: 'https://trakteer.id/BangOneGaming', // ⚠️ GANTI DENGAN URL TRAKTEER ANDA
+      url: 'https://trakteer.id/BangOneGaming',
       icon: '🎁',
       color: '#e74c3c',
       description: 'Indonesia - All Payment Methods'
@@ -54,53 +54,48 @@ const DonationManager = (function() {
   
   let hasShown = false;
   let timer = null;
+  let donationData = {
+    shown: false,
+    timestamp: null
+  };
 
   // ==========================================
-  // SESSION STORAGE MANAGEMENT
+  // STORAGE MANAGEMENT (In-Memory)
   // ==========================================
 
-  /**
-   * Check if donation was shown in this session
-   * @returns {boolean}
-   */
+  function loadData() {
+    try {
+      const stored = sessionStorage.getItem(CONFIG.storageKey);
+      if (stored) {
+        donationData = JSON.parse(stored);
+      }
+    } catch (e) {
+      console.warn('Failed to load donation data:', e);
+    }
+  }
+
+  function saveData() {
+    try {
+      sessionStorage.setItem(CONFIG.storageKey, JSON.stringify(donationData));
+    } catch (e) {
+      console.warn('Failed to save donation data:', e);
+    }
+  }
+
   function wasShownThisSession() {
-    return sessionStorage.getItem(CONFIG.storageKey) === 'true';
+    return donationData.shown === true;
   }
 
-  /**
-   * Mark donation as shown in this session
-   */
   function markAsShown() {
-    sessionStorage.setItem(CONFIG.storageKey, 'true');
-  }
-
-  // ==========================================
-  // SESSION STORAGE MANAGEMENT
-  // ==========================================
-
-  /**
-   * Check if donation was shown in this session
-   * @returns {boolean}
-   */
-  function wasShownThisSession() {
-    return sessionStorage.getItem(CONFIG.storageKey) === 'true';
-  }
-
-  /**
-   * Mark donation as shown in this session
-   */
-  function markAsShown() {
-    sessionStorage.setItem(CONFIG.storageKey, 'true');
+    donationData.shown = true;
+    donationData.timestamp = Date.now();
+    saveData();
   }
 
   // ==========================================
   // MODAL CREATION
   // ==========================================
 
-  /**
-   * Create donation modal
-   * @returns {HTMLElement}
-   */
   function createModal() {
     const modal = document.createElement('div');
     modal.id = CONFIG.modalId;
@@ -164,10 +159,6 @@ const DonationManager = (function() {
     return modal;
   }
 
-  /**
-   * Create donation buttons HTML
-   * @returns {string}
-   */
   function createDonationButtons() {
     return Object.entries(DONATION_LINKS).map(([key, data]) => `
       <a href="${data.url}" 
@@ -189,9 +180,6 @@ const DonationManager = (function() {
   // MODAL CONTROL
   // ==========================================
 
-  /**
-   * Show donation modal
-   */
   function showModal() {
     if (hasShown || wasShownThisSession()) {
       console.log('💰 Donation popup already shown this session');
@@ -206,27 +194,21 @@ const DonationManager = (function() {
     const modal = createModal();
     document.body.appendChild(modal);
 
-    // Trigger animation
-    setTimeout(() => {
-      modal.classList.add('show');
-    }, 10);
+    // Force reflow and add show class
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        modal.classList.add('show');
+      });
+    });
 
-    // Setup event listeners
     setupEventListeners(modal);
-
-    // Mark as shown in this session
     hasShown = true;
     markAsShown();
 
     console.log('💰 Donation popup shown');
-
-    // Track donation button clicks
     trackDonationClicks(modal);
   }
 
-  /**
-   * Close donation modal
-   */
   function closeModal() {
     const modal = document.getElementById(CONFIG.modalId);
     if (!modal) return;
@@ -246,18 +228,12 @@ const DonationManager = (function() {
   // EVENT HANDLERS
   // ==========================================
 
-  /**
-   * Setup event listeners
-   * @param {HTMLElement} modal - Modal element
-   */
   function setupEventListeners(modal) {
-    // Close button
     const closeBtn = modal.querySelector('#donationCloseBtn');
     if (closeBtn) {
       closeBtn.addEventListener('click', closeModal);
     }
 
-    // Remind later button
     const remindBtn = modal.querySelector('#donationRemindBtn');
     if (remindBtn) {
       remindBtn.addEventListener('click', function() {
@@ -266,26 +242,21 @@ const DonationManager = (function() {
       });
     }
 
-    // Close on overlay click
     modal.addEventListener('click', function(e) {
       if (e.target === modal) {
         closeModal();
       }
     });
 
-    // ESC key to close
-    document.addEventListener('keydown', function escHandler(e) {
+    const escHandler = function(e) {
       if (e.key === 'Escape') {
         closeModal();
         document.removeEventListener('keydown', escHandler);
       }
-    });
+    };
+    document.addEventListener('keydown', escHandler);
   }
 
-  /**
-   * Track donation button clicks
-   * @param {HTMLElement} modal - Modal element
-   */
   function trackDonationClicks(modal) {
     const donationBtns = modal.querySelectorAll('.donation-btn');
     
@@ -294,14 +265,6 @@ const DonationManager = (function() {
         const platform = this.dataset.platform;
         console.log(`💰 User clicked donation: ${platform}`);
         
-        // Optional: Send analytics event here
-        // if (typeof gtag !== 'undefined') {
-        //   gtag('event', 'donation_click', {
-        //     'platform': platform
-        //   });
-        // }
-        
-        // Show thank you message
         setTimeout(() => {
           showThankYouMessage();
         }, 500);
@@ -309,9 +272,6 @@ const DonationManager = (function() {
     });
   }
 
-  /**
-   * Show thank you message after clicking donation
-   */
   function showThankYouMessage() {
     const notification = document.createElement('div');
     notification.className = 'donation-thank-you';
@@ -324,15 +284,17 @@ const DonationManager = (function() {
     
     document.body.appendChild(notification);
     
-    setTimeout(() => {
-      notification.classList.add('show');
-    }, 10);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        notification.classList.add('show');
+      });
+    });
     
     setTimeout(() => {
       notification.classList.remove('show');
       setTimeout(() => {
         if (notification.parentNode) {
-          document.body.removeChild(notification);
+          notification.remove();
         }
       }, 300);
     }, 3000);
@@ -342,35 +304,25 @@ const DonationManager = (function() {
   // PUBLIC API
   // ==========================================
 
-  /**
-   * Initialize donation system
-   */
   function init() {
+    loadData();
     console.log('💰 Donation system initialized');
-    console.log(`💰 Will show donation popup after ${CONFIG.showDelay / 1000 / 60} minutes`);
+    console.log(`💰 Will show donation popup after ${CONFIG.showDelay / 1000} seconds`);
 
-    // Check if already shown in this session
     if (wasShownThisSession()) {
       console.log('💰 Donation already shown this session, skipping');
       return;
     }
 
-    // Set timer to show modal after delay
     timer = setTimeout(() => {
       showModal();
     }, CONFIG.showDelay);
   }
 
-  /**
-   * Manually show donation modal (for testing or manual trigger)
-   */
   function show() {
     showModal();
   }
 
-  /**
-   * Cancel scheduled donation popup
-   */
   function cancel() {
     if (timer) {
       clearTimeout(timer);
@@ -379,13 +331,21 @@ const DonationManager = (function() {
     }
   }
 
-  /**
-   * Reset donation state (for testing)
-   */
   function reset() {
     sessionStorage.removeItem(CONFIG.storageKey);
+    donationData = { shown: false, timestamp: null };
     hasShown = false;
     console.log('💰 Donation state reset');
+  }
+
+  // ==========================================
+  // AUTO-INIT ON LOAD
+  // ==========================================
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
 
   // ==========================================
@@ -401,10 +361,5 @@ const DonationManager = (function() {
 
 })();
 
-// ==========================================
-// GLOBAL EXPORTS
-// ==========================================
-
 window.DonationManager = DonationManager;
-
 console.log('✅ DonationManager module loaded');

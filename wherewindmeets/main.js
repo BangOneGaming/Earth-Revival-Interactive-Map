@@ -165,28 +165,34 @@
       initializeIcons();
       console.log("%c✓ Icons initialized", "color:#4CAF50;");
 
-      // Initialize map
-      window.map = initializeMap();
-      console.log("%c✓ Map initialized", "color:#4CAF50;");
+// Initialize map
+window.map = initializeMap();
+console.log("%c✓ Map initialized", "color:#4CAF50;");
 
-      // Initialize UndergroundManager (Popup Version)
-      if (typeof UndergroundManager !== "undefined") {
-        console.log("%c⏳ Initializing UndergroundManager...", "color:#02a0c5;font-weight:bold;");
-        await UndergroundManager.init(window.map);
-        console.log("%c✓ UndergroundManager initialized", "color:#4CAF50;");
-      }
+// Initialize UndergroundManager (Popup Version)
+if (typeof UndergroundManager !== "undefined") {
+  console.log("%c⏳ Initializing UndergroundManager...", "color:#02a0c5;font-weight:bold;");
+  await UndergroundManager.init(window.map);
+  console.log("%c✓ UndergroundManager initialized", "color:#4CAF50;");
+}
 
-      // Initialize marker manager (includes filter)
-      if (typeof MarkerManager !== "undefined" && MarkerManager.init) {
-        MarkerManager.init(window.map);
-        console.log("%c✓ Marker manager initialized", "color:#4CAF50;");
-      }
+// Initialize marker manager (includes filter)
+if (typeof MarkerManager !== "undefined" && MarkerManager.init) {
+  MarkerManager.init(window.map);
+  console.log("%c✓ Marker manager initialized", "color:#4CAF50;");
+}
 
-      // ✅ Initialize MarkerImageHandler SETELAH MarkerManager
-      if (typeof MarkerImageHandler !== "undefined" && MarkerImageHandler.init) {
-        MarkerImageHandler.init();
-        console.log("%c✓ MarkerImageHandler initialized", "color:#4CAF50;");
-      }
+// ✅ TAMBAHKAN INI - Initialize RegionLabelManager
+if (typeof RegionLabelManager !== "undefined" && RegionLabelManager.init) {
+  RegionLabelManager.init(window.map);
+  console.log("%c✓ RegionLabelManager initialized", "color:#4CAF50;");
+}
+
+// ✅ Initialize MarkerImageHandler SETELAH MarkerManager
+if (typeof MarkerImageHandler !== "undefined" && MarkerImageHandler.init) {
+  MarkerImageHandler.init();
+  console.log("%c✓ MarkerImageHandler initialized", "color:#4CAF50;");
+}
 
       // Initialize dev tools if available
       if (typeof createDevToolsPanel === "function") {

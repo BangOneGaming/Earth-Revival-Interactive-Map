@@ -1,14 +1,15 @@
 /**
- * Settings Module - Enhanced Version with Hidden Marker Feature
- * Modular system for user settings with reset visited markers and hidden marker features
+ * Settings Module - Enhanced Version with Hidden Marker & Region Label Features
+ * Modular system for user settings with reset visited markers, hidden marker, and region label toggle
  * 
  * Dependencies:
  * - login.js (for isLoggedIn, getUserToken)
  * - penanda.js (for MarkerManager)
+ * - regionlabel.js (for RegionLabelManager)
  * - Existing loadVisitedMarkersFromServer() function
  * 
  * @author Where Wind Meet Map
- * @version 1.2.0 - Added Hidden Marker feature
+ * @version 1.3.0 - Added Region Label Toggle feature
  */
 
 const SettingsManager = (function() {
@@ -26,7 +27,8 @@ const SettingsManager = (function() {
   const CONFIG = {
     containerId: 'settingsContainer',
     buttonId: 'settingsButton',
-    hiddenMarkerKey: 'hideVisitedMarkers' // localStorage key
+    hiddenMarkerKey: 'hideVisitedMarkers', // localStorage key
+    showRegionLabelsKey: 'showRegionLabels' // localStorage key (NEW!)
   };
 
   // ==========================================
@@ -79,7 +81,11 @@ const SettingsManager = (function() {
     const content = document.createElement('div');
     content.className = 'settings-content';
 
-    // Hidden Marker Section (NEW!)
+    // Region Label Section (NEW!)
+    const regionLabelSection = createRegionLabelSection();
+    content.appendChild(regionLabelSection);
+
+    // Hidden Marker Section
     const hiddenMarkerSection = createHiddenMarkerSection();
     content.appendChild(hiddenMarkerSection);
 
@@ -102,7 +108,42 @@ const SettingsManager = (function() {
   }
 
   /**
-   * Create hidden marker section (NEW!)
+   * Create region label section (NEW!)
+   * @returns {HTMLElement}
+   */
+  function createRegionLabelSection() {
+    const section = document.createElement('div');
+    section.className = 'settings-section';
+
+    // Default: true (tampil)
+    const showLabels = localStorage.getItem(CONFIG.showRegionLabelsKey) !== 'false';
+
+    section.innerHTML = `
+      <div class="settings-section-header">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <h4>Show Region Labels</h4>
+      </div>
+      <p class="settings-description">
+        Display area and region names on the map. Labels will adjust based on zoom level.
+      </p>
+      <label class="settings-toggle">
+        <input type="checkbox" id="showRegionLabelsCheckbox" ${showLabels ? 'checked' : ''}>
+        <span class="settings-toggle-slider"></span>
+        <span class="settings-toggle-label">${showLabels ? 'Visible' : 'Hidden'}</span>
+      </label>
+    `;
+
+    const checkbox = section.querySelector('#showRegionLabelsCheckbox');
+    checkbox.addEventListener('change', handleRegionLabelToggle);
+
+    return section;
+  }
+
+  /**
+   * Create hidden marker section
    * @returns {HTMLElement}
    */
   function createHiddenMarkerSection() {
@@ -222,11 +263,66 @@ const SettingsManager = (function() {
   }
 
   // ==========================================
+  // PRIVATE METHODS - REGION LABEL LOGIC (NEW!)
+  // ==========================================
+
+  /**
+   * Handle region label toggle (NEW!)
+   * @param {Event} e - Change event
+   */
+  function handleRegionLabelToggle(e) {
+    const isEnabled = e.target.checked;
+    
+    // Save to localStorage
+    localStorage.setItem(CONFIG.showRegionLabelsKey, isEnabled.toString());
+    
+    // Update label
+    const label = e.target.parentElement.querySelector('.settings-toggle-label');
+    if (label) {
+      label.textContent = isEnabled ? 'Visible' : 'Hidden';
+    }
+    
+    // Apply to RegionLabelManager
+    applyRegionLabelSetting(isEnabled);
+    
+    // Show notification
+    showNotification(
+      isEnabled 
+        ? 'Region labels are now visible' 
+        : 'Region labels are now hidden',
+      'success'
+    );
+    
+    console.log(`🔄 Region label setting: ${isEnabled ? 'VISIBLE' : 'HIDDEN'}`);
+  }
+
+  /**
+   * Apply region label setting (NEW!)
+   * @param {boolean} show - Whether to show labels
+   */
+  function applyRegionLabelSetting(show) {
+    if (!window.RegionLabelManager) {
+      console.warn('⚠️ RegionLabelManager not available');
+      return;
+    }
+    
+    if (show) {
+      // Show labels (will re-init if needed)
+      window.RegionLabelManager.show();
+      console.log('✅ Region labels shown');
+    } else {
+      // Hide labels (without destroying map reference)
+      window.RegionLabelManager.hide();
+      console.log('✅ Region labels hidden');
+    }
+  }
+
+  // ==========================================
   // PRIVATE METHODS - HIDDEN MARKER LOGIC
   // ==========================================
 
   /**
-   * Handle hidden marker toggle (NEW!)
+   * Handle hidden marker toggle
    * @param {Event} e - Change event
    */
   function handleHiddenMarkerToggle(e) {
@@ -256,7 +352,7 @@ const SettingsManager = (function() {
   }
 
   /**
-   * Apply hidden marker setting to all visited markers (NEW!)
+   * Apply hidden marker setting to all visited markers
    */
   function applyHiddenMarkerSetting() {
     const isHidden = localStorage.getItem(CONFIG.hiddenMarkerKey) === 'true';
@@ -651,7 +747,7 @@ const SettingsManager = (function() {
   }
 
   /**
-   * Get hidden marker setting (NEW!)
+   * Get hidden marker setting
    * @returns {boolean}
    */
   function isHiddenMarkerEnabled() {
@@ -659,11 +755,29 @@ const SettingsManager = (function() {
   }
 
   /**
-   * Apply hidden marker setting (PUBLIC - NEW!)
+   * Get region label setting (NEW!)
+   * @returns {boolean}
+   */
+  function isRegionLabelEnabled() {
+    // Default: true (tampil)
+    return localStorage.getItem(CONFIG.showRegionLabelsKey) !== 'false';
+  }
+
+  /**
+   * Apply hidden marker setting (PUBLIC)
    * Can be called from outside after markers are loaded
    */
   function applyHiddenMarkerSettingPublic() {
     applyHiddenMarkerSetting();
+  }
+
+  /**
+   * Apply region label setting (PUBLIC - NEW!)
+   * Can be called from outside after RegionLabelManager is loaded
+   */
+  function applyRegionLabelSettingPublic() {
+    const show = isRegionLabelEnabled();
+    applyRegionLabelSetting(show);
   }
 
   // ==========================================
@@ -677,8 +791,10 @@ const SettingsManager = (function() {
     close,
     destroy,
     isOpen: isSettingsOpen,
-    isHiddenMarkerEnabled, // NEW!
-    applyHiddenMarkerSetting: applyHiddenMarkerSettingPublic // NEW!
+    isHiddenMarkerEnabled,
+    isRegionLabelEnabled, // NEW!
+    applyHiddenMarkerSetting: applyHiddenMarkerSettingPublic,
+    applyRegionLabelSetting: applyRegionLabelSettingPublic // NEW!
   };
 
 })();
@@ -689,4 +805,4 @@ const SettingsManager = (function() {
 
 window.SettingsManager = SettingsManager;
 
-console.log('✅ SettingsManager module loaded (Enhanced v1.2.0 with Hidden Marker)');
+console.log('✅ SettingsManager module loaded (Enhanced v1.3.0 with Region Label Toggle)');

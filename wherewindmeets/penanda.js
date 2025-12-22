@@ -765,7 +765,7 @@ addMarkersBatch(markers, bounds) {
 
 
 
-  /**
+/**
    * Create and add marker
    */
   createAndAddMarker(markerData, lat, lng, markerKey) {
@@ -789,8 +789,7 @@ addMarkersBatch(markers, bounds) {
     const popupContent = this.createPopupContent(markerData);
 
     const leafletMarker = L.marker([lat, lng], { icon: finalIcon })
-      .bindPopup(popupContent)
-      .addTo(this.map);
+      .bindPopup(popupContent);
 
     if (needsBadge) {
       leafletMarker.on('click', () => {
@@ -800,9 +799,31 @@ addMarkersBatch(markers, bounds) {
       });
     }
 
+    // ✅ Check visited status and hidden marker setting
     const visitedMarkers = JSON.parse(localStorage.getItem("visitedMarkers") || "{}");
-    if (visitedMarkers[markerKey]) {
-      leafletMarker.setOpacity(0.5);
+    const isVisited = visitedMarkers[markerKey] || false;
+    const isHiddenEnabled = window.SettingsManager && window.SettingsManager.isHiddenMarkerEnabled();
+    
+    if (isVisited) {
+      if (isHiddenEnabled) {
+        // Don't add to map if visited and hidden mode is enabled
+        console.log(`🙈 Skipping marker ${markerKey} (visited + hidden mode)`);
+        // Still store in activeMarkers for reference, but don't add to map
+        leafletMarker.categoryId = markerData.category_id;
+        leafletMarker.markerKey = markerKey;
+        leafletMarker.floor = markerFloor;
+        leafletMarker.specialIcon = specialIcon;
+        leafletMarker.hasBadge = needsBadge;
+        this.activeMarkers[markerKey] = leafletMarker;
+        return; // Don't add to map
+      } else {
+        // Add to map but with reduced opacity
+        leafletMarker.addTo(this.map);
+        leafletMarker.setOpacity(0.5);
+      }
+    } else {
+      // Not visited - add normally
+      leafletMarker.addTo(this.map);
     }
 
     leafletMarker.categoryId = markerData.category_id;
