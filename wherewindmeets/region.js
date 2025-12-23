@@ -18,7 +18,8 @@ const LABEL_CONFIG = {
   // Zoom level 3–4: Major regions (PALING BESAR)
   zoom_3_4: [
     { name: 'Kaifeng', lat: 159.1016220096778, lng: 167.6629340648651, size: 60 },
-    { name: 'Qinghe',  lat: 130.2765, lng: 187.7205, size: 60 }
+    { name: 'Qinghe',  lat: 130.2765, lng: 187.7205, size: 60 },
+    { name: 'Bujian Mountain',  lat: 102.05143525952718, lng: 196.66018867492676, size: 60 }
   ],
 
 // Zoom level 5: Sub-regions (SEDANG)
