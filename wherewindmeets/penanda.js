@@ -44,7 +44,7 @@ const filterGroupConfig = {
   combat: {
     title: 'Combat Challenge',
     icon: '',
-    categories: [25, 26, 27]
+    categories: [25, 26, 27, 39]
   },
   materialart: {
     title: 'Material Art',
@@ -366,6 +366,7 @@ getAllMarkers() {
     window.tehnik,
     window.innerwaylist,
     window.npc,
+    window.kemah,
     window.terbaru
   ];
 
@@ -766,109 +767,140 @@ addMarkersBatch(markers, bounds) {
 
 
 /**
-   * Create and add marker
-   */
-  createAndAddMarker(markerData, lat, lng, markerKey) {
-    const specialIcon = markerData.special_icon || null;
-    const markerFloor = markerData.floor || '';
+ * UPDATED: createAndAddMarker di MarkerManager
+ * Replace fungsi yang ada dengan ini
+ */
 
-    const needsBadge = typeof UndergroundManager !== 'undefined'
-      ? UndergroundManager.needsFloorBadge(markerFloor)
-      : false;
+createAndAddMarker(markerData, lat, lng, markerKey) {
+  const specialIcon = markerData.special_icon || null;
+  const markerFloor = markerData.floor || '';
 
-    const baseIcon = typeof getIconByCategoryWithSpecial !== 'undefined'
-      ? getIconByCategoryWithSpecial(markerData.category_id, specialIcon)
-      : getIconByCategory(markerData.category_id);
+  const needsBadge = typeof UndergroundManager !== 'undefined'
+    ? UndergroundManager.needsFloorBadge(markerFloor)
+    : false;
 
-    // Add badge if needed
-    let finalIcon = baseIcon;
-    if (needsBadge) {
-      finalIcon = this.createIconWithBadge(baseIcon, markerFloor);
-    }
-
-    const popupContent = this.createPopupContent(markerData);
-
-    const leafletMarker = L.marker([lat, lng], { icon: finalIcon })
-      .bindPopup(popupContent);
-
-    if (needsBadge) {
-      leafletMarker.on('click', () => {
-        this.map.closePopup();
-        UndergroundManager?.setActiveFloor(markerFloor);
-        this.showFloorSwitchNotification(markerFloor);
-      });
-    }
-
-    // ✅ Check visited status and hidden marker setting
-    const visitedMarkers = JSON.parse(localStorage.getItem("visitedMarkers") || "{}");
-    const isVisited = visitedMarkers[markerKey] || false;
-    const isHiddenEnabled = window.SettingsManager && window.SettingsManager.isHiddenMarkerEnabled();
-    
-    if (isVisited) {
-      if (isHiddenEnabled) {
-        // Don't add to map if visited and hidden mode is enabled
-        console.log(`🙈 Skipping marker ${markerKey} (visited + hidden mode)`);
-        // Still store in activeMarkers for reference, but don't add to map
-        leafletMarker.categoryId = markerData.category_id;
-        leafletMarker.markerKey = markerKey;
-        leafletMarker.floor = markerFloor;
-        leafletMarker.specialIcon = specialIcon;
-        leafletMarker.hasBadge = needsBadge;
-        this.activeMarkers[markerKey] = leafletMarker;
-        return; // Don't add to map
-      } else {
-        // Add to map but with reduced opacity
-        leafletMarker.addTo(this.map);
-        leafletMarker.setOpacity(0.5);
-      }
+  // Determine initial size based on current zoom
+  const currentZoom = this.map.getZoom();
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  
+  let iconSize;
+  if (isMobile) {
+    if (currentZoom < 4) {
+      iconSize = [24, 24];
+    } else if (currentZoom < 5) {
+      iconSize = [28, 28];
+    } else if (currentZoom < 6) {
+      iconSize = [32, 32];
     } else {
-      // Not visited - add normally
-      leafletMarker.addTo(this.map);
+      iconSize = [38, 38];
     }
+  } else {
+    if (currentZoom < 4) {
+      iconSize = [32, 32];
+    } else if (currentZoom < 5) {
+      iconSize = [40, 40];
+    } else if (currentZoom < 6) {
+      iconSize = [48, 48];
+    } else {
+      iconSize = [56, 56];
+    }
+  }
 
-    leafletMarker.categoryId = markerData.category_id;
-    leafletMarker.markerKey = markerKey;
-    leafletMarker.floor = markerFloor;
-    leafletMarker.specialIcon = specialIcon;
-    leafletMarker.hasBadge = needsBadge;
+  // Create icon with correct initial size
+  const baseIcon = typeof getIconByCategoryWithSpecial !== 'undefined'
+    ? getIconByCategoryWithSpecial(markerData.category_id, specialIcon, iconSize)
+    : getIconByCategory(markerData.category_id, iconSize);
 
-    this.activeMarkers[markerKey] = leafletMarker;
-  },
+  // Add badge if needed
+  let finalIcon = baseIcon;
+  if (needsBadge) {
+    finalIcon = this.createIconWithBadge(baseIcon, markerFloor, iconSize);
+  }
 
-  /**
-   * Create icon with floor badge
-   */
-  createIconWithBadge(baseIcon, markerFloor) {
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    const baseHtml = baseIcon.options.html || "";
-    const baseSize = baseIcon.options.iconSize || (isMobile ? [32, 32] : [48, 48]);
-    const badgeSize = Math.floor(baseSize[0] * 0.3);
+  const popupContent = this.createPopupContent(markerData);
 
-    return L.divIcon({
-      html: `
-        <div style="position:relative;width:${baseSize[0]}px;height:${baseSize[1]}px;">
-          ${baseHtml}
-          <img src="${ICON_BASE_URL}layericon.png"
-            style="
-              position:absolute;
-              bottom:0;
-              right:0;
-              width:${badgeSize}px;
-              height:${badgeSize}px;
-              border:2px solid rgba(0,0,0,0.5);
-              border-radius:50%;
-              background:rgba(0,0,0,0.7);
-              box-shadow:0 2px 4px rgba(0,0,0,0.5);
-              z-index:10;
-            ">
-        </div>
-      `,
-      iconSize: baseSize,
-      iconAnchor: baseIcon.options.iconAnchor,
-      popupAnchor: baseIcon.options.popupAnchor,
-      className: "no-default-icon-bg marker-with-badge"
+  const leafletMarker = L.marker([lat, lng], { icon: finalIcon })
+    .bindPopup(popupContent);
+
+  if (needsBadge) {
+    leafletMarker.on('click', () => {
+      this.map.closePopup();
+      UndergroundManager?.setActiveFloor(markerFloor);
+      this.showFloorSwitchNotification(markerFloor);
     });
-  },
+  }
+
+  // ✅ Check visited status and hidden marker setting
+  const visitedMarkers = JSON.parse(localStorage.getItem("visitedMarkers") || "{}");
+  const isVisited = visitedMarkers[markerKey] || false;
+  const isHiddenEnabled = window.SettingsManager && window.SettingsManager.isHiddenMarkerEnabled();
+  
+  if (isVisited) {
+    if (isHiddenEnabled) {
+      // Don't add to map if visited and hidden mode is enabled
+      console.log(`🙈 Skipping marker ${markerKey} (visited + hidden mode)`);
+      
+      // ✅ IMPORTANT: Still store metadata for resize
+      leafletMarker.categoryId = markerData.category_id;
+      leafletMarker.markerKey = markerKey;
+      leafletMarker.floor = markerFloor;
+      leafletMarker.specialIcon = specialIcon;
+      leafletMarker.hasBadge = needsBadge;
+      
+      this.activeMarkers[markerKey] = leafletMarker;
+      return; // Don't add to map
+    } else {
+      // Add to map but with reduced opacity
+      leafletMarker.addTo(this.map);
+      leafletMarker.setOpacity(0.5);
+    }
+  } else {
+    // Not visited - add normally
+    leafletMarker.addTo(this.map);
+  }
+
+  // ✅ Store metadata for later resize
+  leafletMarker.categoryId = markerData.category_id;
+  leafletMarker.markerKey = markerKey;
+  leafletMarker.floor = markerFloor;
+  leafletMarker.specialIcon = specialIcon;
+  leafletMarker.hasBadge = needsBadge;
+
+  this.activeMarkers[markerKey] = leafletMarker;
+},
+
+/**
+ * Updated: createIconWithBadge with custom size support
+ */
+createIconWithBadge(baseIcon, markerFloor, iconSize) {
+  const baseHtml = baseIcon.options.html || "";
+  const badgeSize = Math.floor(iconSize[0] * 0.3);
+
+  return L.divIcon({
+    html: `
+      <div style="position:relative;width:${iconSize[0]}px;height:${iconSize[1]}px;">
+        ${baseHtml}
+        <img src="${ICON_BASE_URL}layericon.png"
+          style="
+            position:absolute;
+            bottom:0;
+            right:0;
+            width:${badgeSize}px;
+            height:${badgeSize}px;
+            border:2px solid rgba(0,0,0,0.5);
+            border-radius:50%;
+            background:rgba(0,0,0,0.7);
+            box-shadow:0 2px 4px rgba(0,0,0,0.5);
+            z-index:10;
+          ">
+      </div>
+    `,
+    iconSize: iconSize,
+    iconAnchor: [iconSize[0] / 2, iconSize[1]],
+    popupAnchor: [0, -iconSize[1]],
+    className: "no-default-icon-bg marker-with-badge"
+  });
+},
 
   /**
    * Show notification when switching floor

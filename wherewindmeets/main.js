@@ -1,5 +1,5 @@
 /**
- * Main application entry point
+ * Main application entry point - WITH INSTANT ICON RESIZER
  */
 (function() {
   'use strict';
@@ -11,13 +11,8 @@
     const overlay = document.getElementById('preloadOverlay');
     if (overlay) overlay.style.display = 'block';
     
-    // Start emotion flip animation (CEPAT!)
     startEmotionFlip();
-    
-    // Start text changing
     startTextAnimation();
-    
-    // Start loading bar animation
     startLoadingBar();
   }
 
@@ -27,7 +22,7 @@
   }
 
   /**
-   * Emotion FLIP 3D (Flip selesai DULU, baru ganti gambar)
+   * Emotion FLIP 3D
    */
   function startEmotionFlip() {
     const emotions = [
@@ -42,16 +37,11 @@
     if (!emotionImg) return;
 
     let currentIndex = 0;
-
-    // Set gambar pertama
     emotionImg.src = emotions[0];
 
-    // Ganti gambar setiap 800ms (flip 600ms + delay 200ms)
     const flipInterval = setInterval(() => {
-      // Trigger animasi flip 3D
       emotionImg.classList.add('flip-animation');
       
-      // TUNGGU flip selesai (600ms), BARU ganti gambar
       setTimeout(() => {
         emotionImg.classList.remove('flip-animation');
         currentIndex = (currentIndex + 1) % emotions.length;
@@ -60,23 +50,20 @@
       
     }, 800);
 
-    // Stop animasi saat loading selesai
     setTimeout(() => {
       clearInterval(flipInterval);
     }, 5000);
   }
 
   /**
-   * Text animation (ganti text di tengah durasi - 2.5 detik)
+   * Text animation
    */
   function startTextAnimation() {
     const textElement = document.getElementById('preloadMessage');
     if (!textElement) return;
 
-    // Text pertama
     textElement.textContent = 'Better Experience With Mobile Desktop mode';
 
-    // Ganti text di tengah loading (2.5 detik)
     setTimeout(() => {
       textElement.style.animation = 'preloadFadeOut 0.4s ease-out';
       
@@ -88,7 +75,7 @@
   }
 
   /**
-   * Loading bar animation (0% -> 100% dalam 5 detik)
+   * Loading bar animation
    */
   function startLoadingBar() {
     const barFill = document.getElementById('preloadBarFill');
@@ -115,7 +102,7 @@
   }
 
   /**
-   * Simulate progress delay (total 5 detik)
+   * Simulate progress delay
    */
   function simulateFinalLoading() {
     return new Promise(resolve => {
@@ -128,7 +115,37 @@
   }
 
   /**
-   * Initialize the application
+   * ✅ VALIDATION: Check if marker data is actually loaded
+   */
+  function validateMarkerData() {
+    const sources = [
+      'chest', 'batutele', 'strangecollection', 'yellow', 'gua', 
+      'blue', 'red', 'peninggalan', 'kucing', 'ketidakadilan', 
+      'petualangan', 'meong', 'pengetahuan', 'cerita', 'bulan', 
+      'tidakterhitung', 'berharga', 'kulinari', 'spesial', 'wc', 
+      'penyembuhan', 'buatteman', 'perdebatan', 'buku', 'penjaga', 
+      'benteng', 'bos', 'jurus', 'pemancing', 'mabuk', 'kartu', 
+      'panah', 'melodi', 'tebakan', 'gulat', 'tehnik', 'innerwaylist',
+      'npc', 'terbaru'
+    ];
+
+    let totalMarkers = 0;
+    const missingData = [];
+
+    sources.forEach(source => {
+      if (!window[source]) {
+        missingData.push(source);
+      } else {
+        const count = Object.keys(window[source]).length;
+        totalMarkers += count;
+      }
+    });
+
+    return totalMarkers > 0;
+  }
+
+  /**
+   * ✅ SAFE INIT: Initialize with proper error handling
    */
   async function initApp() {
     console.log("%c🗺️ Initializing Map Application...", "color:#4CAF50;font-weight:bold;");
@@ -136,77 +153,172 @@
     showPreload();
 
     try {
-      // Check if required functions are available
-      if (typeof initializeIcons !== "function") throw new Error("initializeIcons not found");
-      if (typeof initializeMap !== "function") throw new Error("initializeMap not found");
+      // Check required functions
+      if (typeof initializeIcons !== "function") {
+        throw new Error("initializeIcons not found");
+      }
+      if (typeof initializeMap !== "function") {
+        throw new Error("initializeMap not found");
+      }
 
-      // ✅ STEP 1: Load DATA MARKER dulu dari API
+      // ============================================
+      // STEP 1: Load MARKER DATA (CRITICAL)
+      // ============================================
+      let dataLoadSuccess = false;
+      
       if (typeof DataLoader !== "undefined" && DataLoader.init) {
-        console.log("%c⏳ [1/2] Loading marker data from API...", "color:#FFA500;font-weight:bold;");
-        await DataLoader.init();
-        console.log("%c✓ [1/2] Marker data loaded successfully", "color:#4CAF50;font-weight:bold;");
+        console.log("%c⏳ [1/3] Loading marker data from API...", "color:#FFA500;font-weight:bold;");
+        
+        try {
+          await DataLoader.init();
+          
+          // ✅ VALIDATE DATA
+          console.log("%c🔍 Validating loaded data...", "color:#02a0c5;");
+          dataLoadSuccess = validateMarkerData();
+          
+          if (dataLoadSuccess) {
+            console.log("%c✓ [1/3] Marker data loaded successfully", "color:#4CAF50;font-weight:bold;");
+          } else {
+            throw new Error("No marker data found after loading");
+          }
+          
+        } catch (error) {
+          console.error("%c❌ Failed to load marker data:", "color:red;font-weight:bold;", error);
+          throw new Error(`DataLoader failed: ${error.message}`);
+        }
       } else {
-        console.warn("%c⚠️ DataLoader not found, using static data files", "color:orange;");
+        console.warn("%c⚠️ DataLoader not found", "color:orange;");
+        
+        // Check if static data exists
+        dataLoadSuccess = validateMarkerData();
+        
+        if (!dataLoadSuccess) {
+          throw new Error("No marker data available (neither API nor static files)");
+        }
       }
 
-      // ✅ STEP 2: Load DESCRIPTION data dan merge (SETELAH marker data ready)
+      // ============================================
+      // STEP 2: Load DESCRIPTION DATA (OPTIONAL)
+      // ============================================
       if (typeof DescriptionLoader !== "undefined") {
-        console.log("%c⏳ [2/2] Loading descriptions...", "color:#02a0c5;font-weight:bold;");
-        await DescriptionLoader.init();
-        console.log("%c✓ [2/2] Descriptions loaded", "color:#4CAF50;");
+        console.log("%c⏳ [2/3] Loading descriptions...", "color:#02a0c5;font-weight:bold;");
         
-        // Merge descriptions ke marker data
-        console.log("%c⏳ Merging descriptions into markers...", "color:#02a0c5;");
-        DescriptionLoader.mergeAllDescriptions();
-        console.log("%c✓ Descriptions merged successfully", "color:#4CAF50;font-weight:bold;");
+        try {
+          await DescriptionLoader.init();
+          console.log("%c✓ [2/3] Descriptions loaded", "color:#4CAF50;");
+          
+          // ✅ ONLY MERGE IF DATA IS VALID
+          if (dataLoadSuccess) {
+            console.log("%c⏳ Merging descriptions into markers...", "color:#02a0c5;");
+            DescriptionLoader.mergeAllDescriptions();
+            console.log("%c✓ Descriptions merged successfully", "color:#4CAF50;font-weight:bold;");
+          } else {
+            console.warn("%c⚠️ Skipping description merge (no marker data)", "color:orange;");
+          }
+          
+        } catch (error) {
+          console.warn("%c⚠️ Description loading failed (non-critical):", "color:orange;", error);
+          // Continue without descriptions
+        }
       }
+
+      // ============================================
+      // STEP 3: Initialize MAP & UI
+      // ============================================
+      console.log("%c⏳ [3/3] Initializing map interface...", "color:#02a0c5;font-weight:bold;");
 
       // Initialize icons
       initializeIcons();
-      console.log("%c✓ Icons initialized", "color:#4CAF50;");
+      console.log("%c  ✓ Icons initialized", "color:#4CAF50;");
 
-// Initialize map
-window.map = initializeMap();
-console.log("%c✓ Map initialized", "color:#4CAF50;");
+      // Initialize map
+      window.map = initializeMap();
+      console.log("%c  ✓ Map initialized", "color:#4CAF50;");
 
-// Initialize UndergroundManager (Popup Version)
-if (typeof UndergroundManager !== "undefined") {
-  console.log("%c⏳ Initializing UndergroundManager...", "color:#02a0c5;font-weight:bold;");
-  await UndergroundManager.init(window.map);
-  console.log("%c✓ UndergroundManager initialized", "color:#4CAF50;");
-}
-
-// Initialize marker manager (includes filter)
-if (typeof MarkerManager !== "undefined" && MarkerManager.init) {
-  MarkerManager.init(window.map);
-  console.log("%c✓ Marker manager initialized", "color:#4CAF50;");
-}
-
-// ✅ TAMBAHKAN INI - Initialize RegionLabelManager
-if (typeof RegionLabelManager !== "undefined" && RegionLabelManager.init) {
-  RegionLabelManager.init(window.map);
-  console.log("%c✓ RegionLabelManager initialized", "color:#4CAF50;");
-}
-
-// ✅ Initialize MarkerImageHandler SETELAH MarkerManager
-if (typeof MarkerImageHandler !== "undefined" && MarkerImageHandler.init) {
-  MarkerImageHandler.init();
-  console.log("%c✓ MarkerImageHandler initialized", "color:#4CAF50;");
-}
-
-      // Initialize dev tools if available
-      if (typeof createDevToolsPanel === "function") {
-        createDevToolsPanel(window.map);
-        console.log("%c✓ Dev tools initialized", "color:#4CAF50;");
+      // Initialize UndergroundManager
+      if (typeof UndergroundManager !== "undefined") {
+        try {
+          await UndergroundManager.init(window.map);
+          console.log("%c  ✓ UndergroundManager initialized", "color:#4CAF50;");
+        } catch (error) {
+          console.warn("%c  ⚠️ UndergroundManager failed:", "color:orange;", error);
+        }
       }
 
-      // Tunggu delay loading animation selesai (5 detik)
+      // ✅ CRITICAL: Initialize MarkerManager with validation
+      if (typeof MarkerManager !== "undefined" && MarkerManager.init) {
+        try {
+          // Verify data is available before initializing
+          const markerCount = MarkerManager.getAllMarkers().length;
+          
+          if (markerCount === 0) {
+            console.warn("%c  ⚠️ Warning: MarkerManager found 0 markers", "color:orange;");
+          }
+          
+          MarkerManager.init(window.map);
+          console.log("%c  ✓ Marker manager initialized (" + markerCount + " markers)", "color:#4CAF50;");
+          
+          // ✅ INITIALIZE INSTANT ICON RESIZER HERE
+          if (typeof InstantIconResizer !== "undefined") {
+            console.log("%c  ⏳ Initializing InstantIconResizer...", "color:#02a0c5;");
+            InstantIconResizer.init(window.map);
+            console.log("%c  ✓ InstantIconResizer initialized", "color:#4CAF50;");
+          } else {
+            console.warn("%c  ⚠️ InstantIconResizer not found", "color:orange;");
+          }
+          
+        } catch (error) {
+          console.error("%c  ❌ MarkerManager failed:", "color:red;", error);
+          throw error;
+        }
+      } else {
+        throw new Error("MarkerManager not found or missing init method");
+      }
+
+      // Initialize RegionLabelManager
+      if (typeof RegionLabelManager !== "undefined" && RegionLabelManager.init) {
+        try {
+          RegionLabelManager.init(window.map);
+          console.log("%c  ✓ RegionLabelManager initialized", "color:#4CAF50;");
+        } catch (error) {
+          console.warn("%c  ⚠️ RegionLabelManager failed:", "color:orange;", error);
+        }
+      }
+
+      // Initialize MarkerImageHandler
+      if (typeof MarkerImageHandler !== "undefined" && MarkerImageHandler.init) {
+        try {
+          MarkerImageHandler.init();
+          console.log("%c  ✓ MarkerImageHandler initialized", "color:#4CAF50;");
+        } catch (error) {
+          console.warn("%c  ⚠️ MarkerImageHandler failed:", "color:orange;", error);
+        }
+      }
+
+      // Initialize dev tools
+      if (typeof createDevToolsPanel === "function") {
+        try {
+          createDevToolsPanel(window.map);
+          console.log("%c  ✓ Dev tools initialized", "color:#4CAF50;");
+        } catch (error) {
+          console.warn("%c  ⚠️ Dev tools failed:", "color:orange;", error);
+        }
+      }
+
+      console.log("%c✓ [3/3] Map interface ready", "color:#4CAF50;font-weight:bold;");
+
+      // Wait for loading animation
       await simulateFinalLoading();
 
-      console.log("%c✅ Application ready!", "color:lime;font-weight:bold;font-size:16px;");
+      console.log("%c✅ APPLICATION READY!", "color:lime;font-weight:bold;font-size:16px;");
+      
     } catch (error) {
-      console.error("%c❌ Initialization error:", "color:red;font-weight:bold;", error);
+      console.error("%c❌ CRITICAL ERROR:", "color:red;font-weight:bold;font-size:16px;", error);
       console.error("Stack trace:", error.stack);
+      
+      // Show error to user
+      alert(`Failed to initialize map:\n${error.message}\n\nPlease refresh the page or contact support.`);
+      
     } finally {
       hidePreload();
     }

@@ -46,6 +46,7 @@ const DATA_ENDPOINTS = {
   mysticlist: `${API_BASE_URL}/mysticlist`,
   innerwayslist: `${API_BASE_URL}/innerwayslist`,
   npc: `${API_BASE_URL}/npclist`,
+  kemah: `${API_BASE_URL}/camp`,
   terbaru: `${API_BASE_URL}/terbaru` // ✅ Tambah endpoint baru
 };
 
@@ -89,6 +90,7 @@ const ENDPOINT_TO_GLOBAL = {
   mysticlist: 'tehnik',
   innerwayslist: 'innerwaylist',
   npc: 'npc',
+  kemah: 'kemah',
   terbaru: 'terbaru' // ✅ Tambah mapping global
 };
 

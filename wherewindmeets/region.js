@@ -295,7 +295,7 @@ function createLabelIcon(text, fontSize) {
   function addLabels(labels) {
     // Only add if visible (NEW!)
     if (!isVisible) {
-      console.log('⏭️ Skipped adding labels (hidden)');
+      
       return;
     }
 
@@ -316,11 +316,9 @@ function createLabelIcon(text, fontSize) {
 
       activeLabels.push(marker);
       
-      // Debug log
-      console.log(`📍 Added label "${labelConfig.name}" at [${labelConfig.lat}, ${labelConfig.lng}]`);
+
     });
 
-    console.log(`✅ Added ${labels.length} region labels`);
   }
 
   /**
@@ -342,7 +340,6 @@ function createLabelIcon(text, fontSize) {
     // Add new labels if any (will check isVisible inside)
     if (labels.length > 0) {
       addLabels(labels);
-      console.log(`🔄 Updated labels for zoom ${Math.floor(zoom)}`);
     }
   }
 
@@ -358,7 +355,7 @@ function createLabelIcon(text, fontSize) {
       updateLabels(zoom);
     });
 
-    console.log('✅ Region label event listeners setup');
+    
   }
 
   // ==========================================
@@ -371,7 +368,7 @@ function createLabelIcon(text, fontSize) {
    */
   function init(leafletMap) {
     if (!leafletMap) {
-      console.error('❌ Map instance is required for RegionLabelManager');
+      
       return;
     }
 
@@ -379,12 +376,10 @@ function createLabelIcon(text, fontSize) {
     currentZoom = map.getZoom();
     isVisible = true; // Reset to visible on init
 
-    console.log(`🗺️ RegionLabelManager init at zoom ${currentZoom}`);
-    console.log(`📍 Map center:`, map.getCenter());
-
+    
     // Add initial labels
     const initialLabels = getLabelsForZoom(Math.floor(currentZoom));
-    console.log(`📋 Initial labels for zoom ${Math.floor(currentZoom)}:`, initialLabels);
+    
     
     if (initialLabels.length > 0) {
       addLabels(initialLabels);
@@ -395,7 +390,7 @@ function createLabelIcon(text, fontSize) {
     // Setup event listeners
     setupEventListeners();
 
-    console.log('✅ RegionLabelManager initialized');
+    
   }
 
   /**
@@ -404,7 +399,7 @@ function createLabelIcon(text, fontSize) {
    */
   function show() {
     if (isVisible) {
-      console.log('ℹ️ Labels already visible');
+      
       return;
     }
 
@@ -412,7 +407,7 @@ function createLabelIcon(text, fontSize) {
     
     // If map not initialized, do nothing
     if (!map) {
-      console.warn('⚠️ Map not initialized, cannot show labels');
+      
       return;
     }
 
@@ -421,7 +416,7 @@ function createLabelIcon(text, fontSize) {
     if (labels.length > 0) {
       clearLabels(); // Clear any stale labels
       addLabels(labels);
-      console.log('✅ Region labels shown');
+      
     }
   }
 
@@ -431,13 +426,13 @@ function createLabelIcon(text, fontSize) {
    */
   function hide() {
     if (!isVisible) {
-      console.log('ℹ️ Labels already hidden');
+      
       return;
     }
 
     isVisible = false;
     clearLabels();
-    console.log('✅ Region labels hidden');
+    
   }
 
   /**
@@ -459,7 +454,7 @@ function createLabelIcon(text, fontSize) {
       updateLabels(map.getZoom());
     }
 
-    console.log(`✅ Updated label config for zoom ${zoomLevel}`);
+    
   }
 
   /**

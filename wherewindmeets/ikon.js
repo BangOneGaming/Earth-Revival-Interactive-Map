@@ -73,7 +73,8 @@ const ICON_CONFIG = {
     "35": "summo.webp",
     "36": "tehnik.webp",
     "37": "innerway.webp",
-    "38": "NPC.webp"
+    "38": "NPC.webp",
+    "39": "camp.webp"
   },
 
   names: {
@@ -114,7 +115,8 @@ const ICON_CONFIG = {
     "35": "Sumo",
     "36": "Mystic Skill",
     "37": "Inner Ways",
-    "38": "Old Friend"
+    "38": "Old Friend",
+    "39": "Camp"
   },
 
   // Custom sizes per category
