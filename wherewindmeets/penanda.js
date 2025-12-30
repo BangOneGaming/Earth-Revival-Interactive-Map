@@ -767,8 +767,8 @@ addMarkersBatch(markers, bounds) {
 
 
 /**
- * UPDATED: createAndAddMarker di MarkerManager
- * Replace fungsi yang ada dengan ini
+ * SIMPLIFIED: createAndAddMarker - No zoom-based resizing
+ * Icon menggunakan ukuran default dari icon-manager.js
  */
 
 createAndAddMarker(markerData, lat, lng, markerKey) {
@@ -779,42 +779,15 @@ createAndAddMarker(markerData, lat, lng, markerKey) {
     ? UndergroundManager.needsFloorBadge(markerFloor)
     : false;
 
-  // Determine initial size based on current zoom
-  const currentZoom = this.map.getZoom();
-  const isMobile = window.matchMedia("(max-width: 768px)").matches;
-  
-  let iconSize;
-  if (isMobile) {
-    if (currentZoom < 4) {
-      iconSize = [24, 24];
-    } else if (currentZoom < 5) {
-      iconSize = [28, 28];
-    } else if (currentZoom < 6) {
-      iconSize = [32, 32];
-    } else {
-      iconSize = [38, 38];
-    }
-  } else {
-    if (currentZoom < 4) {
-      iconSize = [32, 32];
-    } else if (currentZoom < 5) {
-      iconSize = [40, 40];
-    } else if (currentZoom < 6) {
-      iconSize = [48, 48];
-    } else {
-      iconSize = [56, 56];
-    }
-  }
-
-  // Create icon with correct initial size
+  // ✅ Gunakan default icon size (no zoom calculation)
   const baseIcon = typeof getIconByCategoryWithSpecial !== 'undefined'
-    ? getIconByCategoryWithSpecial(markerData.category_id, specialIcon, iconSize)
-    : getIconByCategory(markerData.category_id, iconSize);
+    ? getIconByCategoryWithSpecial(markerData.category_id, specialIcon)
+    : getIconByCategory(markerData.category_id);
 
   // Add badge if needed
   let finalIcon = baseIcon;
   if (needsBadge) {
-    finalIcon = this.createIconWithBadge(baseIcon, markerFloor, iconSize);
+    finalIcon = this.createIconWithBadge(baseIcon, markerFloor);
   }
 
   const popupContent = this.createPopupContent(markerData);
@@ -840,7 +813,7 @@ createAndAddMarker(markerData, lat, lng, markerKey) {
       // Don't add to map if visited and hidden mode is enabled
       console.log(`🙈 Skipping marker ${markerKey} (visited + hidden mode)`);
       
-      // ✅ IMPORTANT: Still store metadata for resize
+      // ✅ Store metadata (for potential future use)
       leafletMarker.categoryId = markerData.category_id;
       leafletMarker.markerKey = markerKey;
       leafletMarker.floor = markerFloor;
@@ -859,7 +832,7 @@ createAndAddMarker(markerData, lat, lng, markerKey) {
     leafletMarker.addTo(this.map);
   }
 
-  // ✅ Store metadata for later resize
+  // ✅ Store metadata
   leafletMarker.categoryId = markerData.category_id;
   leafletMarker.markerKey = markerKey;
   leafletMarker.floor = markerFloor;
@@ -870,10 +843,13 @@ createAndAddMarker(markerData, lat, lng, markerKey) {
 },
 
 /**
- * Updated: createIconWithBadge with custom size support
+ * SIMPLIFIED: createIconWithBadge - Use default size from baseIcon
  */
-createIconWithBadge(baseIcon, markerFloor, iconSize) {
+createIconWithBadge(baseIcon, markerFloor) {
   const baseHtml = baseIcon.options.html || "";
+  
+  // ✅ Ambil size dari baseIcon (default size)
+  const iconSize = baseIcon.options.iconSize || [48, 48];
   const badgeSize = Math.floor(iconSize[0] * 0.3);
 
   return L.divIcon({

@@ -100,138 +100,201 @@ const UndergroundManager = {
     });
   },
 
-  /**
-   * Initialize underground manager
-   */
-  async init(map) {
-    this.map = map;
-    
-    await this.waitForMapReady();
-    
-    const panel = document.getElementById("undergroundPanel");
-    const toggleBtn = document.getElementById("undergroundToggle");
-    const content = document.getElementById("undergroundContent");
-    
-    if (!panel || !toggleBtn || !content) {
-      console.error("❌ CRITICAL: Required DOM elements missing!");
+/**
+ * COMPLETE FIXED VERSION - Underground Manager Functions
+ * Copy-paste replace di underground-manager.js
+ */
+
+/**
+ * Initialize underground manager
+ */
+async init(map) {
+  console.log("🏔️ Initializing UndergroundManager...");
+  
+  this.map = map;
+  
+  // Wait for map to be ready
+  await this.waitForMapReady();
+  console.log("  ✓ Map is ready");
+  
+  // Check DOM elements
+  const panel = document.getElementById("undergroundPanel");
+  const toggleBtn = document.getElementById("undergroundToggle");
+  const content = document.getElementById("undergroundContent");
+  
+  if (!panel || !toggleBtn || !content) {
+    throw new Error("Required DOM elements missing (undergroundPanel, undergroundToggle, or undergroundContent)");
+  }
+  console.log("  ✓ DOM elements found");
+  
+  // Load overlay data with retry
+  console.log("  ⏳ Loading overlay data...");
+  const overlayLoaded = await this.loadOverlayData();
+  
+  if (overlayLoaded) {
+    console.log(`  ✓ Overlay data loaded (${this.overlayData.length} items)`);
+  } else {
+    console.warn("  ⚠️ Overlay data failed to load, continuing without overlays");
+  }
+  
+  // Load saved state
+  const savedFloor = localStorage.getItem('activeFloor') || 'surface';
+  const savedSeeAll = localStorage.getItem('seeAllMode');
+  this.seeAllMode = savedSeeAll !== null ? savedSeeAll === 'true' : true;
+  console.log(`  ✓ Loaded saved state: floor=${savedFloor}, seeAll=${this.seeAllMode}`);
+  
+  // Setup UI
+  this.createSeeAllToggle();
+  this.setupUI();
+  this.setupEventListeners();
+  console.log("  ✓ UI setup complete");
+  
+  // Set initial floor
+  this.setActiveFloor(savedFloor, false);
+  console.log(`  ✓ Active floor set to: ${savedFloor}`);
+  
+  // Show hint after delay
+  setTimeout(() => {
+    this.showUndergroundHint();
+  }, 2000);
+  
+  console.log("✅ UndergroundManager initialized successfully");
+},
+
+/**
+ * Wait for map to be fully ready
+ */
+async waitForMapReady() {
+  return new Promise((resolve) => {
+    if (this.isMapReady()) {
+      this.mapReady = true;
+      resolve();
       return;
     }
     
-    console.log("⏳ Loading overlay data...");
-    await this.loadOverlayData();
-    console.log("✅ Overlay data loading complete");
+    let attempts = 0;
+    const maxAttempts = 50;
     
-    // Load saved state
-    const savedFloor = localStorage.getItem('activeFloor') || 'surface';
-    const savedSeeAll = localStorage.getItem('seeAllMode');
-    this.seeAllMode = savedSeeAll !== null ? savedSeeAll === 'true' : true;
-    
-    this.createSeeAllToggle();
-    this.setupUI();
-    this.setupEventListeners();
-    
-    this.setActiveFloor(savedFloor, false);
-    
-    setTimeout(() => {
-      this.showUndergroundHint();
-    }, 2000);
-  },
-
-  /**
-   * Wait for map to be fully ready
-   */
-  async waitForMapReady() {
-    return new Promise((resolve) => {
+    const checkInterval = setInterval(() => {
+      attempts++;
+      
       if (this.isMapReady()) {
         this.mapReady = true;
+        clearInterval(checkInterval);
         resolve();
-        return;
+      } else if (attempts >= maxAttempts) {
+        console.warn("⚠️ Map not ready after 5s, proceeding anyway");
+        this.mapReady = true;
+        clearInterval(checkInterval);
+        resolve();
       }
-      
-      let attempts = 0;
-      const maxAttempts = 50;
-      
-      const checkInterval = setInterval(() => {
-        attempts++;
-        
-        if (this.isMapReady()) {
-          this.mapReady = true;
-          clearInterval(checkInterval);
-          resolve();
-        } else if (attempts >= maxAttempts) {
-          console.warn("⚠️ Map not ready after 5s, proceeding anyway");
-          this.mapReady = true;
-          clearInterval(checkInterval);
-          resolve();
-        }
-      }, 100);
-    });
-  },
+    }, 100);
+  });
+},
 
-  /**
-   * Check if map is ready
-   */
-  isMapReady() {
-    return this.map && 
-           typeof this.map.hasLayer === 'function' &&
-           typeof this.map.addLayer === 'function' &&
-           typeof this.map.removeLayer === 'function';
-  },
+/**
+ * Check if map is ready
+ */
+isMapReady() {
+  return this.map && 
+         typeof this.map.hasLayer === 'function' &&
+         typeof this.map.addLayer === 'function' &&
+         typeof this.map.removeLayer === 'function';
+},
 
-  /**
-   * Create Leaflet overlay layers from data
-   */
-  createOverlayLayers() {
-    if (!this.overlayData || this.overlayData.length === 0) {
-      console.warn("⚠️ No overlay data available");
+/**
+ * Create Leaflet overlay layers from data
+ */
+createOverlayLayers() {
+  if (!this.overlayData || this.overlayData.length === 0) {
+    console.warn("⚠️ No overlay data available");
+    return;
+  }
+
+  this.overlayData.forEach((overlay, index) => {
+    const underground = String(overlay.underground);
+
+    if (!overlay.path) {
+      console.warn(`⚠️ Overlay #${index + 1} has no path!`, overlay);
       return;
     }
 
-    this.overlayData.forEach((overlay, index) => {
-      const underground = String(overlay.underground);
+    const bounds = L.latLngBounds(
+      [overlay.bounds.sw.lat, overlay.bounds.sw.lng],
+      [overlay.bounds.ne.lat, overlay.bounds.ne.lng]
+    );
 
-      if (!overlay.path) {
-        console.warn(`⚠️ Overlay #${index + 1} has no path!`, overlay);
-        return;
-      }
-
-      const bounds = L.latLngBounds(
-        [overlay.bounds.sw.lat, overlay.bounds.sw.lng],
-        [overlay.bounds.ne.lat, overlay.bounds.ne.lng]
-      );
-
-      const imageOverlay = L.imageOverlay(overlay.path, bounds, {
-        opacity: 0.95,
-        interactive: false,
-        className: 'underground-overlay'
-      });
-
-      if (!this.overlayLayers[underground]) {
-        this.overlayLayers[underground] = [];
-      }
-      this.overlayLayers[underground].push(imageOverlay);
+    const imageOverlay = L.imageOverlay(overlay.path, bounds, {
+      opacity: 0.95,
+      interactive: false,
+      className: 'underground-overlay'
     });
-  },
 
-  /**
-   * Load overlay data from API
-   */
-  async loadOverlayData() {
+    if (!this.overlayLayers[underground]) {
+      this.overlayLayers[underground] = [];
+    }
+    this.overlayLayers[underground].push(imageOverlay);
+  });
+},
+
+/**
+ * Load overlay data from API with retry logic
+ */
+async loadOverlayData() {
+  const MAX_RETRIES = 3;
+  const RETRY_DELAY = 1000;
+  const TIMEOUT = 10000; // 10 seconds
+  
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      const response = await fetch('https://autumn-dream-8c07.square-spon.workers.dev/bellow');
+      console.log(`    Attempt ${attempt}/${MAX_RETRIES}...`);
+      
+      // Create abort controller for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), TIMEOUT);
+      
+      const response = await fetch('https://autumn-dream-8c07.square-spon.workers.dev/bellow', {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
       
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       
       this.overlayData = await response.json();
+      
+      // Validate data
+      if (!Array.isArray(this.overlayData)) {
+        throw new Error("Invalid overlay data format (not an array)");
+      }
+      
+      if (this.overlayData.length === 0) {
+        console.warn("    ⚠️ Empty overlay data received");
+      }
+      
+      // Create overlay layers
       this.createOverlayLayers();
       
+      return true;
+      
     } catch (error) {
-      console.error("❌ Failed to load overlay data:", error);
-      this.overlayData = [];
+      console.warn(`    ❌ Attempt ${attempt} failed:`, error.message);
+      
+      if (attempt < MAX_RETRIES) {
+        console.log(`    ⏳ Retrying in ${RETRY_DELAY}ms...`);
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+      } else {
+        console.error("    ❌ All retry attempts failed");
+        this.overlayData = [];
+        return false;
+      }
     }
-  },
+  }
+  
+  return false;
+},
 
   /**
    * ✨ Create See All toggle button (outside panel)
