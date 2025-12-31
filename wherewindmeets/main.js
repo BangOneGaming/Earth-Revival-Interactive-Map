@@ -243,14 +243,18 @@
       // STEP 4: Initialize Underground System
       // ============================================
       updateLoadingText('Initializing underground system...');
+      
+async function waitForUndergroundManager() {
+  for (let i = 0; i < 50; i++) {
+    if (window.UndergroundManager) return true;
+    await new Promise(r => setTimeout(r, 100));
+  }
+  return false;
+}
 
-      if (typeof UndergroundManager !== "undefined") {
-        try {
-          await UndergroundManager.init(window.map);
-        } catch (error) {
-          // Optional feature
-        }
-      }
+if (await waitForUndergroundManager()) {
+  await UndergroundManager.init(window.map);
+}
 
       // ============================================
       // OPTIONAL: Dev Tools
