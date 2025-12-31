@@ -537,47 +537,60 @@ const SettingsManager = (function() {
         }, 150);
       }
 
-      // Sync to server
-      if (typeof isLoggedIn === 'function' && isLoggedIn()) {
-        const token = typeof getUserToken === 'function' ? getUserToken() : null;
-        
-        if (token && allKeys.length > 0) {
-          console.log(`🔄 RESET STEP 6: Syncing to server (${allKeys.length} markers)...`);
-          
-          try {
-            const response = await fetch(
-              'https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker/batch',
-              {
-                method: 'POST',
-                headers: {
-                  'Authorization': `Bearer ${token}`,
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                  markers: allKeys.map(markerKey => ({
-                    markerKey: markerKey,
-                    visited: false
-                  }))
-                })
-              }
-            );
+// Sync to server
+if (typeof isLoggedIn === 'function' && isLoggedIn()) {
+  const token = typeof getUserToken === 'function' ? getUserToken() : null;
 
-            if (response.ok) {
-              const data = await response.json();
-              console.log('   ✅ Server reset successful:', data);
-              showNotification('All visited markers have been reset successfully!', 'success');
-            } else {
-              console.error('   ❌ Server reset failed:', response.status);
-              showNotification('Local reset successful, but server sync failed.', 'error');
-            }
-          } catch (err) {
-            console.error('   ❌ Server reset error:', err);
-            showNotification('Local reset successful, but server sync failed.', 'error');
-          }
-        }
-      } else {
-        showNotification('All visited markers have been reset locally!', 'success');
-      }
+  if (token && allKeys.length > 0) {
+    console.log(`🔄 RESET STEP 6: Syncing to server (${allKeys.length} markers)...`);
+
+    try {
+const markers = allKeys.map(markerKey => ({
+  markerKey: String(markerKey),
+  visited: false
+}));
+
+const CHUNK = 400;
+
+for (let i = 0; i < markers.length; i += CHUNK) {
+  const batch = markers.slice(i, i + CHUNK);
+
+  const response = await fetch(
+    'https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker/batch',
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ markers: batch })
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Batch failed at ${i}`);
+  }
+}
+
+
+      // ✅ kalau sampai sini, artinya SEMUA batch sukses
+      console.log('   ✅ Server reset successful');
+      showNotification(
+        'All visited markers have been reset successfully!',
+        'success'
+      );
+
+    } catch (err) {
+      console.error('   ❌ Server reset error:', err);
+      showNotification(
+        'Local reset successful, but server sync failed.',
+        'error'
+      );
+    }
+  }
+} else {
+  showNotification('All visited markers have been reset locally!', 'success');
+}
 
       lastResetTime = Date.now();
       
