@@ -29,7 +29,7 @@ const MarkerImageHandler = (function() {
     maxDimension: 1920,
     cacheKey: 'wwm_marker_images',
     cacheVersionKey: 'wwm_marker_images_version',
-    uploadEnabled: false,
+    uploadEnabled: true,
     uploadResumeDate: 'January 1st'
   };
 
