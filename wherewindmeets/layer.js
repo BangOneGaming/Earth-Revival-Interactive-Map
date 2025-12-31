@@ -1,9 +1,7 @@
 /**
- * Underground Floor Manager - WITH SEE ALL TOGGLE BUTTON
- * Checkbox See All dipindah ke luar panel sebagai toggle button
+ * Underground Floor Manager - Clean Version
+ * Always starts at surface, no floor state persistence
  */
-
-console.log("🏔️ Loading underground-manager.js (See All Toggle Button)...");
 
 const UndergroundManager = {
   map: null,
@@ -12,7 +10,7 @@ const UndergroundManager = {
   overlayData: null,
   isOpen: false,
   mapReady: false,
-  seeAllMode: true, // Default: checked
+  seeAllMode: false, // Default: OFF
   
   floors: [
     { 
@@ -100,211 +98,169 @@ const UndergroundManager = {
     });
   },
 
-/**
- * COMPLETE FIXED VERSION - Underground Manager Functions
- * Copy-paste replace di underground-manager.js
- */
-
-/**
- * Initialize underground manager
- */
-async init(map) {
-  console.log("🏔️ Initializing UndergroundManager...");
-  
-  this.map = map;
-  
-  // Wait for map to be ready
-  await this.waitForMapReady();
-  console.log("  ✓ Map is ready");
-  
-  // Check DOM elements
-  const panel = document.getElementById("undergroundPanel");
-  const toggleBtn = document.getElementById("undergroundToggle");
-  const content = document.getElementById("undergroundContent");
-  
-  if (!panel || !toggleBtn || !content) {
-    throw new Error("Required DOM elements missing (undergroundPanel, undergroundToggle, or undergroundContent)");
-  }
-  console.log("  ✓ DOM elements found");
-  
-  // Load overlay data with retry
-  console.log("  ⏳ Loading overlay data...");
-  const overlayLoaded = await this.loadOverlayData();
-  
-  if (overlayLoaded) {
-    console.log(`  ✓ Overlay data loaded (${this.overlayData.length} items)`);
-  } else {
-    console.warn("  ⚠️ Overlay data failed to load, continuing without overlays");
-  }
-  
-  // Load saved state
-  const savedFloor = localStorage.getItem('activeFloor') || 'surface';
-  const savedSeeAll = localStorage.getItem('seeAllMode');
-  this.seeAllMode = savedSeeAll !== null ? savedSeeAll === 'true' : true;
-  console.log(`  ✓ Loaded saved state: floor=${savedFloor}, seeAll=${this.seeAllMode}`);
-  
-  // Setup UI
-  this.createSeeAllToggle();
-  this.setupUI();
-  this.setupEventListeners();
-  console.log("  ✓ UI setup complete");
-  
-  // Set initial floor
-  this.setActiveFloor(savedFloor, false);
-  console.log(`  ✓ Active floor set to: ${savedFloor}`);
-  
-  // Show hint after delay
-  setTimeout(() => {
-    this.showUndergroundHint();
-  }, 2000);
-  
-  console.log("✅ UndergroundManager initialized successfully");
-},
-
-/**
- * Wait for map to be fully ready
- */
-async waitForMapReady() {
-  return new Promise((resolve) => {
-    if (this.isMapReady()) {
-      this.mapReady = true;
-      resolve();
-      return;
+  /**
+   * Initialize underground manager
+   */
+  async init(map) {
+    this.map = map;
+    
+    // Wait for map to be ready
+    await this.waitForMapReady();
+    
+    // Check DOM elements
+    const panel = document.getElementById("undergroundPanel");
+    const toggleBtn = document.getElementById("undergroundToggle");
+    const content = document.getElementById("undergroundContent");
+    
+    if (!panel || !toggleBtn || !content) {
+      throw new Error("Required DOM elements missing");
     }
     
-    let attempts = 0;
-    const maxAttempts = 50;
+    // Load overlay data
+    await this.loadOverlayData();
     
-    const checkInterval = setInterval(() => {
-      attempts++;
-      
-      if (this.isMapReady()) {
-        this.mapReady = true;
-        clearInterval(checkInterval);
-        resolve();
-      } else if (attempts >= maxAttempts) {
-        console.warn("⚠️ Map not ready after 5s, proceeding anyway");
-        this.mapReady = true;
-        clearInterval(checkInterval);
-        resolve();
-      }
-    }, 100);
-  });
-},
-
-/**
- * Check if map is ready
- */
-isMapReady() {
-  return this.map && 
-         typeof this.map.hasLayer === 'function' &&
-         typeof this.map.addLayer === 'function' &&
-         typeof this.map.removeLayer === 'function';
-},
-
-/**
- * Create Leaflet overlay layers from data
- */
-createOverlayLayers() {
-  if (!this.overlayData || this.overlayData.length === 0) {
-    console.warn("⚠️ No overlay data available");
-    return;
-  }
-
-  this.overlayData.forEach((overlay, index) => {
-    const underground = String(overlay.underground);
-
-    if (!overlay.path) {
-      console.warn(`⚠️ Overlay #${index + 1} has no path!`, overlay);
-      return;
-    }
-
-    const bounds = L.latLngBounds(
-      [overlay.bounds.sw.lat, overlay.bounds.sw.lng],
-      [overlay.bounds.ne.lat, overlay.bounds.ne.lng]
-    );
-
-    const imageOverlay = L.imageOverlay(overlay.path, bounds, {
-      opacity: 0.95,
-      interactive: false,
-      className: 'underground-overlay'
-    });
-
-    if (!this.overlayLayers[underground]) {
-      this.overlayLayers[underground] = [];
-    }
-    this.overlayLayers[underground].push(imageOverlay);
-  });
-},
-
-/**
- * Load overlay data from API with retry logic
- */
-async loadOverlayData() {
-  const MAX_RETRIES = 3;
-  const RETRY_DELAY = 1000;
-  const TIMEOUT = 10000; // 10 seconds
-  
-  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-    try {
-      console.log(`    Attempt ${attempt}/${MAX_RETRIES}...`);
-      
-      // Create abort controller for timeout
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), TIMEOUT);
-      
-      const response = await fetch('https://autumn-dream-8c07.square-spon.workers.dev/bellow', {
-        signal: controller.signal
-      });
-      
-      clearTimeout(timeoutId);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      
-      this.overlayData = await response.json();
-      
-      // Validate data
-      if (!Array.isArray(this.overlayData)) {
-        throw new Error("Invalid overlay data format (not an array)");
-      }
-      
-      if (this.overlayData.length === 0) {
-        console.warn("    ⚠️ Empty overlay data received");
-      }
-      
-      // Create overlay layers
-      this.createOverlayLayers();
-      
-      return true;
-      
-    } catch (error) {
-      console.warn(`    ❌ Attempt ${attempt} failed:`, error.message);
-      
-      if (attempt < MAX_RETRIES) {
-        console.log(`    ⏳ Retrying in ${RETRY_DELAY}ms...`);
-        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
-      } else {
-        console.error("    ❌ All retry attempts failed");
-        this.overlayData = [];
-        return false;
-      }
-    }
-  }
-  
-  return false;
-},
+    // Load only See All preference (not floor state)
+    const savedSeeAll = localStorage.getItem('seeAllMode');
+    this.seeAllMode = savedSeeAll === 'true';
+    
+    // Setup UI
+    this.createSeeAllToggle();
+    this.setupUI();
+    this.setupEventListeners();
+    
+    // Always start at surface
+    this.setActiveFloor('surface', false);
+    
+    // Show hint after delay
+    setTimeout(() => {
+      this.showUndergroundHint();
+    }, 2000);
+  },
 
   /**
-   * ✨ Create See All toggle button (outside panel)
+   * Wait for map to be fully ready
+   */
+  async waitForMapReady() {
+    return new Promise((resolve) => {
+      if (this.isMapReady()) {
+        this.mapReady = true;
+        resolve();
+        return;
+      }
+      
+      let attempts = 0;
+      const maxAttempts = 50;
+      
+      const checkInterval = setInterval(() => {
+        attempts++;
+        
+        if (this.isMapReady()) {
+          this.mapReady = true;
+          clearInterval(checkInterval);
+          resolve();
+        } else if (attempts >= maxAttempts) {
+          this.mapReady = true;
+          clearInterval(checkInterval);
+          resolve();
+        }
+      }, 100);
+    });
+  },
+
+  /**
+   * Check if map is ready
+   */
+  isMapReady() {
+    return this.map && 
+           typeof this.map.hasLayer === 'function' &&
+           typeof this.map.addLayer === 'function' &&
+           typeof this.map.removeLayer === 'function';
+  },
+
+  /**
+   * Create Leaflet overlay layers from data
+   */
+  createOverlayLayers() {
+    if (!this.overlayData || this.overlayData.length === 0) {
+      return;
+    }
+
+    this.overlayData.forEach((overlay, index) => {
+      const underground = String(overlay.underground);
+
+      if (!overlay.path) {
+        return;
+      }
+
+      const bounds = L.latLngBounds(
+        [overlay.bounds.sw.lat, overlay.bounds.sw.lng],
+        [overlay.bounds.ne.lat, overlay.bounds.ne.lng]
+      );
+
+      const imageOverlay = L.imageOverlay(overlay.path, bounds, {
+        opacity: 0.95,
+        interactive: false,
+        className: 'underground-overlay'
+      });
+
+      if (!this.overlayLayers[underground]) {
+        this.overlayLayers[underground] = [];
+      }
+      this.overlayLayers[underground].push(imageOverlay);
+    });
+  },
+
+  /**
+   * Load overlay data from API with retry logic
+   */
+  async loadOverlayData() {
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY = 1000;
+    const TIMEOUT = 10000;
+    
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), TIMEOUT);
+        
+        const response = await fetch('https://autumn-dream-8c07.square-spon.workers.dev/bellow', {
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        
+        this.overlayData = await response.json();
+        
+        if (!Array.isArray(this.overlayData)) {
+          throw new Error("Invalid overlay data format");
+        }
+        
+        this.createOverlayLayers();
+        return true;
+        
+      } catch (error) {
+        if (attempt < MAX_RETRIES) {
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+        } else {
+          this.overlayData = [];
+          return false;
+        }
+      }
+    }
+    
+    return false;
+  },
+
+  /**
+   * Create See All toggle button (outside panel)
    */
   createSeeAllToggle() {
     const container = document.querySelector('.underground-container');
-    if (!container) {
-      console.error("❌ underground-container not found!");
-      return;
-    }
+    if (!container) return;
 
     // Check if already exists
     if (document.getElementById('seeAllToggle')) return;
@@ -330,7 +286,7 @@ async loadOverlayData() {
   },
 
   /**
-   * ✨ Update See All button visual state
+   * Update See All button visual state
    */
   updateSeeAllButton() {
     const btn = document.getElementById('seeAllToggle');
@@ -351,18 +307,14 @@ async loadOverlayData() {
   },
 
   /**
-   * Setup floor selection UI (without checkbox)
+   * Setup floor selection UI
    */
   setupUI() {
     const container = document.getElementById("undergroundContent");
-    if (!container) {
-      console.error("❌ undergroundContent container not found!");
-      return;
-    }
+    if (!container) return;
 
     container.innerHTML = '';
 
-    // Floor list only
     this.floors.forEach((floor, index) => {
       const isActive = this.activeFloor === floor.id;
       
@@ -398,10 +350,7 @@ async loadOverlayData() {
     const panel = document.getElementById("undergroundPanel");
     const seeAllBtn = document.getElementById("seeAllToggle");
 
-    if (!toggleBtn || !panel) {
-      console.error("❌ ERROR: Required elements not found!");
-      return;
-    }
+    if (!toggleBtn || !panel) return;
 
     // Underground toggle button
     toggleBtn.addEventListener("click", (e) => {
@@ -409,7 +358,7 @@ async loadOverlayData() {
       this.togglePanel();
     });
 
-    // ✨ See All toggle button
+    // See All toggle button
     if (seeAllBtn) {
       seeAllBtn.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -454,63 +403,60 @@ async loadOverlayData() {
   },
 
   /**
-   * ✨ Show notification when toggling See All
+   * Show notification when toggling See All
    */
-showSeeAllNotification() {
-  const oldNotif = document.querySelector(".see-all-notification");
-  if (oldNotif) oldNotif.remove();
+  showSeeAllNotification() {
+    const oldNotif = document.querySelector(".see-all-notification");
+    if (oldNotif) oldNotif.remove();
 
-  const notif = document.createElement("div");
-  notif.className = "see-all-notification";
-  notif.innerHTML = `
-    <span style="font-size:20px;margin-right:8px;">👁️</span>
-    <span>See All Mode: <strong>${this.seeAllMode ? 'ON' : 'OFF'}</strong></span>
-  `;
-  document.body.appendChild(notif);
+    const notif = document.createElement("div");
+    notif.className = "see-all-notification";
+    notif.innerHTML = `
+      <span style="font-size:20px;margin-right:8px;">👁️</span>
+      <span>See All Mode: <strong>${this.seeAllMode ? 'ON' : 'OFF'}</strong></span>
+    `;
+    document.body.appendChild(notif);
 
-  // hilangkan inline style = gunakan CSS murni
-  // cukup tambahkan animasi reverse untuk close
-  setTimeout(() => {
-    notif.style.animation = "slideDown .3s ease-in reverse";
-    setTimeout(() => notif.remove(), 300);
-  }, 2000);
-},
+    setTimeout(() => {
+      notif.style.animation = "slideDown .3s ease-in reverse";
+      setTimeout(() => notif.remove(), 300);
+    }, 2000);
+  },
 
   /**
    * Toggle panel visibility
    */
-togglePanel() {
-  this.isOpen = !this.isOpen;
-  
-  const panel = document.getElementById("undergroundPanel");
-  const seeAllBtn = document.getElementById("seeAllToggle");
+  togglePanel() {
+    this.isOpen = !this.isOpen;
+    
+    const panel = document.getElementById("undergroundPanel");
+    const seeAllBtn = document.getElementById("seeAllToggle");
 
-  if (!panel) return;
+    if (!panel) return;
 
-  if (this.isOpen) {
-    panel.classList.add('visible');
-    if (seeAllBtn) seeAllBtn.style.display = "inline-flex"; // 👁️ MUNCUL
-  } else {
-    panel.classList.remove('visible');
-    if (seeAllBtn) seeAllBtn.style.display = "none";        // 👁️ HILANG
-  }
-},
+    if (this.isOpen) {
+      panel.classList.add('visible');
+      if (seeAllBtn) seeAllBtn.style.display = "inline-flex";
+    } else {
+      panel.classList.remove('visible');
+      if (seeAllBtn) seeAllBtn.style.display = "none";
+    }
+  },
 
   /**
    * Close panel
    */
-closePanel() {
-  const panel = document.getElementById("undergroundPanel");
-  const seeAllBtn = document.getElementById("seeAllToggle");
+  closePanel() {
+    const panel = document.getElementById("undergroundPanel");
+    const seeAllBtn = document.getElementById("seeAllToggle");
 
-  if (!panel) return;
+    if (!panel) return;
 
-  this.isOpen = false;
-  panel.classList.remove('visible');
+    this.isOpen = false;
+    panel.classList.remove('visible');
 
-  // Tambahkan ini
-  if (seeAllBtn) seeAllBtn.style.display = "none";
-},
+    if (seeAllBtn) seeAllBtn.style.display = "none";
+  },
 
   /**
    * Set active floor and update markers
@@ -532,7 +478,8 @@ closePanel() {
       }
     });
     
-    localStorage.setItem('activeFloor', floorId);
+    // NO LONGER SAVE FLOOR STATE
+    // localStorage.setItem('activeFloor', floorId); // REMOVED
     
     // Apply visual effects
     if (floorConfig) {
@@ -557,7 +504,6 @@ closePanel() {
    */
   updateOverlays(previousFloor, newFloor) {
     if (!this.mapReady || !this.isMapReady()) {
-      console.warn("⚠️ Map not ready, skipping overlay update");
       return;
     }
     
@@ -565,13 +511,13 @@ closePanel() {
     if (previousFloor && previousFloor !== 'surface') {
       const prevOverlays = this.overlayLayers[previousFloor];
       if (prevOverlays) {
-        prevOverlays.forEach((overlay, i) => {
+        prevOverlays.forEach((overlay) => {
           try {
             if (this.map.hasLayer(overlay)) {
               this.map.removeLayer(overlay);
             }
           } catch (err) {
-            console.error(`❌ Error removing overlay:`, err);
+            // Silent fail
           }
         });
       }
@@ -581,11 +527,11 @@ closePanel() {
     if (newFloor && newFloor !== 'surface') {
       const newOverlays = this.overlayLayers[newFloor];
       if (newOverlays) {
-        newOverlays.forEach((overlay, i) => {
+        newOverlays.forEach((overlay) => {
           try {
             overlay.addTo(this.map);
           } catch (err) {
-            console.error(`❌ Error adding overlay:`, err);
+            // Silent fail
           }
         });
       }
@@ -593,7 +539,7 @@ closePanel() {
   },
 
   /**
-   * ✨ Check if a marker should be visible (with See All logic)
+   * Check if a marker should be visible (with See All logic)
    */
   shouldShowMarker(marker) {
     const markerFloor = marker.floor || '';
@@ -637,7 +583,7 @@ closePanel() {
   },
 
   /**
-   * ✨ Check if marker needs badge (is from different floor)
+   * Check if marker needs badge (is from different floor)
    */
   needsFloorBadge(markerFloor) {
     if (!this.seeAllMode) return false;
@@ -648,12 +594,12 @@ closePanel() {
     const markerFloorStr = String(markerFloor || '');
     const filterValue = currentFloorConfig.filterValue;
     
-    // Surface mode: badge untuk semua underground markers
+    // Surface mode: badge for all underground markers
     if (filterValue === null) {
       return markerFloorStr !== '' && !isNaN(parseInt(markerFloorStr));
     }
     
-    // Underground mode: badge untuk marker yang berbeda floor
+    // Underground mode: badge for markers from different floor
     const currentFloorStr = String(filterValue);
     return markerFloorStr !== currentFloorStr && markerFloorStr !== '';
   },
@@ -724,18 +670,3 @@ closePanel() {
 
 // Make available globally
 window.UndergroundManager = UndergroundManager;
-
-// Update hint position on window resize
-let undergroundHintResizeTimeout;
-window.addEventListener('resize', () => {
-  clearTimeout(undergroundHintResizeTimeout);
-  undergroundHintResizeTimeout = setTimeout(() => {
-    const hint = document.querySelector('.underground-hint');
-    if (hint && hint.classList.contains('show')) {
-      hint.remove();
-      UndergroundManager.showUndergroundHint();
-    }
-  }, 250);
-});
-
-console.log("✅ underground-manager.js loaded (See All Toggle Button)");
