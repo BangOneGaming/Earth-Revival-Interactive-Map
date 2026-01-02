@@ -37,185 +37,419 @@ zoom_5: [
 ],
 
 // Zoom level 6: Subareas
-zoom_6:[
+zoom_6: [
   {
     "name": "General's Shrine",
-    "lat": 126.59796527592282,
-    "lng": 199.10370540618896,
+    "lat": 126.906249,
+    "lng": 199.624994,
     "size": 24
   },
   {
     "name": "Battlecrest Slope",
-    "lat": 131.52268447793867,
-    "lng": 197.35526585578918,
+    "lat": 131.687499,
+    "lng": 197.781244,
     "size": 24
   },
   {
     "name": "Bamboo Abode",
-    "lat": 129.73471708631573,
-    "lng": 203.6599099636078,
+    "lat": 129.906249,
+    "lng": 204.687494,
     "size": 24
   },
   {
     "name": "Stonewash Strand",
-    "lat": 130.86946666642726,
-    "lng": 194.40923023223877,
-    "size": 24
-  },
-  {
-    "name": "Heaven's Pier",
-    "lat": 130.916586318673,
-    "lng": 188.7513885498047,
+    "lat": 130.687499,
+    "lng": 194.812494,
     "size": 24
   },
   {
     "name": "Kilnfire Ridge",
-    "lat": 129.78432780622546,
-    "lng": 183.92233777046204,
+    "lat": 129.562499,
+    "lng": 184.187494,
+    "size": 24
+  },
+  {
+    "name": "Pallace of Annals",
+    "lat": 139.312499,
+    "lng": 189.031244,
+    "size": 24
+  },
+  {
+    "name": "Heaven Pier's",
+    "lat": 130.687499,
+    "lng": 189.374994,
     "size": 24
   },
   {
     "name": "Blissful Retreat",
-    "lat": 127.12438554913957,
-    "lng": 182.99103021621704,
+    "lat": 126.874999,
+    "lng": 183.312494,
     "size": 24
   },
   {
-    "name": "Still Shore",
-    "lat": 128.45357022518095,
-    "lng": 180.81885075569153,
+    "name": "Harvest Village",
+    "lat": 128.031249,
+    "lng": 176.156244,
     "size": 24
   },
   {
     "name": "Witherwilds",
-    "lat": 132.3101869396634,
-    "lng": 178.53326153755188,
-    "size": 24
-  },
-  {
-    "name": "Palace of Annals",
-    "lat": 139.28523420380762,
-    "lng": 188.06394863128662,
-    "size": 24
-  },
-  {
-    "name": "Harvestfall Village",
-    "lat": 127.75071038168889,
-    "lng": 175.62401056289673,
+    "lat": 132.281249,
+    "lng": 179.062494,
     "size": 24
   },
   {
     "name": "Crimson Cliff",
-    "lat": 134.21989715401813,
-    "lng": 192.42726707458496,
-    "size": 24
-  },
-  {
-    "name": "Gleaming Abyss",
-    "lat": 132.98367045899263,
-    "lng": 175.09477710723877,
+    "lat": 134.749999,
+    "lng": 192.812494,
     "size": 24
   },
   {
     "name": "Peace Bell Tower",
-    "lat": 132.47593180588146,
-    "lng": 185.66406679153442,
+    "lat": 132.406249,
+    "lng": 186.687494,
     "size": 24
   },
   {
     "name": "Riverview Terrace",
-    "lat": 135.15185999864502,
-    "lng": 176.26929903030396,
+    "lat": 135.593749,
+    "lng": 176.687494,
     "size": 24
   },
   {
     "name": "Twinbeast Ridge",
-    "lat": 138.0148942475086,
-    "lng": 181.1453709602356,
+    "lat": 138.343749,
+    "lng": 181.531244,
     "size": 24
   },
   {
     "name": "Sage's Knoll",
-    "lat": 136.90784398678176,
-    "lng": 185.75070571899414,
+    "lat": 137.374999,
+    "lng": 185.781244,
     "size": 24
   },
   {
     "name": "Encircling Lake",
-    "lat": 141.92103297366836,
-    "lng": 182.9059567451477,
+    "lat": 142.156249,
+    "lng": 183.093744,
     "size": 24
   },
   {
-    "name": "Riverside Station",
-    "lat": 132.21474461735212,
-    "lng": 172.29927253723145,
+    "name": "Gleaming Abbys",
+    "lat": 133.187499,
+    "lng": 175.374994,
     "size": 24
   },
   {
-    "name": "Halo Peak",
-    "lat": 119.79133309588832,
-    "lng": 188.4454526901245,
-    "size": 24
-  },
-  {
-    "name": "Bodhi Sea",
-    "lat": 122.29576329772985,
-    "lng": 195.81764221191406,
+    "name": "Still Shores",
+    "lat": 128.437499,
+    "lng": 181.468744,
     "size": 24
   },
   {
     "name": "Mercyheart Town",
-    "lat": 119.99953143271846,
-    "lng": 181.5227644443512,
+    "lat": 119.937499,
+    "lng": 182.031244,
     "size": 24
   },
   {
-    "name": "Finesteed Hamlet",
-    "lat": 120.44150986689361,
-    "lng": 200.13313150405884,
+    "name": "Hallo Peak",
+    "lat": 119.781249,
+    "lng": 188.906244,
     "size": 24
   },
   {
-    "name": "Flower Expanse",
-    "lat": 122.84122433594338,
-    "lng": 183.351393699646,
-    "size": 24
-  },
-  {
-    "name": "Mercyheart Monastery",
-    "lat": 114.37499158233308,
-    "lng": 182.61848187446594,
-    "size": 24
-  },
-  {
-    "name": "Jadebrook Mountain",
-    "lat": 124.86853631161664,
-    "lng": 189.51390266418457,
-    "size": 24
-  },
-  {
-    "name": "Buddha Fort",
-    "lat": 120.57231831428079,
-    "lng": 205.0333957672119,
-    "size": 24
-  },
-  {
-    "name": "Wildmane Ranch",
-    "lat": 124.41562653599976,
-    "lng": 200.94988346099854,
-    "size": 24
-  },
-  {
-    "name": "Thousand-Buddha Village",
-    "lat": 115.23659172427595,
-    "lng": 190.29075527191162,
+    "name": "Thousand Buddha Village",
+    "lat": 115.843749,
+    "lng": 190.749994,
     "size": 24
   },
   {
     "name": "Floral Expanse Beyond",
-    "lat": 118.13743418010517,
-    "lng": 195.66948986053467,
+    "lat": 118.406249,
+    "lng": 197.187494,
+    "size": 24
+  },
+  {
+    "name": "Bodhi Sea",
+    "lat": 122.624999,
+    "lng": 196.124994,
+    "size": 24
+  },
+  {
+    "name": "Finesteed",
+    "lat": 120.468749,
+    "lng": 200.812494,
+    "size": 24
+  },
+  {
+    "name": "Flower Expanse",
+    "lat": 123.156249,
+    "lng": 183.624994,
+    "size": 24
+  },
+  {
+    "name": "Mercyhearth Monastery",
+    "lat": 114.624999,
+    "lng": 183.499994,
+    "size": 24
+  },
+  {
+    "name": "Jadebrook Mountain",
+    "lat": 125.031249,
+    "lng": 190.093744,
+    "size": 24
+  },
+  {
+    "name": "Buddha Fort",
+    "lat": 121.156249,
+    "lng": 205.218744,
+    "size": 24
+  },
+  {
+    "name": "Wildmare Ranch",
+    "lat": 124.687499,
+    "lng": 201.781244,
+    "size": 24
+  },
+  {
+    "name": "Song Dynasty Palace",
+    "lat": 144.812499,
+    "lng": 168.562494,
+    "size": 24
+  },
+  {
+    "name": "Prosperity Haven ",
+    "lat": 142.906249,
+    "lng": 164.218744,
+    "size": 24
+  },
+  {
+    "name": "Kifeng Prefecture",
+    "lat": 150.156249,
+    "lng": 168.406244,
+    "size": 24
+  },
+  {
+    "name": "Furnace Area",
+    "lat": 148.843749,
+    "lng": 164.249994,
+    "size": 24
+  },
+  {
+    "name": "Imperial Artisan Court",
+    "lat": 154.593749,
+    "lng": 163.968744,
+    "size": 24
+  },
+  {
+    "name": "Velvet Shade",
+    "lat": 143.249999,
+    "lng": 172.124994,
+    "size": 24
+  },
+  {
+    "name": "Fairgrounds",
+    "lat": 152.874999,
+    "lng": 172.499994,
+    "size": 24
+  },
+  {
+    "name": "South Gate Avenue",
+    "lat": 154.156249,
+    "lng": 168.656244,
+    "size": 24
+  },
+  {
+    "name": "Stillhearth Grove",
+    "lat": 143.437499,
+    "lng": 176.906244,
+    "size": 24
+  },
+  {
+    "name": "Abandoned Mercy Hall",
+    "lat": 146.999999,
+    "lng": 181.812494,
+    "size": 24
+  },
+  {
+    "name": "Kaifeng Suburbs-East",
+    "lat": 149.406249,
+    "lng": 176.312494,
+    "size": 24
+  },
+  {
+    "name": "Mistveil Forest",
+    "lat": 152.999999,
+    "lng": 180.312494,
+    "size": 24
+  },
+  {
+    "name": "Heavenfall",
+    "lat": 134.249999,
+    "lng": 164.656244,
+    "size": 24
+  },
+  {
+    "name": "Baima Crossing",
+    "lat": 137.218749,
+    "lng": 171.749994,
+    "size": 24
+  },
+  {
+    "name": "Kaifeng Suburbs-North",
+    "lat": 138.062499,
+    "lng": 164.781244,
+    "size": 24
+  },
+  {
+    "name": "Fishwood River",
+    "lat": 137.656249,
+    "lng": 156.374994,
+    "size": 24
+  },
+  {
+    "name": "Enternal Mountain",
+    "lat": 144.468749,
+    "lng": 153.156244,
+    "size": 24
+  },
+  {
+    "name": "Kaifeng Suburbs-West",
+    "lat": 143.749999,
+    "lng": 160.093744,
+    "size": 24
+  },
+  {
+    "name": "Starveil Grassland",
+    "lat": 148.749999,
+    "lng": 154.343744,
+    "size": 24
+  },
+  {
+    "name": "Wansheng Town",
+    "lat": 148.843749,
+    "lng": 159.906244,
+    "size": 24
+  },
+  {
+    "name": "ghost market",
+    "lat": 158.031249,
+    "lng": 168.406244,
+    "size": 24
+  },
+  {
+    "name": "Forsaken Quarter",
+    "lat": 155.718749,
+    "lng": 172.718744,
+    "size": 24
+  },
+  {
+    "name": "Unbound Cavern",
+    "lat": 155.968749,
+    "lng": 174.874994,
+    "size": 24
+  },
+  {
+    "name": "Jiuliumen Station",
+    "lat": 160.187499,
+    "lng": 167.187494,
+    "size": 24
+  },
+  {
+    "name": "Jinming Pool",
+    "lat": 156.156249,
+    "lng": 157.812494,
+    "size": 24
+  },
+  {
+    "name": "Petalfall Crossing",
+    "lat": 162.999999,
+    "lng": 156.999994,
+    "size": 24
+  },
+  {
+    "name": "North Imperial Garrden",
+    "lat": 159.812499,
+    "lng": 159.656244,
+    "size": 24
+  },
+  {
+    "name": "South Imperial Garden",
+    "lat": 163.624999,
+    "lng": 161.374994,
+    "size": 24
+  },
+  {
+    "name": "Masterwood Hamlet",
+    "lat": 160.718749,
+    "lng": 164.562494,
+    "size": 24
+  },
+  {
+    "name": "Buddha Statue Site",
+    "lat": 164.874999,
+    "lng": 164.749994,
+    "size": 24
+  },
+  {
+    "name": "Grand Canal",
+    "lat": 163.999999,
+    "lng": 170.156244,
+    "size": 24
+  },
+  {
+    "name": "Pipa Chasm",
+    "lat": 167.593749,
+    "lng": 159.406244,
+    "size": 24
+  },
+  {
+    "name": "Dreamfall Cliff",
+    "lat": 167.718749,
+    "lng": 168.437494,
+    "size": 24
+  },
+  {
+    "name": "Sorrowfield Village",
+    "lat": 157.124999,
+    "lng": 177.687494,
+    "size": 24
+  },
+  {
+    "name": "Kaifeng Suburbs-South",
+    "lat": 158.437499,
+    "lng": 168.906244,
+    "size": 24
+  },
+  {
+    "name": "Plainfield",
+    "lat": 161.999999,
+    "lng": 174.562494,
+    "size": 24
+  },
+  {
+    "name": "Ever-Normal Granary",
+    "lat": 164.562499,
+    "lng": 177.968744,
+    "size": 24
+  },
+  {
+    "name": "Martial Temple",
+    "lat": 167.906249,
+    "lng": 164.531244,
+    "size": 24
+  },
+  {
+    "name": "Gracetown",
+    "lat": 172.906249,
+    "lng": 174.281244,
+    "size": 24
+  },
+  {
+    "name": "Desperation Ridge",
+    "lat": 173.937499,
+    "lng": 184.031244,
     "size": 24
   }
 ]
