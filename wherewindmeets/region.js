@@ -116,6 +116,12 @@ zoom_6: [
     "lng": 176.687494,
     "size": 24
   },
+    {
+    "name": "Riverside Station",
+    "lat": 132.21474461735212,
+    "lng": 172.29927253723145,
+    "size": 24
+  },
   {
     "name": "Twinbeast Ridge",
     "lat": 138.343749,
@@ -333,9 +339,10 @@ zoom_6: [
     "size": 24
   },
   {
-    "name": "ghost market",
+    "name": "Ghost Market",
     "lat": 158.031249,
     "lng": 168.406244,
+    "floor": 1,
     "size": 24
   },
   {
@@ -348,12 +355,6 @@ zoom_6: [
     "name": "Unbound Cavern",
     "lat": 155.968749,
     "lng": 174.874994,
-    "size": 24
-  },
-  {
-    "name": "Jiuliumen Station",
-    "lat": 160.187499,
-    "lng": 167.187494,
     "size": 24
   },
   {
