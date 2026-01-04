@@ -349,17 +349,19 @@ const MarkerImageHandler = (function() {
     try {
       if (container) container.classList.add('uploading');
 
-      try {
-        await checkServerQuota();
-      } catch (err) {
-        if (err.message === "quota") {
-          showNotification(
-            `⚠️ Server quota exceeded. Upload will resume on ${CONFIG.uploadResumeDate}.`,
-            "error"
-          );
-          return;
-        }
-      }
+try {
+  await checkServerQuota();
+} catch (err) {
+  if (err.message === "quota") {
+    showNotification("⚠️ Server quota exceeded. Try again later.", "error");
+    return;
+  }
+
+  if (err.message === "auth") {
+    showNotification("❌ Session expired. Please login again.", "error");
+    return;
+  }
+}
 
       const source = fromPaste ? 'clipboard' : 'file';
       showNotification(`⏳ Compressing ${source} image...`, 'info');
@@ -414,35 +416,26 @@ const MarkerImageHandler = (function() {
     return { valid: true };
   }
 
-  async function checkServerQuota() {
-    try {
-      const token = typeof getUserToken === 'function' ? getUserToken() : null;
-      if (!token) throw new Error('Not authenticated');
+async function checkServerQuota() {
+  const token = typeof getUserToken === 'function' ? getUserToken() : null;
+  if (!token) throw new Error('auth');
 
-      const res = await fetch(CONFIG.authEndpoint, {
-        method: 'GET',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+  const res = await fetch(CONFIG.authEndpoint, {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
 
-      if (res.status === 429 || res.status === 503) {
-        throw new Error("quota");
-      }
-
-      const data = await res.json();
-      if (data.error && (
-        data.error.includes("limit") ||
-        data.error.includes("quota") ||
-        data.error.includes("exceed")
-      )) {
-        throw new Error("quota");
-      }
-
-      return data;
-    } catch (e) {
-      throw new Error("quota");
-    }
+  if (res.status === 429 || res.status === 503) {
+    throw new Error("quota");
   }
 
+  if (!res.ok) {
+    throw new Error("auth");
+  }
+
+  const data = await res.json();
+  return data;
+}
   // ==========================================
   // UI COMPONENTS (NEW: PASTE ZONE STYLE!)
   // ==========================================
