@@ -429,6 +429,9 @@ sources.forEach(source => {
     this.activeMarkers = {};
   },
 
+
+
+
 createPopupContent(markerData, editState = {}) {
   const categoryName = getCategoryName(markerData.category_id);
   const categoryIcon = getIconUrl(markerData.category_id);
@@ -593,7 +596,43 @@ createPopupContent(markerData, editState = {}) {
       </div>
     `;
   }
-
+// 🎯 TAMBAHKAN BAGIAN INI (Knowledge Part Navigation)
+const partNavigationHTML = typeof KnowledgePartNavigation !== 'undefined' 
+  ? KnowledgePartNavigation.createPartNavigationHTML(markerData)
+  : '';
+// Header/Name section HTML
+let headerHTML = '';
+if (editState.editingName) {
+  headerHTML = `
+    <div class="marker-popup-header editing">
+      <input 
+        type="text" 
+        id="editName_${markerKey}" 
+        class="marker-popup-name-edit" 
+        value="${markerData.name || ''}" 
+        placeholder="Enter location name...">
+      <div class="marker-popup-section-actions">
+        <button class="marker-popup-edit-btn editing" onclick="saveEdit('${markerKey}', 'name')">
+          ${SVG_ICONS.save}
+          <span>Save</span>
+        </button>
+        <button class="marker-popup-edit-btn cancel" onclick="cancelEdit('${markerKey}')">
+          ${SVG_ICONS.cancel}
+          <span>Cancel</span>
+        </button>
+      </div>
+    </div>
+  `;
+} else {
+  headerHTML = `
+    <div class="marker-popup-header">
+      <h3>${markerData.name || 'Unnamed Location'}</h3>
+      <button class="marker-popup-section-edit-btn" onclick="event.stopPropagation(); startEdit('${markerKey}', 'name')" title="Edit Name">
+        <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/edit.png?updatedAt=1762987960006" alt="Edit">
+      </button>
+    </div>
+  `;
+}
   // ✅ GUNAKAN MarkerImageHandler untuk bagian gambar
   const imageHTML = typeof MarkerImageHandler !== 'undefined' 
     ? MarkerImageHandler.createImageContainerHTML(markerData)
@@ -615,14 +654,15 @@ createPopupContent(markerData, editState = {}) {
       <!-- Image Section -->
       ${imageHTML}
       
-      <!-- Header Section -->
-      <div class="marker-popup-header">
-        <h3>${markerData.name || 'Unnamed Location'}</h3>
-      </div>
+<!-- Header Section -->
+${headerHTML}
       
       <!-- Description Section -->
       ${descHTML}
       
+    <!-- 🎯 TAMBAHKAN PART NAVIGATION DI SINI -->
+    ${partNavigationHTML}
+    
       <!-- Footer Section (Visited + ys_id + links_info) -->
       <div class="marker-popup-footer">
         
@@ -1318,14 +1358,22 @@ window.startEdit = function(markerKey, type) {
     showLoginPopup();
     return;
   }
-
   const marker = MarkerManager.activeMarkers[markerKey];
   if (!marker) return;
   
   const markerData = MarkerManager.getAllMarkers().find(m => m._key === markerKey);
   if (!markerData) return;
   
-  const editState = type === 'coords' ? { editingCoords: true } : { editingDesc: true };
+  // ✅ PERBAIKAN: Handle 3 tipe edit (coords, desc, name)
+  const editState = {};
+  if (type === 'coords') {
+    editState.editingCoords = true;
+  } else if (type === 'desc') {
+    editState.editingDesc = true;
+  } else if (type === 'name') {
+    editState.editingName = true;
+  }
+  
   marker.getPopup().setContent(MarkerManager.createPopupContent(markerData, editState));
   
   window.currentEditMarker = markerKey;
@@ -1394,6 +1442,7 @@ function showNotification(message, type = 'success') {
     setTimeout(() => document.body.removeChild(notification), 300);
   }, 2000);
 }
+
 // ========================================
 // GLOBAL EXPORTS
 // ========================================

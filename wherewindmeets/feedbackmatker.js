@@ -92,13 +92,14 @@ async function saveFeedbackUser(key, updateData) {
     // 2️⃣ Ambil data lama marker ini (bukan semua)
     const oldMarkerData = existingData[key] || {};
 
-    // 3️⃣ Merge manual agar tidak overwrite data yang kosong
-    const finalMerged = {
-      x: updateData.x !== undefined ? updateData.x : oldMarkerData.x || "",
-      y: updateData.y !== undefined ? updateData.y : oldMarkerData.y || "",
-      desc: updateData.desc !== undefined ? updateData.desc : oldMarkerData.desc || "",
-      ys_id: userProfile.inGameName
-    };
+// 3️⃣ Merge manual agar tidak overwrite data yang kosong
+const finalMerged = {
+  x: updateData.x !== undefined ? updateData.x : oldMarkerData.x || "",
+  y: updateData.y !== undefined ? updateData.y : oldMarkerData.y || "",
+  desc: updateData.desc !== undefined ? updateData.desc : oldMarkerData.desc || "",
+  name: updateData.name !== undefined ? updateData.name : oldMarkerData.name || "",
+  ys_id: userProfile.inGameName
+};
 
     const payload = {
       [key]: finalMerged
@@ -161,6 +162,10 @@ window.saveEditFromConsole = async function(markerKey, type) {
     const descInput = document.getElementById(`editDesc_${markerKey}`);
     if (!descInput) return console.warn("Description input not found");
     updateData = { desc: descInput.value.trim() };
+  } else if (type === "name") {
+    const nameInput = document.getElementById(`editName_${markerKey}`);
+    if (!nameInput) return console.warn("Name input not found");
+    updateData = { name: nameInput.value.trim() };
   }
 
   markerEdits[markerKey] = { ...markerEdits[markerKey], ...updateData };
@@ -176,7 +181,6 @@ window.saveEditFromConsole = async function(markerKey, type) {
   } catch (err) {
     console.error("❌ Failed to sync with server:", err);
     
-    // Don't show "saved locally" notification if quota exceeded (popup already shown)
     if (!err.message.includes("quota exceeded")) {
       showNotification("⚠️ Saved locally, but failed to sync", "error");
     }
@@ -195,6 +199,7 @@ function syncFeedbackToMarkers(markers, feedbackData) {
       marker.x = feedback.x || "";
       marker.y = feedback.y || "";
       marker.desc = feedback.desc || marker.desc || "";
+      marker.name = feedback.name || marker.name || "";
       // ✅ Tambahkan ys_id jika ada
       if (feedback.ys_id) {
         marker.ys_id = feedback.ys_id;

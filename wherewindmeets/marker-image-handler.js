@@ -1,13 +1,19 @@
 /**
- * Marker Image Handler Module v5.3
+ * Marker Image Handler Module v5.5
  * 
- * NEW FEATURES v5.3:
- * - Desktop-only paste zone (dashed border style)
- * - Click paste zone = open file browser
- * - Ctrl+V = direct upload
- * - Mobile: only Upload button visible
+ * NEW FEATURES v5.5:
+ * - Integrated Image Editor before upload
+ * - Drawing tools (brush, text, circle markers)
+ * - Edit and annotate images before uploading
+ * - Preview and confirm before final upload
  * 
- * @version 5.3.0
+ * FEATURES v5.4:
+ * - Touch protection: prevents accidental upload clicks on touch devices
+ * - Pointer type detection: distinguishes between touch and mouse events
+ * - 300ms touch cooldown to allow hover gestures
+ * - Desktop mode on mobile: paste zone hidden for touch devices
+ * 
+ * @version 5.5.0
  */
 
 const MarkerImageHandler = (function() {
@@ -30,12 +36,18 @@ const MarkerImageHandler = (function() {
     cacheKey: 'wwm_marker_images',
     cacheVersionKey: 'wwm_marker_images_version',
     uploadEnabled: true,
-    uploadResumeDate: 'January 1st'
+    uploadResumeDate: 'January 1st',
+    enableImageEditor: true, // Toggle editor on/off
+    enableTouchProtection: false // Toggle touch protection (set false jika bermasalah)
   };
 
   let imageCache = {};
   let isLoaded = false;
   let pasteListeners = new Map();
+
+  // Touch protection state
+  let lastTouchTime = 0;
+  let isPointerMode = false;
 
   // ==========================================
   // DEVICE DETECTION
@@ -43,6 +55,29 @@ const MarkerImageHandler = (function() {
 
   function isMobile() {
     return window.matchMedia("(max-width: 768px)").matches;
+  }
+
+  function isTouchDevice() {
+    return ('ontouchstart' in window) || 
+           (navigator.maxTouchPoints > 0) || 
+           (navigator.msMaxTouchPoints > 0);
+  }
+
+  function handlePointerStart(e) {
+    if (e.pointerType === 'touch') {
+      lastTouchTime = Date.now();
+      isPointerMode = false;
+    } else {
+      isPointerMode = true;
+    }
+  }
+
+  function shouldAllowClick() {
+    const timeSinceTouch = Date.now() - lastTouchTime;
+    if (timeSinceTouch < 300) {
+      return false;
+    }
+    return true;
   }
 
   // ==========================================
@@ -340,28 +375,68 @@ const MarkerImageHandler = (function() {
   }
 
   // ==========================================
-  // PROCESS IMAGE UPLOAD
+  // PROCESS IMAGE UPLOAD (with Editor Integration)
   // ==========================================
 
-  async function processImageUpload(file, markerKey, fromPaste = false) {
+async function processImageUpload(file, markerKey, fromPaste = false) {
+    // Validate file first
+    const validation = validateFile(file);
+    if (!validation.valid) {
+      showNotification(`❌ ${validation.error}`, 'error');
+      return;
+    }
+
+    // If Image Editor is enabled and available, open it
+    if (CONFIG.enableImageEditor && typeof ImageEditor !== 'undefined') {
+      console.log('✏️ Opening Image Editor...');
+      
+      ImageEditor.open(file, markerKey, async (result) => {
+        // Check if user cancelled
+        if (result.status === 'cancel') {
+          console.log('❌ Upload cancelled by user');
+          showNotification('Upload cancelled', 'info');
+          return;
+        }
+        
+        // Only proceed if confirmed
+        if (result.status === 'confirm' && result.blob) {
+          console.log('📝 Image edited, proceeding with upload...');
+          
+          // Convert blob to file
+          const editedFile = new File([result.blob], file.name, {
+            type: 'image/png',
+            lastModified: Date.now()
+          });
+
+          // Continue with upload
+          await continueUpload(editedFile, markerKey, fromPaste);
+        }
+      });
+    } else {
+      // Direct upload without editor
+      await continueUpload(file, markerKey, fromPaste);
+    }
+  }
+
+  async function continueUpload(file, markerKey, fromPaste) {
     const container = document.querySelector(`.marker-image-container[data-marker-key="${markerKey}"]`);
 
     try {
       if (container) container.classList.add('uploading');
 
-try {
-  await checkServerQuota();
-} catch (err) {
-  if (err.message === "quota") {
-    showNotification("⚠️ Server quota exceeded. Try again later.", "error");
-    return;
-  }
+      try {
+        await checkServerQuota();
+      } catch (err) {
+        if (err.message === "quota") {
+          showNotification("⚠️ Server quota exceeded. Try again later.", "error");
+          return;
+        }
 
-  if (err.message === "auth") {
-    showNotification("❌ Session expired. Please login again.", "error");
-    return;
-  }
-}
+        if (err.message === "auth") {
+          showNotification("❌ Session expired. Please login again.", "error");
+          return;
+        }
+      }
 
       const source = fromPaste ? 'clipboard' : 'file';
       showNotification(`⏳ Compressing ${source} image...`, 'info');
@@ -407,7 +482,7 @@ try {
   }
 
   function validateFile(file) {
-    if (!CONFIG.allowedFormats.includes(file.type)) {
+    if (!CONFIG.allowedFormats.includes(file.type) && file.type !== 'image/png') {
       return { valid: false, error: 'Format tidak valid. Gunakan PNG, JPG, atau WebP' };
     }
     if (file.size > CONFIG.maxFileSize) {
@@ -416,36 +491,38 @@ try {
     return { valid: true };
   }
 
-async function checkServerQuota() {
-  const token = typeof getUserToken === 'function' ? getUserToken() : null;
-  if (!token) throw new Error('auth');
+  async function checkServerQuota() {
+    const token = typeof getUserToken === 'function' ? getUserToken() : null;
+    if (!token) throw new Error('auth');
 
-  const res = await fetch(CONFIG.authEndpoint, {
-    method: 'GET',
-    headers: { 'Authorization': `Bearer ${token}` }
-  });
+    const res = await fetch(CONFIG.authEndpoint, {
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
 
-  if (res.status === 429 || res.status === 503) {
-    throw new Error("quota");
+    if (res.status === 429 || res.status === 503) {
+      throw new Error("quota");
+    }
+
+    if (!res.ok) {
+      throw new Error("auth");
+    }
+
+    const data = await res.json();
+    return data;
   }
 
-  if (!res.ok) {
-    throw new Error("auth");
-  }
-
-  const data = await res.json();
-  return data;
-}
   // ==========================================
-  // UI COMPONENTS (NEW: PASTE ZONE STYLE!)
+  // UI COMPONENTS (with touch protection)
   // ==========================================
 
   function createImageContainerHTML(markerData) {
     const markerKey = markerData._key;
     const mobile = isMobile();
+    const touch = isTouchDevice();
     
-    // Paste zone hanya untuk desktop
-    const pasteZoneHTML = !mobile ? `
+    // Paste zone hanya untuk desktop non-touch
+    const pasteZoneHTML = !mobile && !touch ? `
       <div class="marker-paste-zone" 
            onclick="MarkerImageHandler.triggerUpload('${markerKey}')"
            title="Click to browse files or press Ctrl+V to paste">
@@ -463,7 +540,8 @@ async function checkServerQuota() {
            data-current-index="0"
            data-ui-loaded="false">
         
-        <div class="marker-image-wrapper">
+        <div class="marker-image-wrapper" 
+             onpointerdown="MarkerImageHandler.handlePointerStart(event)">
           <img 
             class="marker-popup-img" 
             src="${CONFIG.fallbackImage}"
@@ -475,7 +553,8 @@ async function checkServerQuota() {
           </div>
           
           <div class="marker-image-overlay">
-            <button class="marker-image-btn upload-btn" onclick="MarkerImageHandler.triggerUpload('${markerKey}')">
+            <button class="marker-image-btn upload-btn" 
+                    onclick="return MarkerImageHandler.safeUploadClick('${markerKey}', event)">
               📤 Upload
             </button>
             ${pasteZoneHTML}
@@ -508,12 +587,13 @@ async function checkServerQuota() {
 
     const images = getImages(markerKey);
     const mobile = isMobile();
+    const touch = isTouchDevice();
     
     container.dataset.uiLoaded = 'true';
     container.dataset.images = JSON.stringify(images);
 
-    // Attach paste listener (desktop only)
-    if (!mobile) {
+    // Attach paste listener (desktop non-touch only)
+    if (!mobile && !touch) {
       attachPasteListener(markerKey);
     }
 
@@ -529,8 +609,8 @@ async function checkServerQuota() {
         uploaderEl.style.display = 'block';
       }
 
-      // Paste zone hanya desktop
-      const pasteZoneHTML = !mobile ? `
+      // Paste zone hanya desktop non-touch
+      const pasteZoneHTML = !mobile && !touch ? `
         <div class="marker-paste-zone compact" 
              onclick="MarkerImageHandler.triggerUpload('${markerKey}')"
              title="Click to browse or Ctrl+V to paste">
@@ -542,7 +622,8 @@ async function checkServerQuota() {
       ` : '';
 
       overlay.innerHTML = `
-        <button class="marker-image-btn upload-btn" onclick="MarkerImageHandler.triggerUpload('${markerKey}')">
+        <button class="marker-image-btn upload-btn" 
+                onclick="return MarkerImageHandler.safeUploadClick('${markerKey}', event)">
           📤 Upload
         </button>
         ${pasteZoneHTML}
@@ -566,7 +647,7 @@ async function checkServerQuota() {
       container.dataset.isFallback = 'true';
       if (uploaderEl) uploaderEl.style.display = 'none';
       
-      const pasteZoneHTML = !mobile ? `
+      const pasteZoneHTML = !mobile && !touch ? `
         <div class="marker-paste-zone" 
              onclick="MarkerImageHandler.triggerUpload('${markerKey}')"
              title="Click to browse files or press Ctrl+V to paste">
@@ -579,7 +660,8 @@ async function checkServerQuota() {
       ` : '';
       
       overlay.innerHTML = `
-        <button class="marker-image-btn upload-btn" onclick="MarkerImageHandler.triggerUpload('${markerKey}')">
+        <button class="marker-image-btn upload-btn" 
+                onclick="return MarkerImageHandler.safeUploadClick('${markerKey}', event)">
           📤 Upload
         </button>
         ${pasteZoneHTML}
@@ -627,8 +709,34 @@ async function checkServerQuota() {
   }
 
   // ==========================================
-  // FILE UPLOAD
+  // FILE UPLOAD (with touch protection)
   // ==========================================
+
+  function safeUploadClick(markerKey, event) {
+    // Jika touch protection disabled, langsung izinkan
+    if (!CONFIG.enableTouchProtection) {
+      triggerUpload(markerKey);
+      return true;
+    }
+    
+    // Touch protection logic
+    const timeSinceTouch = Date.now() - lastTouchTime;
+    const isTouchEvent = event.pointerType === 'touch' || 
+                         (event.type && event.type.indexOf('touch') !== -1);
+    
+    // Hanya blokir jika:
+    // 1. Touch event yang baru saja terjadi (< 300ms)
+    // 2. DAN bukan klik mouse biasa
+    if (isTouchEvent && timeSinceTouch < 300) {
+      event.preventDefault();
+      event.stopPropagation();
+      console.log('🚫 Upload click prevented (touch hover detected)');
+      return false;
+    }
+    
+    triggerUpload(markerKey);
+    return true;
+  }
 
   function triggerUpload(markerKey) {
     if (!CONFIG.uploadEnabled) {
@@ -652,13 +760,6 @@ async function checkServerQuota() {
   async function handleFileSelect(event, markerKey) {
     const file = event.target.files[0];
     if (!file) return;
-
-    const validation = validateFile(file);
-    if (!validation.valid) {
-      showNotification(`❌ ${validation.error}`, 'error');
-      event.target.value = '';
-      return;
-    }
 
     await processImageUpload(file, markerKey, false);
     event.target.value = '';
@@ -765,10 +866,13 @@ async function checkServerQuota() {
   
   function debugCache() {
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('📦 IMAGE CACHE DEBUG v5.3');
+    console.log('📦 IMAGE CACHE DEBUG v5.5');
     console.log('isLoaded:', isLoaded);
     console.log('Upload enabled:', CONFIG.uploadEnabled);
+    console.log('Editor enabled:', CONFIG.enableImageEditor);
+    console.log('ImageEditor available:', typeof ImageEditor !== 'undefined');
     console.log('Device:', isMobile() ? 'Mobile' : 'Desktop');
+    console.log('Input:', isTouchDevice() ? 'Touch' : 'Mouse');
     console.log('Total markers:', Object.keys(imageCache).length);
     console.log('Last updated:', new Date(getLastUpdated()).toLocaleString());
     console.log('Active paste listeners:', pasteListeners.size);
@@ -794,18 +898,28 @@ async function checkServerQuota() {
     await preloadAllImages();
   }
 
-// ==========================================
+  // ==========================================
   // INIT
   // ==========================================
 
   async function init() {
-    console.log('🚀 MarkerImageHandler v5.3 initializing...');
+    console.log('🚀 MarkerImageHandler v5.5 initializing...');
     
     if (!CONFIG.uploadEnabled) {
       console.warn(`⚠️ Upload temporarily disabled until ${CONFIG.uploadResumeDate}`);
     }
 
-    console.log(`📱 Device: ${isMobile() ? 'Mobile (paste disabled)' : 'Desktop (paste enabled)'}`);
+    if (CONFIG.enableImageEditor) {
+      if (typeof ImageEditor !== 'undefined') {
+        console.log('✏️ Image Editor integration enabled');
+      } else {
+        console.warn('⚠️ Image Editor not found. Load editing-image-upload.js first.');
+      }
+    }
+
+    const deviceType = isMobile() ? 'Mobile' : 'Desktop';
+    const inputType = isTouchDevice() ? 'Touch' : 'Mouse';
+    console.log(`📱 Device: ${deviceType} / Input: ${inputType}`);
 
     await preloadAllImages();
 
@@ -842,7 +956,7 @@ async function checkServerQuota() {
       console.warn('⚠️ Map not ready yet, popup listener skipped.');
     }
 
-    console.log('✅ MarkerImageHandler v5.3 ready');
+    console.log('✅ MarkerImageHandler v5.5 ready');
   }
 
   // ==========================================
@@ -856,7 +970,9 @@ async function checkServerQuota() {
     getImages,
     hasImages,
     triggerUpload,
+    safeUploadClick,
     handleFileSelect,
+    handlePointerStart,
     nextImage,
     prevImage,
     openFullView,
@@ -870,8 +986,8 @@ async function checkServerQuota() {
     CONFIG
   };
 
-})(); // ← IIFE close
+})();
 
 // Global expose
 window.MarkerImageHandler = MarkerImageHandler;
-console.log('✅ MarkerImageHandler module loaded v5.3.0');
+console.log('✅ MarkerImageHandler module loaded v5.5.0');

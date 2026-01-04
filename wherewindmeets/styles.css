@@ -164,26 +164,40 @@ html, body {
 /* ============================================================
    HEADER SECTION
 ============================================================ */
+/* === NAME HEADER (Normal) === */
 .marker-popup-header {
+  position: relative;
   background: rgba(0, 0, 0, 0.2);
-  padding: 15px;
-  padding-right: 50px;
+  padding: 14px 16px;
+  padding-right: 20px;
   border-bottom: 2px solid rgba(218, 165, 32, 0.6);
   text-align: center;
 }
 
 .marker-popup-header h3 {
   margin: 0;
-  padding-left: 30px;
   font-size: 18px;
   font-weight: bold;
   color: #FFD700;
-  text-shadow: 
+  line-height: 1.4;
+  text-shadow:
     2px 2px 4px rgba(0, 0, 0, 0.7),
     0 0 10px rgba(218, 165, 32, 0.5);
-  line-height: 1.4;
 }
 
+/* === NAME HEADER (Editing Mode) === */
+.marker-popup-header.editing {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 10px;
+}
+/* HANYA sembunyikan edit NAME di header */
+.marker-popup-header > .marker-popup-section-edit-btn {
+  display: none !important;
+}
 /* ============================================================
    COORDINATES SECTION
 ============================================================ */
@@ -890,6 +904,8 @@ html, body {
   }
 }
 
+
+
 /* Pulse ring effect di belakang marker */
 .marker-glow-effect::before {
   content: '';
@@ -951,6 +967,132 @@ html, body {
   .marker-glow-effect::before {
     width: 50px;
     height: 50px;
+  }
+}
+
+
+/* ============================================================
+   KNOWLEDGE PART NAVIGATION
+   Styling untuk navigasi antar Part pada marker Knowledge
+============================================================ */
+
+.knowledge-part-navigation {
+  padding: 12px 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(218, 165, 32, 0.3);
+  border-bottom: 1px solid rgba(218, 165, 32, 0.3);
+}
+
+.part-nav-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: #DAA520;
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.part-nav-header svg {
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+}
+
+.part-nav-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.part-btn {
+  padding: 6px 14px;
+  border: 1px solid rgba(218, 165, 32, 0.6);
+  border-radius: 8px;
+  background: linear-gradient(
+    135deg,
+    rgba(218, 165, 32, 0.15),
+    rgba(184, 134, 11, 0.15)
+  );
+  color: #FFD700;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.part-btn:hover:not(:disabled) {
+  background: linear-gradient(
+    135deg,
+    rgba(218, 165, 32, 0.3),
+    rgba(184, 134, 11, 0.3)
+  );
+  border-color: rgba(218, 165, 32, 0.9);
+  box-shadow: 0 0 12px rgba(218, 165, 32, 0.5);
+  transform: translateY(-2px);
+}
+
+.part-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.part-btn.current {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 215, 0, 0.4),
+    rgba(218, 165, 32, 0.4)
+  );
+  border-color: #FFD700;
+  color: #FFF8DC;
+  cursor: default;
+  box-shadow: 
+    0 0 15px rgba(218, 165, 32, 0.6),
+    inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  animation: currentPartPulse 2s ease-in-out infinite;
+}
+
+@keyframes currentPartPulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 15px rgba(218, 165, 32, 0.6),
+      inset 0 1px 3px rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 
+      0 0 20px rgba(218, 165, 32, 0.8),
+      inset 0 1px 3px rgba(255, 255, 255, 0.3);
+  }
+}
+
+.part-btn:disabled {
+  opacity: 1;
+  pointer-events: none;
+}
+
+/* Responsive Design */
+@media (max-width: 400px) {
+  .knowledge-part-navigation {
+    padding: 10px 12px;
+  }
+
+  .part-nav-buttons {
+    gap: 6px;
+  }
+
+  .part-btn {
+    padding: 5px 12px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 350px) {
+  .part-btn {
+    padding: 4px 10px;
+    font-size: 10px;
   }
 }
 

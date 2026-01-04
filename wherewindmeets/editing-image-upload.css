@@ -1,0 +1,506 @@
+/**
+ * Image Editor Styles
+ * Version 1.0
+ */
+
+/* ==========================================
+   MODAL OVERLAY
+   ========================================== */
+
+.image-editor-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.image-editor-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.image-editor-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+/* ==========================================
+   EDITOR CONTAINER
+   ========================================== */
+
+.image-editor-container {
+  position: relative;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  width: 90vw;
+  max-width: 1200px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.image-editor-modal.active .image-editor-container {
+  transform: scale(1);
+}
+
+/* ==========================================
+   HEADER
+   ========================================== */
+
+.image-editor-header {
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.image-editor-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.editor-close-btn {
+  background: rgba(255, 59, 48, 0.2);
+  border: 1px solid rgba(255, 59, 48, 0.3);
+  color: #FF3B30;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.editor-close-btn:hover {
+  background: rgba(255, 59, 48, 0.3);
+  transform: scale(1.05);
+}
+
+/* ==========================================
+   TOOLBAR
+   ========================================== */
+
+.image-editor-toolbar {
+  padding: 16px;
+  background: rgba(15, 52, 96, 0.5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.tool-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 90px;
+}
+
+.tool-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.tool-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.tool-btn.danger {
+  background: rgba(255, 59, 48, 0.1);
+  border-color: rgba(255, 59, 48, 0.3);
+  color: #FF3B30;
+}
+
+.tool-btn.danger:hover {
+  background: rgba(255, 59, 48, 0.2);
+  border-color: rgba(255, 59, 48, 0.4);
+}
+
+.tool-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.tool-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.tool-label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 0 8px;
+}
+
+/* ==========================================
+   CANVAS WRAPPER
+   ========================================== */
+
+.image-editor-canvas-wrapper {
+  flex: 1;
+  position: relative;
+  overflow: auto;
+  background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 100%);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-editor-canvas {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  background: #fff;
+  cursor: crosshair;
+}
+
+.editor-annotations {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  pointer-events: none;
+}
+
+/* ==========================================
+   ANNOTATIONS
+   ========================================== */
+
+.editor-annotations {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  pointer-events: none;
+}
+
+.editor-text-annotation,
+.editor-circle-wrapper {
+  position: absolute;
+  pointer-events: all;
+  cursor: move;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.editor-text-annotation {
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  white-space: nowrap;
+  outline: none;
+  min-width: 50px;
+}
+
+.editor-text-annotation:focus {
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 0 2px rgba(255, 59, 48, 0.5);
+}
+
+.editor-text-annotation.selected {
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.8);
+  background: rgba(102, 126, 234, 0.1);
+}
+
+/* Circle Wrapper & Circle */
+.editor-circle-wrapper {
+  position: absolute;
+  pointer-events: all;
+}
+
+.editor-circle-annotation {
+  width: 100%;
+  height: 100%;
+  border-style: solid;
+  border-radius: 50%;
+  background: transparent;
+  box-sizing: border-box;
+  pointer-events: all;
+  cursor: move;
+}
+
+.editor-circle-wrapper.selected .editor-circle-annotation {
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.8);
+}
+
+/* Circle Transform Handles */
+/* Circle resize handles - MUCH BIGGER for touch */
+.circle-handle {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  background: white;
+  border: 3px solid #FF3B30;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 15;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+  touch-action: none;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.circle-handle::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+}
+/* Visual feedback when handle is hovered / touched */
+.circle-handle:hover,
+.circle-handle:active {
+  background: #FF3B30;            /* merah aktif */
+  border-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.35),
+              0 4px 16px rgba(255, 59, 48, 0.6);
+}
+
+/* Center MOVE handle - BIGGEST and most visible */
+.circle-handle.handle-move {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+  border: 3px solid white;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: move;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.5);
+}
+
+.circle-handle.handle-move:hover,
+.circle-handle.handle-move:active {
+  background: linear-gradient(135deg, #4CAF50, #2E7D32); /* hijau = MOVE */
+  box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.35),
+              0 6px 20px rgba(33, 150, 243, 0.7);
+}
+
+/* Corner handles */
+.circle-handle.handle-nw { 
+  top: -16px; 
+  left: -16px; 
+  cursor: nwse-resize; 
+}
+.circle-handle.handle-ne { 
+  top: -16px; 
+  right: -16px; 
+  cursor: nesw-resize; 
+}
+.circle-handle.handle-sw { 
+  bottom: -16px; 
+  left: -16px; 
+  cursor: nesw-resize; 
+}
+.circle-handle.handle-se { 
+  bottom: -16px; 
+  right: -16px; 
+  cursor: nwse-resize; 
+}
+
+/* ==========================================
+   FOOTER
+   ========================================== */
+
+.image-editor-footer {
+  padding: 20px 24px;
+  background: rgba(15, 52, 96, 0.5);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.editor-btn {
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cancel-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.confirm-btn {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(56, 239, 125, 0.4);
+}
+
+.confirm-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(56, 239, 125, 0.5);
+}
+
+.confirm-btn:active {
+  transform: translateY(0);
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 768px) {
+  .image-editor-container {
+    width: 95vw;
+    max-height: 95vh;
+  }
+
+  .image-editor-header {
+    padding: 16px;
+  }
+
+  .image-editor-header h3 {
+    font-size: 18px;
+  }
+
+  .image-editor-toolbar {
+    padding: 12px;
+    gap: 6px;
+  }
+
+  .tool-btn {
+    padding: 8px 12px;
+    min-width: 70px;
+    font-size: 12px;
+  }
+
+  .tool-icon {
+    font-size: 16px;
+  }
+
+  .tool-label {
+    font-size: 11px;
+  }
+
+  .toolbar-divider {
+    display: none;
+  }
+
+  .image-editor-canvas-wrapper {
+    padding: 12px;
+  }
+
+  .image-editor-footer {
+    padding: 16px;
+    gap: 8px;
+  }
+
+  .editor-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    flex: 1;
+  }
+}
+
+/* ==========================================
+   LOADING STATE
+   ========================================== */
+
+.image-editor-container.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.image-editor-container.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ==========================================
+   TOUCH IMPROVEMENTS
+   ========================================== */
+
+@media (hover: none) and (pointer: coarse) {
+  .tool-btn,
+  .editor-btn {
+    padding: 12px 16px;
+    min-height: 44px;
+  }
+
+  .editor-text-annotation,
+  .editor-circle-annotation {
+    touch-action: none;
+  }
+}
