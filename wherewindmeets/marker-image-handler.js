@@ -390,34 +390,42 @@ async function processImageUpload(file, markerKey, fromPaste = false) {
     if (CONFIG.enableImageEditor && typeof ImageEditor !== 'undefined') {
       console.log('✏️ Opening Image Editor...');
       
-      ImageEditor.open(file, markerKey, async (result) => {
-        // Check if user cancelled
-        if (result.status === 'cancel') {
-          console.log('❌ Upload cancelled by user');
-          showNotification('Upload cancelled', 'info');
-          return;
-        }
-        
-        // Only proceed if confirmed
-        if (result.status === 'confirm' && result.blob) {
-          console.log('📝 Image edited, proceeding with upload...');
+      // Return promise to prevent further execution
+      return new Promise((resolve) => {
+        ImageEditor.open(file, markerKey, async (result) => {
+          // Check if user cancelled
+          if (result.status === 'cancel') {
+            console.log('❌ Upload cancelled by user');
+            showNotification('Upload cancelled', 'info');
+            resolve(); // Resolve tanpa upload
+            return;
+          }
           
-          // Convert blob to file
-          const editedFile = new File([result.blob], file.name, {
-            type: 'image/png',
-            lastModified: Date.now()
-          });
+          // Only proceed if confirmed
+          if (result.status === 'confirm' && result.blob) {
+            console.log('📝 Image edited, proceeding with upload...');
+            
+            // Convert blob to file
+            const editedFile = new File([result.blob], file.name, {
+              type: 'image/png',
+              lastModified: Date.now()
+            });
 
-          // Continue with upload
-          await continueUpload(editedFile, markerKey, fromPaste);
-        }
+            // Continue with upload
+            await continueUpload(editedFile, markerKey, fromPaste);
+            resolve();
+          } else {
+            // Jika status tidak dikenali
+            console.log('⚠️ Unknown editor status:', result.status);
+            resolve();
+          }
+        });
       });
     } else {
       // Direct upload without editor
       await continueUpload(file, markerKey, fromPaste);
     }
   }
-
   async function continueUpload(file, markerKey, fromPaste) {
     const container = document.querySelector(`.marker-image-container[data-marker-key="${markerKey}"]`);
 

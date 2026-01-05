@@ -62,6 +62,10 @@
    UPLOADING STATE
    ========================================== */
 
+.marker-image-container.uploading {
+  position: relative;
+}
+
 .marker-image-container.uploading::after {
   content: '';
   position: absolute;
@@ -86,6 +90,7 @@
   border-radius: 12px;
   border: 2px solid #f3d59b;
   box-shadow: 0 8px 32px rgba(243, 213, 155, 0.3);
+  white-space: nowrap;
 }
 
 @keyframes pulse {

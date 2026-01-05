@@ -1,18 +1,11 @@
 /**
  * Image Editor for Upload Preview
- * Version 2.1 - Touch Optimized
+ * Version 3.0 - Mobile Touch Optimized
  * 
- * NEW FEATURES v2.1:
- * - Better touch handling with drag threshold
- * - Larger touch targets (24px handles)
- * - Improved drag stability on mobile
- * - Touch slop distance to prevent accidental drags
- * 
- * FEATURES v2.0:
- * - Undo/Redo functionality
- * - Circle spawns at center with transform handles
- * - Resize circles by dragging corner handles
- * - Better state management
+ * FEATURES:
+ * - Mobile: NO handles, pinch to resize, touch anywhere to move
+ * - Desktop: Full handles for move & resize
+ * - Clean console (only touch gesture logs)
  */
 
 const ImageEditor = (function() {
@@ -29,6 +22,15 @@ const ImageEditor = (function() {
   let isDragging = false;
   let dragStartPos = { x: 0, y: 0 };
   let hasMoved = false;
+  
+  // Pinch gesture tracking
+  let isPinching = false;
+  let initialPinchDistance = 0;
+  let initialRadius = 0;
+  let pinchIndicator = null;
+  
+  // Device detection
+  const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
   // Undo/Redo stacks
   let undoStack = [];
@@ -45,9 +47,9 @@ const ImageEditor = (function() {
     circleStrokeWidth: 3,
     minCircleRadius: 20,
     maxCircleRadius: 200,
-    handleSize: 32, // BIGGER - easier to tap
-    moveHandleSize: 40, // Center move handle
-    touchSlopDistance: 4 // Reduced for better responsiveness
+    handleSize: 32,
+    moveHandleSize: 40,
+    touchSlopDistance: 4
   };
 
   // ==========================================
@@ -272,15 +274,82 @@ const ImageEditor = (function() {
     canvas.addEventListener('mouseup', handleMouseUp);
     canvas.addEventListener('mouseleave', handleMouseUp);
 
-    canvas.addEventListener('touchstart', handleTouchStart);
-    canvas.addEventListener('touchmove', handleTouchMove);
-    canvas.addEventListener('touchend', handleTouchEnd);
+    canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+    canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+  }
+
+  // 👆 VISUAL: Touch ripple effect
+  function createTouchRipple(x, y) {
+    const ripple = document.createElement('div');
+    ripple.className = 'touch-ripple';
+    ripple.style.cssText = `
+      position: absolute;
+      left: ${x}px;
+      top: ${y}px;
+      width: 0;
+      height: 0;
+      border: 3px solid rgba(33, 150, 243, 0.8);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 999998;
+      transform: translate(-50%, -50%);
+      animation: ripple-expand 0.6s ease-out;
+    `;
+    
+    if (!document.querySelector('#ripple-animation')) {
+      const style = document.createElement('style');
+      style.id = 'ripple-animation';
+      style.textContent = `
+        @keyframes ripple-expand {
+          0% {
+            width: 0;
+            height: 0;
+            opacity: 1;
+          }
+          100% {
+            width: 60px;
+            height: 60px;
+            opacity: 0;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+    
+    currentEditor.annotationsLayer.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+  }
+  
+  // 🤏 PINCH INDICATOR
+  function showPinchIndicator() {
+    if (!selectedElement) return;
+    
+    pinchIndicator = document.createElement('div');
+    pinchIndicator.className = 'pinch-indicator';
+    pinchIndicator.textContent = '🤏 Pinch to Resize';
+    selectedElement.element.appendChild(pinchIndicator);
+  }
+  
+  function updatePinchIndicator(radius) {
+    if (pinchIndicator) {
+      pinchIndicator.textContent = `🤏 ${Math.round(radius)}px`;
+    }
+  }
+  
+  function hidePinchIndicator() {
+    if (pinchIndicator) {
+      pinchIndicator.remove();
+      pinchIndicator = null;
+    }
   }
 
   function handleMouseDown(e) {
     const rect = currentEditor.canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const scaleX = currentEditor.canvas.width / rect.width;
+    const scaleY = currentEditor.canvas.height / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
 
     switch (currentEditor.currentTool) {
       case 'brush':
@@ -296,8 +365,10 @@ const ImageEditor = (function() {
     if (!currentEditor) return;
     
     const rect = currentEditor.canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const scaleX = currentEditor.canvas.width / rect.width;
+    const scaleY = currentEditor.canvas.height / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
 
     if (currentEditor.currentTool === 'brush' && isDrawing) {
       draw(x, y);
@@ -337,23 +408,52 @@ const ImageEditor = (function() {
 
   function handleTouchStart(e) {
     e.preventDefault();
+    
+    // 🤏 PINCH GESTURE: 2 fingers = resize
+    if (e.touches.length === 2 && selectedElement && selectedElement.type === 'circle') {
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      const dx = touch2.clientX - touch1.clientX;
+      const dy = touch2.clientY - touch1.clientY;
+      initialPinchDistance = Math.sqrt(dx * dx + dy * dy);
+      initialRadius = selectedElement.radius;
+      isPinching = true;
+      
+      showPinchIndicator();
+      console.log(`🤏 Pinch started | distance: ${initialPinchDistance.toFixed(0)}px`);
+      return;
+    }
+    
+    // 👆 SINGLE TOUCH
     const touch = e.touches[0];
     const rect = currentEditor.canvas.getBoundingClientRect();
-    const x = touch.clientX - rect.left;
-    const y = touch.clientY - rect.top;
+    const scaleX = currentEditor.canvas.width / rect.width;
+    const scaleY = currentEditor.canvas.height / rect.height;
+    const x = (touch.clientX - rect.left) * scaleX;
+    const y = (touch.clientY - rect.top) * scaleY;
 
-    let touchedAnnotation = false;
+    createTouchRipple(touch.clientX - rect.left, touch.clientY - rect.top);
+    console.log(`👆 Touch: (${x.toFixed(0)}, ${y.toFixed(0)})`);
+
+    // If object is selected, touch anywhere = move
+    if (selectedElement && currentEditor.currentTool === 'none') {
+      startDragging(x, y, selectedElement);
+      return;
+    }
+
+    // Try to select annotation
+    let touched = false;
     for (let i = currentEditor.annotations.length - 1; i >= 0; i--) {
       const ann = currentEditor.annotations[i];
       if (isPointInAnnotation(x, y, ann)) {
         selectElement(ann);
         startDragging(x, y, ann);
-        touchedAnnotation = true;
+        touched = true;
         break;
       }
     }
 
-    if (!touchedAnnotation && currentEditor.currentTool === 'brush') {
+    if (!touched && currentEditor.currentTool === 'brush') {
       startDrawing(x, y);
     }
   }
@@ -362,15 +462,36 @@ const ImageEditor = (function() {
     e.preventDefault();
     if (!currentEditor) return;
 
+    // 🤏 PINCH RESIZE
+    if (e.touches.length === 2 && isPinching && selectedElement && selectedElement.type === 'circle') {
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      const dx = touch2.clientX - touch1.clientX;
+      const dy = touch2.clientY - touch1.clientY;
+      const currentDistance = Math.sqrt(dx * dx + dy * dy);
+      
+      const scale = currentDistance / initialPinchDistance;
+      const newRadius = Math.max(
+        CONFIG.minCircleRadius,
+        Math.min(CONFIG.maxCircleRadius, initialRadius * scale)
+      );
+      
+      selectedElement.radius = newRadius;
+      updateCirclePosition(selectedElement);
+      updatePinchIndicator(newRadius);
+      return;
+    }
+
+    // 👆 SINGLE TOUCH MOVE
     const touch = e.touches[0];
     const rect = currentEditor.canvas.getBoundingClientRect();
-    const x = touch.clientX - rect.left;
-    const y = touch.clientY - rect.top;
+    const scaleX = currentEditor.canvas.width / rect.width;
+    const scaleY = currentEditor.canvas.height / rect.height;
+    const x = (touch.clientX - rect.left) * scaleX;
+    const y = (touch.clientY - rect.top) * scaleY;
 
     if (currentEditor.currentTool === 'brush' && isDrawing) {
       draw(x, y);
-    } else if (isResizing && selectedElement) {
-      resizeCircle(x, y);
     } else if (isDragging && selectedElement) {
       if (!hasMoved) {
         const dx = x - dragStartPos.x;
@@ -390,6 +511,14 @@ const ImageEditor = (function() {
 
   function handleTouchEnd(e) {
     e.preventDefault();
+    
+    if (isPinching) {
+      isPinching = false;
+      hidePinchIndicator();
+      saveState();
+      console.log(`🤏 Pinch ended | final radius: ${selectedElement?.radius.toFixed(0)}px`);
+    }
+    
     handleMouseUp();
   }
 
@@ -451,8 +580,14 @@ const ImageEditor = (function() {
     annotation.className = 'editor-text-annotation';
     annotation.contentEditable = 'true';
     annotation.textContent = text;
-    annotation.style.left = centerX + 'px';
-    annotation.style.top = centerY + 'px';
+    annotation.style.pointerEvents = 'none';
+    
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = rect.width / canvas.width;
+    const scaleY = rect.height / canvas.height;
+    
+    annotation.style.left = (centerX * scaleX) + 'px';
+    annotation.style.top = (centerY * scaleY) + 'px';
     annotation.style.color = '#ffffff';
     annotation.style.fontSize = CONFIG.textSize + 'px';
     annotation.style.textShadow = `
@@ -480,20 +615,10 @@ const ImageEditor = (function() {
       if (currentEditor.currentTool === 'none') {
         selectElement(annotationData);
         const rect = currentEditor.canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        startDragging(x, y, annotationData);
-      }
-    });
-
-    annotation.addEventListener('touchstart', (e) => {
-      e.stopPropagation();
-      if (currentEditor.currentTool === 'none') {
-        selectElement(annotationData);
-        const touch = e.touches[0];
-        const rect = currentEditor.canvas.getBoundingClientRect();
-        const x = touch.clientX - rect.left;
-        const y = touch.clientY - rect.top;
+        const scaleX = currentEditor.canvas.width / rect.width;
+        const scaleY = currentEditor.canvas.height / rect.height;
+        const x = (e.clientX - rect.left) * scaleX;
+        const y = (e.clientY - rect.top) * scaleY;
         startDragging(x, y, annotationData);
       }
     });
@@ -516,32 +641,41 @@ const ImageEditor = (function() {
 
     const wrapper = document.createElement('div');
     wrapper.className = 'editor-circle-wrapper';
+    wrapper.style.pointerEvents = 'none';
     
     const circle = document.createElement('div');
     circle.className = 'editor-circle-annotation';
+    circle.style.pointerEvents = 'none';
     
-    // Create CENTER MOVE handle
-    const moveHandle = document.createElement('div');
-    moveHandle.className = 'circle-handle handle-move';
-    moveHandle.innerHTML = '✥';
-    moveHandle.style.width = CONFIG.moveHandleSize + 'px';
-    moveHandle.style.height = CONFIG.moveHandleSize + 'px';
-    moveHandle.style.fontSize = '24px';
-    moveHandle.style.lineHeight = CONFIG.moveHandleSize + 'px';
-    
-    // Create CORNER resize handles
-    const handles = ['nw', 'ne', 'sw', 'se'].map(pos => {
-      const handle = document.createElement('div');
-      handle.className = `circle-handle handle-${pos}`;
-      handle.dataset.position = pos;
-      handle.style.width = CONFIG.handleSize + 'px';
-      handle.style.height = CONFIG.handleSize + 'px';
-      return handle;
-    });
-
     wrapper.appendChild(circle);
-    wrapper.appendChild(moveHandle); // Add move handle first
-    handles.forEach(h => wrapper.appendChild(h));
+    
+    let moveHandle = null;
+    let handles = [];
+    
+    // 🖥️ DESKTOP ONLY: Add handles
+    if (!isMobile) {
+      moveHandle = document.createElement('div');
+      moveHandle.className = 'circle-handle handle-move';
+      moveHandle.innerHTML = '✥';
+      moveHandle.style.width = CONFIG.moveHandleSize + 'px';
+      moveHandle.style.height = CONFIG.moveHandleSize + 'px';
+      moveHandle.style.fontSize = '24px';
+      moveHandle.style.lineHeight = CONFIG.moveHandleSize + 'px';
+      moveHandle.style.pointerEvents = 'auto';
+      
+      handles = ['nw', 'ne', 'sw', 'se'].map(pos => {
+        const handle = document.createElement('div');
+        handle.className = `circle-handle handle-${pos}`;
+        handle.dataset.position = pos;
+        handle.style.width = CONFIG.handleSize + 'px';
+        handle.style.height = CONFIG.handleSize + 'px';
+        handle.style.pointerEvents = 'auto';
+        return handle;
+      });
+
+      wrapper.appendChild(moveHandle);
+      handles.forEach(h => wrapper.appendChild(h));
+    }
 
     const annotationData = {
       type: 'circle',
@@ -560,72 +694,43 @@ const ImageEditor = (function() {
     currentEditor.annotations.push(annotationData);
     currentEditor.annotationsLayer.appendChild(wrapper);
 
-    // Move handle events (EASIEST to grab)
-    moveHandle.addEventListener('mousedown', (e) => {
-      e.stopPropagation();
-      selectElement(annotationData);
-      const rect = currentEditor.canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      startDragging(x, y, annotationData);
-    });
+    // 🖥️ DESKTOP: Handle events
+    if (moveHandle) {
+      moveHandle.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        selectElement(annotationData);
+        const rect = currentEditor.canvas.getBoundingClientRect();
+        const scaleX = currentEditor.canvas.width / rect.width;
+        const scaleY = currentEditor.canvas.height / rect.height;
+        const x = (e.clientX - rect.left) * scaleX;
+        const y = (e.clientY - rect.top) * scaleY;
+        startDragging(x, y, annotationData);
+      });
+    }
 
-    moveHandle.addEventListener('touchstart', (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      selectElement(annotationData);
-      const touch = e.touches[0];
-      const rect = currentEditor.canvas.getBoundingClientRect();
-      const x = touch.clientX - rect.left;
-      const y = touch.clientY - rect.top;
-      startDragging(x, y, annotationData);
-    });
-
-    // Circle body drag (backup method)
     circle.addEventListener('mousedown', (e) => {
       e.stopPropagation();
       if (currentEditor.currentTool === 'none') {
         selectElement(annotationData);
         const rect = currentEditor.canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        const scaleX = currentEditor.canvas.width / rect.width;
+        const scaleY = currentEditor.canvas.height / rect.height;
+        const x = (e.clientX - rect.left) * scaleX;
+        const y = (e.clientY - rect.top) * scaleY;
         startDragging(x, y, annotationData);
       }
     });
 
-    circle.addEventListener('touchstart', (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      if (currentEditor.currentTool === 'none') {
-        selectElement(annotationData);
-        const touch = e.touches[0];
-        const rect = currentEditor.canvas.getBoundingClientRect();
-        const x = touch.clientX - rect.left;
-        const y = touch.clientY - rect.top;
-        startDragging(x, y, annotationData);
-      }
-    });
-
-    // Corner handles for RESIZE
-    handles.forEach(handle => {
-      handle.addEventListener('mousedown', (e) => {
-        e.stopPropagation();
-        selectElement(annotationData);
-        startResizing(e, annotationData, handle.dataset.position);
+    // 🖥️ DESKTOP: Resize handles
+    if (!isMobile) {
+      handles.forEach(handle => {
+        handle.addEventListener('mousedown', (e) => {
+          e.stopPropagation();
+          selectElement(annotationData);
+          startResizing(e, annotationData, handle.dataset.position);
+        });
       });
-
-      handle.addEventListener('touchstart', (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        selectElement(annotationData);
-        const touch = e.touches[0];
-        const fakeEvent = {
-          clientX: touch.clientX,
-          clientY: touch.clientY
-        };
-        startResizing(fakeEvent, annotationData, handle.dataset.position);
-      });
-    });
+    }
 
     setTimeout(() => {
       selectElement(annotationData);
@@ -638,28 +743,37 @@ const ImageEditor = (function() {
     const { x, y, radius, color, strokeWidth } = annotation;
     const { element, circle } = annotation;
     
-    element.style.left = (x - radius) + 'px';
-    element.style.top = (y - radius) + 'px';
-    element.style.width = (radius * 2) + 'px';
-    element.style.height = (radius * 2) + 'px';
+    const rect = currentEditor.canvas.getBoundingClientRect();
+    const scaleX = rect.width / currentEditor.canvas.width;
+    const scaleY = rect.height / currentEditor.canvas.height;
+    
+    const screenX = x * scaleX;
+    const screenY = y * scaleY;
+    const screenRadius = radius * scaleX;
+    
+    element.style.left = (screenX - screenRadius) + 'px';
+    element.style.top = (screenY - screenRadius) + 'px';
+    element.style.width = (screenRadius * 2) + 'px';
+    element.style.height = (screenRadius * 2) + 'px';
     
     circle.style.borderColor = color;
     circle.style.borderWidth = strokeWidth + 'px';
   }
 
-function startResizing(e, annotation, handlePos) {
-  isResizing = true;
-  resizeHandle = handlePos;
-  selectedElement = annotation;
+  function startResizing(e, annotation, handlePos) {
+    isResizing = true;
+    resizeHandle = handlePos;
+    selectedElement = annotation;
 
-  // 🔥 Tambahkan visual state
-  const handle = annotation.handles.find(h => h.dataset.position === handlePos);
-  if (handle) handle.classList.add('is-active');
+    const handle = annotation.handles.find(h => h.dataset.position === handlePos);
+    if (handle) handle.classList.add('is-active');
 
-  const rect = currentEditor.canvas.getBoundingClientRect();
-  dragOffset.x = e.clientX - rect.left;
-  dragOffset.y = e.clientY - rect.top;
-}
+    const rect = currentEditor.canvas.getBoundingClientRect();
+    const scaleX = currentEditor.canvas.width / rect.width;
+    const scaleY = currentEditor.canvas.height / rect.height;
+    dragOffset.x = (e.clientX - rect.left) * scaleX;
+    dragOffset.y = (e.clientY - rect.top) * scaleY;
+  }
 
   function resizeCircle(mouseX, mouseY) {
     if (!selectedElement || !isResizing) return;
@@ -680,15 +794,15 @@ function startResizing(e, annotation, handlePos) {
     updateCirclePosition(annotation);
   }
 
-function stopResizing() {
-  if (isResizing && selectedElement) {
-    selectedElement.handles.forEach(h => h.classList.remove('is-active'));
-    saveState();
-  }
+  function stopResizing() {
+    if (isResizing && selectedElement && selectedElement.handles) {
+      selectedElement.handles.forEach(h => h.classList.remove('is-active'));
+      saveState();
+    }
 
-  isResizing = false;
-  resizeHandle = null;
-}
+    isResizing = false;
+    resizeHandle = null;
+  }
 
   // ==========================================
   // SELECTION & DRAGGING
@@ -698,7 +812,7 @@ function stopResizing() {
     for (let i = currentEditor.annotations.length - 1; i >= 0; i--) {
       const ann = currentEditor.annotations[i];
       
-      if (ann.type === 'circle') {
+      if (ann.type === 'circle' && !isMobile) {
         const handleClicked = checkHandleClick(x, y, ann);
         if (handleClicked) {
           selectElement(ann);
@@ -717,36 +831,35 @@ function stopResizing() {
   }
 
   function checkHandleClick(x, y, annotation) {
-    if (!annotation.handles) return false;
+    if (!annotation.handles || !annotation.handles.length) return false;
     
     const canvasRect = currentEditor.canvas.getBoundingClientRect();
+    const scaleX = currentEditor.canvas.width / canvasRect.width;
+    const scaleY = currentEditor.canvas.height / canvasRect.height;
     
-    // Check MOVE handle first (highest priority, biggest)
     if (annotation.moveHandle) {
       const moveRect = annotation.moveHandle.getBoundingClientRect();
-      const mx = moveRect.left - canvasRect.left + moveRect.width / 2;
-      const my = moveRect.top - canvasRect.top + moveRect.height / 2;
+      const mx = (moveRect.left - canvasRect.left + moveRect.width / 2) * scaleX;
+      const my = (moveRect.top - canvasRect.top + moveRect.height / 2) * scaleY;
       const moveDist = Math.sqrt((x - mx) ** 2 + (y - my) ** 2);
-      const moveRadius = CONFIG.moveHandleSize / 2 + 8; // Extra generous padding
+      const moveRadius = (CONFIG.moveHandleSize / 2 + 8) * scaleX;
       
       if (moveDist < moveRadius) {
-        // Start DRAG, not resize
         startDragging(x, y, annotation);
         return true;
       }
     }
     
-    // Check RESIZE handles (corners)
-    const touchRadius = CONFIG.handleSize / 2 + 8; // Generous padding
+    const touchRadius = (CONFIG.handleSize / 2 + 8) * scaleX;
     
     for (let handle of annotation.handles) {
       const rect = handle.getBoundingClientRect();
-      const hx = rect.left - canvasRect.left + rect.width / 2;
-      const hy = rect.top - canvasRect.top + rect.height / 2;
+      const hx = (rect.left - canvasRect.left + rect.width / 2) * scaleX;
+      const hy = (rect.top - canvasRect.top + rect.height / 2) * scaleY;
       const dist = Math.sqrt((x - hx) ** 2 + (y - hy) ** 2);
       
       if (dist < touchRadius) {
-        startResizing({ clientX: x + canvasRect.left, clientY: y + canvasRect.top }, annotation, handle.dataset.position);
+        startResizing({ clientX: x / scaleX + canvasRect.left, clientY: y / scaleY + canvasRect.top }, annotation, handle.dataset.position);
         return true;
       }
     }
@@ -758,10 +871,13 @@ function stopResizing() {
     const rect = annotation.element.getBoundingClientRect();
     const canvasRect = currentEditor.canvas.getBoundingClientRect();
     
-    const annX = rect.left - canvasRect.left;
-    const annY = rect.top - canvasRect.top;
-    const annW = rect.width;
-    const annH = rect.height;
+    const scaleX = currentEditor.canvas.width / canvasRect.width;
+    const scaleY = currentEditor.canvas.height / canvasRect.height;
+    
+    const annX = (rect.left - canvasRect.left) * scaleX;
+    const annY = (rect.top - canvasRect.top) * scaleY;
+    const annW = rect.width * scaleX;
+    const annH = rect.height * scaleY;
     
     return x >= annX && x <= annX + annW && y >= annY && y <= annY + annH;
   }
@@ -770,31 +886,42 @@ function stopResizing() {
     deselectAll();
     selectedElement = annotation;
     annotation.element.classList.add('selected');
+    
+    if (annotation.type === 'text') {
+      annotation.element.style.pointerEvents = 'auto';
+    }
   }
 
   function deselectAll() {
     if (selectedElement) {
       selectedElement.element.classList.remove('selected');
+      
+      if (selectedElement.type === 'text') {
+        selectedElement.element.style.pointerEvents = 'none';
+      }
+      
       selectedElement = null;
     }
   }
 
-function startDragging(x, y, annotation) {
-  isDragging = true;
-  hasMoved = false;
-  dragStartPos = { x, y };
+  function startDragging(x, y, annotation) {
+    isDragging = true;
+    hasMoved = false;
+    dragStartPos = { x, y };
 
-  // 🔥 visual active
-  if (annotation.moveHandle) {
-    annotation.moveHandle.classList.add('is-active');
+    if (annotation.moveHandle) {
+      annotation.moveHandle.classList.add('is-active');
+    }
+
+    const rect = annotation.element.getBoundingClientRect();
+    const canvasRect = currentEditor.canvas.getBoundingClientRect();
+    
+    const scaleX = currentEditor.canvas.width / canvasRect.width;
+    const scaleY = currentEditor.canvas.height / canvasRect.height;
+
+    dragOffset.x = x - (rect.left - canvasRect.left) * scaleX;
+    dragOffset.y = y - (rect.top - canvasRect.top) * scaleY;
   }
-
-  const rect = annotation.element.getBoundingClientRect();
-  const canvasRect = currentEditor.canvas.getBoundingClientRect();
-
-  dragOffset.x = x - (rect.left - canvasRect.left);
-  dragOffset.y = y - (rect.top - canvasRect.top);
-}
 
   function dragAnnotation(x, y) {
     if (!selectedElement) return;
@@ -807,25 +934,30 @@ function startDragging(x, y, annotation) {
       selectedElement.y = newY + selectedElement.radius;
       updateCirclePosition(selectedElement);
     } else if (selectedElement.type === 'text') {
-      selectedElement.element.style.left = newX + 'px';
-      selectedElement.element.style.top = newY + 'px';
       selectedElement.x = newX;
       selectedElement.y = newY;
+      
+      const rect = currentEditor.canvas.getBoundingClientRect();
+      const scaleX = rect.width / currentEditor.canvas.width;
+      const scaleY = rect.height / currentEditor.canvas.height;
+      
+      selectedElement.element.style.left = (newX * scaleX) + 'px';
+      selectedElement.element.style.top = (newY * scaleY) + 'px';
     }
   }
 
-function stopDragging() {
-  if (selectedElement?.moveHandle) {
-    selectedElement.moveHandle.classList.remove('is-active');
-  }
+  function stopDragging() {
+    if (selectedElement?.moveHandle) {
+      selectedElement.moveHandle.classList.remove('is-active');
+    }
 
-  if (isDragging && hasMoved && !isResizing && !isDrawing) {
-    saveState();
-  }
+    if (isDragging && hasMoved && !isResizing && !isDrawing) {
+      saveState();
+    }
 
-  isDragging = false;
-  hasMoved = false;
-}
+    isDragging = false;
+    hasMoved = false;
+  }
 
   // ==========================================
   // UNDO/REDO SYSTEM
@@ -854,36 +986,24 @@ function stopDragging() {
     }
     
     redoStack = [];
-    
-    console.log(`💾 State saved (Undo: ${undoStack.length}, Redo: ${redoStack.length})`);
   }
 
   function undo() {
-    if (undoStack.length <= 1) {
-      console.log('⚠️ Nothing to undo');
-      return;
-    }
+    if (undoStack.length <= 1) return;
 
     const currentState = undoStack.pop();
     redoStack.push(currentState);
     
     const previousState = undoStack[undoStack.length - 1];
     restoreState(previousState);
-    
-    console.log(`↶ Undo (Undo: ${undoStack.length}, Redo: ${redoStack.length})`);
   }
 
   function redo() {
-    if (redoStack.length === 0) {
-      console.log('⚠️ Nothing to redo');
-      return;
-    }
+    if (redoStack.length === 0) return;
 
     const state = redoStack.pop();
     undoStack.push(state);
     restoreState(state);
-    
-    console.log(`↷ Redo (Undo: ${undoStack.length}, Redo: ${redoStack.length})`);
   }
 
   function restoreState(state) {
@@ -931,8 +1051,14 @@ function stopDragging() {
     el.className = 'editor-text-annotation';
     el.contentEditable = 'true';
     el.textContent = data.text;
-    el.style.left = data.x + 'px';
-    el.style.top = data.y + 'px';
+    el.style.pointerEvents = 'none';
+    
+    const rect = currentEditor.canvas.getBoundingClientRect();
+    const scaleX = rect.width / currentEditor.canvas.width;
+    const scaleY = rect.height / currentEditor.canvas.height;
+    
+    el.style.left = (data.x * scaleX) + 'px';
+    el.style.top = (data.y * scaleY) + 'px';
     el.style.color = data.color;
     el.style.fontSize = data.size + 'px';
     el.style.textShadow = `
@@ -951,21 +1077,10 @@ function stopDragging() {
       if (currentEditor.currentTool === 'none') {
         selectElement(ann);
         const rect = currentEditor.canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        startDragging(x, y, ann);
-      }
-    });
-
-    el.addEventListener('touchstart', e => {
-      e.stopPropagation();
-      e.preventDefault();
-      if (currentEditor.currentTool === 'none') {
-        selectElement(ann);
-        const touch = e.touches[0];
-        const rect = currentEditor.canvas.getBoundingClientRect();
-        const x = touch.clientX - rect.left;
-        const y = touch.clientY - rect.top;
+        const scaleX = currentEditor.canvas.width / rect.width;
+        const scaleY = currentEditor.canvas.height / rect.height;
+        const x = (e.clientX - rect.left) * scaleX;
+        const y = (e.clientY - rect.top) * scaleY;
         startDragging(x, y, ann);
       }
     });
@@ -974,31 +1089,40 @@ function stopDragging() {
   function addCircleFromState(data) {
     const wrapper = document.createElement('div');
     wrapper.className = 'editor-circle-wrapper';
+    wrapper.style.pointerEvents = 'none';
     
     const circle = document.createElement('div');
     circle.className = 'editor-circle-annotation';
+    circle.style.pointerEvents = 'none';
     
-    // Create CENTER MOVE handle
-    const moveHandle = document.createElement('div');
-    moveHandle.className = 'circle-handle handle-move';
-    moveHandle.innerHTML = '✥';
-    moveHandle.style.width = CONFIG.moveHandleSize + 'px';
-    moveHandle.style.height = CONFIG.moveHandleSize + 'px';
-    moveHandle.style.fontSize = '24px';
-    moveHandle.style.lineHeight = CONFIG.moveHandleSize + 'px';
-    
-    const handles = ['nw', 'ne', 'sw', 'se'].map(pos => {
-      const handle = document.createElement('div');
-      handle.className = `circle-handle handle-${pos}`;
-      handle.dataset.position = pos;
-      handle.style.width = CONFIG.handleSize + 'px';
-      handle.style.height = CONFIG.handleSize + 'px';
-      return handle;
-    });
-
     wrapper.appendChild(circle);
-    wrapper.appendChild(moveHandle);
-    handles.forEach(h => wrapper.appendChild(h));
+    
+    let moveHandle = null;
+    let handles = [];
+    
+    if (!isMobile) {
+      moveHandle = document.createElement('div');
+      moveHandle.className = 'circle-handle handle-move';
+      moveHandle.innerHTML = '✥';
+      moveHandle.style.width = CONFIG.moveHandleSize + 'px';
+      moveHandle.style.height = CONFIG.moveHandleSize + 'px';
+      moveHandle.style.fontSize = '24px';
+      moveHandle.style.lineHeight = CONFIG.moveHandleSize + 'px';
+      moveHandle.style.pointerEvents = 'auto';
+      
+      handles = ['nw', 'ne', 'sw', 'se'].map(pos => {
+        const handle = document.createElement('div');
+        handle.className = `circle-handle handle-${pos}`;
+        handle.dataset.position = pos;
+        handle.style.width = CONFIG.handleSize + 'px';
+        handle.style.height = CONFIG.handleSize + 'px';
+        handle.style.pointerEvents = 'auto';
+        return handle;
+      });
+
+      wrapper.appendChild(moveHandle);
+      handles.forEach(h => wrapper.appendChild(h));
+    }
 
     const ann = {
       ...data,
@@ -1012,72 +1136,45 @@ function stopDragging() {
     currentEditor.annotations.push(ann);
     currentEditor.annotationsLayer.appendChild(wrapper);
 
-    // Move handle
-    moveHandle.addEventListener('mousedown', (e) => {
-      e.stopPropagation();
-      selectElement(ann);
-      const rect = currentEditor.canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      startDragging(x, y, ann);
-    });
+    if (moveHandle) {
+      moveHandle.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        selectElement(ann);
+        const rect = currentEditor.canvas.getBoundingClientRect();
+        const scaleX = currentEditor.canvas.width / rect.width;
+        const scaleY = currentEditor.canvas.height / rect.height;
+        const x = (e.clientX - rect.left) * scaleX;
+        const y = (e.clientY - rect.top) * scaleY;
+        startDragging(x, y, ann);
+      });
+    }
 
-    moveHandle.addEventListener('touchstart', (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      selectElement(ann);
-      const touch = e.touches[0];
-      const rect = currentEditor.canvas.getBoundingClientRect();
-      const x = touch.clientX - rect.left;
-      const y = touch.clientY - rect.top;
-      startDragging(x, y, ann);
-    });
-
-    // Circle body
     circle.addEventListener('mousedown', (e) => {
       e.stopPropagation();
       if (currentEditor.currentTool === 'none') {
         selectElement(ann);
         const rect = currentEditor.canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        const scaleX = currentEditor.canvas.width / rect.width;
+        const scaleY = currentEditor.canvas.height / rect.height;
+        const x = (e.clientX - rect.left) * scaleX;
+        const y = (e.clientY - rect.top) * scaleY;
         startDragging(x, y, ann);
       }
     });
 
-    circle.addEventListener('touchstart', (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      if (currentEditor.currentTool === 'none') {
-        selectElement(ann);
-        const touch = e.touches[0];
-        const rect = currentEditor.canvas.getBoundingClientRect();
-        const x = touch.clientX - rect.left;
-        const y = touch.clientY - rect.top;
-        startDragging(x, y, ann);
-      }
-    });
-
-    // Corner handles
-    handles.forEach(handle => {
-      handle.addEventListener('mousedown', e => {
-        e.stopPropagation();
-        selectElement(ann);
-        startResizing(e, ann, handle.dataset.position);
+    if (!isMobile) {
+      handles.forEach(handle => {
+        handle.addEventListener('mousedown', e => {
+          e.stopPropagation();
+          selectElement(ann);
+          startResizing(e, ann, handle.dataset.position);
+        });
       });
-
-      handle.addEventListener('touchstart', e => {
-        e.stopPropagation();
-        e.preventDefault();
-        selectElement(ann);
-        const touch = e.touches[0];
-        startResizing({ clientX: touch.clientX, clientY: touch.clientY }, ann, handle.dataset.position);
-      });
-    });
+    }
   }
 
   // ==========================================
-  // CLEAR & DELETE
+  // DELETE
   // ==========================================
 
   function deleteSelected() {
@@ -1210,4 +1307,4 @@ function stopDragging() {
 })();
 
 window.ImageEditor = ImageEditor;
-console.log('✅ ImageEditor module loaded v2.1 - Touch Optimized');
+console.log('✅ ImageEditor v3.0 - Mobile Optimized (Pinch to Resize, Touch Anywhere to Move)');

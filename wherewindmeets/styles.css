@@ -1073,6 +1073,353 @@ html, body {
   pointer-events: none;
 }
 
+/* ========================================
+   MOBILE COMPACT POPUP (≤480px)
+   FINAL & STABLE VERSION
+   ======================================== */
+@media (max-width: 480px) {
+
+  /* ===============================
+     LEAFLET POPUP WRAPPER (ANTI JEBOL)
+     =============================== */
+  .leaflet-popup-content-wrapper {
+    max-width: 92vw;
+    width: auto;
+  }
+
+  .leaflet-popup-content {
+    max-width: 92vw;
+    width: auto;
+    margin: 0;
+    overflow-x: hidden;
+  }
+
+  /* ===============================
+     MAIN POPUP CONTAINER
+     =============================== */
+  .marker-popup {
+    max-width: 100%;
+    width: auto;
+    min-width: unset;
+  }
+
+  /* ===============================
+     CATEGORY SECTION
+     =============================== */
+  .marker-popup-category {
+    padding: 6px 10px;
+  }
+
+  .marker-popup-category-name {
+    font-size: 13px;
+    line-height: 1.25;
+  }
+
+  /* ===============================
+     IMAGE SECTION (COMPACT)
+     =============================== */
+  .marker-popup-image {
+    height: 105px;
+    padding: 8px 10px 4px;
+  }
+
+  /* ===============================
+     HEADER / NAME
+     =============================== */
+  .marker-popup-header {
+    padding: 2px 10px;
+  }
+
+  .marker-popup-header h3 {
+    font-size: 8px;
+    line-height: 1.3;
+  }
+
+  /* ===============================
+     COORDINATES SECTION
+     =============================== */
+  .marker-popup-coords {
+    padding: 6px 10px;
+  }
+
+  .marker-popup-coords-title {
+    font-size: 10.5px;
+  }
+
+  .marker-popup-coord-item {
+    font-size: 11.5px;
+    padding: 4px 6px;
+    gap: 4px;
+  }
+
+  /* ===============================
+     DESCRIPTION SECTION
+     =============================== */
+  .marker-popup-desc {
+    padding: 6px 10px;
+  }
+
+  .marker-popup-desc-title {
+    font-size: 7.5px;
+  }
+.marker-popup-desc-title svg {
+  width: 7px ;
+  height: 7px ;
+  stroke-width: 1.2;
+  flex-shrink: 0;
+}
+  .marker-popup-desc-text {
+    font-size: 6.5px;
+    line-height: 1.4;
+    max-height: 70px;
+    overflow-y: auto;
+  }
+.marker-popup-desc-icon {
+  width: 7px;
+  height: 7px;
+  stroke-width: 1.2;
+  flex-shrink: 0;
+}
+  .marker-popup-desc-edit {
+    font-size: 6.5px;
+    min-height: 65px;
+  }
+.marker-popup-content span {
+  font-size: 6px;
+  line-height: 1.1;
+}
+.marker-popup-desc-text {
+  font-size: 6.5px;
+  line-height: 1.4;
+  max-height: 70px;
+  overflow-y: auto;
+
+  /* === PENTING: CEGAH MELEBAR === */
+  max-width: 100%;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+  /* Scrollbar tipis */
+  .marker-popup-desc-text::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  /* ===============================
+     KNOWLEDGE / PART NAVIGATION
+     =============================== */
+  .knowledge-part-navigation {
+    padding: 6px 10px;
+  }
+
+  .part-nav-header {
+    font-size: 6.5px;
+    margin-bottom: 6px;
+  }
+
+  .part-nav-buttons {
+    gap: 5px;
+  }
+
+  .part-btn {
+    padding: 3px 8px;
+    font-size: 3.5px;
+    border-radius: 5px;
+  }
+ /* ===============================
+     YS ID (MOBILE COMPACT)
+     =============================== */
+  .marker-image-btn.upload-btn,
+  .marker-image-btn.fullview-btn {
+    font-size: 5px;
+    padding: 6px 10px;
+    min-width: unset;
+    width: auto;
+    gap: 4px;
+  }
+  
+  .marker-popup-ysid {
+    padding: 2px 6px;
+    border-radius: 6px;
+    max-width: 100%;
+  }
+
+  .marker-popup-ysid-label {
+    font-size: 3.5px;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
+
+  /* Biar LINK + YSID rapi berdampingan */
+  .footer-right-group {
+    gap: 6px;
+    align-items: center;
+  }
+
+}
+  /* ===============================
+     EDIT SECTION BUTTON
+     =============================== */
+  .marker-popup-section-edit-btn {
+    width: 28px;
+    height: 28px;
+  }
+
+  .marker-popup-section-edit-btn img {
+    transform: none;
+  }
+
+  /* Disable tooltip on mobile */
+  .marker-popup-section-edit-btn::before,
+  .marker-popup-section-edit-btn::after {
+    display: none;
+  }
+
+/* ===============================
+   FOOTER SECTION (FORCE ROW)
+   =============================== */
+.marker-popup-footer {
+  display: flex !important;
+  flex-direction: row !important;   /* ⬅️ INI KUNCINYA */
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 6px 10px;
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+
+/* ===============================
+   VISITED (LEFT)
+   =============================== */
+.marker-popup-visited {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 4px;
+
+  flex: 0 1 auto;
+  white-space: nowrap;
+}
+
+.marker-popup-visited input[type="checkbox"] {
+  width: 10px;
+  height: 10px;
+  margin: 0;
+  transform: scale(0.6);
+  transform-origin: left center;
+  flex-shrink: 0;
+}
+
+.marker-popup-visited-label {
+  display: inline-flex ;
+  flex-direction: row ;
+  align-items: center;
+  gap: 3px;
+
+  font-size: 6px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.marker-popup-visited-label svg {
+  width: 6px;
+  height: 6px;
+  stroke-width: 1.5;
+  flex-shrink: 0;
+}
+
+.marker-popup-visited-label span {
+  font-size: 6px;
+}
+
+/* ===============================
+   RIGHT GROUP (YSID / LINK)
+   =============================== */
+.footer-right-group {
+  display: flex ;
+  flex-direction: row ;   /* ⬅️ PAKSA KE SAMPING */
+  align-items: center;
+  gap: 6px;
+
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.marker-popup-ysid {
+  padding: 3px 6px;
+}
+
+.marker-popup-ysid-label {
+  font-size: 6px;
+}
+
+.marker-popup-link-btn {
+  font-size: 8.5px;
+  padding: 3px 6px;
+}
+
+/* ===============================
+   SMALL LABEL
+   =============================== */
+.marker-popup-full-label {
+  font-size: 4px;
+}
+  /* ===============================
+     COMMENTS BUTTON
+     =============================== */
+  .marker-popup-comments-section {
+    padding: 6px 10px;
+  }
+
+  .marker-popup-comments-btn {
+    min-width: 120px;
+    justify-content: center;
+    padding: 8px 12px;
+  }
+ .marker-popup-comments-btn svg {
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+  }
+  .marker-popup-comments-btn span {
+    font-size: 6px;
+  }
+  /* ===============================
+     REPORT SECTION
+     =============================== */
+  .marker-popup-report-section {
+    padding: 6px 10px;
+  }
+
+  .marker-popup-report-btn {
+    font-size: 4px;
+    padding: 4px 10px;
+  }
+  .marker-popup-report-btn svg {
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+  }
+  /* ===============================
+     SAVE / CANCEL ACTIONS
+     =============================== */
+  .marker-popup-section-actions {
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .marker-popup-edit-btn {
+    font-size: 6.5px;
+    padding: 6px 10px;
+  }
+
+}
+
+
 /* Responsive Design */
 @media (max-width: 400px) {
   .knowledge-part-navigation {

@@ -454,3 +454,115 @@
     font-size: 13px;
   }
 }
+/* ==========================================
+   MOBILE COMPACT PROFILE (≤ 480px)
+   ========================================== */
+@media (max-width: 480px) {
+
+  #profileContainer {
+    top: 8px;
+    left: 10%;
+
+    min-width: 100px;
+    max-width: 120px;
+    padding: 8px;
+
+    border-radius: 10px;
+  }
+
+  /* ===== HEADER ===== */
+  .profile-header {
+    gap: 8px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
+
+  .profile-weapon-img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .profile-name {
+    font-size: 11px;
+    margin-bottom: 2px;
+  }
+
+  .profile-role {
+    font-size: 8px;
+    letter-spacing: 0.3px;
+  }
+
+  /* ===== TOTAL COUNTER ===== */
+  .profile-total-counter {
+    padding: 6px 8px;
+    margin-top: 6px;
+  }
+
+  .profile-total-label {
+    font-size: 9px;
+  }
+
+  .profile-total-value {
+    font-size: 12px;
+  }
+
+  /* ===== STATS SECTION ===== */
+  .profile-stats-section {
+    gap: 6px;
+    max-height: 180px;
+    padding-right: 2px;
+  }
+
+  .profile-stats-section.collapsed {
+    max-height: 90px;
+  }
+
+  /* ===== STAT ITEM ===== */
+  .profile-stat-item {
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: 5px;
+  }
+
+  .profile-stat-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .profile-stat-name {
+    font-size: 9.5px;
+  }
+
+  .profile-stat-count {
+    font-size: 10.5px;
+    min-width: 22px;
+  }
+
+  /* ===== SHOW MORE BUTTON ===== */
+  .profile-show-more-btn {
+    padding: 6px 8px;
+    font-size: 9px;
+    gap: 4px;
+    margin-top: 6px;
+  }
+
+  .profile-show-more-icon {
+    font-size: 10px;
+  }
+
+  /* ===== EMPTY / LOADING ===== */
+  .profile-empty-state,
+  .profile-loading {
+    font-size: 9px;
+    padding: 12px;
+  }
+
+  /* ===== TOGGLE BUTTON ===== */
+  .profile-toggle-btn {
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+    top: 6px;
+    right: 6px;
+  }
+}
