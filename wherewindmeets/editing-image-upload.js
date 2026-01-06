@@ -172,10 +172,16 @@ const ImageEditor = (function() {
           height = height * ratio;
         }
 
-        canvas.width = width;
-        canvas.height = height;
-        
-        ctx.drawImage(img, 0, 0, width, height);
+ canvas.width = width;
+canvas.height = height;
+
+// 🔥 FIX ANDROID SCREENSHOT BLANK
+ctx.save();
+ctx.globalCompositeOperation = 'source-over';
+ctx.fillStyle = '#ffffff';          // ← WAJIB
+ctx.fillRect(0, 0, width, height);  // ← WAJIB
+ctx.drawImage(img, 0, 0, width, height);
+ctx.restore();
         
         attachCanvasEvents();
         saveState();
@@ -1012,7 +1018,12 @@ const ImageEditor = (function() {
     const { ctx, canvas, originalImage } = currentEditor;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
+
+// 🔥 FIX ANDROID SCREENSHOT
+ctx.fillStyle = '#ffffff';
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+ctx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
 
     currentEditor.annotations.forEach(a => a.element.remove());
     currentEditor.annotations = [];
@@ -1204,8 +1215,9 @@ const ImageEditor = (function() {
     finalCanvas.height = canvas.height;
     const finalCtx = finalCanvas.getContext('2d');
 
-    finalCtx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
-
+    finalCtx.fillStyle = '#ffffff';
+finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+finalCtx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
     paths.forEach(path => {
       if (path.points.length < 2) return;
       
