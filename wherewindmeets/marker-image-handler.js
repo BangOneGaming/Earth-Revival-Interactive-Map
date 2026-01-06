@@ -1,19 +1,18 @@
 /**
- * Marker Image Handler Module v5.5
+ * Marker Image Handler Module v5.6
  * 
- * NEW FEATURES v5.5:
+ * NEW FEATURES v5.6:
+ * - Image normalization to fix color space issues
+ * - Prevents black/dark screenshots on upload
+ * - Force sRGB color space conversion
+ * 
+ * FEATURES v5.5:
  * - Integrated Image Editor before upload
  * - Drawing tools (brush, text, circle markers)
  * - Edit and annotate images before uploading
  * - Preview and confirm before final upload
  * 
- * FEATURES v5.4:
- * - Touch protection: prevents accidental upload clicks on touch devices
- * - Pointer type detection: distinguishes between touch and mouse events
- * - 300ms touch cooldown to allow hover gestures
- * - Desktop mode on mobile: paste zone hidden for touch devices
- * 
- * @version 5.5.0
+ * @version 5.6.0
  */
 
 const MarkerImageHandler = (function() {
@@ -30,22 +29,20 @@ const MarkerImageHandler = (function() {
     },
     fallbackImage: 'https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg',
     allowedFormats: ['image/png', 'image/jpeg', 'image/webp'],
-    maxFileSize: 15 * 1024 * 1024, // 15MB
+    maxFileSize: 15 * 1024 * 1024,
     webpQuality: 0.85,
     maxDimension: 1920,
     cacheKey: 'wwm_marker_images',
     cacheVersionKey: 'wwm_marker_images_version',
     uploadEnabled: true,
     uploadResumeDate: 'January 1st',
-    enableImageEditor: true, // Toggle editor on/off
-    enableTouchProtection: false // Toggle touch protection (set false jika bermasalah)
+    enableImageEditor: true,
+    enableTouchProtection: false
   };
 
   let imageCache = {};
   let isLoaded = false;
   let pasteListeners = new Map();
-
-  // Touch protection state
   let lastTouchTime = 0;
   let isPointerMode = false;
 
@@ -122,6 +119,84 @@ const MarkerImageHandler = (function() {
   }
 
   // ==========================================
+  // UTILITY
+  // ==========================================
+
+  function formatBytes(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  }
+
+  // ==========================================
+  // IMAGE NORMALIZATION (NEW v5.6)
+  // ==========================================
+
+  async function normalizeImage(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      
+      reader.onload = (e) => {
+        const img = new Image();
+        
+        img.onerror = () => reject(new Error('Failed to load image'));
+        
+        img.onload = () => {
+          try {
+            console.log('🔧 Normalizing image to sRGB color space...');
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            
+            const ctx = canvas.getContext('2d', {
+              colorSpace: 'srgb',
+              willReadFrequently: false
+            });
+            
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+            
+            canvas.toBlob(
+              (blob) => {
+                if (!blob) {
+                  reject(new Error('Failed to normalize image'));
+                  return;
+                }
+                
+                const normalizedFile = new File(
+                  [blob], 
+                  file.name.replace(/\.[^.]+$/, '.png'),
+                  { 
+                    type: 'image/png',
+                    lastModified: Date.now()
+                  }
+                );
+                
+                console.log(`✅ Image normalized: ${formatBytes(file.size)} → ${formatBytes(blob.size)}`);
+                resolve(normalizedFile);
+              },
+              'image/png',
+              1.0
+            );
+          } catch (error) {
+            reject(error);
+          }
+        };
+        
+        img.src = e.target.result;
+      };
+      
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // ==========================================
   // IMAGE COMPRESSION TO WEBP
   // ==========================================
 
@@ -193,14 +268,6 @@ const MarkerImageHandler = (function() {
       
       reader.readAsDataURL(file);
     });
-  }
-
-  function formatBytes(bytes) {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
   }
 
   // ==========================================
@@ -375,57 +442,56 @@ const MarkerImageHandler = (function() {
   }
 
   // ==========================================
-  // PROCESS IMAGE UPLOAD (with Editor Integration)
+  // PROCESS IMAGE UPLOAD (with normalization)
   // ==========================================
 
-async function processImageUpload(file, markerKey, fromPaste = false) {
-    // Validate file first
+  async function processImageUpload(file, markerKey, fromPaste = false) {
     const validation = validateFile(file);
     if (!validation.valid) {
       showNotification(`❌ ${validation.error}`, 'error');
       return;
     }
 
-    // If Image Editor is enabled and available, open it
-    if (CONFIG.enableImageEditor && typeof ImageEditor !== 'undefined') {
-      console.log('✏️ Opening Image Editor...');
+    try {
+      const normalizedFile = await normalizeImage(file);
       
-      // Return promise to prevent further execution
-      return new Promise((resolve) => {
-        ImageEditor.open(file, markerKey, async (result) => {
-          // Check if user cancelled
-          if (result.status === 'cancel') {
-            console.log('❌ Upload cancelled by user');
-            showNotification('Upload cancelled', 'info');
-            resolve(); // Resolve tanpa upload
-            return;
-          }
-          
-          // Only proceed if confirmed
-          if (result.status === 'confirm' && result.blob) {
-            console.log('📝 Image edited, proceeding with upload...');
+      if (CONFIG.enableImageEditor && typeof ImageEditor !== 'undefined') {
+        console.log('✏️ Opening Image Editor...');
+        
+        return new Promise((resolve) => {
+          ImageEditor.open(normalizedFile, markerKey, async (result) => {
+            if (result.status === 'cancel') {
+              console.log('❌ Upload cancelled by user');
+              showNotification('Upload cancelled', 'info');
+              resolve();
+              return;
+            }
             
-            // Convert blob to file
-            const editedFile = new File([result.blob], file.name, {
-              type: 'image/png',
-              lastModified: Date.now()
-            });
+            if (result.status === 'confirm' && result.blob) {
+              console.log('📝 Image edited, proceeding with upload...');
+              
+              const editedFile = new File([result.blob], normalizedFile.name, {
+                type: 'image/png',
+                lastModified: Date.now()
+              });
 
-            // Continue with upload
-            await continueUpload(editedFile, markerKey, fromPaste);
-            resolve();
-          } else {
-            // Jika status tidak dikenali
-            console.log('⚠️ Unknown editor status:', result.status);
-            resolve();
-          }
+              await continueUpload(editedFile, markerKey, fromPaste);
+              resolve();
+            } else {
+              console.log('⚠️ Unknown editor status:', result.status);
+              resolve();
+            }
+          });
         });
-      });
-    } else {
-      // Direct upload without editor
-      await continueUpload(file, markerKey, fromPaste);
+      } else {
+        await continueUpload(normalizedFile, markerKey, fromPaste);
+      }
+    } catch (error) {
+      console.error('❌ Image normalization failed:', error);
+      showNotification(`❌ Failed to process image: ${error.message}`, 'error');
     }
   }
+
   async function continueUpload(file, markerKey, fromPaste) {
     const container = document.querySelector(`.marker-image-container[data-marker-key="${markerKey}"]`);
 
@@ -477,7 +543,7 @@ async function processImageUpload(file, markerKey, fromPaste = false) {
   }
 
   // ==========================================
-  // UTILITY
+  // VALIDATION & QUOTA
   // ==========================================
 
   function generateFilename(markerKey, ext = 'webp') {
@@ -521,7 +587,7 @@ async function processImageUpload(file, markerKey, fromPaste = false) {
   }
 
   // ==========================================
-  // UI COMPONENTS (with touch protection)
+  // UI COMPONENTS
   // ==========================================
 
   function createImageContainerHTML(markerData) {
@@ -529,7 +595,6 @@ async function processImageUpload(file, markerKey, fromPaste = false) {
     const mobile = isMobile();
     const touch = isTouchDevice();
     
-    // Paste zone hanya untuk desktop non-touch
     const pasteZoneHTML = !mobile && !touch ? `
       <div class="marker-paste-zone" 
            onclick="MarkerImageHandler.triggerUpload('${markerKey}')"
@@ -600,7 +665,6 @@ async function processImageUpload(file, markerKey, fromPaste = false) {
     container.dataset.uiLoaded = 'true';
     container.dataset.images = JSON.stringify(images);
 
-    // Attach paste listener (desktop non-touch only)
     if (!mobile && !touch) {
       attachPasteListener(markerKey);
     }
@@ -617,7 +681,6 @@ async function processImageUpload(file, markerKey, fromPaste = false) {
         uploaderEl.style.display = 'block';
       }
 
-      // Paste zone hanya desktop non-touch
       const pasteZoneHTML = !mobile && !touch ? `
         <div class="marker-paste-zone compact" 
              onclick="MarkerImageHandler.triggerUpload('${markerKey}')"
@@ -717,24 +780,19 @@ async function processImageUpload(file, markerKey, fromPaste = false) {
   }
 
   // ==========================================
-  // FILE UPLOAD (with touch protection)
+  // FILE UPLOAD
   // ==========================================
 
   function safeUploadClick(markerKey, event) {
-    // Jika touch protection disabled, langsung izinkan
     if (!CONFIG.enableTouchProtection) {
       triggerUpload(markerKey);
       return true;
     }
     
-    // Touch protection logic
     const timeSinceTouch = Date.now() - lastTouchTime;
     const isTouchEvent = event.pointerType === 'touch' || 
                          (event.type && event.type.indexOf('touch') !== -1);
     
-    // Hanya blokir jika:
-    // 1. Touch event yang baru saja terjadi (< 300ms)
-    // 2. DAN bukan klik mouse biasa
     if (isTouchEvent && timeSinceTouch < 300) {
       event.preventDefault();
       event.stopPropagation();
