@@ -143,6 +143,18 @@
 
     return totalMarkers > 0;
   }
+  
+// ============================================
+// WAIT FOR REQUIRED GLOBAL FUNCTION
+// ============================================
+async function waitForFunction(fnName, timeout = 5000) {
+  const start = Date.now();
+  while (Date.now() - start < timeout) {
+    if (typeof window[fnName] === "function") return true;
+    await new Promise(r => setTimeout(r, 50));
+  }
+  return false;
+}
 
   // ============================================
   // MAIN INITIALIZATION
@@ -152,13 +164,17 @@
     showPreload();
 
     try {
-      // Verify required functions exist
-      if (typeof initializeIcons !== "function") {
-        throw new Error("initializeIcons not found");
-      }
-      if (typeof initializeMap !== "function") {
-        throw new Error("initializeMap not found");
-      }
+// ============================================
+// WAIT FOR CORE DEPENDENCIES
+// ============================================
+updateLoadingText('Preparing core systems...');
+
+const iconReady = await waitForFunction("initializeIcons");
+const mapReady  = await waitForFunction("initializeMap");
+
+if (!iconReady || !mapReady) {
+  throw new Error("Core system not ready (icons or map)");
+}
 
       // ============================================
       // STEP 1: Load Marker Data
