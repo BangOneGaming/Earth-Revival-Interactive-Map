@@ -121,6 +121,9 @@ const MarkerImageHandler = (function() {
     } catch (e) {}
   }
 
+
+
+
   // ==========================================
   // IMAGE COMPRESSION TO WEBP
   // ==========================================
@@ -384,7 +387,58 @@ ctx.restore();
   // ==========================================
   // PROCESS IMAGE UPLOAD (with Editor Integration)
   // ==========================================
+async function sanitizeBeforeEditor(file) {
+  const isScreenshot =
+    file.type === 'image/png' &&
+    /screenshot|screen/i.test(file.name);
 
+  if (!isScreenshot) return file;
+
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth || img.width;
+      canvas.height = img.naturalHeight || img.height;
+
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+
+      canvas.toBlob(
+        blob => {
+          if (!blob) {
+            reject(new Error('Sanitize failed'));
+            return;
+          }
+
+          resolve(new File(
+            [blob],
+            file.name.replace(/\.\w+$/, '.jpg'),
+            {
+              type: 'image/jpeg',
+              lastModified: Date.now()
+            }
+          ));
+        },
+        'image/jpeg',
+        0.95
+      );
+    };
+
+    img.onerror = e => {
+      URL.revokeObjectURL(objectUrl);
+      reject(e);
+    };
+
+    img.src = objectUrl;
+  });
+}
 async function processImageUpload(file, markerKey, fromPaste = false) {
     // Validate file first
     const validation = validateFile(file);
@@ -395,11 +449,21 @@ async function processImageUpload(file, markerKey, fromPaste = false) {
 
     // If Image Editor is enabled and available, open it
     if (CONFIG.enableImageEditor && typeof ImageEditor !== 'undefined') {
-      console.log('✏️ Opening Image Editor...');
-      
-      // Return promise to prevent further execution
-      return new Promise((resolve) => {
-        ImageEditor.open(file, markerKey, async (result) => {
+console.log('✏️ Opening Image Editor...');
+showNotification('🧼 Preparing image...', 'info');
+
+let safeFile = file;
+
+try {
+  safeFile = await sanitizeBeforeEditor(file);
+} catch (e) {
+  console.warn('⚠️ Sanitize failed, fallback to original file', e);
+}
+
+showNotification('✏️ Opening editor...', 'info');
+
+return new Promise((resolve) => {
+  ImageEditor.open(safeFile, markerKey, async (result) => {
           // Check if user cancelled
           if (result.status === 'cancel') {
             console.log('❌ Upload cancelled by user');
