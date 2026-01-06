@@ -155,11 +155,18 @@ const MarkerImageHandler = (function() {
             canvas.width = width;
             canvas.height = height;
             
-            const ctx = canvas.getContext('2d');
-            ctx.imageSmoothingEnabled = true;
-            ctx.imageSmoothingQuality = 'high';
-            ctx.drawImage(img, 0, 0, width, height);
-            
+const ctx = canvas.getContext('2d');
+ctx.imageSmoothingEnabled = true;
+ctx.imageSmoothingQuality = 'high';
+
+// 🔥 FIX ANDROID SCREENSHOT BLANK
+ctx.save();
+ctx.globalCompositeOperation = 'source-over';
+ctx.fillStyle = '#ffffff';
+ctx.fillRect(0, 0, width, height);
+ctx.drawImage(img, 0, 0, width, height);
+ctx.restore();
+
             canvas.toBlob(
               (blob) => {
                 if (!blob) {
@@ -406,10 +413,14 @@ async function processImageUpload(file, markerKey, fromPaste = false) {
             console.log('📝 Image edited, proceeding with upload...');
             
             // Convert blob to file
-            const editedFile = new File([result.blob], file.name, {
-              type: 'image/png',
-              lastModified: Date.now()
-            });
+const editedFile = new File(
+  [result.blob],
+  file.name.replace(/\.\w+$/, '.webp'),
+  {
+    type: 'image/webp',
+    lastModified: Date.now()
+  }
+);
 
             // Continue with upload
             await continueUpload(editedFile, markerKey, fromPaste);
