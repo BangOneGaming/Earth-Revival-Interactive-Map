@@ -150,46 +150,52 @@ const ImageEditor = (function() {
   // CANVAS INITIALIZATION
   // ==========================================
 
-  function initializeCanvas() {
-    const { canvas, imageFile } = currentEditor;
-    const ctx = canvas.getContext('2d');
-    currentEditor.ctx = ctx;
+function initializeCanvas() {
+  const { canvas, imageFile } = currentEditor;
+  const ctx = canvas.getContext('2d');
+  currentEditor.ctx = ctx;
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        currentEditor.originalImage = img;
-        
-        const maxWidth = 1000;
-        const maxHeight = 600;
-        let width = img.width;
-        let height = img.height;
-        
-        if (width > maxWidth || height > maxHeight) {
-          const ratio = Math.min(maxWidth / width, maxHeight / height);
-          width = width * ratio;
-          height = height * ratio;
-        }
+  const img = new Image();
+  const objectUrl = URL.createObjectURL(imageFile);
 
- canvas.width = width;
-canvas.height = height;
+  img.onload = () => {
+    URL.revokeObjectURL(objectUrl);
 
-// 🔥 FIX ANDROID SCREENSHOT BLANK
-ctx.save();
-ctx.globalCompositeOperation = 'source-over';
-ctx.fillStyle = '#ffffff';          // ← WAJIB
-ctx.fillRect(0, 0, width, height);  // ← WAJIB
-ctx.drawImage(img, 0, 0, width, height);
-ctx.restore();
-        
-        attachCanvasEvents();
-        saveState();
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(imageFile);
-  }
+    currentEditor.originalImage = img;
+
+    const maxWidth = 1000;
+    const maxHeight = 600;
+    let width = img.naturalWidth;
+    let height = img.naturalHeight;
+
+    if (width > maxWidth || height > maxHeight) {
+      const ratio = Math.min(maxWidth / width, maxHeight / height);
+      width *= ratio;
+      height *= ratio;
+    }
+
+    canvas.width = width;
+    canvas.height = height;
+
+    // 🛡️ ANDROID SAFE DRAW
+    ctx.save();
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, height);
+    ctx.drawImage(img, 0, 0, width, height);
+    ctx.restore();
+
+    attachCanvasEvents();
+    saveState();
+  };
+
+  img.onerror = (e) => {
+    console.error('❌ Image load failed', e);
+    URL.revokeObjectURL(objectUrl);
+  };
+
+  img.src = objectUrl;
+}
 
   // ==========================================
   // KEYBOARD SHORTCUTS
