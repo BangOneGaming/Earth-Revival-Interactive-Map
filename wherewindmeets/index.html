@@ -601,6 +601,7 @@ btnClose.addEventListener("click", function(e) {
 <!-- Application Scripts -->    
 <script>
   const v = Date.now();
+
   const files = [
     "cookie-consent.js",
     "memuat-data.js",
@@ -626,21 +627,30 @@ btnClose.addEventListener("click", function(e) {
     "patchnote.js",
     "setting.js",
     "donate.js",
-    "region.js",
+    "region.js"
   ];
 
-  // Load all scripts
-  files.forEach(src => {
-    const s = document.createElement("script");
-    s.src = `${src}?v=${v}`;
-    document.body.appendChild(s);
-  });
+  function loadScriptsSequentially(list, index = 0) {
+    if (index >= list.length) {
+      // ✅ Setelah SEMUA selesai → load main.js
+      const main = document.createElement("script");
+      main.src = `main.js?v=${v}`;
+      main.defer = true;
+      document.body.appendChild(main);
+      return;
+    }
 
-  // Load main.js with defer
-  const main = document.createElement("script");
-  main.src = `main.js?v=${v}`;
-  main.defer = true;
-  document.body.appendChild(main);
+    const s = document.createElement("script");
+    s.src = `${list[index]}?v=${v}`;
+    s.onload = () => loadScriptsSequentially(list, index + 1);
+    s.onerror = () => {
+      console.error("Failed to load:", list[index]);
+      loadScriptsSequentially(list, index + 1);
+    };
+    document.body.appendChild(s);
+  }
+
+  loadScriptsSequentially(files);
 </script>
 <script>
 if ("serviceWorker" in navigator) {
