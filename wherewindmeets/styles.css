@@ -1454,7 +1454,7 @@ html, body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  display: none;
+
 }
 
 @media (min-width: 769px) {

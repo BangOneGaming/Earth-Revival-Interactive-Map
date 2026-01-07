@@ -9,19 +9,34 @@
   // PRELOAD UI FUNCTIONS
   // ============================================
   
-  function showPreload() {
-    const overlay = document.getElementById('preloadOverlay');
-    if (overlay) overlay.style.display = 'block';
-    
-    startEmotionFlip();
-    startTextAnimation();
-    startLoadingBar();
-  }
+async function showPreload() {
+  const overlay = document.getElementById('preloadOverlay');
+  if (overlay) overlay.style.display = 'block';
 
-  function hidePreload() {
-    const overlay = document.getElementById('preloadOverlay');
-    if (overlay) overlay.style.display = 'none';
+  const emotions = [
+    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/impressed.webp',
+    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/cry.webp',
+    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/hehe.webp',
+    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/well.webp',
+    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/thinking.webp'
+  ];
+
+  // 🔥 PENTING
+  await preloadImages(emotions);
+
+  startEmotionFlip(emotions);
+  startTextAnimation();
+  startLoadingBar();
+}
+
+function hidePreload() {
+  const overlay = document.getElementById('preloadOverlay');
+  if (overlay) {
+    overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity 0.3s ease';
+    setTimeout(() => overlay.remove(), 300);
   }
+}
 
   function updateLoadingText(message) {
     const textElement = document.getElementById('preloadMessage');
@@ -33,39 +48,58 @@
       }, 300);
     }
   }
+  
+function waitForProfileReady(retry = 0) {
+  if (
+    window.ProfileContainer &&
+    typeof isLoggedIn === 'function' &&
+    isLoggedIn() &&
+    typeof getUserProfile === 'function' &&
+    getUserProfile()
+  ) {
+    ProfileContainer.create();
+    console.log('✅ ProfileContainer auto-created after reload');
+    return;
+  }
 
+  if (retry < 20) {
+    setTimeout(() => waitForProfileReady(retry + 1), 200);
+  }
+}
   // ============================================
   // EMOTION FLIP ANIMATION
   // ============================================
-  
-  function startEmotionFlip() {
-    const emotions = [
-      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/impressed.webp',
-      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/cry.webp',
-      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/hehe.webp',
-      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/well.webp',
-      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/thinking.webp'
-    ];
+function preloadImages(urls) {
+  return Promise.all(
+    urls.map(src => {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = resolve;
+        img.onerror = resolve;
+        img.src = src;
+      });
+    })
+  );
+}
+function startEmotionFlip(emotions) {
+  const emotionImg = document.getElementById('preloadEmotionIcon');
+  if (!emotionImg) return;
 
-    const emotionImg = document.getElementById('preloadEmotionIcon');
-    if (!emotionImg) return;
+  let currentIndex = 0;
+  emotionImg.src = emotions[0];
 
-    let currentIndex = 0;
-    emotionImg.src = emotions[0];
+  const flipInterval = setInterval(() => {
+    emotionImg.classList.add('flip-animation');
 
-    const flipInterval = setInterval(() => {
-      emotionImg.classList.add('flip-animation');
-      
-      setTimeout(() => {
-        emotionImg.classList.remove('flip-animation');
-        currentIndex = (currentIndex + 1) % emotions.length;
-        emotionImg.src = emotions[currentIndex];
-      }, 600);
-      
-    }, 800);
+    setTimeout(() => {
+      emotionImg.classList.remove('flip-animation');
+      currentIndex = (currentIndex + 1) % emotions.length;
+      emotionImg.src = emotions[currentIndex];
+    }, 600);
+  }, 800);
 
-    setTimeout(() => clearInterval(flipInterval), 5000);
-  }
+  setTimeout(() => clearInterval(flipInterval), 5000);
+}
 
   // ============================================
   // TEXT ANIMATION
@@ -161,7 +195,7 @@ async function waitForFunction(fnName, timeout = 5000) {
   // ============================================
   
   async function initApp() {
-    showPreload();
+    await showPreload();
 
     try {
 // ============================================
@@ -260,6 +294,7 @@ if (!iconReady || !mapReady) {
       // ============================================
       updateLoadingText('Initializing underground system...');
       
+
 async function waitForUndergroundManager() {
   for (let i = 0; i < 50; i++) {
     if (window.UndergroundManager) return true;
@@ -293,17 +328,21 @@ if (await waitForUndergroundManager()) {
       alert(`Failed to initialize map:\n${error.message}\n\nPlease refresh the page.`);
       
     } finally {
-      hidePreload();
-      
-      // ============================================
-      // Show Cookie Consent Banner (2 second delay)
-      // ============================================
-      if (typeof window.WWMCookieConsent !== "undefined") {
-        window.WWMCookieConsent.initAfterLoad(2000);
-      }
-    }
-  }
+  document.body.classList.add('app-ready');
 
+  setTimeout(() => {
+    hidePreload();
+
+    // ✅ SAFE INIT PROFILE (retry-based)
+    waitForProfileReady();
+
+  }, 300);
+
+  if (typeof window.WWMCookieConsent !== "undefined") {
+    window.WWMCookieConsent.initAfterLoad(2000);
+  }
+}
+}
   // ============================================
   // AUTO-START
   // ============================================

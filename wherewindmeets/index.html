@@ -70,7 +70,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <link href="https://fonts.googleapis.com/css2?family=Lato:wght@700&display=swap" rel="stylesheet">
   <script>
-    const CSS_VERSION = "5.8.3";
+    const CSS_VERSION = "5.8.5";
   </script>
 
   <!-- Custom CSS -->
@@ -103,6 +103,22 @@
   
 </head>  
 <body>  
+<!-- Preload Overlay -->
+<div id="preloadOverlay">
+  <div id="preloadContainer">
+    <!-- Emotion Icon (5 gambar flip cepat) -->
+    <img id="preloadEmotionIcon" src="" alt="Loading emotion">
+    
+    <!-- Loading Text (ganti setelah setengah durasi) -->
+    <div id="preloadMessage">Better Experience With Mobile Desktop mode</div>
+    
+    <!-- Loading Bar Container -->
+    <div id="preloadBarContainer">
+      <div id="preloadBarFill"></div>
+      <div id="preloadBarPercent">0%</div>
+    </div>
+  </div>
+</div>
 
 <!-- Leaderboard Panel -->
 <div class="leaderboard-panel" id="leaderboardPanel">
@@ -165,22 +181,7 @@
   </div>
 </div>
 
-<!-- Preload Overlay -->
-<div id="preloadOverlay">
-  <div id="preloadContainer">
-    <!-- Emotion Icon (5 gambar flip cepat) -->
-    <img id="preloadEmotionIcon" src="" alt="Loading emotion">
-    
-    <!-- Loading Text (ganti setelah setengah durasi) -->
-    <div id="preloadMessage">Better Experience With Mobile Desktop mode</div>
-    
-    <!-- Loading Bar Container -->
-    <div id="preloadBarContainer">
-      <div id="preloadBarFill"></div>
-      <div id="preloadBarPercent">0%</div>
-    </div>
-  </div>
-</div>
+
 
 <!-- 🔵 TOP-CENTER LOGIN BUTTON -->
 <button id="topLoginBtn">Login</button>
@@ -593,7 +594,6 @@ btnClose.addEventListener("click", function(e) {
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>    
     
 
-  
 <!-- Google Sign-In -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>  
 <script src="username.js"></script>    
@@ -613,8 +613,11 @@ btnClose.addEventListener("click", function(e) {
     "leaderboard.js",
     "editing-image-upload.js",
     "marker-image-handler.js",
+
+    // ⛔ PENTING: ikon HARUS sebelum peta & main
     "ikon.js",
     "peta.js",
+
     "booklist.js",
     "knowladgelist.js",
     "mystic-skill-panel.js",
