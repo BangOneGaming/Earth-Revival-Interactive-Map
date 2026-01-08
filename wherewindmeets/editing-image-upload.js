@@ -163,19 +163,39 @@ function initializeCanvas() {
 
     currentEditor.originalImage = img;
 
+    // 🎯 FIXED CANVAS SIZE for consistent coordinates across devices
     const maxWidth = 1000;
     const maxHeight = 600;
+    const minWidth = 800; // 🔥 NEW: Minimum canvas width
+    
     let width = img.naturalWidth;
     let height = img.naturalHeight;
 
+    // Scale down if too large
     if (width > maxWidth || height > maxHeight) {
       const ratio = Math.min(maxWidth / width, maxHeight / height);
+      width *= ratio;
+      height *= ratio;
+    }
+    
+    // 🔥 Scale UP if too small (mobile images)
+    if (width < minWidth) {
+      const ratio = minWidth / width;
+      width *= ratio;
+      height *= ratio;
+    }
+    
+    // Cap at maxHeight after upscaling
+    if (height > maxHeight) {
+      const ratio = maxHeight / height;
       width *= ratio;
       height *= ratio;
     }
 
     canvas.width = width;
     canvas.height = height;
+    
+    console.log(`🖼️ Canvas size: ${width.toFixed(0)}x${height.toFixed(0)} (original: ${img.naturalWidth}x${img.naturalHeight})`);
 
     // 🛡️ ANDROID SAFE DRAW
     ctx.save();
@@ -186,6 +206,18 @@ function initializeCanvas() {
     ctx.restore();
 
     attachCanvasEvents();
+    
+    // 🖼️ Log canvas dimensions AFTER canvas is attached to DOM
+    const rect = canvas.getBoundingClientRect();
+    console.log('🖼️ Canvas dimensions:', {
+      canvasWidth: canvas.width,
+      canvasHeight: canvas.height,
+      screenWidth: rect.width,
+      screenHeight: rect.height,
+      scaleX: canvas.width / rect.width,
+      scaleY: canvas.height / rect.height
+    });
+    
     saveState();
   };
 
@@ -580,11 +612,12 @@ function initializeCanvas() {
   // TEXT ANNOTATIONS
   // ==========================================
 
-  function addText() {
+function addText() {
     const text = prompt('Enter text:');
     if (!text) return;
 
     const { canvas } = currentEditor;
+    // 🎯 CANVAS COORDINATES (not screen coordinates)
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
 
@@ -594,14 +627,8 @@ function initializeCanvas() {
     annotation.textContent = text;
     annotation.style.pointerEvents = 'none';
     
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = rect.width / canvas.width;
-    const scaleY = rect.height / canvas.height;
-    
-    annotation.style.left = (centerX * scaleX) + 'px';
-    annotation.style.top = (centerY * scaleY) + 'px';
     annotation.style.color = '#ffffff';
-    annotation.style.fontSize = CONFIG.textSize + 'px';
+    // Font size will be set by updateTextPosition()
     annotation.style.textShadow = `
       -1px -1px 0 #000,
        1px -1px 0 #000,
@@ -612,12 +639,15 @@ function initializeCanvas() {
     const annotationData = {
       type: 'text',
       element: annotation,
-      x: centerX,
+      x: centerX,  // ✅ Store CANVAS coordinates
       y: centerY,
       text,
       color: CONFIG.textColor,
       size: CONFIG.textSize
     };
+    
+    // 🔄 Update visual position
+    updateTextPosition(annotationData);
 
     currentEditor.annotations.push(annotationData);
     currentEditor.annotationsLayer.appendChild(annotation);
@@ -729,10 +759,25 @@ function initializeCanvas() {
         const scaleY = currentEditor.canvas.height / rect.height;
         const x = (e.clientX - rect.left) * scaleX;
         const y = (e.clientY - rect.top) * scaleY;
+        console.log(`🖱️ Circle mousedown at canvas: (${x.toFixed(0)}, ${y.toFixed(0)})`);
         startDragging(x, y, annotationData);
       }
     });
-
+circle.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (currentEditor.currentTool === 'none') {
+        selectElement(annotationData);
+        const touch = e.touches[0];
+        const rect = currentEditor.canvas.getBoundingClientRect();
+        const scaleX = currentEditor.canvas.width / rect.width;
+        const scaleY = currentEditor.canvas.height / rect.height;
+        const x = (touch.clientX - rect.left) * scaleX;
+        const y = (touch.clientY - rect.top) * scaleY;
+        console.log(`👆 Circle touchstart at canvas: (${x.toFixed(0)}, ${y.toFixed(0)})`);
+        startDragging(x, y, annotationData);
+      }
+    });
     // 🖥️ DESKTOP: Resize handles
     if (!isMobile) {
       handles.forEach(handle => {
@@ -751,7 +796,7 @@ function initializeCanvas() {
     saveState();
   }
 
-  function updateCirclePosition(annotation) {
+function updateCirclePosition(annotation) {
     const { x, y, radius, color, strokeWidth } = annotation;
     const { element, circle } = annotation;
     
@@ -769,9 +814,25 @@ function initializeCanvas() {
     element.style.height = (screenRadius * 2) + 'px';
     
     circle.style.borderColor = color;
-    circle.style.borderWidth = strokeWidth + 'px';
+    // 🔥 Scale stroke width to match screen
+    circle.style.borderWidth = (strokeWidth * scaleX) + 'px';
   }
-
+// 🎯 NEW: Update text visual position from canvas coordinates
+  function updateTextPosition(annotation) {
+    const { x, y, size } = annotation;
+    const { element } = annotation;
+    
+    const rect = currentEditor.canvas.getBoundingClientRect();
+    const scaleX = rect.width / currentEditor.canvas.width;
+    const scaleY = rect.height / currentEditor.canvas.height;
+    
+    element.style.left = (x * scaleX) + 'px';
+    element.style.top = (y * scaleY) + 'px';
+    
+    // 🔥 Scale font size to match screen
+    element.style.fontSize = (size * scaleX) + 'px';
+  }
+  
   function startResizing(e, annotation, handlePos) {
     isResizing = true;
     resizeHandle = handlePos;
@@ -880,18 +941,27 @@ function initializeCanvas() {
   }
 
   function isPointInAnnotation(x, y, annotation) {
-    const rect = annotation.element.getBoundingClientRect();
-    const canvasRect = currentEditor.canvas.getBoundingClientRect();
+    // 🎯 Check if point (in canvas coordinates) is inside annotation
     
-    const scaleX = currentEditor.canvas.width / canvasRect.width;
-    const scaleY = currentEditor.canvas.height / canvasRect.height;
+    if (annotation.type === 'circle') {
+      // Circle: check distance from center
+      const dx = x - annotation.x;
+      const dy = y - annotation.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      return distance <= annotation.radius;
+      
+    } else if (annotation.type === 'text') {
+      // Text: approximate bounding box
+      const textWidth = annotation.size * annotation.element.textContent.length * 0.6;
+      const textHeight = annotation.size * 1.2;
+      
+      return x >= annotation.x && 
+             x <= annotation.x + textWidth && 
+             y >= annotation.y && 
+             y <= annotation.y + textHeight;
+    }
     
-    const annX = (rect.left - canvasRect.left) * scaleX;
-    const annY = (rect.top - canvasRect.top) * scaleY;
-    const annW = rect.width * scaleX;
-    const annH = rect.height * scaleY;
-    
-    return x >= annX && x <= annX + annW && y >= annY && y <= annY + annH;
+    return false;
   }
 
   function selectElement(annotation) {
@@ -916,7 +986,7 @@ function initializeCanvas() {
     }
   }
 
-  function startDragging(x, y, annotation) {
+function startDragging(x, y, annotation) {
     isDragging = true;
     hasMoved = false;
     dragStartPos = { x, y };
@@ -925,36 +995,65 @@ function initializeCanvas() {
       annotation.moveHandle.classList.add('is-active');
     }
 
-    const rect = annotation.element.getBoundingClientRect();
-    const canvasRect = currentEditor.canvas.getBoundingClientRect();
-    
-    const scaleX = currentEditor.canvas.width / canvasRect.width;
-    const scaleY = currentEditor.canvas.height / canvasRect.height;
-
-    dragOffset.x = x - (rect.left - canvasRect.left) * scaleX;
-    dragOffset.y = y - (rect.top - canvasRect.top) * scaleY;
+    // 🎯 Calculate offset from CANVAS coordinates
+    if (annotation.type === 'circle') {
+      // For circles, offset from top-left corner
+      dragOffset.x = x - (annotation.x - annotation.radius);
+      dragOffset.y = y - (annotation.y - annotation.radius);
+      
+      console.log(`🎯 startDragging CIRCLE:`, {
+        touchAt: { x: x.toFixed(0), y: y.toFixed(0) },
+        circleCenter: { x: annotation.x.toFixed(0), y: annotation.y.toFixed(0) },
+        radius: annotation.radius.toFixed(0),
+        offset: { x: dragOffset.x.toFixed(0), y: dragOffset.y.toFixed(0) }
+      });
+      
+    } else if (annotation.type === 'text') {
+      // For text, offset from anchor point
+      dragOffset.x = x - annotation.x;
+      dragOffset.y = y - annotation.y;
+      
+      console.log(`🎯 startDragging TEXT:`, {
+        touchAt: { x: x.toFixed(0), y: y.toFixed(0) },
+        textPos: { x: annotation.x.toFixed(0), y: annotation.y.toFixed(0) },
+        offset: { x: dragOffset.x.toFixed(0), y: dragOffset.y.toFixed(0) }
+      });
+    }
   }
 
-  function dragAnnotation(x, y) {
+function dragAnnotation(x, y) {
     if (!selectedElement) return;
     
+    // 🎯 Calculate new CANVAS position
     const newX = x - dragOffset.x;
     const newY = y - dragOffset.y;
     
     if (selectedElement.type === 'circle') {
+      // Circle stores center, so add radius
       selectedElement.x = newX + selectedElement.radius;
       selectedElement.y = newY + selectedElement.radius;
+      
+      console.log(`🔄 dragAnnotation CIRCLE:`, {
+        mouseAt: { x: x.toFixed(0), y: y.toFixed(0) },
+        offset: { x: dragOffset.x.toFixed(0), y: dragOffset.y.toFixed(0) },
+        newTopLeft: { x: newX.toFixed(0), y: newY.toFixed(0) },
+        newCenter: { x: selectedElement.x.toFixed(0), y: selectedElement.y.toFixed(0) }
+      });
+      
       updateCirclePosition(selectedElement);
     } else if (selectedElement.type === 'text') {
+      // ✅ Store CANVAS coordinates
       selectedElement.x = newX;
       selectedElement.y = newY;
       
-      const rect = currentEditor.canvas.getBoundingClientRect();
-      const scaleX = rect.width / currentEditor.canvas.width;
-      const scaleY = rect.height / currentEditor.canvas.height;
+      console.log(`🔄 dragAnnotation TEXT:`, {
+        mouseAt: { x: x.toFixed(0), y: y.toFixed(0) },
+        offset: { x: dragOffset.x.toFixed(0), y: dragOffset.y.toFixed(0) },
+        newPos: { x: newX.toFixed(0), y: newY.toFixed(0) }
+      });
       
-      selectedElement.element.style.left = (newX * scaleX) + 'px';
-      selectedElement.element.style.top = (newY * scaleY) + 'px';
+      // 🔄 Update visual position
+      updateTextPosition(selectedElement);
     }
   }
 
@@ -1063,21 +1162,15 @@ ctx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
     deselectAll();
   }
 
-  function addTextFromState(data) {
+function addTextFromState(data) {
     const el = document.createElement('div');
     el.className = 'editor-text-annotation';
     el.contentEditable = 'true';
     el.textContent = data.text;
     el.style.pointerEvents = 'none';
     
-    const rect = currentEditor.canvas.getBoundingClientRect();
-    const scaleX = rect.width / currentEditor.canvas.width;
-    const scaleY = rect.height / currentEditor.canvas.height;
-    
-    el.style.left = (data.x * scaleX) + 'px';
-    el.style.top = (data.y * scaleY) + 'px';
     el.style.color = data.color;
-    el.style.fontSize = data.size + 'px';
+    // Font size will be set by updateTextPosition()
     el.style.textShadow = `
       -1px -1px 0 #000,
        1px -1px 0 #000,
@@ -1086,9 +1179,12 @@ ctx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
     `;
 
     const ann = { ...data, element: el };
+    
+    // 🔄 Update visual position from canvas coordinates
+    updateTextPosition(ann);
+    
     currentEditor.annotations.push(ann);
     currentEditor.annotationsLayer.appendChild(el);
-
     el.addEventListener('mousedown', e => {
       e.stopPropagation();
       if (currentEditor.currentTool === 'none') {
@@ -1213,17 +1309,29 @@ ctx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
   // EXPORT & FINALIZE
   // ==========================================
 
-  function confirm() {
+function confirm() {
     const { canvas, ctx, annotations, paths, originalImage } = currentEditor;
+
+    // 🔍 DEBUG: Log annotations before export
+    console.log('🔍 Exporting annotations:', annotations.map(a => ({
+      type: a.type,
+      x: a.x,
+      y: a.y,
+      text: a.type === 'text' ? a.element.textContent : undefined,
+      radius: a.radius
+    })));
 
     const finalCanvas = document.createElement('canvas');
     finalCanvas.width = canvas.width;
     finalCanvas.height = canvas.height;
     const finalCtx = finalCanvas.getContext('2d');
 
+    // 🛡️ ANDROID SAFE: Draw white background first
     finalCtx.fillStyle = '#ffffff';
-finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
-finalCtx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
+    finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+    finalCtx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
+    
+    // Draw paths
     paths.forEach(path => {
       if (path.points.length < 2) return;
       
@@ -1242,23 +1350,31 @@ finalCtx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
       finalCtx.stroke();
     });
 
+    // 🎯 Draw annotations using CANVAS coordinates
     annotations.forEach(ann => {
       if (ann.type === 'text') {
+        // ✅ Text coordinates stored as TOP position
+        // Canvas fillText uses BASELINE position, so we need to add font size
+        const textX = ann.x;
+        const textY = ann.y + ann.size; // Convert TOP → BASELINE
+        
+        console.log(`📝 Drawing text: TOP (${ann.x.toFixed(0)}, ${ann.y.toFixed(0)}) → BASELINE (${textX.toFixed(0)}, ${textY.toFixed(0)})`);
+        
         finalCtx.font = `bold ${ann.size}px Arial`;
         finalCtx.lineWidth = Math.max(2, ann.size * 0.15);
+        
+        // Draw text outline (black)
         finalCtx.strokeStyle = '#000000';
-        finalCtx.strokeText(
-          ann.element.textContent,
-          ann.x,
-          ann.y + ann.size
-        );
+        finalCtx.strokeText(ann.element.textContent, textX, textY);
+        
+        // Draw text fill (white)
         finalCtx.fillStyle = '#ffffff';
-        finalCtx.fillText(
-          ann.element.textContent,
-          ann.x,
-          ann.y + ann.size
-        );
+        finalCtx.fillText(ann.element.textContent, textX, textY);
+        
       } else if (ann.type === 'circle') {
+        // ✅ Circle coordinates are already in canvas space
+        console.log(`⭕ Drawing circle at canvas coords: (${ann.x.toFixed(0)}, ${ann.y.toFixed(0)}) radius: ${ann.radius.toFixed(0)}`);
+        
         finalCtx.strokeStyle = ann.color;
         finalCtx.lineWidth = ann.strokeWidth;
         finalCtx.beginPath();
@@ -1266,6 +1382,8 @@ finalCtx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
         finalCtx.stroke();
       }
     });
+
+    console.log('✅ Export complete, creating blob...');
 
     finalCanvas.toBlob((blob) => {
       if (currentEditor.callback) {
@@ -1325,4 +1443,6 @@ finalCtx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
 })();
 
 window.ImageEditor = ImageEditor;
-console.log('✅ ImageEditor v3.0 - Mobile Optimized (Pinch to Resize, Touch Anywhere to Move)');
+console.log('✅ ImageEditor v3.1 - FIXED Coordinate System');
+console.log('📍 All coordinates now use CANVAS space, not SCREEN space');
+console.log('🎯 Export will match editor preview exactly');
