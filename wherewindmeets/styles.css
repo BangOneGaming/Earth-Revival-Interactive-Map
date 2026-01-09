@@ -1,8 +1,10 @@
 /* === Reset & Base Styles === */
 html, body {
   margin: 0;
+      min-height: 100vh;
   height: 100%;
   background: #000;
+  
 }
 
 /* === Map Container === */
