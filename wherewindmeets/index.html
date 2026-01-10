@@ -70,7 +70,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <link href="https://fonts.googleapis.com/css2?family=Lato:wght@700&display=swap" rel="stylesheet">
   <script>
-    const CSS_VERSION = "5.8.6";
+    const CSS_VERSION = "5.8.9";
   </script>
 
   <!-- Custom CSS -->
@@ -270,67 +270,99 @@
 <!-- Patch Notes Popup -->
 <div class="patch-overlay" id="patchOverlay">
   <div class="patch-popup">
+
     <!-- Close Button -->
     <button class="patch-close" onclick="closePatchPopup()">&times;</button>
 
     <!-- Header -->
     <div class="patch-header">
-      <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/BangOne.webp" alt="Update" class="patch-image">
-      <h2 class="patch-title">🗺️ Map Update Live!</h2>
-      <p class="patch-subtitle">New Features & Quality of Life Improvements</p>
+      <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/BangOne.webp"
+           alt="Update" class="patch-image">
+      <h2 class="patch-title">🗺️ Interactive Map Update</h2>
+      <p class="patch-subtitle">New Content, Better Details & Stability Fixes</p>
     </div>
 
     <!-- Content -->
     <div class="patch-content">
-      <h3>✨ What's New</h3>
-      <ul>
+      <h3>✨ What's New in This Version</h3>
+
+      <ul class="patch-list">
         <li>
-          <strong>🧘 Inner Ways & Mystic Skills Added</strong> – 
-          Inner Way locations and Mystic Skill markers are now available on the map.
+          <strong>
+  <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/camp.webp"
+       class="patch-icon" alt="Camp">
+  Camp &amp;
+  <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/NPC.webp"
+       class="patch-icon" alt="NPC">
+  NPC Markers Added
+</strong>
+          <br>
+          Camp locations and NPC points have now been added to the map.
         </li>
 
         <li>
-          <strong>⚙️ New Settings Menu</strong> – 
-          A new settings panel has been added for better control and customization.
+          <strong>📖 Enhanced Marker Descriptions</strong>
+          <ul>
+            <li>
+              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/knoweverything.webp"
+                   class="patch-icon" alt="Wandering Tales">
+              Wandering Tales
+            </li>
+            <li>
+              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/meow.webp"
+                   class="patch-icon" alt="Meow Meow Treasure">
+              Meow Meow Treasure
+            </li>
+            <li>
+              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/adventure.webp"
+                   class="patch-icon" alt="Encounter">
+              Encounter
+            </li>
+            <li>
+              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/book.webp"
+                   class="patch-icon" alt="Experience">
+              Experience
+            </li>
+          </ul>
         </li>
 
-        <li>
-          <strong>🔄 Reset Visited Markers (Login Required)</strong> – 
-          Logged-in users can now reset all visited markers directly from the settings menu.
-        </li>
+<li>
+  <strong>
+    <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/knoweverything.webp"
+         class="patch-icon" alt="Wandering Tales">
+    Improved Wandering Tales Title Translation
+  </strong><br>
+  Wandering Tales titles have been retranslated more accurately to improve searchability.
+  This update also adds part buttons to Wandering Tales, making it easier to locate related items
+  and navigate between interconnected quests.
+</li>
 
         <li>
-          <strong>🚫 Hide Visited Markers Completely</strong> – 
-          Visited markers can now be fully hidden instead of becoming semi-transparent.
-          Enable this option from the settings menu.
-        </li>
-
-        <li>
-          <strong>🕳️ Underground Marker Toggle</strong> – 
-          Underground markers can now be shown or hidden using the Underground toggle button.
+          <strong>🖼️ Image Feature Fully Fixed</strong><br>
+          The image system is now fully stable and works correctly across all markers.
         </li>
       </ul>
 
-      <h3>🎯 Improvements</h3>
+      <h3>🕘 Previous Improvements</h3>
       <ul>
-        <li><strong>🧭 Better Marker Control</strong> – Cleaner filtering options for a smoother exploration experience.</li>
-        <li><strong>⚡ Performance Tweaks</strong> – Improved marker handling and visibility logic.</li>
-      </ul>
-
-      <h3>🕘 Previous Updates</h3>
-      <ul>
-        <li><strong>🔐 Improved Login System</strong> – Login flow is more stable and no longer blocks users.</li>
-        <li><strong>💾 Offline Visited Markers</strong> – Your visited progress is saved locally and works offline.</li>
-        <li><strong>📱 Mobile Optimization</strong> – Better experience on mobile (desktop mode recommended).</li>
-        <li><strong>🗺️ Enhanced Map Detail</strong> – Maximum zoom level improved without losing quality.</li>
+        <li>Offline visited markers support</li>
+        <li>Improved map zoom clarity</li>
+        <li>Better performance on large marker sets</li>
+        <li>Mobile interaction refinements</li>
       </ul>
     </div>
 
     <!-- Footer -->
     <div class="patch-footer">
-      <p><strong>Report bugs or suggest features:</strong></p>
-      <div class="patch-contact">
-        <a href="https://discord.gg/Mt65qFprs" target="_blank" class="patch-link">
+      <p><strong>Thank you for your support ❤️</strong></p>
+      <p>
+        Thank you to everyone who has donated and supported this project.
+        I hope this update helps supporters feel more included
+        in the development of the <strong>Where Winds Meet Interactive Map</strong>.
+      </p>
+
+  <div class="patch-contact">
+    <a href="https://discord.gg/Mt65qFprs" target="_blank" class="patch-link">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
           </svg>
@@ -344,12 +376,12 @@
         </a>
       </div>
     </div>
-    
 
     <!-- Brand -->
     <div class="patch-brand">
       Made with ❤️ by <strong>BangOne Gaming</strong>
     </div>
+
   </div>
 </div>
 <!-- Sticky AdSense Container -->
@@ -594,6 +626,7 @@ btnClose.addEventListener("click", function(e) {
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>    
     
 
+  
 <!-- Google Sign-In -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>  
 <script src="username.js"></script>    

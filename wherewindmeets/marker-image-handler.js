@@ -84,28 +84,26 @@ const MarkerImageHandler = (function() {
   // LOCALSTORAGE FUNCTIONS
   // ==========================================
 
-  function saveToLocalStorage() {
-    try {
-      localStorage.setItem(CONFIG.cacheKey, JSON.stringify(imageCache));
-      console.log('💾 Saved to localStorage');
-    } catch (e) {
-      console.warn('⚠️ Failed to save to localStorage:', e);
-    }
+function saveToLocalStorage() {
+  try {
+    localStorage.setItem(CONFIG.cacheKey, JSON.stringify(imageCache));
+  } catch (e) {
+    console.warn('⚠️ Failed to save to localStorage:', e);
   }
+}
 
-  function loadFromLocalStorage() {
-    try {
-      const data = localStorage.getItem(CONFIG.cacheKey);
-      if (data) {
-        imageCache = JSON.parse(data);
-        console.log(`📦 Loaded ${Object.keys(imageCache).length} markers from localStorage`);
-        return true;
-      }
-    } catch (e) {
-      console.warn('⚠️ Failed to load from localStorage:', e);
+function loadFromLocalStorage() {
+  try {
+    const data = localStorage.getItem(CONFIG.cacheKey);
+    if (data) {
+      imageCache = JSON.parse(data);
+      return true;
     }
-    return false;
+  } catch (e) {
+    console.warn('⚠️ Failed to load from localStorage:', e);
   }
+  return false;
+}
 
   function getLastUpdated() {
     try {
@@ -259,38 +257,41 @@ ctx.restore();
   // PRELOAD ALL IMAGES
   // ==========================================
 
-  async function preloadAllImages() {
-    if (isLoaded) return;
+async function preloadAllImages() {
+  if (isLoaded) return;
 
-    const hasLocalData = loadFromLocalStorage();
-    const localLastUpdated = getLastUpdated();
+  const hasLocalData = loadFromLocalStorage();
+  const localLastUpdated = getLastUpdated();
 
-    try {
-      console.log('🌐 Fetching all marker images...');
-      const response = await fetch(CONFIG.allEndpoint);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
+  try {
+    const response = await fetch(CONFIG.allEndpoint);
 
-      const data = await response.json();
-      
-      if (data.success && data.markers) {
-        if (data.lastUpdated > localLastUpdated || !hasLocalData) {
-          imageCache = data.markers;
-          saveToLocalStorage();
-          setLastUpdated(data.lastUpdated);
-        }
-      }
-    } catch (e) {
-      console.error('❌ Preload failed:', e);
-      if (!hasLocalData) {
-        console.log('⚠️ No local cache, will fetch on demand');
-      }
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
     }
 
-    isLoaded = true;
+    const data = await response.json();
+
+    if (data.success && data.markers) {
+      // ✅ CRITICAL FIX: ALWAYS check if server has newer data
+      const serverIsNewer = data.lastUpdated > localLastUpdated;
+      const shouldUpdate = serverIsNewer || !hasLocalData;
+
+      if (shouldUpdate) {
+        imageCache = data.markers;
+        saveToLocalStorage();
+        setLastUpdated(data.lastUpdated);
+      }
+    } else {
+      console.warn('⚠️ Invalid server response, using local cache');
+    }
+
+  } catch (e) {
+    console.error('❌ Fetch failed:', e.message);
   }
+
+  isLoaded = true;
+}
 
   // ==========================================
   // GET IMAGES
@@ -632,8 +633,9 @@ const editedFile = new File(
             data-marker-key="${markerKey}">
           
           <div class="marker-image-loading" style="display: none;">
-            <div class="spinner"></div>
-          </div>
+  <div class="spinner"></div>
+  <div class="loading-text">Loading...</div>
+</div>
           
           <div class="marker-image-overlay">
             <button class="marker-image-btn upload-btn" 
@@ -657,100 +659,145 @@ const editedFile = new File(
     `;
   }
 
-  function loadImages(markerKey) {
-    const container = document.querySelector(`.marker-image-container[data-marker-key="${markerKey}"]`);
-    if (!container) return;
+async function loadImages(markerKey) {
+  const container = document.querySelector(
+    `.marker-image-container[data-marker-key="${markerKey}"]`
+  );
+  if (!container) return;
+  if (container.dataset.uiLoaded === 'true') return;
 
-    if (container.dataset.uiLoaded === 'true') return;
+  const img = container.querySelector('.marker-popup-img');
+  const overlay = container.querySelector('.marker-image-overlay');
+  const navContainer = container.querySelector('.marker-image-nav-container');
+  const uploaderEl = container.querySelector('.marker-image-uploader');
+  const loadingEl = container.querySelector('.marker-image-loading');
 
-    const img = container.querySelector('.marker-popup-img');
-    const overlay = container.querySelector('.marker-image-overlay');
-    const navContainer = container.querySelector('.marker-image-nav-container');
-    const uploaderEl = container.querySelector('.marker-image-uploader');
+  let images = getImages(markerKey);
 
-    const images = getImages(markerKey);
-    const mobile = isMobile();
-    const touch = isTouchDevice();
-    
-    container.dataset.uiLoaded = 'true';
-    container.dataset.images = JSON.stringify(images);
-
-    // Attach paste listener (desktop non-touch only)
-    if (!mobile && !touch) {
-      attachPasteListener(markerKey);
+  // ===============================
+  // FETCH FROM SERVER (CACHE MISS)
+  // ===============================
+  if (images.length === 0) {
+    if (loadingEl) {
+      loadingEl.innerHTML = `
+        <div class="spinner"></div>
+        <div class="loading-text">Loading images...</div>
+      `;
+      loadingEl.style.display = 'flex';
     }
+    container.classList.add('fetching');
 
-    if (images.length > 0) {
-      img.onerror = () => {
-        img.src = CONFIG.fallbackImage;
-        container.dataset.isFallback = 'true';
-      };
-      img.src = images[0].url;
+    try {
+      const response = await fetch(
+        `${CONFIG.apiEndpoint}?markerKey=${encodeURIComponent(markerKey)}`
+      );
+      const data = await response.json();
 
-      if (uploaderEl) {
-        uploaderEl.textContent = `📷 ${images[0].uploadedBy}`;
-        uploaderEl.style.display = 'block';
+      if (data?.success && data.totalImages > 0) {
+        images = data.imageDetails.map(img => ({
+          url: img.url,
+          uploadedBy: img.uploadedBy
+        }));
+
+        imageCache[markerKey] = images;
+        saveToLocalStorage();
+        setLastUpdated(Date.now());
       }
-
-      // Paste zone hanya desktop non-touch
-      const pasteZoneHTML = !mobile && !touch ? `
-        <div class="marker-paste-zone compact" 
-             onclick="MarkerImageHandler.triggerUpload('${markerKey}')"
-             title="Click to browse or Ctrl+V to paste">
-          <div class="paste-zone-icon">📋</div>
-          <div class="paste-zone-text">
-            <div class="paste-zone-subtitle">Click or Ctrl+V</div>
-          </div>
-        </div>
-      ` : '';
-
-      overlay.innerHTML = `
-        <button class="marker-image-btn upload-btn" 
-                onclick="return MarkerImageHandler.safeUploadClick('${markerKey}', event)">
-          📤 Upload
-        </button>
-        ${pasteZoneHTML}
-        <button class="marker-image-btn fullview-btn" onclick="MarkerImageHandler.openFullView('${markerKey}')">
-          🔍 Full View
-        </button>
-      `;
-
-      if (images.length > 1) {
-        navContainer.innerHTML = `
-          <button class="marker-image-nav prev" onclick="MarkerImageHandler.prevImage('${markerKey}')">‹</button>
-          <button class="marker-image-nav next" onclick="MarkerImageHandler.nextImage('${markerKey}')">›</button>
-          <div class="marker-image-indicators">
-            ${images.map((_, i) => `<span class="indicator ${i === 0 ? 'active' : ''}" data-index="${i}"></span>`).join('')}
-          </div>
-        `;
-      }
-
-      container.dataset.isFallback = 'false';
-    } else {
-      container.dataset.isFallback = 'true';
-      if (uploaderEl) uploaderEl.style.display = 'none';
-      
-      const pasteZoneHTML = !mobile && !touch ? `
-        <div class="marker-paste-zone" 
-             onclick="MarkerImageHandler.triggerUpload('${markerKey}')"
-             title="Click to browse files or press Ctrl+V to paste">
-          <div class="paste-zone-icon">📋</div>
-          <div class="paste-zone-text">
-            <div class="paste-zone-title">Drop or Paste Image</div>
-            <div class="paste-zone-subtitle">Click to browse • Ctrl+V to paste</div>
-          </div>
-        </div>
-      ` : '';
-      
-      overlay.innerHTML = `
-        <button class="marker-image-btn upload-btn" 
-                onclick="return MarkerImageHandler.safeUploadClick('${markerKey}', event)">
-          📤 Upload
-        </button>
-        ${pasteZoneHTML}
-      `;
+    } catch (err) {
+      console.warn('[Images] Failed to fetch images:', err);
+    } finally {
+      if (loadingEl) loadingEl.style.display = 'none';
+      container.classList.remove('fetching');
     }
   }
+
+  const mobile = isMobile();
+  const touch = isTouchDevice();
+
+  container.dataset.uiLoaded = 'true';
+  container.dataset.images = JSON.stringify(images);
+
+  if (!mobile && !touch) {
+    attachPasteListener(markerKey);
+  }
+
+  // ===============================
+  // UI RENDER
+  // ===============================
+  if (images.length > 0) {
+    img.onerror = () => {
+      img.src = CONFIG.fallbackImage;
+      container.dataset.isFallback = 'true';
+    };
+
+    img.src = images[0].url;
+
+    if (uploaderEl) {
+      uploaderEl.textContent = `📷 ${images[0].uploadedBy}`;
+      uploaderEl.style.display = 'block';
+    }
+
+    const pasteZoneHTML = (!mobile && !touch) ? `
+      <div class="marker-paste-zone compact"
+           onclick="MarkerImageHandler.triggerUpload('${markerKey}')">
+        <div class="paste-zone-icon">📋</div>
+        <div class="paste-zone-text">
+          <div class="paste-zone-subtitle">Click or Ctrl+V</div>
+        </div>
+      </div>
+    ` : '';
+
+    overlay.innerHTML = `
+      <button class="marker-image-btn upload-btn"
+              onclick="return MarkerImageHandler.safeUploadClick('${markerKey}', event)">
+        📤 Upload
+      </button>
+      ${pasteZoneHTML}
+      <button class="marker-image-btn fullview-btn"
+              onclick="MarkerImageHandler.openFullView('${markerKey}')">
+        🔍 Full View
+      </button>
+    `;
+
+    if (images.length > 1) {
+      navContainer.innerHTML = `
+        <button class="marker-image-nav prev"
+                onclick="MarkerImageHandler.prevImage('${markerKey}')">‹</button>
+        <button class="marker-image-nav next"
+                onclick="MarkerImageHandler.nextImage('${markerKey}')">›</button>
+        <div class="marker-image-indicators">
+          ${images.map((_, i) =>
+            `<span class="indicator ${i === 0 ? 'active' : ''}" data-index="${i}"></span>`
+          ).join('')}
+        </div>
+      `;
+    }
+
+    container.dataset.isFallback = 'false';
+  } else {
+    container.dataset.isFallback = 'true';
+    if (uploaderEl) uploaderEl.style.display = 'none';
+
+    const pasteZoneHTML = (!mobile && !touch) ? `
+      <div class="marker-paste-zone"
+           onclick="MarkerImageHandler.triggerUpload('${markerKey}')">
+        <div class="paste-zone-icon">📋</div>
+        <div class="paste-zone-text">
+          <div class="paste-zone-title">Drop or Paste Image</div>
+          <div class="paste-zone-subtitle">Click • Ctrl+V</div>
+        </div>
+      </div>
+    ` : '';
+
+    overlay.innerHTML = `
+      <button class="marker-image-btn upload-btn"
+              onclick="return MarkerImageHandler.safeUploadClick('${markerKey}', event)">
+        📤 Upload
+      </button>
+      ${pasteZoneHTML}
+    `;
+  }
+}
 
   // ==========================================
   // CAROUSEL NAVIGATION
@@ -1005,8 +1052,6 @@ const editedFile = new File(
     console.log(`📱 Device: ${deviceType} / Input: ${inputType}`);
 
     await preloadAllImages();
-
-    console.log('✨ Preload complete:', Object.keys(imageCache).length, 'markers');
 
     // Pasang listener popup (kalau map belum ada, error dicegah)
     try {
