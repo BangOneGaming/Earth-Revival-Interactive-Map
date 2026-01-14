@@ -743,8 +743,7 @@ if (moveHandle) {
     e.stopPropagation();
     selectElement(annotationData);
     const coords = getCanvasCoordinates(e.clientX, e.clientY);
-    startDragging(coords.x, coords.y, annotationData);  // ✅ Benar
-    startDragging(x, y, annotationData);  // ❌ ERROR: Baris duplikat, x dan y tidak ada!
+    startDragging(coords.x, coords.y, annotationData);
   });
 }
 
