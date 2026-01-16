@@ -37,7 +37,7 @@ const MarkerImageHandler = (function() {
     cacheVersionKey: 'wwm_marker_images_version',
     uploadEnabled: true,
     uploadResumeDate: 'January 14',
-    enableImageEditor: false, // Toggle editor on/off
+    enableImageEditor: true, // Toggle editor on/off
     enableTouchProtection: false // Toggle touch protection (set false jika bermasalah)
   };
 
