@@ -794,11 +794,17 @@ function updateCirclePosition(annotation) {
     const { element, circle } = annotation;
     
     const rect = currentEditor.canvas.getBoundingClientRect();
+    const wrapperRect = currentEditor.annotationsLayer.getBoundingClientRect();
+    
     const scaleX = rect.width / currentEditor.canvas.width;
     const scaleY = rect.height / currentEditor.canvas.height;
     
-    const screenX = x * scaleX;
-    const screenY = y * scaleY;
+    // ✅ Calculate offset dari wrapper ke canvas
+    const offsetX = rect.left - wrapperRect.left;
+    const offsetY = rect.top - wrapperRect.top;
+    
+    const screenX = x * scaleX + offsetX;
+    const screenY = y * scaleY + offsetY;
     const screenRadius = radius * scaleX;
     
     element.style.left = (screenX - screenRadius) + 'px';
@@ -807,25 +813,35 @@ function updateCirclePosition(annotation) {
     element.style.height = (screenRadius * 2) + 'px';
     
     circle.style.borderColor = color;
-    // 🔥 Scale stroke width to match screen
     circle.style.borderWidth = (strokeWidth * scaleX) + 'px';
-  }
+}
 // 🎯 NEW: Update text visual position from canvas coordinates
   function updateTextPosition(annotation) {
-    const { x, y, size } = annotation;
-    const { element } = annotation;
+    const { x, y, radius, color, strokeWidth } = annotation;
+    const { element, circle } = annotation;
     
     const rect = currentEditor.canvas.getBoundingClientRect();
+    const wrapperRect = currentEditor.annotationsLayer.getBoundingClientRect();
+    
     const scaleX = rect.width / currentEditor.canvas.width;
     const scaleY = rect.height / currentEditor.canvas.height;
     
-    const topY = y - size * 1.35; // Konversi BASELINE → TOP
-    element.style.left = (x * scaleX) + 'px';
-    element.style.top = (topY * scaleY) + 'px';
+    // ✅ Calculate offset dari wrapper ke canvas
+    const offsetX = rect.left - wrapperRect.left;
+    const offsetY = rect.top - wrapperRect.top;
     
-    // 🔥 Scale font size to match screen
-    element.style.fontSize = (size * scaleX) + 'px';
-  }
+    const screenX = x * scaleX + offsetX;
+    const screenY = y * scaleY + offsetY;
+    const screenRadius = radius * scaleX;
+    
+    element.style.left = (screenX - screenRadius) + 'px';
+    element.style.top = (screenY - screenRadius) + 'px';
+    element.style.width = (screenRadius * 2) + 'px';
+    element.style.height = (screenRadius * 2) + 'px';
+    
+    circle.style.borderColor = color;
+    circle.style.borderWidth = (strokeWidth * scaleX) + 'px';
+}
   
   function startResizing(e, annotation, handlePos) {
     isResizing = true;
@@ -1295,13 +1311,16 @@ function confirm() {
       x: a.x,
       y: a.y,
       text: a.type === 'text' ? a.element.textContent : undefined,
-      radius: a.radius
+      radius: a.radius,
+      canvasWidth: canvas.width,
+      canvasHeight: canvas.height
     })));
 
     const finalCanvas = document.createElement('canvas');
     finalCanvas.width = canvas.width;
     finalCanvas.height = canvas.height;
     const finalCtx = finalCanvas.getContext('2d');
+
 
     // 🛡️ ANDROID SAFE: Draw white background first
     finalCtx.fillStyle = '#ffffff';
@@ -1359,6 +1378,11 @@ function confirm() {
     console.log('✅ Export complete, creating blob...');
 
     finalCanvas.toBlob((blob) => {
+      // ✅ TESTING: Show result image instead of uploading
+      if (MarkerImageHandler.CONFIG.debugMode) {
+        showDebugPreview(finalCanvas, annotations);
+      }
+      
       if (currentEditor.callback) {
         currentEditor.callback({
           status: 'confirm',
@@ -1367,7 +1391,81 @@ function confirm() {
       }
       close();
     }, 'image/png', 1.0);
-  }
+}
+
+
+// ✅ NEW: Debug preview function
+function showDebugPreview(canvas, annotations) {
+    const debugModal = document.createElement('div');
+    debugModal.style.cssText = `
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      z-index: 10001;
+      max-width: 90vw;
+      max-height: 90vh;
+      overflow: auto;
+    `;
+    
+    const info = document.createElement('div');
+    info.style.cssText = `
+      margin-bottom: 16px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #333;
+    `;
+    
+    info.innerHTML = `
+      <h3 style="margin: 0 0 12px 0; color: #2196F3;">🔍 Debug Preview</h3>
+      <strong>Device:</strong> ${isMobile ? 'Mobile' : 'Desktop'}<br>
+      <strong>Canvas:</strong> ${canvas.width}x${canvas.height}<br>
+      <strong>Annotations:</strong> ${annotations.length}<br>
+      <hr style="margin: 12px 0;">
+      ${annotations.map((a, i) => `
+        <div style="margin: 8px 0; padding: 8px; background: #f5f5f5; border-radius: 4px;">
+          <strong>#${i+1} ${a.type.toUpperCase()}</strong><br>
+          Position: (${a.x.toFixed(0)}, ${a.y.toFixed(0)})<br>
+          ${a.type === 'circle' ? `Radius: ${a.radius.toFixed(0)}px` : ''}
+          ${a.type === 'text' ? `Text: "${a.element.textContent}"` : ''}
+        </div>
+      `).join('')}
+    `;
+    
+    const img = document.createElement('img');
+    img.src = canvas.toDataURL();
+    img.style.cssText = `
+      display: block;
+      max-width: 100%;
+      border: 2px solid #2196F3;
+      border-radius: 8px;
+      margin-top: 12px;
+    `;
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = '✕ Close';
+    closeBtn.style.cssText = `
+      margin-top: 12px;
+      padding: 10px 20px;
+      background: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    `;
+    closeBtn.onclick = () => debugModal.remove();
+    
+    debugModal.appendChild(info);
+    debugModal.appendChild(img);
+    debugModal.appendChild(closeBtn);
+    document.body.appendChild(debugModal);
+}
+
 
   function cancel() {
     if (currentEditor.paths.length > 0 || currentEditor.annotations.length > 0) {

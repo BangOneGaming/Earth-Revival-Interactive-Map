@@ -513,7 +513,7 @@ html, body {
 
 .marker-popup-visited-label {
   color: #e0e0e0;
-  font-size: 10px;
+  font-size: 15px;
   font-weight: 500;
   user-select: none;
 }
@@ -539,7 +539,7 @@ html, body {
 
 .marker-popup-ysid-label {
   color: #FFD700;
-  font-size: 10px;
+  font-size: 15px;
   font-weight: bold;
   font-family: 'Courier New', monospace;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
@@ -605,14 +605,18 @@ html, body {
   transform: translateY(-1px);
 }
 /* ============================================================
-   COMMENTS SECTION (NEW)
+   COMMENTS SECTION (VERTIKAL)
 ============================================================ */
 .marker-popup-comments-section {
   padding: 12px 15px;
   background: rgba(0, 0, 0, 0.15);
+
   display: flex;
-  justify-content: center;
+  flex-direction: column;   /* ⬅️ PENTING */
+  gap: 10px;                /* jarak atas–bawah */
+
   align-items: center;
+  justify-content: center;
 }
 
 /* Comments Button */
@@ -858,7 +862,21 @@ html, body {
   .marker-popup-ysid {
     align-self: flex-end;
   }
-  
+
+.marker-popup-link-btn {
+  padding: 4px 30px;
+  border-radius: 10px;
+  gap: 4px;
+
+  font-size: 6px;        /* ⬅️ SAMA DENGAN COMMENT */
+  line-height: 1;
+  letter-spacing: 0.2px;
+}
+  .marker-popup-link-btn svg {
+    width: 7px;
+    height: 7px;
+  }
+
   .marker-popup-comments-btn {
     max-width: 100%;
     padding: 8px 20px;
@@ -1347,7 +1365,7 @@ html, body {
 }
 
 /* ===============================
-   RIGHT GROUP (YSID / LINK)
+   RIGHT GROUP YSID
    =============================== */
 .footer-right-group {
   display: flex ;
@@ -1367,10 +1385,6 @@ html, body {
   font-size: 6px;
 }
 
-.marker-popup-link-btn {
-  font-size: 8.5px;
-  padding: 3px 6px;
-}
 
 /* ===============================
    SMALL LABEL
@@ -1378,12 +1392,16 @@ html, body {
 .marker-popup-full-label {
   font-size: 4px;
 }
-  /* ===============================
-     COMMENTS BUTTON
-     =============================== */
-  .marker-popup-comments-section {
-    padding: 6px 10px;
-  }
+/* ===============================
+   COMMENTS + LINK (VERTIKAL)
+   =============================== */
+.marker-popup-comments-section {
+  padding: 6px 10px;
+  display: flex;
+  flex-direction: column;   /* ⬅️ KUNCI UTAMA */
+  gap: 6px;                 /* jarak atas–bawah */
+  align-items: center;      /* tengah horizontal */
+}
 
   .marker-popup-comments-btn {
     min-width: 120px;

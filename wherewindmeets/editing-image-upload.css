@@ -134,11 +134,16 @@
     }
 
     .editor-annotations {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      pointer-events: none;
-    }
+  position: absolute;
+  top: 0;       /* ✅ Remove offset */
+  left: 0;      /* ✅ Remove offset */
+  width: 100%;  /* ✅ Match canvas wrapper */
+  height: 100%; /* ✅ Match canvas wrapper */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
 
     .editor-text-annotation {
       position: absolute;

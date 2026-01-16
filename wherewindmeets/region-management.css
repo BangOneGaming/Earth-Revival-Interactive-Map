@@ -1,0 +1,334 @@
+/* === REGION UNIFIED CONTAINER === */
+
+/* Main Container - Contains both button and panel */
+.region-container {
+  position: fixed;
+  top: 10px;
+  left: 23%;
+  z-index: 1000;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  pointer-events: none;
+}
+
+/* Toggle Button */
+.region-toggle {
+  width: 50px;
+  height: 50px;
+  background: rgba(0, 0, 0, 0);
+  border: 2px solid #f4e5c0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+
+.region-toggle:hover {
+  background: linear-gradient(135deg, #f3d59b, #d4a74a);
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(212, 167, 74, 0.6);
+}
+
+.region-toggle img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+/* Panel - Transparent, No Border */
+.region-panel {
+  width: 200px;
+  background: transparent;
+  border: none;
+  
+  opacity: 0;
+  transform: scale(0.9) translateX(-10px);
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+}
+
+/* Panel visible state */
+.region-panel.visible {
+  opacity: 1;
+  transform: scale(1) translateX(0);
+  pointer-events: auto;
+}
+
+/* Content area */
+.region-content {
+  padding: 0;
+  overflow-y: auto;
+  max-height: 320px;
+}
+
+.region-content::-webkit-scrollbar { 
+  width: 4px; 
+}
+
+.region-content::-webkit-scrollbar-track { 
+  background: rgba(255,255,255,0.1); 
+  border-radius: 2px; 
+}
+
+.region-content::-webkit-scrollbar-thumb { 
+  background: #d4a74a; 
+  border-radius: 2px; 
+}
+
+/* Region item */
+.region-item {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  margin-bottom: 6px;
+  background: rgba(80,55,20,0.9);
+  border: 1px solid rgba(212,167,74,0.3);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.region-item:last-child {
+  margin-bottom: 0;
+}
+
+.region-item:hover {
+  background: rgba(212,167,74,1);
+  border-color: rgba(243,213,155,0.6);
+  transform: translateX(3px);
+}
+
+/* Active state */
+.region-item.active {
+  background: linear-gradient(
+    135deg,
+    rgba(243,213,155,0.5) 0%,
+    rgba(212,167,74,0.6) 100%
+  );
+  border: 2px solid rgba(243,213,155,1);
+  box-shadow: 0 0 12px rgba(243,213,155,0.4);
+}
+
+/* Active indicator */
+.region-item.active::before {
+  content: '●';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #f3d59b;
+  font-size: 16px;
+  text-shadow: 0 0 8px rgba(243,213,155,0.8);
+  animation: regionPulse 2s infinite;
+}
+
+@keyframes regionPulse {
+  0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
+  50% { opacity: 0.6; transform: translateY(-50%) scale(1.2); }
+}
+
+/* Region icon */
+.region-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+  flex-shrink: 0;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+/* Region info */
+.region-info {
+  flex: 1;
+  min-width: 0;
+  padding-right: 20px;
+}
+
+.region-name {
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* Animation - Desktop (slide from left) */
+@keyframes slideInLeftRegion {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.region-panel.visible .region-item {
+  animation: slideInLeftRegion 0.25s ease forwards;
+}
+
+.region-panel.visible .region-item:nth-child(1) { animation-delay: 0.03s; }
+.region-panel.visible .region-item:nth-child(2) { animation-delay: 0.06s; }
+.region-panel.visible .region-item:nth-child(3) { animation-delay: 0.09s; }
+.region-panel.visible .region-item:nth-child(4) { animation-delay: 0.12s; }
+.region-panel.visible .region-item:nth-child(5) { animation-delay: 0.15s; }
+.region-panel.visible .region-item:nth-child(6) { animation-delay: 0.18s; }
+.region-panel.visible .region-item:nth-child(7) { animation-delay: 0.21s; }
+
+/* ==========================================
+   REGION HINT STYLES
+========================================== */
+
+.region-hint {
+  position: fixed;
+  background: linear-gradient(135deg, #ffe6a8, #ffd88a);
+  color: #6a4100;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 0 0 2px rgba(212, 175, 55, 0.3);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  z-index: 2000;
+}
+
+/* SEGITIGA LAYER (PC) */
+.region-hint::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  border-width: 0 10px 10px 10px;
+  border-style: solid;
+  border-color: transparent transparent #ffe6a8 transparent;
+
+  filter: drop-shadow(0 -2px 2px rgba(0,0,0,0.15));
+}
+
+.region-hint.show {
+  opacity: 1;
+}
+
+
+@keyframes bounceUpRegion {
+  0%, 100% { transform: translateX(-50%) translateY(-10px); }
+  50% { transform: translateX(-50%) translateY(-15px); }
+}
+
+.region-hint.show {
+  opacity: 1;
+}
+
+/* ========= Notification Region ========= */
+.region-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 999999;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(243,213,155,0.3);
+  animation: slideDown .3s ease-in forwards;
+}
+
+/* === MOBILE RESPONSIVE === */
+@media (max-width: 768px) {
+  .region-container {
+    top: 65vh;
+    left: 10px;
+    flex-direction: row;
+    z-index: 500;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .region-toggle {
+    width: 45px;
+    height: 45px;
+  }
+
+  .region-toggle img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .region-panel {
+    width: 150px;
+    transform: scale(0.9) translateX(10px);
+  }
+
+  .region-panel.visible {
+    transform: scale(1) translateX(0);
+  }
+
+  @keyframes slideInRightRegion {
+    from { opacity: 0; transform: translateX(8px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .region-panel.visible .region-item {
+    animation: slideInRightRegion 0.25s ease forwards;
+  }
+
+  .region-name {
+    font-size: 11px;
+  }
+
+  .region-hint::before {
+    top: 50%;
+    right: 100%;
+    left: auto;
+    bottom: auto;
+    transform: translateY(-50%);
+
+    border-width: 8px 10px 8px 0;
+    border-style: solid;
+    border-color: transparent #ffe6a8 transparent transparent;
+  }
+
+
+
+
+  @keyframes bounceLeftRegion {
+    0%, 100% { transform: translateY(-50%) translateX(0); }
+    50% { transform: translateY(-50%) translateX(-5px); }
+  }
+
+  .region-notification {
+    font-size: 13px;
+    padding: 10px 16px;
+    top: 10px;
+  }
+}

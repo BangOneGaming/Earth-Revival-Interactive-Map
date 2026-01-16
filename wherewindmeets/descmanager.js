@@ -44,31 +44,43 @@ const DescriptionLoader = {
    * @returns {Object} - Marker data with merged descriptions
    */
   mergeDescriptions(markerData) {
-    if (!this.isLoaded || !this.descData) {
-      console.warn('⚠️ Description data not loaded yet');
-      return markerData;
+  if (!this.isLoaded || !this.descData) {
+    console.warn('⚠️ Description data not loaded yet');
+    return markerData;
+  }
+
+  let mergedDesc = 0;
+  let mergedLocType = 0;
+
+  Object.keys(markerData).forEach(markerId => {
+    const marker = markerData[markerId];
+    const fallback = this.descData[markerId];
+
+    if (!fallback) return;
+
+    // === DESC FALLBACK ===
+    if (!marker.desc || marker.desc.trim() === '') {
+      if (fallback.desc && fallback.desc.trim() !== '') {
+        marker.desc = fallback.desc;
+        mergedDesc++;
+      }
     }
 
-    let mergedCount = 0;
-
-    // Iterate through all markers
-    Object.keys(markerData).forEach(markerId => {
-      const marker = markerData[markerId];
-      
-      // HANYA isi dari descknowladge.json jika marker.desc KOSONG
-      if (!marker.desc || marker.desc.trim() === '') {
-        if (this.descData[markerId] && this.descData[markerId].desc) {
-          marker.desc = this.descData[markerId].desc;
-          mergedCount++;
-        }
+    // === LOC_TYPE FALLBACK ===
+    if (!marker.loc_type || marker.loc_type.trim() === '') {
+      if (fallback.loc_type && fallback.loc_type.trim() !== '') {
+        marker.loc_type = fallback.loc_type;
+        mergedLocType++;
       }
-      // Jika marker.desc sudah ada, BIARKAN (prioritas lebih tinggi)
-    });
+    }
+  });
 
-    console.log(`✅ Filled ${mergedCount} empty descriptions from descknowladge.json`);
-    
-    return markerData;
-  },
+  console.log(
+    `✅ Fallback applied → desc: ${mergedDesc}, loc_type: ${mergedLocType}`
+  );
+
+  return markerData;
+},
 
   /**
    * Merge descriptions into all loaded endpoints

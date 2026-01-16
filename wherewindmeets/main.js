@@ -1,6 +1,6 @@
 /**
  * Main application entry point
- * Clean version with integrated cookie consent
+ * Clean version with integrated cookie consent + Region Manager
  */
 (function() {
   'use strict';
@@ -294,7 +294,6 @@ if (!iconReady || !mapReady) {
       // ============================================
       updateLoadingText('Initializing underground system...');
       
-
 async function waitForUndergroundManager() {
   for (let i = 0; i < 50; i++) {
     if (window.UndergroundManager) return true;
@@ -305,6 +304,29 @@ async function waitForUndergroundManager() {
 
 if (await waitForUndergroundManager()) {
   await UndergroundManager.init(window.map);
+}
+
+      // ============================================
+      // STEP 5: Initialize Region Manager (NEW!)
+      // ============================================
+      updateLoadingText('Initializing region system...');
+      
+async function waitForRegionManager() {
+  for (let i = 0; i < 50; i++) {
+    if (window.RegionManager) return true;
+    await new Promise(r => setTimeout(r, 100));
+  }
+  return false;
+}
+
+if (await waitForRegionManager()) {
+  try {
+    await RegionManager.init(window.map);
+    console.log('✅ RegionManager initialized');
+  } catch (error) {
+    console.warn('⚠️ RegionManager init failed:', error);
+    // Non-critical, continue without region filtering
+  }
 }
 
       // ============================================

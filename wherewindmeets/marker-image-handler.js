@@ -36,8 +36,10 @@ const MarkerImageHandler = (function() {
     cacheKey: 'wwm_marker_images',
     cacheVersionKey: 'wwm_marker_images_version',
     uploadEnabled: true,
-    uploadResumeDate: 'January 14',
-    enableImageEditor: true, // Toggle editor on/off
+    uploadResumeDate: 'January 1st',
+      enableImageEditor: true,
+  debugMode: false,           // ✅ NEW: Enable debug overlay
+  uploadToServer: true, 
     enableTouchProtection: false // Toggle touch protection (set false jika bermasalah)
   };
 
@@ -502,55 +504,92 @@ const editedFile = new File(
       await continueUpload(file, markerKey, fromPaste);
     }
   }
-  async function continueUpload(file, markerKey, fromPaste) {
-    const container = document.querySelector(`.marker-image-container[data-marker-key="${markerKey}"]`);
+async function continueUpload(file, markerKey, fromPaste) {
+  const container = document.querySelector(
+    `.marker-image-container[data-marker-key="${markerKey}"]`
+  );
 
-    try {
-      if (container) container.classList.add('uploading');
+  try {
+    if (container) container.classList.add('uploading');
 
-      try {
-        await checkServerQuota();
-      } catch (err) {
-        if (err.message === "quota") {
-          showNotification("⚠️ Server quota exceeded. Try again later.", "error");
-          return;
-        }
+    // 🧪 DEBUG MODE — LOCAL PREVIEW ONLY (NO SERVER UPLOAD)
+    if (CONFIG.debugMode && !CONFIG.uploadToServer) {
+      console.log('🧪 DEBUG MODE: Upload skipped (local preview only)');
 
-        if (err.message === "auth") {
-          showNotification("❌ Session expired. Please login again.", "error");
-          return;
-        }
+      // 🔹 Buat blob URL lokal
+      const localUrl = URL.createObjectURL(file);
+
+      // 🔹 Inject ke imageCache supaya popup bisa render
+      if (!imageCache[markerKey]) {
+        imageCache[markerKey] = [];
       }
 
-      const source = fromPaste ? 'clipboard' : 'file';
-      showNotification(`⏳ Compressing ${source} image...`, 'info');
+      imageCache[markerKey].unshift({
+        url: localUrl,
+        uploadedBy: 'Local Preview'
+      });
 
-      const compressed = await compressToWebP(file);
-      
-      showNotification(
-        `✨ Compressed ${compressed.savings}% • Uploading...`,
-        'info'
-      );
+      // 🔹 Simpan cache (opsional, bisa dihapus kalau mau volatile)
+      saveToLocalStorage();
+      setLastUpdated(Date.now());
 
-      const imageUrl = await uploadToImageKit(compressed.blob, markerKey);
-      await saveImageUrlToServer(markerKey, imageUrl);
-
+      // 🔹 Paksa UI reload
       if (container) {
         container.dataset.uiLoaded = 'false';
       }
+
       loadImages(markerKey);
-      
-      showNotification(
-        `✅ Upload success! (${formatBytes(compressed.compressedSize)})`,
-        'success'
-      );
-    } catch (error) {
-      console.error('Upload failed:', error);
-      showNotification(`❌ ${error.message}`, 'error');
-    } finally {
-      if (container) container.classList.remove('uploading');
+
+      showNotification('🧪 Preview lokal (tidak diupload)', 'info');
+      return; // ⛔ STOP — tidak lanjut ke upload server
     }
+
+    // ===============================
+    // NORMAL UPLOAD FLOW
+    // ===============================
+    try {
+      await checkServerQuota();
+    } catch (err) {
+      if (err.message === "quota") {
+        showNotification("⚠️ Server quota exceeded. Try again later.", "error");
+        return;
+      }
+      if (err.message === "auth") {
+        showNotification("❌ Session expired. Please login again.", "error");
+        return;
+      }
+    }
+
+    const source = fromPaste ? 'clipboard' : 'file';
+    showNotification(`⏳ Compressing ${source} image...`, 'info');
+
+    const compressed = await compressToWebP(file);
+
+    showNotification(
+      `✨ Compressed ${compressed.savings}% • Uploading...`,
+      'info'
+    );
+
+    const imageUrl = await uploadToImageKit(compressed.blob, markerKey);
+    await saveImageUrlToServer(markerKey, imageUrl);
+
+    if (container) {
+      container.dataset.uiLoaded = 'false';
+    }
+    loadImages(markerKey);
+
+    showNotification(
+      `✅ Upload success! (${formatBytes(compressed.compressedSize)})`,
+      'success'
+    );
+
+  } catch (error) {
+    console.error('Upload failed:', error);
+    showNotification(`❌ ${error.message}`, 'error');
+  } finally {
+    if (container) container.classList.remove('uploading');
   }
+}
 
   // ==========================================
   // UTILITY
@@ -887,13 +926,24 @@ async function loadImages(markerKey) {
     if (input) input.click();
   }
 
-  async function handleFileSelect(event, markerKey) {
-    const file = event.target.files[0];
-    if (!file) return;
+async function handleFileSelect(event, markerKey) {
+  const input = event.target;
+  const file = input.files && input.files[0];
+  if (!file) return;
 
+  // 🔒 Lock supaya tidak double-trigger (PC sering kena)
+  input.disabled = true;
+
+  try {
+    // ❗ JANGAN upload di sini
+    // Biarkan processImageUpload yang membuka editor
     await processImageUpload(file, markerKey, false);
-    event.target.value = '';
+  } finally {
+    // 🔓 Reset input agar bisa upload ulang file yang sama
+    input.value = '';
+    input.disabled = false;
   }
+}
 
   // ==========================================
   // FULL VIEW MODAL

@@ -642,108 +642,118 @@ if (editState.editingName) {
              onerror="this.src='https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg'">
        </div>`;
 
-  // Updated createPopupContent function dengan struktur baru
-  return `
-    <div class="marker-popup" data-marker-key="${markerKey}" onclick="event.stopPropagation()">
-      <!-- Category Section -->
-      <div class="marker-popup-category">
-        <img src="${categoryIcon}" alt="${categoryName}" class="marker-popup-category-icon">
-        <span class="marker-popup-category-name">${categoryName}</span>
-      </div>
-      
-      <!-- Image Section -->
-      ${imageHTML}
-      
-<!-- Header Section -->
-${headerHTML}
-      
-      <!-- Description Section -->
-      ${descHTML}
-      
-    <!-- 🎯 TAMBAHKAN PART NAVIGATION DI SINI -->
+// Updated createPopupContent function (Link pindah ke Comments)
+return `
+  <div class="marker-popup" data-marker-key="${markerKey}" onclick="event.stopPropagation()">
+
+    <!-- Category Section -->
+    <div class="marker-popup-category">
+      <img src="${categoryIcon}" alt="${categoryName}" class="marker-popup-category-icon">
+      <span class="marker-popup-category-name">${categoryName}</span>
+    </div>
+
+    <!-- Image Section -->
+    ${imageHTML}
+
+    <!-- Header Section -->
+    ${headerHTML}
+
+    <!-- Description Section -->
+    ${descHTML}
+
+    <!-- 🎯 PART NAVIGATION -->
     ${partNavigationHTML}
-    
-      <!-- Footer Section (Visited + ys_id + links_info) -->
-      <div class="marker-popup-footer">
-        
-        <!-- Left: Visited -->
-        <div class="marker-popup-visited" onclick="event.stopPropagation(); toggleVisited('${markerKey}')">
-          <input type="checkbox" ${isVisited ? 'checked' : ''} onchange="event.stopPropagation()">
-          <span class="marker-popup-visited-label">
-            ${SVG_ICONS.check}
-            <span>Visited</span>
-          </span>
-        </div>
 
-        <!-- Right container: LINK + YSID -->
-        <div class="footer-right-group">
+    <!-- Footer Section (Visited + YSID ONLY) -->
+    <div class="marker-popup-footer">
 
-          <!-- Link dulu -->
-          ${hasValidLink ? `
-            <div class="marker-popup-link-info">
-              <a href="${markerData.links_info}" 
-                 target="_blank" 
-                 class="marker-popup-link-btn">
-                ${SVG_ICONS.link}
-                <span>Videos Hint</span>
-              </a>
-            </div>
-          ` : ''}
-
-          <!-- Baru YSID -->
-          ${markerData.ys_id ? `
-            <div class="marker-popup-ysid">
-              <span class="marker-popup-ysid-label">@${markerData.ys_id}</span>
-            </div>
-          ` : ''}
-
-        </div>
-
+      <!-- Left: Visited -->
+      <div class="marker-popup-visited"
+           onclick="event.stopPropagation(); toggleVisited('${markerKey}')">
+        <input type="checkbox"
+               ${isVisited ? 'checked' : ''}
+               onchange="event.stopPropagation()">
+        <span class="marker-popup-visited-label">
+          ${SVG_ICONS.check}
+          <span>Visited</span>
+        </span>
       </div>
-      
-      <!-- Comments Section -->
-      <div class="marker-popup-comments-section">
-        <button class="marker-popup-comments-btn" onclick="event.stopPropagation(); openCommentsModal('${markerKey}')">
-          ${SVG_ICONS.comment}
-          <span>Comments</span>
-        </button>
-      </div>
-      
-      <!-- Report Section -->
-      <div class="marker-popup-report-section">
-        <button 
-          class="marker-popup-report-btn"
-          onclick="event.stopPropagation(); toggleReportPopup('${markerKey}')">
-          ${SVG_ICONS.alert}
-          <span>Report</span>
-        </button>
-        <div class="report-popup" data-report="${markerKey}">
-          <a class="report-link" href="https://discord.gg/Mt65qFprs" target="_blank">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="#ffd88a">
-              <path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.07.07 0 0 0-.073.036c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.49 0 12.64 12.64 0 0 0-.622-1.25.07.07 0 0 0-.073-.036A19.736 19.736 0 0 0 4.69 4.37a.064.064 0 0 0-.03.027C.7 10.053-.42 15.58.13 21.053a.078.078 0 0 0 .028.053 19.9 19.9 0 0 0 6.072 3.073.07.07 0 0 0 .076-.027c.466-.638.883-1.313 1.246-2.017a.07.07 0 0 0-.041-.098 13.1 13.1 0 0 1-1.872-.892.07.07 0 0 1-.01-.116 10.2 10.2 0 0 0 .372-.292.07.07 0 0 1 .073-.01c3.927 1.793 8.18 1.793 12.062 0a.07.07 0 0 1 .074.009c.12.098.247.2.373.293a.07.07 0 0 1-.01.116c-.6.35-1.245.654-1.872.892a.07.07 0 0 0-.04.099c.385.703.802 1.378 1.245 2.016a.07.07 0 0 0 .077.027 19.87 19.87 0 0 0 6.072-3.073.07.07 0 0 0 .028-.053c.5-5.251-.838-10.755-3.983-16.656a.06.06 0 0 0-.029-.028ZM8.02 15.33c-1.183 0-2.154-1.084-2.154-2.412 0-1.328.955-2.412 2.154-2.412 1.21 0 2.168 1.093 2.154 2.412 0 1.328-.955 2.412-2.154 2.412Zm7.975 0c-1.183 0-2.154-1.084-2.154-2.412 0-1.328.955-2.412 2.154-2.412 1.21 0 2.168 1.093 2.154 2.412 0 1.328-.944 2.412-2.154 2.412Z"/>
-            </svg>
-            Discord
-          </a>
-          <a class="report-link" href="https://www.tiktok.com/@bangonegaming97" target="_blank">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="#ffd88a">
-              <path d="M12.58 2h3.22a5.73 5.73 0 0 0 4.1 4.08v3.22a8.92 8.92 0 0 1-4.13-1.17v7.72a6.69 6.69 0 1 1-6.69-6.69 6.6 6.6 0 0 1 1.5.17v3.36a3.33 3.33 0 1 0 2.42 3.21V2Z"/>
-            </svg>
-            TikTok
-          </a>
-          <a class="report-link"
-            href="mailto:square.spon@gmail.com?subject=Report%20Marker%20|%20Key:%20${markerKey}%20|%20Category:%20${markerData.category_id}&body=Hello,%0D%0AI want to report a marker.%0D%0A%0D%0AKey: ${markerKey}%0D%0ACategory ID: ${markerData.category_id}%0D%0AReason:%0D%0A">
-            ${SVG_ICONS.email}
-            Email
-          </a>
+
+      <!-- Right: YSID -->
+      ${markerData.ys_id ? `
+        <div class="marker-popup-ysid">
+          <span class="marker-popup-ysid-label">@${markerData.ys_id}</span>
         </div>
+      ` : ''}
+
+    </div>
+
+    <!-- Comments + Link Section -->
+    <div class="marker-popup-comments-section">
+
+      <!-- Videos Hint -->
+      ${hasValidLink ? `
+        <a href="${markerData.links_info}"
+           target="_blank"
+           class="marker-popup-link-btn"
+           onclick="event.stopPropagation()">
+          ${SVG_ICONS.link}
+          <span>Videos Hint</span>
+        </a>
+      ` : ''}
+
+      <!-- Comments -->
+      <button class="marker-popup-comments-btn"
+              onclick="event.stopPropagation(); openCommentsModal('${markerKey}')">
+        ${SVG_ICONS.comment}
+        <span>Comments</span>
+      </button>
+
+    </div>
+
+    <!-- Report Section -->
+    <div class="marker-popup-report-section">
+      <button class="marker-popup-report-btn"
+              onclick="event.stopPropagation(); toggleReportPopup('${markerKey}')">
+        ${SVG_ICONS.alert}
+        <span>Report</span>
+      </button>
+
+      <div class="report-popup" data-report="${markerKey}">
+
+        <a class="report-link"
+           href="https://discord.gg/Mt65qFprs"
+           target="_blank">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="#ffd88a">
+            <path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515..." />
+          </svg>
+          Discord
+        </a>
+
+        <a class="report-link"
+           href="https://www.tiktok.com/@bangonegaming97"
+           target="_blank">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="#ffd88a">
+            <path d="M12.58 2h3.22a5.73 5.73..." />
+          </svg>
+          TikTok
+        </a>
+
+        <a class="report-link"
+           href="mailto:square.spon@gmail.com?subject=Report%20Marker%20|%20Key:%20${markerKey}%20|%20Category:%20${markerData.category_id}&body=Hello,%0D%0AI want to report a marker.%0D%0A%0D%0AKey: ${markerKey}%0D%0ACategory ID: ${markerData.category_id}%0D%0AReason:%0D%0A">
+          ${SVG_ICONS.email}
+          Email
+        </a>
+
       </div>
     </div>
-  `;
+
+  </div>
+`;
 },
 /**
  * Add markers in batches for better performance
- * @param {Array} markers - Array of marker data
- * @param {L.LatLngBounds} bounds - The current bounds
+ * ✅ UPDATED: Added Region filter check
  */
 addMarkersBatch(markers, bounds) {
   const batchSize = MARKER_CONFIG.batchSize;
@@ -768,18 +778,27 @@ addMarkersBatch(markers, bounds) {
         continue;
       }
 
-      // Check if marker passes category filter
+      // ✅ CHECK 1: Check if marker passes category filter
       const passesFilter = this.isFilterActive(markerData.category_id);
       if (!passesFilter) {
         continue;
       }
 
-      // Check if marker passes floor filter
+      // ✅ CHECK 2: Check if marker passes floor filter
       let passesFloorFilter = true;
       if (typeof UndergroundManager !== 'undefined') {
         passesFloorFilter = UndergroundManager.shouldShowMarker(markerData);
       }
       if (!passesFloorFilter) {
+        continue;
+      }
+
+      // ✅ CHECK 3: Check if marker passes region filter (NEW!)
+      let passesRegionFilter = true;
+      if (typeof RegionManager !== 'undefined') {
+        passesRegionFilter = RegionManager.shouldShowMarker(markerData);
+      }
+      if (!passesRegionFilter) {
         continue;
       }
 
@@ -798,19 +817,21 @@ addMarkersBatch(markers, bounds) {
       if (typeof UndergroundManager !== 'undefined') {
         UndergroundManager.updateStats();
       }
+      
+      // Update region stats if available (NEW!)
+      if (typeof RegionManager !== 'undefined') {
+        RegionManager.updateStats();
+      }
     }
   };
 
   addNextBatch();
 },
 
-
-
 /**
  * SIMPLIFIED: createAndAddMarker - No zoom-based resizing
  * Icon menggunakan ukuran default dari icon-manager.js
  */
-
 createAndAddMarker(markerData, lat, lng, markerKey) {
   const specialIcon = markerData.special_icon || null;
   const markerFloor = markerData.floor || '';
@@ -918,101 +939,122 @@ createIconWithBadge(baseIcon, markerFloor) {
   });
 },
 
-  /**
-   * Show notification when switching floor
-   */
-  showFloorSwitchNotification(floorId) {
-    const oldNotif = document.querySelector(".floor-switch-notification");
-    if (oldNotif) oldNotif.remove();
+/**
+ * Show notification when switching floor
+ */
+showFloorSwitchNotification(floorId) {
+  const oldNotif = document.querySelector(".floor-switch-notification");
+  if (oldNotif) oldNotif.remove();
 
-    let floorName = "Unknown Floor";
+  let floorName = "Unknown Floor";
 
-    if (typeof UndergroundManager !== "undefined") {
-      const floorInfo = UndergroundManager.floors.find(f => f.id === floorId);
-      if (floorInfo) floorName = floorInfo.name;
-    }
-
-    const notif = document.createElement("div");
-    notif.className = "floor-switch-notification";
-    notif.innerHTML = `
-      <img src="${ICON_BASE_URL}layericon.png" style="width:20px;height:20px;margin-right:8px;">
-      <span>Switched to <strong>${floorName}</strong></span>
-    `;
-    document.body.appendChild(notif);
-
-    notif.style.cssText = `
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.85);
-      color: white;
-      padding: 12px 20px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      font-size: 14px;
-      z-index: 10000;
-      animation: slideDown .3s ease-out;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    `;
-
-    setTimeout(() => {
-      notif.style.animation = "slideDown .3s ease-in reverse";
-      setTimeout(() => notif.remove(), 300);
-    }, 3000);
-  },
-
-  /**
-   * Update markers in view
-   */
-  updateMarkersInView() {
-    const bounds = this.getBufferedBounds();
-    const markers = this.getAllMarkers();
-
-    this.removeOutOfBoundsMarkers(bounds);
-    this.addMarkersBatch(markers, bounds);
-  },
-
-  /**
-   * Update stats
-   */
-  updateStats() {
-    const statsEl = document.getElementById("filterStats");
-    if (!statsEl) return;
-
-    const count = Object.keys(this.activeMarkers).length;
-
-    let floorInfo = "";
-    if (typeof UndergroundManager !== "undefined") {
-      const activeFloorData = UndergroundManager.getActiveFloorInfo();
-      if (activeFloorData) {
-        let floorName = activeFloorData.name.split("(")[0].trim();
-        floorInfo = ` <span style="color:#f3d59b;">| ${floorName}</span>`;
-      }
-    }
-
-    statsEl.innerHTML = `Showing <strong>${count}</strong> markers${floorInfo}`;
-  },
-
-  /**
-   * Refresh markers after floor change
-   */
-  forceRefreshMarkers() {
-    this.removeAllMarkers();
-    this.updateMarkersInView();
-  },
-
-  /**
-   * Debounce
-   */
-  debounce(fn, delay) {
-    let timeout;
-    return function (...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => fn.apply(this, args), delay);
-    };
+  if (typeof UndergroundManager !== "undefined") {
+    const floorInfo = UndergroundManager.floors.find(f => f.id === floorId);
+    if (floorInfo) floorName = floorInfo.name;
   }
+
+  const notif = document.createElement("div");
+  notif.className = "floor-switch-notification";
+  notif.innerHTML = `
+    <img src="${ICON_BASE_URL}layericon.png" style="width:20px;height:20px;margin-right:8px;">
+    <span>Switched to <strong>${floorName}</strong></span>
+  `;
+  document.body.appendChild(notif);
+
+  notif.style.cssText = `
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.85);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    z-index: 10000;
+    animation: slideDown .3s ease-out;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  `;
+
+  setTimeout(() => {
+    notif.style.animation = "slideDown .3s ease-in reverse";
+    setTimeout(() => notif.remove(), 300);
+  }, 3000);
+},
+
+/**
+ * Update markers in view with all filters
+ * ✅ This method calls getAllMarkers and addMarkersBatch
+ */
+updateMarkersInView() {
+  if (!this.map) return;
+  
+  const bounds = this.getBufferedBounds();
+  const markers = this.getAllMarkers();
+  
+  this.removeOutOfBoundsMarkers(bounds);
+  this.addMarkersBatch(markers, bounds);
+},
+
+/**
+ * Update stats with all active filters
+ * ✅ UPDATED: Added Region info display
+ */
+updateStats() {
+  const statsEl = document.getElementById("filterStats");
+  if (!statsEl) return;
+
+  const count = Object.keys(this.activeMarkers).length;
+  const filterInfo = [];
+
+  // Floor info
+  if (typeof UndergroundManager !== "undefined") {
+    const activeFloorData = UndergroundManager.getActiveFloorInfo();
+    if (activeFloorData) {
+      let floorName = activeFloorData.name.split("(")[0].trim();
+      filterInfo.push(`<span style="color:#f3d59b;">${floorName}</span>`);
+    }
+  }
+
+  // Region info (NEW!)
+  if (typeof RegionManager !== "undefined") {
+    const activeRegionData = RegionManager.getActiveRegionInfo();
+    if (activeRegionData && activeRegionData.id !== 'all') {
+      filterInfo.push(`<span style="color:#a8d5ff;">${activeRegionData.name}</span>`);
+    }
+  }
+
+  // Build stats text
+  let statsHTML = `Showing <strong>${count}</strong> markers`;
+  
+  if (filterInfo.length > 0) {
+    statsHTML += ` <span style="color:#888;">|</span> ${filterInfo.join(' <span style="color:#888;">|</span> ')}`;
+  }
+
+  statsEl.innerHTML = statsHTML;
+},
+
+/**
+ * Force refresh markers after filter change
+ */
+forceRefreshMarkers() {
+  console.log("🔄 Force refresh markers...");
+  this.removeAllMarkers();
+  this.updateMarkersInView();
+},
+
+/**
+ * Debounce utility
+ */
+debounce(fn, delay) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
 }; // ✅ Penutup MarkerManager yang benar
 // ========================================
 // VISITED MARKER FUNCTIONS
