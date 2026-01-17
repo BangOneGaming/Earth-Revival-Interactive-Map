@@ -114,7 +114,7 @@ skipBtn.addEventListener("click", () => {
 
     // Set action untuk tombol Visit
     visitBtn.onclick = () => {
-        window.location.href = "wherewindmeets/index.html";
+        window.location.href = "/wherewindmeets/";
     };
 });
   // === 6️⃣ Tombol Close TikTok Popup ===
