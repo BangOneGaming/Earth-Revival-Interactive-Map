@@ -214,7 +214,7 @@ html, body {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  margin-bottom: 6px;
+  margin-bottom: 0px;
 }
 
 .marker-popup-coords-title {
@@ -328,13 +328,62 @@ html, body {
 }
 
 /* ============================================================
-   DESCRIPTION SECTION
+   DESCRIPTION + LOCATION TYPE SECTION
 ============================================================ */
+
 .marker-popup-desc {
-  padding: 12px 15px;
-  background: rgba(0, 0, 0, 0.1);
+  display: flex;              /* ⬅️ WAJIB */
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.15);
+  padding: 10px 15px;
+  gap: 2px;                   /* boleh 1–3 */
 }
 
+/* ============================================================
+   LOCATION TYPE HEADER (MATCH DESC HEADER)
+============================================================ */
+
+.marker-popup-loc-type-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;   /* ⬅️ CENTER UTAMA */
+  gap: 8px;
+  padding: 0 15px;
+  background: rgba(0, 0, 0, 0.15);
+  position: relative;       /* ⬅️ untuk tombol edit */
+}
+
+/* Kurangi padding button edit di dalamnya */
+.marker-popup-loc-type-header .marker-popup-section-edit-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Kurangi spacing di inline wrapper */
+.marker-popup-loc-type-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+/* ICON — samakan feel SVG */
+.marker-popup-loc-type-icon {
+  width: 14px;
+  height: 14px;
+  opacity: 0.85;
+  transform: translateY(1px);
+}
+
+/* TEXT */
+.marker-popup-loc-type-text {
+  font-size: 12px;   /* SAMA seperti desc title */
+  font-weight: bold;
+  color: #DAA520;
+  text-shadow: 1px 1px 2px rgba(0,0,0,.7);
+  padding-left: 0;   /* sudah sejajar */
+}
 .marker-popup-desc-title {
   color: #DAA520;
   font-size: 12px;
@@ -342,14 +391,18 @@ html, body {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
 }
 
+/* ---------- DESCRIPTION TEXT ---------- */
+
 .marker-popup-desc-text {
   color: #e0e0e0;
   font-size: 13px;
   line-height: 1.6;
   max-height: 100px;
   overflow-y: auto;
+  padding-right: 4px;
 }
 
+/* Scrollbar */
 .marker-popup-desc-text::-webkit-scrollbar {
   width: 6px;
 }
@@ -368,11 +421,13 @@ html, body {
   background: rgba(218, 165, 32, 0.7);
 }
 
+/* ---------- EDIT MODE ---------- */
+
 .marker-popup-desc-edit {
   width: 100%;
   min-height: 80px;
   padding: 8px 10px;
-  margin: 8px 0;
+  margin-top: 6px;
   border-radius: 6px;
   border: 1px solid rgba(218, 165, 32, 0.6);
   background: rgba(0, 0, 0, 0.3);
@@ -380,7 +435,7 @@ html, body {
   font-family: 'Courier New', monospace;
   font-size: 13px;
   outline: none;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   resize: vertical;
   box-sizing: border-box;
 }
@@ -390,6 +445,8 @@ html, body {
   box-shadow: 0 0 8px rgba(218, 165, 32, 0.7);
   background: rgba(0, 0, 0, 0.4);
 }
+
+/* ---------- EMPTY STATE ---------- */
 
 .marker-popup-empty {
   color: #999;
@@ -1143,6 +1200,7 @@ html, body {
     line-height: 1.25;
   }
 
+
   /* ===============================
      IMAGE SECTION (COMPACT)
      =============================== */
@@ -1183,13 +1241,47 @@ html, body {
   /* ===============================
      DESCRIPTION SECTION
      =============================== */
-  .marker-popup-desc {
-    padding: 6px 10px;
-  }
+.marker-popup-desc {
+  padding: 5px 10px;
+  gap: 0;
+}
 
   .marker-popup-desc-title {
     font-size: 7.5px;
   }
+  /* HEADER WRAPPER */
+  .marker-popup-loc-type-header {
+    padding: 0 10px;
+  }
+.marker-popup-loc-type-header .marker-popup-section-edit-btn {
+  width: 18px;   /* ⬅️ UBAH dari 50px */
+  height: 18px;  /* ⬅️ UBAH dari 50px */
+  padding: 0;  /* ⬅️ UBAH dari 4px */
+}
+  /* INLINE ROW */
+  .marker-popup-loc-type-inline {
+    gap: 1px;
+  }
+
+  /* ICON */
+  .marker-popup-loc-type-icon {
+    width: 7px;
+    height: 7px;
+    transform: translateY(1px);
+  }
+
+  /* TEXT (MATCH DESC TITLE MOBILE) */
+  .marker-popup-loc-type-text {
+    font-size: 7px;
+    font-weight: bold;
+  }
+
+  /* EDIT BUTTON */
+  .marker-popup-section-edit-btn {
+    width: 40px;
+    height: 40px;
+  }
+  
 .marker-popup-desc-title svg {
   width: 7px ;
   height: 7px ;

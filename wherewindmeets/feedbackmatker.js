@@ -98,6 +98,9 @@ const finalMerged = {
   y: updateData.y !== undefined ? updateData.y : oldMarkerData.y || "",
   desc: updateData.desc !== undefined ? updateData.desc : oldMarkerData.desc || "",
   name: updateData.name !== undefined ? updateData.name : oldMarkerData.name || "",
+  loc_type: updateData.loc_type !== undefined
+    ? updateData.loc_type
+    : oldMarkerData.loc_type || "",
   ys_id: userProfile.inGameName
 };
 
@@ -166,7 +169,14 @@ window.saveEditFromConsole = async function(markerKey, type) {
     const nameInput = document.getElementById(`editName_${markerKey}`);
     if (!nameInput) return console.warn("Name input not found");
     updateData = { name: nameInput.value.trim() };
-  }
+  } else if (type === "loc_type") {
+  const select = document.getElementById(`editLocType_${markerKey}`);
+  if (!select) return console.warn("Loc type select not found");
+
+  updateData = {
+    loc_type: select.value.trim()
+  };
+}
 
   markerEdits[markerKey] = { ...markerEdits[markerKey], ...updateData };
   localStorage.setItem("markerEdits", JSON.stringify(markerEdits));
@@ -200,6 +210,7 @@ function syncFeedbackToMarkers(markers, feedbackData) {
       marker.y = feedback.y || "";
       marker.desc = feedback.desc || marker.desc || "";
       marker.name = feedback.name || marker.name || "";
+      marker.loc_type = feedback.loc_type || marker.loc_type || "";
       // ✅ Tambahkan ys_id jika ada
       if (feedback.ys_id) {
         marker.ys_id = feedback.ys_id;

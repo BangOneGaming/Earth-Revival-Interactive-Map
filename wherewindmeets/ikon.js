@@ -151,6 +151,41 @@ function getOverlayUrl(categoryId) {
   return overlay ? ICON_BASE_URL + overlay : ICON_CONFIG.baseIcon;
 }
 
+function isCommonChest(markerName) {
+  if (!markerName) return false;
+  const name = markerName.trim();
+  
+  // ✅ Nama-nama ini dianggap COMMON (pakai petiharta.webp)
+  const commonChests = [
+    "Chest Collection - Rocket (Burn Vines, Explosive Barrel, Sunrise-Sunset Flowers)",
+    "Chest Collection - Star-Grabbing Moon (Snakes Gathered, Guarded by Humans)",
+    "Treasure Collection", // Nama polos tanpa tambahan
+    "Treasure Chest Gathering",
+    "Chest Collection", // Nama polos tanpa tambahan
+    "Treasure Chest" // ✅ TAMBAHAN: nama polos "Treasure Chest"
+  ];
+  
+  // Jika ada di daftar common
+  if (commonChests.includes(name)) {
+    return true;
+  }
+  
+  const nameLower = name.toLowerCase();
+  
+  // ✅ Deteksi jika mengandung "common chest"
+  return nameLower.includes("common chest");
+}
+
+function getChestOverlayByName(markerName) {
+  // ✅ Jika common chest → petiharta.webp (icon biasa)
+  if (isCommonChest(markerName)) {
+    return `${ICON_BASE_URL}petiharta.webp`;
+  }
+  
+  // ✅ Selain itu (chest puzzle/special) → puzzle_chest.webp
+  return `${ICON_BASE_URL}puzzle_chest.png`;
+}
+
 function getAllCategories() {
   return Object.keys(ICON_CONFIG.overlays).map(id => ({
     id: id,
@@ -167,6 +202,50 @@ function testIconUrl(url, categoryId) {
     FAILED_ICONS.add(categoryId);
   };
   img.src = url;
+}
+
+function createCompositeLeafletIconWithMarkerName(categoryId, markerName) {
+  // 🔒 JANGAN sentuh size / anchor / popupAnchor
+  const baseUrl = ICON_CONFIG.baseIcon;
+
+  const special = ICON_CONFIG.specialSizes[categoryId];
+  const size = special?.size || ICON_CONFIG.defaultSize;
+  const anchor = special?.anchor || ICON_CONFIG.defaultAnchor;
+  const popupAnchor = special?.popupAnchor || ICON_CONFIG.defaultPopupAnchor;
+
+  // 🔐 KHUSUS CHEST (category 2)
+  if (String(categoryId) === "2") {
+    const overlayUrl = getChestOverlayByName(markerName);
+
+    // ⚠️ HTML SAMA PERSIS DENGAN SISTEM LAMA
+    return L.divIcon({
+      html: `
+        <div style="position:relative;width:${size[0]}px;height:${size[1]}px;">
+          <img src="${baseUrl}" 
+               style="
+                 position:absolute;
+                 top:-10%; left:-10%;
+                 width:120%; height:120%;
+                 z-index:1;
+               ">
+          <img src="${overlayUrl}" 
+               style="
+                 position:absolute;
+                 top:10%; left:20%;
+                 width:60%; height:60%;
+                 z-index:2;
+               ">
+        </div>
+      `,
+      iconSize: size,
+      iconAnchor: anchor,
+      popupAnchor: popupAnchor,
+      className: "no-default-icon-bg"
+    });
+  }
+
+  // ⛔ kategori lain BIARKAN sistem lama
+  return getIconByCategory(categoryId);
 }
 
 function createCompositeLeafletIcon(categoryId) {
@@ -252,6 +331,15 @@ function getIconByCategory(categoryId) {
   const id = String(categoryId);
   if (ICONS[id]) return ICONS[id];
   return ICONS.default || new L.Icon.Default();
+}
+
+function getIconByCategoryWithMarkerName(categoryId, markerName) {
+  // HANYA chest yang dicek
+  if (String(categoryId) === "2") {
+    return createCompositeLeafletIconWithMarkerName(categoryId, markerName);
+  }
+
+  return getIconByCategory(categoryId);
 }
 
 function createIconHTML(categoryId, options = {}) {
@@ -385,9 +473,9 @@ window.IconManager = {
   getOverlayUrl,
   getAllCategories,
   getIconByCategory,
+  getIconByCategoryWithMarkerName, // ✅ BARU
   createIconHTML,
   createCompositeIconHTML,
-  // ✅ Tambahkan ini
   getIconUrlWithSpecial,
   getIconByCategoryWithSpecial,
   createCompositeLeafletIconWithSpecial,

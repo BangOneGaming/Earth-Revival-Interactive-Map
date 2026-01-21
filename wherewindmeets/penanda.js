@@ -10,7 +10,9 @@ const MARKER_CONFIG = {
   bufferPercent: 0.2,
   debounceDelay: 120
 };
-
+const EDIT_PERMISSION = {
+  loc_type: false // 🔒 default TIDAK bisa diedit
+};
 // ========================================
 // FILTER GROUP CONFIGURATION
 // Category IDs berdasarkan ICON_CONFIG
@@ -437,7 +439,7 @@ createPopupContent(markerData, editState = {}) {
   const categoryIcon = getIconUrl(markerData.category_id);
   const description = markerData.desc || 'No description available';
   const markerKey = markerData._key;
-
+  const locType = markerData.loc_type?.trim() || 'Not Selected';
   // Convert newlines to <br> for HTML display
   const formattedDesc = description !== 'No description available' 
     ? description.replace(/\n/g, '<br>') 
@@ -556,46 +558,141 @@ createPopupContent(markerData, editState = {}) {
     `;
   }
 
-  // Description section HTML
-  let descHTML = '';
-  if (editState.editingDesc) {
-    descHTML = `
-      <div class="marker-popup-desc">
-        <div class="marker-popup-section-header">
-          <div class="marker-popup-desc-title">
-            ${SVG_ICONS.description}
-            <span>Description (Editing)</span>
-          </div>
-        </div>
-        <textarea id="editDesc_${markerKey}" class="marker-popup-desc-edit" placeholder="Enter description...">${description !== 'No description available' ? description : ''}</textarea>
-        <div class="marker-popup-section-actions">
-          <button class="marker-popup-edit-btn editing" onclick="saveEdit('${markerKey}', 'desc')">
-            ${SVG_ICONS.save}
-            <span>Save</span>
-          </button>
-          <button class="marker-popup-edit-btn cancel" onclick="cancelEdit('${markerKey}')">
-            ${SVG_ICONS.cancel}
-            <span>Cancel</span>
-          </button>
+// ===============================
+// Loc_type section HTML
+// ===============================
+
+let locTypeHTML = '';
+// ===============================
+// Location Type Options (GLOBAL)
+// ===============================
+const regionOptions =
+  typeof RegionManager !== 'undefined' && RegionManager.availableRegions
+    ? RegionManager.availableRegions
+        .filter(r => r.id !== 'all')
+        .map(r => `
+          <option value="${r.name}" ${r.name === locType ? 'selected' : ''}>
+            ${r.name}
+          </option>
+        `).join('')
+    : '';
+if (editState.editingLocType && EDIT_PERMISSION?.loc_type) {
+  locTypeHTML = `
+    <div class="marker-popup-loc-type-edit">
+      <label class="marker-popup-loc-type-label">
+        ${SVG_ICONS.save}
+        <span>Region Name</span>
+      </label>
+
+      <select id="editLocType_${markerKey}"
+              class="marker-popup-loc-type-select">
+        <option value="">Not Selected</option>
+        ${regionOptions}
+      </select>
+
+      <div class="marker-popup-section-actions">
+        <button class="marker-popup-edit-btn editing"
+                onclick="saveEdit('${markerKey}', 'loc_type')">
+          ${SVG_ICONS.save}
+          <span>Save</span>
+        </button>
+        <button class="marker-popup-edit-btn cancel"
+                onclick="cancelEdit('${markerKey}')">
+          ${SVG_ICONS.cancel}
+          <span>Cancel</span>
+        </button>
+      </div>
+    </div>
+  `;
+} else {
+locTypeHTML = `
+  <div class="marker-popup-section-header marker-popup-loc-type-header ${locType === 'Not Selected' ? 'empty' : ''}">
+    
+    <div class="marker-popup-loc-type-inline">
+      <img src="${ICON_BASE_URL}region.webp"
+           class="marker-popup-loc-type-icon">
+      <span class="marker-popup-loc-type-text">${locType}</span>
+    </div>
+
+    ${EDIT_PERMISSION?.loc_type ? `
+      <button class="marker-popup-section-edit-btn"
+              data-tooltip="Edit Location Type"
+              onclick="event.stopPropagation(); startEdit('${markerKey}', 'loc_type')">
+        <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/edit.png">
+      </button>
+    ` : ''}
+
+  </div>
+`;
+}
+// ===============================
+// Description section HTML
+// ===============================
+let descHTML = '';
+
+if (editState.editingDesc) {
+  descHTML = `
+    <div class="marker-popup-desc">
+
+      <div class="marker-popup-section-header">
+        <div class="marker-popup-desc-title">
+          ${SVG_ICONS.description}
+          <span>Description (Editing)</span>
         </div>
       </div>
-    `;
-  } else {
-    descHTML = `
-      <div class="marker-popup-desc">
-        <div class="marker-popup-section-header">
-          <div class="marker-popup-desc-title">
-            ${SVG_ICONS.description}
-            <span>Description</span>
-          </div>
-          <button class="marker-popup-section-edit-btn" onclick="event.stopPropagation(); startEdit('${markerKey}', 'desc')" title="Edit Description">
-            <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/edit.png?updatedAt=1762987960006" alt="Edit">
-          </button>
-        </div>
-        <div class="marker-popup-desc-text">${formattedDesc !== 'No description available' ? formattedDesc : '<span class="marker-popup-empty">No description available</span>'}</div>
+
+      <textarea
+        id="editDesc_${markerKey}"
+        class="marker-popup-desc-edit"
+        placeholder="Enter description...">${
+          description !== 'No description available' ? description : ''
+        }</textarea>
+
+      <div class="marker-popup-section-actions">
+        <button class="marker-popup-edit-btn editing"
+                onclick="saveEdit('${markerKey}', 'desc')">
+          ${SVG_ICONS.save}
+          <span>Save</span>
+        </button>
+
+        <button class="marker-popup-edit-btn cancel"
+                onclick="cancelEdit('${markerKey}')">
+          ${SVG_ICONS.cancel}
+          <span>Cancel</span>
+        </button>
       </div>
-    `;
-  }
+
+    </div>
+  `;
+} else {
+  descHTML = `
+    <div class="marker-popup-desc">
+
+      <div class="marker-popup-section-header">
+        <div class="marker-popup-desc-title">
+          ${SVG_ICONS.description}
+          <span>Description</span>
+        </div>
+
+        <button class="marker-popup-section-edit-btn"
+                onclick="event.stopPropagation(); startEdit('${markerKey}', 'desc')"
+                title="Edit Description">
+          <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/edit.png"
+               alt="Edit">
+        </button>
+      </div>
+
+      <div class="marker-popup-desc-text">
+        ${
+          formattedDesc !== 'No description available'
+            ? formattedDesc
+            : '<span class="marker-popup-empty">No description available</span>'
+        }
+      </div>
+
+    </div>
+  `;
+}
 // 🎯 TAMBAHKAN BAGIAN INI (Knowledge Part Navigation)
 const partNavigationHTML = typeof KnowledgePartNavigation !== 'undefined' 
   ? KnowledgePartNavigation.createPartNavigationHTML(markerData)
@@ -646,12 +743,15 @@ if (editState.editingName) {
 return `
   <div class="marker-popup" data-marker-key="${markerKey}" onclick="event.stopPropagation()">
 
-    <!-- Category Section -->
-    <div class="marker-popup-category">
-      <img src="${categoryIcon}" alt="${categoryName}" class="marker-popup-category-icon">
-      <span class="marker-popup-category-name">${categoryName}</span>
-    </div>
+<!-- Category Section -->
+<div class="marker-popup-category">
+  <img src="${categoryIcon}" alt="${categoryName}" class="marker-popup-category-icon">
+  <span class="marker-popup-category-name">${categoryName}</span>
+</div>
 
+    <!-- LOCATION TYPE -->
+    ${locTypeHTML}
+    
     <!-- Image Section -->
     ${imageHTML}
 
@@ -835,27 +935,40 @@ addMarkersBatch(markers, bounds) {
 createAndAddMarker(markerData, lat, lng, markerKey) {
   const specialIcon = markerData.special_icon || null;
   const markerFloor = markerData.floor || '';
-
   const needsBadge = typeof UndergroundManager !== 'undefined'
     ? UndergroundManager.needsFloorBadge(markerFloor)
     : false;
-
-  // ✅ Gunakan default icon size (no zoom calculation)
-  const baseIcon = typeof getIconByCategoryWithSpecial !== 'undefined'
-    ? getIconByCategoryWithSpecial(markerData.category_id, specialIcon)
-    : getIconByCategory(markerData.category_id);
-
+  
+  // ✅ UBAH BAGIAN INI - Tambahkan pengecekan untuk chest
+  let baseIcon;
+  
+  // KHUSUS untuk category 2 (Treasure Chest) - cek nama
+  if (String(markerData.category_id) === "2") {
+    baseIcon = typeof getIconByCategoryWithMarkerName !== 'undefined'
+      ? getIconByCategoryWithMarkerName(markerData.category_id, markerData.name)
+      : getIconByCategory(markerData.category_id);
+  }
+  // Untuk kategori lain dengan special_icon
+  else if (specialIcon) {
+    baseIcon = typeof getIconByCategoryWithSpecial !== 'undefined'
+      ? getIconByCategoryWithSpecial(markerData.category_id, specialIcon)
+      : getIconByCategory(markerData.category_id);
+  }
+  // Default
+  else {
+    baseIcon = getIconByCategory(markerData.category_id);
+  }
+  
   // Add badge if needed
   let finalIcon = baseIcon;
   if (needsBadge) {
     finalIcon = this.createIconWithBadge(baseIcon, markerFloor);
   }
-
+  
   const popupContent = this.createPopupContent(markerData);
-
   const leafletMarker = L.marker([lat, lng], { icon: finalIcon })
     .bindPopup(popupContent);
-
+  
   if (needsBadge) {
     leafletMarker.on('click', () => {
       this.map.closePopup();
@@ -863,7 +976,7 @@ createAndAddMarker(markerData, lat, lng, markerKey) {
       this.showFloorSwitchNotification(markerFloor);
     });
   }
-
+  
   // ✅ Check visited status and hidden marker setting
   const visitedMarkers = JSON.parse(localStorage.getItem("visitedMarkers") || "{}");
   const isVisited = visitedMarkers[markerKey] || false;
@@ -871,10 +984,8 @@ createAndAddMarker(markerData, lat, lng, markerKey) {
   
   if (isVisited) {
     if (isHiddenEnabled) {
-      // Don't add to map if visited and hidden mode is enabled
       console.log(`🙈 Skipping marker ${markerKey} (visited + hidden mode)`);
       
-      // ✅ Store metadata (for potential future use)
       leafletMarker.categoryId = markerData.category_id;
       leafletMarker.markerKey = markerKey;
       leafletMarker.floor = markerFloor;
@@ -882,24 +993,20 @@ createAndAddMarker(markerData, lat, lng, markerKey) {
       leafletMarker.hasBadge = needsBadge;
       
       this.activeMarkers[markerKey] = leafletMarker;
-      return; // Don't add to map
+      return;
     } else {
-      // Add to map but with reduced opacity
       leafletMarker.addTo(this.map);
       leafletMarker.setOpacity(0.5);
     }
   } else {
-    // Not visited - add normally
     leafletMarker.addTo(this.map);
   }
-
-  // ✅ Store metadata
+  
   leafletMarker.categoryId = markerData.category_id;
   leafletMarker.markerKey = markerKey;
   leafletMarker.floor = markerFloor;
   leafletMarker.specialIcon = specialIcon;
   leafletMarker.hasBadge = needsBadge;
-
   this.activeMarkers[markerKey] = leafletMarker;
 },
 
@@ -1395,37 +1502,39 @@ async function fallbackIndividualSync(keysToSync, localVisited, token) {
  * @param {string} type - Edit type ('coords' or 'desc')
  */
 window.startEdit = function(markerKey, type) {
-  // 🔒 Pastikan login dulu
   if (!isLoggedIn()) {
     showLoginPopup();
     return;
   }
+
   const marker = MarkerManager.activeMarkers[markerKey];
   if (!marker) return;
-  
+
   const markerData = MarkerManager.getAllMarkers().find(m => m._key === markerKey);
   if (!markerData) return;
-  
-  // ✅ PERBAIKAN: Handle 3 tipe edit (coords, desc, name)
+
   const editState = {};
-  if (type === 'coords') {
-    editState.editingCoords = true;
-  } else if (type === 'desc') {
-    editState.editingDesc = true;
-  } else if (type === 'name') {
-    editState.editingName = true;
+
+  if (type === 'desc') editState.editingDesc = true;
+  if (type === 'coords') editState.editingCoords = true;
+  if (type === 'name') editState.editingName = true;
+
+  // ✅ LOC TYPE PUNYA MODE SENDIRI
+  if (type === 'loc_type' && EDIT_PERMISSION?.loc_type) {
+    editState.editingLocType = true;
   }
-  
-  marker.getPopup().setContent(MarkerManager.createPopupContent(markerData, editState));
-  
+
+  marker.getPopup().setContent(
+    MarkerManager.createPopupContent(markerData, editState)
+  );
+
   window.currentEditMarker = markerKey;
   window.currentEditType = type;
-  
+
   setTimeout(() => {
     document.addEventListener('click', handleClickOutside, true);
   }, 100);
 };
-
 /**
  * Handle click outside popup to cancel edit
  * @param {Event} e - Click event

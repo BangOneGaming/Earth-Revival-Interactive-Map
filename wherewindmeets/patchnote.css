@@ -24,7 +24,7 @@
   background: linear-gradient(135deg, #0a1628 0%, #1a2942 100%);
   border: 3px solid #4a7c9e;
   border-radius: 16px;
-  max-width: 500px;
+  max-width: 600px;
   width: 90%;
   max-height: 90vh;
   padding: 0;
@@ -90,6 +90,7 @@
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
+  z-index: 10;
 }
 .patch-close:hover {
   background: rgba(255, 255, 255, 0.2);
@@ -108,26 +109,90 @@
 .patch-content h3 {
   color: #87ceeb;
   font-size: 20px;
-  margin: 0 0 15px 0;
+  margin: 20px 0 15px 0;
   border-bottom: 2px solid #4a7c9e;
   padding-bottom: 8px;
 }
-.patch-content ul {
+.patch-content h3:first-child {
+  margin-top: 0;
+}
+
+/* List Styles */
+.patch-list {
   list-style: none;
   padding: 0;
   margin: 0 0 20px 0;
 }
-.patch-content li {
-  padding: 8px 0 8px 25px;
-  position: relative;
-  font-size: 15px;
+.patch-list > li {
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(74, 124, 158, 0.2);
 }
-.patch-content li:before {
-  content: "✦";
-  position: absolute;
-  left: 0;
-  color: #4a7c9e;
-  font-size: 18px;
+.patch-list > li:last-child {
+  border-bottom: none;
+}
+.patch-list strong {
+  color: #87ceeb;
+  font-size: 16px;
+  display: block;
+  margin-bottom: 8px;
+}
+.patch-description {
+  color: #b0d4e8;
+  font-size: 14px;
+  margin: 8px 0 0 0;
+  line-height: 1.6;
+}
+
+/* Patch Icons */
+.patch-icon {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+  margin: 0 6px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Feature Icons Display (for chest differentiation) */
+.patch-feature-icons {
+  display: flex;
+  gap: 20px;
+  margin: 12px 0;
+  flex-wrap: wrap;
+}
+.patch-icon-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(74, 124, 158, 0.2);
+  border: 1px solid #4a7c9e;
+  border-radius: 6px;
+}
+.patch-icon-item img {
+  width: 28px;
+  height: 28px;
+}
+.patch-icon-item span {
+  color: #b0d4e8;
+  font-size: 13px;
+  font-weight: normal;
+}
+
+/* Category Icons Display (horizontal icons) */
+.patch-category-icons {
+  display: flex;
+  gap: 12px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+.patch-category-icons .patch-icon {
+  width: 28px;
+  height: 28px;
+  padding: 4px;
+  background: rgba(74, 124, 158, 0.2);
+  border: 1px solid #4a7c9e;
+  border-radius: 4px;
+  cursor: help;
 }
 
 /* Footer */
@@ -189,6 +254,18 @@
 }
 
 /* ========================================
+   TABLET RESPONSIVE (≤1024px)
+   ======================================== */
+@media (max-width: 1024px) {
+  .patch-popup {
+    max-width: 550px;
+  }
+  .patch-content {
+    padding: 20px 25px;
+  }
+}
+
+/* ========================================
    MOBILE RESPONSIVE (≤768px)
    ======================================== */
 @media (max-width: 768px) {
@@ -227,16 +304,43 @@
     line-height: 1.6;
   }
   .patch-content h3 {
-    font-size: 16px;
-    margin-bottom: 10px;
+    font-size: 17px;
+    margin: 15px 0 12px 0;
     padding-bottom: 6px;
   }
-  .patch-content li {
-    padding: 6px 0 6px 20px;
+  .patch-list > li {
+    padding: 12px 0;
+  }
+  .patch-list strong {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+  .patch-description {
     font-size: 13px;
   }
-  .patch-content li:before {
-    font-size: 14px;
+  
+  /* Icons Mobile */
+  .patch-icon {
+    width: 20px;
+    height: 20px;
+    margin: 0 4px;
+  }
+  .patch-feature-icons {
+    gap: 12px;
+  }
+  .patch-icon-item {
+    padding: 6px 10px;
+  }
+  .patch-icon-item img {
+    width: 24px;
+    height: 24px;
+  }
+  .patch-icon-item span {
+    font-size: 12px;
+  }
+  .patch-category-icons .patch-icon {
+    width: 24px;
+    height: 24px;
   }
 
   /* Footer Mobile */
@@ -273,7 +377,7 @@
 @media (max-width: 480px) {
   .patch-popup {
     width: 98%;
-    max-height: 80vh;
+    max-height: 82vh;
     border-radius: 10px;
   }
 
@@ -304,14 +408,45 @@
     padding: 12px 15px;
   }
   .patch-content h3 {
-    font-size: 14px;
+    font-size: 15px;
+    margin: 12px 0 10px 0;
   }
-  .patch-content li {
-    padding: 5px 0 5px 18px;
+  .patch-list > li {
+    padding: 10px 0;
+  }
+  .patch-list strong {
+    font-size: 13px;
+  }
+  .patch-description {
     font-size: 12px;
   }
-  .patch-content li:before {
-    font-size: 12px;
+  
+  /* Icons Small Mobile */
+  .patch-icon {
+    width: 18px;
+    height: 18px;
+  }
+  .patch-feature-icons {
+    gap: 10px;
+    flex-direction: column;
+  }
+  .patch-icon-item {
+    width: 100%;
+    padding: 8px;
+  }
+  .patch-icon-item img {
+    width: 22px;
+    height: 22px;
+  }
+  .patch-icon-item span {
+    font-size: 11px;
+  }
+  .patch-category-icons {
+    gap: 8px;
+  }
+  .patch-category-icons .patch-icon {
+    width: 22px;
+    height: 22px;
   }
 
   /* Footer Small Mobile */
@@ -330,7 +465,7 @@
     width: 100%;
     justify-content: center;
     padding: 10px;
-    font-size: 12px;
+    font-size: 11px;
   }
 
   /* Brand Small Mobile */
@@ -345,7 +480,7 @@
    ======================================== */
 @media (max-width: 360px) {
   .patch-popup {
-    max-height: 78vh;
+    max-height: 80vh;
   }
   .patch-image {
     max-width: 60px;
@@ -353,7 +488,13 @@
   .patch-title {
     font-size: 16px;
   }
-  .patch-content li {
+  .patch-subtitle {
+    font-size: 10px;
+  }
+  .patch-content h3 {
+    font-size: 14px;
+  }
+  .patch-description {
     font-size: 11px;
   }
 }
@@ -364,37 +505,24 @@
 @media (max-height: 500px) and (orientation: landscape) {
   .patch-popup {
     max-height: 95vh;
-    flex-direction: row;
     max-width: 90%;
   }
   
   .patch-header {
-    width: 35%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border-right: 1px solid #4a7c9e;
-  }
-  
-  .patch-content {
-    width: 65%;
-    max-height: 100%;
-  }
-  
-  .patch-footer {
-    display: none; /* Hide footer in landscape to save space */
-  }
-  
-  .patch-brand {
-    display: none;
+    padding: 10px 15px;
   }
   
   .patch-image {
-    max-width: 80px;
+    max-width: 60px;
+    margin-bottom: 5px;
   }
   
   .patch-title {
     font-size: 16px;
+  }
+  
+  .patch-subtitle {
+    font-size: 10px;
   }
   
   .patch-close {
@@ -404,32 +532,26 @@
     height: 25px;
     font-size: 16px;
   }
-}
-
-//*sementara*//
-
-/* Patch Icon in List */
-.patch-content li img.patch-icon {
-  width: 24px;
-  height: 24px;
-  vertical-align: middle;
-  margin-right: 8px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .patch-content li img.patch-icon {
-    width: 20px;
-    height: 20px;
-    margin-right: 6px;
+  
+  .patch-content {
+    padding: 10px 15px;
   }
-}
-
-@media (max-width: 480px) {
-  .patch-content li img.patch-icon {
-    width: 18px;
-    height: 18px;
-    margin-right: 5px;
+  
+  .patch-content h3 {
+    font-size: 14px;
+    margin: 10px 0 8px 0;
+  }
+  
+  .patch-list > li {
+    padding: 8px 0;
+  }
+  
+  .patch-footer {
+    padding: 10px;
+  }
+  
+  .patch-brand {
+    padding: 8px;
+    font-size: 10px;
   }
 }

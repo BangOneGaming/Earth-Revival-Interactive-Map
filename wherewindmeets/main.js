@@ -353,12 +353,17 @@ if (await waitForRegionManager()) {
   document.body.classList.add('app-ready');
 
   setTimeout(() => {
-    hidePreload();
+  hidePreload();
+  waitForProfileReady();
 
-    // ✅ SAFE INIT PROFILE (retry-based)
-    waitForProfileReady();
+  // ✅ SHOW PATCH NOTES AFTER APP READY
+  setTimeout(() => {
+    if (window.showPatchPopup) {
+      showPatchPopup();
+    }
+  }, 800);
 
-  }, 300);
+}, 300);
 
   if (typeof window.WWMCookieConsent !== "undefined") {
     window.WWMCookieConsent.initAfterLoad(2000);
