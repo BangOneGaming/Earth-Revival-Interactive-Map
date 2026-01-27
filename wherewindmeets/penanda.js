@@ -11,7 +11,7 @@ const MARKER_CONFIG = {
   debounceDelay: 120
 };
 const EDIT_PERMISSION = {
-  loc_type: true // 🔒 default TIDAK bisa diedit
+  loc_type: false // 🔒 default TIDAK bisa diedit
 };
 // ========================================
 // FILTER GROUP CONFIGURATION
