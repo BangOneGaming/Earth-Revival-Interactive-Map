@@ -1,9 +1,15 @@
 /**
  * Knowledge Part Navigation System (series_id based)
- * Clean + Stable + Forced Popup Open
+ * Clean + Stable + Forced Popup Open + Hide Other Markers
  */
 
 const KnowledgePartNavigation = {
+
+  // Store hidden markers state
+  hiddenMarkers: new Set(),
+  isSeriesViewActive: false,
+  activeSeriesId: null,
+  restoreTimeout: null,
 
   extractPartNumber(name) {
     if (!name) return null;
@@ -16,44 +22,101 @@ const KnowledgePartNavigation = {
     return name.replace(/\s*\(Part\s+\d+\)\s*$/i, '').trim();
   },
 
-findSeriesMarkers(markerData) {
-  const partNumber = this.extractPartNumber(markerData.name);
-  if (partNumber === null) return null;
-  if (!window.pengetahuan) return null;
+  findSeriesMarkers(markerData) {
+    const partNumber = this.extractPartNumber(markerData.name);
+    if (partNumber === null) return null;
+    if (!window.pengetahuan) return null;
 
-  const seriesId = markerData.series_id;
-  if (!seriesId) return null; // ⛔ wajib ada
+    const seriesId = markerData.series_id;
+    if (!seriesId) return null;
 
-  const seriesMarkers = {};
+    const seriesMarkers = {};
 
-  Object.keys(window.pengetahuan).forEach(key => {
-    const marker = window.pengetahuan[key];
+    Object.keys(window.pengetahuan).forEach(key => {
+      const marker = window.pengetahuan[key];
 
-    // 🔒 KUNCI UTAMA
-    if (marker.series_id !== seriesId) return;
+      if (marker.series_id !== seriesId) return;
 
-    const pn = this.extractPartNumber(marker.name);
-    if (pn === null) return;
+      const pn = this.extractPartNumber(marker.name);
+      if (pn === null) return;
 
-    if (seriesMarkers[pn]) {
-      console.warn('[KPN] Duplicate part number:', pn, key);
-      return;
+      if (seriesMarkers[pn]) {
+        return;
+      }
+
+      seriesMarkers[pn] = { key, partNumber: pn, marker };
+    });
+
+    const parts = Object.values(seriesMarkers)
+      .sort((a, b) => a.partNumber - b.partNumber);
+
+    if (parts.length <= 1) return null;
+
+    return {
+      baseName: seriesId,
+      currentPart: partNumber,
+      parts
+    };
+  },
+
+  hideNonSeriesMarkers(seriesId) {
+    if (!window.MarkerManager?.activeMarkers) return;
+    
+    if (this.restoreTimeout) {
+      clearTimeout(this.restoreTimeout);
+      this.restoreTimeout = null;
+    }
+    
+    this.isSeriesViewActive = true;
+    this.activeSeriesId = seriesId;
+    this.hiddenMarkers.clear();
+
+    Object.keys(window.MarkerManager.activeMarkers).forEach(markerKey => {
+      const leafletMarker = window.MarkerManager.activeMarkers[markerKey];
+      const markerData = window.pengetahuan?.[markerKey];
+
+      if (markerData?.series_id === seriesId) {
+        return;
+      }
+
+      if (leafletMarker && window.map.hasLayer(leafletMarker)) {
+        window.map.removeLayer(leafletMarker);
+        this.hiddenMarkers.add(markerKey);
+      }
+    });
+  },
+
+  showAllMarkers() {
+    if (!this.isSeriesViewActive) return;
+    if (!window.MarkerManager?.activeMarkers) return;
+
+    if (this.restoreTimeout) {
+      clearTimeout(this.restoreTimeout);
     }
 
-    seriesMarkers[pn] = { key, partNumber: pn, marker };
-  });
+    this.restoreTimeout = setTimeout(() => {
+      this.hiddenMarkers.forEach(markerKey => {
+        const leafletMarker = window.MarkerManager.activeMarkers[markerKey];
+        if (leafletMarker && !window.map.hasLayer(leafletMarker)) {
+          const visitedMarkers = JSON.parse(localStorage.getItem("visitedMarkers") || "{}");
+          const isVisited = visitedMarkers[markerKey] || false;
+          const isHiddenEnabled = window.SettingsManager?.isHiddenMarkerEnabled();
 
-  const parts = Object.values(seriesMarkers)
-    .sort((a, b) => a.partNumber - b.partNumber);
+          if (isVisited && isHiddenEnabled) {
+            return;
+          }
 
-  if (parts.length <= 1) return null;
+          leafletMarker.addTo(window.map);
+        }
+      });
+      
+      this.hiddenMarkers.clear();
+      this.isSeriesViewActive = false;
+      this.activeSeriesId = null;
+      this.restoreTimeout = null;
+    }, 1300);
+  },
 
-  return {
-    baseName: seriesId,
-    currentPart: partNumber,
-    parts
-  };
-},
   createPartNavigationHTML(markerData) {
     if (markerData.category_id !== "13") return '';
 
@@ -80,87 +143,66 @@ findSeriesMarkers(markerData) {
     `;
   },
 
-  /**
-   * 🔥 NAVIGATE + FORCE POPUP
-   */
-navigateToPart(markerKey) {
+  navigateToPart(markerKey) {
+    if (!window.map || !window.pengetahuan?.[markerKey]) {
+      console.error('[KPN] Map or marker data missing');
+      return;
+    }
 
-  console.group('[KPN]');
-  console.log('Navigate to:', markerKey);
+    const data = window.pengetahuan[markerKey];
+    const lat = parseFloat(data.lat);
+    const lng = parseFloat(data.lng);
 
-  if (!window.map || !window.pengetahuan?.[markerKey]) {
-    console.warn('Map or marker data missing');
-    console.groupEnd();
-    return;
-  }
+    if (isNaN(lat) || isNaN(lng)) {
+      console.error('[KPN] Invalid coordinates for marker:', markerKey);
+      return;
+    }
 
-  const data = window.pengetahuan[markerKey];
-  const lat = parseFloat(data.lat);
-  const lng = parseFloat(data.lng);
+    if (window.map._popup) {
+      window.map._popup.remove();
+    }
 
-  if (isNaN(lat) || isNaN(lng)) {
-    console.warn('Invalid coordinates');
-    console.groupEnd();
-    return;
-  }
+    window.map.flyTo([lat, lng], 7, {
+      duration: 1.5,
+      easeLinearity: 0.25
+    });
 
-  // STEP 1: close popup
-  if (window.map._popup) {
-    window.map._popup.remove();
-    console.log('Popup closed');
-  }
+    window.map.once('moveend', () => {
+      let attempt = 0;
+      const maxAttempts = 5;
 
-  // STEP 2: fly
-  console.log('Flying...');
-  window.map.flyTo([lat, lng], 7, {
-    duration: 1.5,
-    easeLinearity: 0.25
-  });
+      const interval = setInterval(() => {
+        attempt++;
 
-  // STEP 3: after move end → try open popup
-  window.map.once('moveend', () => {
-    console.log('Fly finished');
+        let targetMarker = null;
 
-    let attempt = 0;
-    const maxAttempts = 5;
+        window.map.eachLayer(layer => {
+          if (
+            layer instanceof L.Marker &&
+            layer.getLatLng &&
+            layer.getLatLng().lat === lat &&
+            layer.getLatLng().lng === lng
+          ) {
+            targetMarker = layer;
+          }
+        });
 
-    const interval = setInterval(() => {
-      attempt++;
-      console.log(`Popup attempt ${attempt}/${maxAttempts}`);
-
-      let targetMarker = null;
-
-      // 🔍 UNIVERSAL LEAFLET MARKER SCAN
-      window.map.eachLayer(layer => {
-        if (
-          layer instanceof L.Marker &&
-          layer.getLatLng &&
-          layer.getLatLng().lat === lat &&
-          layer.getLatLng().lng === lng
-        ) {
-          targetMarker = layer;
+        if (targetMarker) {
+          targetMarker.openPopup();
+          clearInterval(interval);
+          return;
         }
-      });
 
-      if (targetMarker) {
-        targetMarker.openPopup();
-        console.log('✅ Popup opened');
-        clearInterval(interval);
-        console.groupEnd();
-        return;
-      }
+        if (attempt >= maxAttempts) {
+          console.error('[KPN] Popup not found after 5 seconds for marker:', markerKey);
+          clearInterval(interval);
+        }
 
-      if (attempt >= maxAttempts) {
-        console.warn('❌ Popup not found after 5 seconds');
-        clearInterval(interval);
-        console.groupEnd();
-      }
+      }, 1000);
+    });
 
-    }, 1000); // 1 detik
-  });
-
-  this.highlightMarker(markerKey);
-},
+    this.highlightMarker(markerKey);
+  },
 
   highlightMarker(markerKey) {
     if (!window.MarkerManager?.findMarkerByKey) return;
