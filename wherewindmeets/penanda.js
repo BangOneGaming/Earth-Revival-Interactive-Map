@@ -877,7 +877,7 @@ return `
 },
 /**
  * Add markers in batches for better performance
- * ✅ UPDATED: Added Region filter check
+ * ✅ UPDATED: Added Region filter check + Series view check
  */
 addMarkersBatch(markers, bounds) {
   const batchSize = MARKER_CONFIG.batchSize;
@@ -917,13 +917,25 @@ addMarkersBatch(markers, bounds) {
         continue;
       }
 
-      // ✅ CHECK 3: Check if marker passes region filter (NEW!)
+      // ✅ CHECK 3: Check if marker passes region filter
       let passesRegionFilter = true;
       if (typeof RegionManager !== 'undefined') {
         passesRegionFilter = RegionManager.shouldShowMarker(markerData);
       }
       if (!passesRegionFilter) {
         continue;
+      }
+
+      // 🆕 CHECK 4: Check if series view is active (NEW!)
+      if (typeof KnowledgePartNavigation !== 'undefined' && 
+          KnowledgePartNavigation.isSeriesViewActive) {
+        // If series view is active, only show markers from the active series
+        const activeSeriesId = KnowledgePartNavigation.activeSeriesId;
+        if (markerData.series_id !== activeSeriesId) {
+          // Store this marker key to be shown later when series view closes
+          KnowledgePartNavigation.hiddenMarkers.add(markerKey);
+          continue;
+        }
       }
 
       // Create and add marker
@@ -942,7 +954,7 @@ addMarkersBatch(markers, bounds) {
         UndergroundManager.updateStats();
       }
       
-      // Update region stats if available (NEW!)
+      // Update region stats if available
       if (typeof RegionManager !== 'undefined') {
         RegionManager.updateStats();
       }
@@ -998,6 +1010,19 @@ createAndAddMarker(markerData, lat, lng, markerKey) {
       this.map.closePopup();
       UndergroundManager?.setActiveFloor(markerFloor);
       this.showFloorSwitchNotification(markerFloor);
+    });
+  }
+  
+  // 🆕 ADD POPUP EVENT LISTENERS FOR SERIES MARKERS
+  if (markerData.category_id === "13" && markerData.series_id) {
+    leafletMarker.on('popupopen', () => {
+      console.log('[KPN] Series popup opened, hiding other markers');
+      KnowledgePartNavigation.hideNonSeriesMarkers(markerData.series_id);
+    });
+    
+    leafletMarker.on('popupclose', () => {
+      console.log('[KPN] Series popup closed, showing all markers');
+      KnowledgePartNavigation.showAllMarkers();
     });
   }
   
