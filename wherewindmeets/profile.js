@@ -10,7 +10,7 @@
  * - setting.js (for SettingsManager) - OPTIONAL
  * 
  * @author Your Name
- * @version 1.2.0 - Added Settings integration
+ * @version 1.3.0 - Added Logout button
  */
 
 const ProfileContainer = (function() {
@@ -322,6 +322,106 @@ const CATEGORY_ICONS = {
   }
 
   /**
+   * Create logout button with SVG icon
+   * @returns {HTMLElement}
+   */
+  function createLogoutButton() {
+    const logoutBtn = document.createElement('button');
+    logoutBtn.className = 'profile-logout-btn';
+    logoutBtn.title = 'Logout';
+    
+    // Styling tombol logout
+    logoutBtn.style.cssText = `
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      border-radius: 4px;
+    `;
+    
+    // SVG logout icon dengan warna kuning kecoklatan
+    logoutBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4A574" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: all 0.3s ease;">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+        <polyline points="16 17 21 12 16 7"></polyline>
+        <line x1="21" y1="12" x2="9" y2="12"></line>
+      </svg>
+    `;
+    
+    // Hover effects
+    logoutBtn.addEventListener('mouseenter', function() {
+      this.style.transform = 'scale(1.15)';
+      const svg = this.querySelector('svg');
+      if (svg) {
+        svg.setAttribute('stroke', '#F3E5AB'); // Warna lebih terang saat hover
+      }
+    });
+    
+    logoutBtn.addEventListener('mouseleave', function() {
+      this.style.transform = 'scale(1)';
+      const svg = this.querySelector('svg');
+      if (svg) {
+        svg.setAttribute('stroke', '#D4A574'); // Kembali ke warna normal
+      }
+    });
+    
+    logoutBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      
+      // Try to call logout function from login.js
+      if (typeof window.handleLogout === 'function') {
+        window.handleLogout();
+      } else {
+        // Fallback: implement logout directly
+        console.warn('⚠️ handleLogout not found, using fallback');
+        
+        const confirmed = confirm("Are you sure you want to logout?");
+        if (!confirmed) return;
+        
+        // Clear data
+        localStorage.removeItem("userToken");
+        localStorage.removeItem("visitedMarkers");
+        
+        // Reset all marker opacity to 1.0
+        if (typeof MarkerManager !== 'undefined' && MarkerManager.activeMarkers) {
+          Object.entries(MarkerManager.activeMarkers).forEach(([key, marker]) => {
+            if (marker) {
+              // Restore to map if hidden
+              if (!marker._map && MarkerManager.map) {
+                marker.addTo(MarkerManager.map);
+              }
+              // Reset opacity to full
+              marker.setOpacity(1.0);
+            }
+          });
+          console.log("✅ All marker opacity reset to 1.0");
+        }
+        
+        // Remove profile container
+        if (ProfileContainer && ProfileContainer.exists()) {
+          ProfileContainer.remove();
+        }
+        
+        // Show notification (if available)
+        if (typeof showNotification === 'function') {
+          showNotification("You have been logged out successfully", "info");
+        }
+        
+        // Reload page
+        setTimeout(() => {
+          location.reload();
+        }, 500);
+      }
+    });
+    
+    return logoutBtn;
+  }
+
+  /**
    * Create header section
    * @param {Object} profile - User profile data
    * @param {Object} weaponData - Weapon data
@@ -353,8 +453,13 @@ const CATEGORY_ICONS = {
 
     infoDiv.appendChild(nameDiv);
     infoDiv.appendChild(roleDiv);
+    
+    // Add logout button
+    const logoutBtn = createLogoutButton();
+    
     header.appendChild(weaponImg);
     header.appendChild(infoDiv);
+    header.appendChild(logoutBtn);
 
     return header;
   }
@@ -746,4 +851,4 @@ window.createProfileContainer = ProfileContainer.create;
 window.updateProfileContainer = ProfileContainer.update;
 window.removeProfileContainer = ProfileContainer.remove;
 
-console.log('✅ ProfileContainer module loaded (with Settings support)');
+console.log('✅ ProfileContainer module loaded (with Settings support and Logout button)');

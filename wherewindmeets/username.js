@@ -692,4 +692,67 @@ function updateTopLoginVisibility() {
   }
 }
 
+// ==========================================
+// LOGOUT FUNCTION
+// ==========================================
+
+/**
+ * Handle user logout
+ * Clears all user data and resets UI
+ */
+window.handleLogout = function() {
+  console.log("🚪 Logging out user...");
+  
+  // Konfirmasi sebelum logout
+  const confirmed = confirm("Are you sure you want to logout?");
+  if (!confirmed) {
+    console.log("⏹️ Logout cancelled by user");
+    return;
+  }
+  
+  // 1. Clear current user data
+  currentUser = null;
+  
+  // 2. Remove token from localStorage
+  localStorage.removeItem("userToken");
+  
+  // 3. ✅ Clear visited markers from localStorage
+  localStorage.removeItem("visitedMarkers");
+  console.log("🗑️ Local visited markers cleared");
+  
+  // 4. ✅ Reset all marker opacity to 1.0 (restore to full visibility)
+  if (typeof MarkerManager !== 'undefined' && MarkerManager.activeMarkers) {
+    Object.entries(MarkerManager.activeMarkers).forEach(([key, marker]) => {
+      if (marker) {
+        // Restore to map if hidden
+        if (!marker._map && MarkerManager.map) {
+          marker.addTo(MarkerManager.map);
+        }
+        // Reset opacity to full
+        marker.setOpacity(1.0);
+      }
+    });
+    console.log("✅ All marker opacity reset to 1.0");
+  }
+  
+  // 5. Remove profile container
+  if (typeof ProfileContainer !== 'undefined' && ProfileContainer.exists()) {
+    ProfileContainer.remove();
+    console.log("✅ Profile container removed");
+  }
+  
+  // 6. Show login button again
+  updateTopLoginVisibility();
+  
+  // 7. Show notification
+  showNotification("You have been logged out successfully", "info");
+  
+  // 8. Refresh page to reset all state
+  setTimeout(() => {
+    location.reload();
+  }, 1000);
+  
+  console.log("✅ Logout successful");
+};
+
 window.WWM_WEAPONS = WWM_WEAPONS;

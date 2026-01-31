@@ -243,26 +243,44 @@ if (groupKey === "discover") {
       });
     }
     
+/**
+ * FIXED - Popup Event Handler
+ * Hapus auto-load, hanya setup paste listener
+ */
+
 window.toggleReportPopup = function(markerKey) {
   const popup = document.querySelector(`.report-popup[data-report="${markerKey}"]`);
   if (!popup) return;
   popup.style.display = popup.style.display === "flex" ? "none" : "flex";
 };
+
 this.map.on('popupopen', (e) => {
   const popup = e.popup;
   const content = popup.getElement();
   if (!content) return;
-
+  
   const popupDiv = content.querySelector('.marker-popup');
   if (!popupDiv) return;
-
+  
   const markerKey = popupDiv.dataset.markerKey;
-
-  // ⬇️ BAGIAN PALING PENTING — load image
+  
+  // ✅ HANYA setup paste listener untuk desktop
   const imageContainer = content.querySelector('.marker-image-container');
-  if (imageContainer) {
-    MarkerImageHandler.loadImages(markerKey);
+  if (imageContainer && typeof MarkerImageHandler !== 'undefined') {
+    // Jangan load images di sini!
+    // Biarkan toggleMarkerImage() yang handle load
+    
+    // Hanya attach paste listener untuk desktop non-touch
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    const isTouch = ('ontouchstart' in window) || 
+                    (navigator.maxTouchPoints > 0);
+    
+    if (!isMobile && !isTouch) {
+      // MarkerImageHandler sudah handle ini di internal event listener
+      // Kita tidak perlu panggil apa-apa
+    }
   }
+  
 });
 
   },
@@ -1648,9 +1666,13 @@ function toggleMarkerImage(markerKey) {
         </svg>`;
     }
 
-    // Load images hanya saat dibuka
-    if (typeof MarkerImageHandler !== 'undefined') {
+    // 🔥 LOAD IMAGE HANYA SEKALI (LAZY MANUAL)
+    if (
+      typeof MarkerImageHandler !== 'undefined' &&
+      !imageContent.dataset.loaded
+    ) {
       MarkerImageHandler.loadImages(markerKey);
+      imageContent.dataset.loaded = 'true';
     }
 
   } else {
