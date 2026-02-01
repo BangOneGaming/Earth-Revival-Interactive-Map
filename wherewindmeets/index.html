@@ -5,15 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Where Winds Meet Interactive Map - 100% Exploration Collection</title>
 
-  <!-- ✅ PRECONNECT TO CRITICAL DOMAINS (EARLY CONNECTION) -->
-  <link rel="preconnect" href="https://ik.imagekit.io" crossorigin>
-  <link rel="preconnect" href="https://unpkg.com" crossorigin>
-  <link rel="preconnect" href="https://tiles.bgonegaming.win" crossorigin>
-  <link rel="dns-prefetch" href="https://www.googletagmanager.com">
-  <link rel="dns-prefetch" href="https://accounts.google.com">
-  <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
+  <title>Where Winds Meet Interactive Map - 100% Exploration Collection</title>
 
   <!-- ✅ CANONICAL URL -->
   <link rel="canonical" href="https://bgonegaming.win/wherewindmeets/" />
@@ -42,11 +35,6 @@
 
   <!-- ✅ THEME COLOR -->
   <meta name="theme-color" content="#b8860b" />
-
-  <!-- ✅ PRELOAD CRITICAL RESOURCES -->
-  <link rel="preload" href="https://unpkg.com/leaflet/dist/leaflet.css" as="style">
-  <link rel="preload" href="https://unpkg.com/leaflet/dist/leaflet.js" as="script">
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Lato:wght@700&display=swap" as="style">
 
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RNEQ8BY21N"></script>
@@ -78,209 +66,15 @@
   }
   </script>
 
-  <!-- Leaflet CSS (Critical - Load First) -->
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@700&display=swap" rel="stylesheet">
-
-  <!-- ✅ CRITICAL CSS (INLINE FOR FAST RENDER) -->
-  <style>
-    /* Critical styles for initial render */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-      overflow: hidden;
-      background: #1a1a1a;
-    }
-
-    /* Map Container - CRITICAL FOR LCP */
-    #map {
-      width: 100%;
-      height: 100vh;
-      background: #2c2c2c;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Leaflet essentials */
-    .leaflet-container {
-      background: #2c2c2c;
-      font-family: inherit;
-    }
-
-    .leaflet-tile {
-      filter: brightness(0.9);
-    }
-
-    /* Preload Overlay - Optimized */
-    #preloadOverlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.95);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      transition: opacity 0.5s ease;
-    }
-
-    #preloadOverlay.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    #preloadContainer {
-      text-align: center;
-      color: #fff;
-    }
-
-    #preloadEmotionIcon {
-      width: 80px;
-      height: 80px;
-      margin-bottom: 20px;
-      animation: pulse 1s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
-
-    #preloadMessage {
-      font-size: 18px;
-      margin-bottom: 20px;
-      color: #b8860b;
-    }
-
-    #preloadBarContainer {
-      width: 300px;
-      height: 30px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 15px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    #preloadBarFill {
-      height: 100%;
-      background: linear-gradient(90deg, #b8860b, #ffd700);
-      width: 0%;
-      transition: width 0.3s ease;
-    }
-
-    #preloadBarPercent {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 14px;
-      font-weight: bold;
-      color: #fff;
-    }
-
-    /* Filter Panel - Critical visibility */
-    .filter-panel {
-      position: fixed;
-      left: -320px;
-      top: 0;
-      width: 320px;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.95);
-      z-index: 1000;
-      transition: left 0.3s ease;
-      overflow-y: auto;
-    }
-
-    .filter-panel.open {
-      left: 0;
-    }
-
-    .filter-toggle {
-      position: fixed;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 40px;
-      height: 80px;
-      background: rgba(0, 0, 0, 0.9);
-      border: 2px solid #b8860b;
-      color: #b8860b;
-      font-size: 20px;
-      cursor: pointer;
-      z-index: 999;
-      border-radius: 0 10px 10px 0;
-      transition: left 0.3s ease;
-    }
-
-    .filter-toggle.open {
-      left: 320px;
-    }
-
-    /* Login Button */
-    #topLoginBtn {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 10px 24px;
-      background: linear-gradient(135deg, #b8860b, #ffd700);
-      color: #000;
-      border: none;
-      border-radius: 25px;
-      font-weight: bold;
-      cursor: pointer;
-      z-index: 1001;
-      box-shadow: 0 4px 15px rgba(184, 134, 11, 0.4);
-      transition: transform 0.2s;
-    }
-
-    #topLoginBtn:hover {
-      transform: translateX(-50%) scale(1.05);
-    }
-
-    /* SEO Content - Hidden */
-    #seo-content {
-      position: absolute;
-      left: -9999px;
-      top: auto;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-    }
-  </style>
-
-  <!-- ✅ GLOBAL ERROR HANDLER -->
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@700&display=swap" rel="stylesheet">
   <script>
-    // Global error handler to catch all errors
-    window.addEventListener('error', function(e) {
-      console.error('Global error caught:', e.message, e.filename, e.lineno, e.colno);
-      // Don't show overlay errors to user, just log them
-      if (e.message && e.message.includes('Script error')) {
-        e.preventDefault();
-      }
-    });
-
-    // Promise rejection handler
-    window.addEventListener('unhandledrejection', function(e) {
-      console.error('Unhandled promise rejection:', e.reason);
-      e.preventDefault();
-    });
+    const CSS_VERSION = "5.9.6";
   </script>
 
-  <!-- ✅ NON-CRITICAL CSS - LOAD ASYNC -->
+  <!-- Custom CSS -->
   <script>
-    const CSS_VERSION = "5.9.8";
-    
-    // Load non-critical CSS asynchronously with error handling
     const cssFiles = [
       'styles.css',
       'marker-image-handler.css',
@@ -302,28 +96,17 @@
       'region.css'
     ];
     
-    // Async CSS loading with fallback
     cssFiles.forEach(file => {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = `${file}?v=${CSS_VERSION}`;
-      link.media = 'print';
-      link.onload = function() { 
-        this.media = 'all';
-        console.log('✅ CSS loaded:', file);
-      };
-      link.onerror = function() {
-        console.warn('⚠️ CSS failed to load:', file);
-      };
-      document.head.appendChild(link);
+      document.write(`<link rel="stylesheet" href="${file}?v=${CSS_VERSION}" />`);
     });
   </script>
+  
   
 </head>  
 <body> 
 
 <!-- ✅ SEO CONTENT (STATIC, FOR SEARCH ENGINE) -->
-<main id="seo-content">
+<main id="seo-content" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">
 
   <h1>Where Winds Meet Interactive Map – Complete Exploration Guide</h1>
 
@@ -396,12 +179,16 @@
     </a>
   </p>
 </noscript>
-
-<!-- ✅ SIMPLIFIED PRELOAD - NO BLOCKING -->
+<!-- Preload Overlay -->
 <div id="preloadOverlay">
   <div id="preloadContainer">
-    <img id="preloadEmotionIcon" src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/faviconV2.ico?updatedAt=1762922428848" alt="Loading" loading="eager">
-    <div id="preloadMessage">Loading Interactive Map...</div>
+    <!-- Emotion Icon (5 gambar flip cepat) -->
+    <img id="preloadEmotionIcon" src="" alt="Loading emotion">
+    
+    <!-- Loading Text (ganti setelah setengah durasi) -->
+    <div id="preloadMessage">Better Experience With Mobile Desktop mode</div>
+    
+    <!-- Loading Bar Container -->
     <div id="preloadBarContainer">
       <div id="preloadBarFill"></div>
       <div id="preloadBarPercent">0%</div>
@@ -413,7 +200,7 @@
 <div class="leaderboard-panel" id="leaderboardPanel">
   <div class="leaderboard-header">
     <div class="leaderboard-title-img">
-      <img src="assets/ui/leaderboard-title.png" alt="Leaderboard" loading="lazy" onerror="this.style.display='none'">
+      <img src="assets/ui/leaderboard-title.png" alt="Leaderboard" onerror="this.style.display='none'">
     </div>
     <h2>Top Contributors</h2>
   </div>
@@ -431,7 +218,7 @@
 </div>
 
 <!-- Toggle button for leaderboard -->
-<button class="leaderboard-toggle" id="leaderboardToggle" onclick="if(typeof toggleLeaderboard === 'function') toggleLeaderboard()">
+<button class="leaderboard-toggle" id="leaderboardToggle" onclick="toggleLeaderboard()">
   🏆
 </button>
 
@@ -439,7 +226,7 @@
 <div class="filter-panel" id="filterPanel">  
   <div class="filter-header">  
     <h2 class="filter-title-img">
-      <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/alternate.png?updatedAt=1762941265121" alt="Filter Markers" loading="lazy" />
+      <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/alternate.png?updatedAt=1762941265121" alt="Filter Markers" />
     </h2>
   </div>  
     
@@ -457,7 +244,6 @@
 
 <button class="filter-toggle" id="filterToggle">◀</button>
 
-<!-- ✅ MAP CONTAINER - LCP ELEMENT -->
 <div id="map">
   <!-- Notification Icon -->
   <div id="notificationIcon"></div>
@@ -471,10 +257,12 @@
   </div>
 </div>
 
+
+
 <!-- 🔵 TOP-CENTER LOGIN BUTTON -->
 <button id="topLoginBtn">Login</button>
 
-<!-- GSI Onload -->
+<!-- GSI Onload (untuk One Tap / prompt) -->
 <div id="g_id_onload"
      data-client_id="712617149675-2rufcnh8bdq0oo35812no2cgivm81pqp.apps.googleusercontent.com"
      data-context="signin"
@@ -485,18 +273,24 @@
 
 <!-- ✅ UNIFIED UNDERGROUND CONTAINER -->
 <div class="underground-container" id="undergroundContainer">
+  <!-- Toggle Button -->
   <button id="undergroundToggle" class="underground-toggle" title="Toggle Underground Floors">
-    <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/layericon.png" alt="Underground" loading="lazy">
+    <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/layericon.png" alt="Underground">
   </button>
   
+  <!-- Panel -->
   <div id="undergroundPanel" class="underground-panel">
+    <!-- Header (hidden by CSS) -->
     <div class="underground-header">
       <h2>🏔️ Floor Selection</h2>
     </div>
 
+    <!-- Content -->
     <div id="undergroundContent" class="underground-content">
+      <!-- Floor items will be generated by JavaScript -->
     </div>
 
+    <!-- Stats (hidden by CSS) -->
     <div id="undergroundStats" class="underground-stats">
       <div>
         <span>Active Floor</span>
@@ -533,11 +327,11 @@
 
 <!-- Comments Modal -->
 <div id="commentsModal" class="comments-modal" style="display: none;">
-  <div class="comments-modal-overlay" onclick="if(typeof closeCommentsModal === 'function') closeCommentsModal()"></div>
+  <div class="comments-modal-overlay" onclick="closeCommentsModal()"></div>
   <div class="comments-modal-content">
     <div class="comments-modal-header">
       <h3 class="comments-modal-title">💬 Looking for Comments</h3>
-      <button class="comments-modal-close" onclick="if(typeof closeCommentsModal === 'function') closeCommentsModal()">&times;</button>
+      <button class="comments-modal-close" onclick="closeCommentsModal()">&times;</button>
     </div>
     
     <div class="comments-modal-body" id="commentsModalBody">
@@ -553,29 +347,33 @@
 <div class="patch-overlay" id="patchOverlay">
   <div class="patch-popup">
 
-    <button class="patch-close" onclick="if(typeof closePatchPopup === 'function') closePatchPopup()">&times;</button>
+    <!-- Close Button -->
+    <button class="patch-close" onclick="closePatchPopup()">&times;</button>
 
+    <!-- Header -->
     <div class="patch-header">
       <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/BangOne.webp"
-           alt="Update" class="patch-image" loading="lazy">
+           alt="Update" class="patch-image">
       <h2 class="patch-title">Interactive Map Update</h2>
       <p class="patch-subtitle">Enhanced Features, Region Filters & Performance Improvements</p>
     </div>
 
+    <!-- Content -->
     <div class="patch-content">
       <h3>What's New in This Version</h3>
 
       <ul class="patch-list">
         
+        <!-- Chest Icon Differentiation -->
         <li>
           <strong>Chest Icon Differentiation</strong>
           <div class="patch-feature-icons">
             <div class="patch-icon-item">
-              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/petiharta.webp" class="patch-icon" alt="Common Chest" loading="lazy">
+              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/petiharta.webp" class="patch-icon" alt="Common Chest">
               <span>Common Chest</span>
             </div>
             <div class="patch-icon-item">
-              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/puzzle_chest.png" class="patch-icon" alt="Puzzle Chest" loading="lazy">
+              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/puzzle_chest.png" class="patch-icon" alt="Puzzle Chest">
               <span>Puzzle Chest</span>
             </div>
           </div>
@@ -586,20 +384,22 @@
           </p>
         </li>
 
+        <!-- Region System -->
         <li>
           <strong>
-            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon" alt="Region" loading="lazy">
+            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon" alt="Region">
             Region Information & Filtering
           </strong>
-          <p class="patch-description">
-            <strong>Note:</strong><br>
-            This feature is still in beta testing. We will improve it slowly based on your feedback.<br>
-            Every marker popup now displays its region name, making it easy to identify 
-            location areas. A new region filter allows you to display markers from specific 
-            regions only, helping you focus on exploration by area.
-          </p>
+<p class="patch-description">
+  <strong>Note:</strong><br>
+  This feature is still in beta testing. We will improve it slowly based on your feedback.<br>
+  Every marker popup now displays its region name, making it easy to identify 
+  location areas. A new region filter allows you to display markers from specific 
+  regions only, helping you focus on exploration by area.
+</p>
         </li>
 
+        <!-- Image Loading Optimization -->
         <li>
           <strong>Optimized Image Loading</strong>
           <p class="patch-description">
@@ -616,10 +416,10 @@
         <li>
           <strong>
             <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/camp.webp"
-                 class="patch-icon" alt="Camp" loading="lazy">
+                 class="patch-icon" alt="Camp">
             Camp &
             <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/NPC.webp"
-                 class="patch-icon" alt="NPC" loading="lazy">
+                 class="patch-icon" alt="NPC">
             NPC Markers
           </strong>
           <p class="patch-description">
@@ -632,20 +432,20 @@
           <p class="patch-description">Improved descriptions for:</p>
           <div class="patch-category-icons">
             <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/knoweverything.webp"
-                 class="patch-icon" alt="Wandering Tales" title="Wandering Tales" loading="lazy">
+                 class="patch-icon" alt="Wandering Tales" title="Wandering Tales">
             <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/meow.webp"
-                 class="patch-icon" alt="Meow Meow Treasure" title="Meow Meow Treasure" loading="lazy">
+                 class="patch-icon" alt="Meow Meow Treasure" title="Meow Meow Treasure">
             <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/adventure.webp"
-                 class="patch-icon" alt="Encounter" title="Encounter" loading="lazy">
+                 class="patch-icon" alt="Encounter" title="Encounter">
             <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/book.webp"
-                 class="patch-icon" alt="Experience" title="Experience" loading="lazy">
+                 class="patch-icon" alt="Experience" title="Experience">
           </div>
         </li>
 
         <li>
           <strong>
             <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/knoweverything.webp"
-                 class="patch-icon" alt="Wandering Tales" loading="lazy">
+                 class="patch-icon" alt="Wandering Tales">
             Wandering Tales Navigation
           </strong>
           <p class="patch-description">
@@ -671,6 +471,7 @@
       </ul>
     </div>
 
+    <!-- Footer -->
     <div class="patch-footer">
       <p><strong>Thank you for your support</strong></p>
       <p>
@@ -695,22 +496,25 @@
       </div>
     </div>
 
+    <!-- Brand -->
     <div class="patch-brand">
       Made with care by <strong>BangOne Gaming</strong>
     </div>
 
   </div>
 </div>
-
 <!-- Sticky AdSense Container -->
 <div id="sticky-ad-container">
   
+  <!-- Close Button -->
   <div id="ad-close-wrapper">
       <button id="btn-close-ad">Tutup Iklan</button>
   </div>
   
+  <!-- Click Detection Layer -->
   <div id="ad-click-detector"></div>
   
+  <!-- Google AdSense Unit -->
   <ins class="adsbygoogle"
        data-ad-client="ca-pub-8582564022805467"
        data-ad-slot="7695704952"
@@ -719,252 +523,253 @@
   </ins>
 </div>
 
-<!-- ✅ AD STYLES & SCRIPTS (DEFERRED) -->
 <script>
+// ======================================================
+// INJECT CSS VIA JAVASCRIPT
+// ======================================================
 (function() {
-    try {
-        const style = document.createElement('style');
-        style.textContent = `
+    const style = document.createElement('style');
+    style.textContent = `
+        /* Desktop Default */
+        #sticky-ad-container {
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            text-align: center !important;
+            z-index: 400 !important;
+            background: rgba(255, 255, 255, 0.3) !important;
+            padding: 2px 0 !important;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1) !important;
+            transition: all 0.3s ease !important;
+            min-height: 60px !important;
+        }
+
+        #ad-close-wrapper {
+            position: absolute !important;
+            top: 10px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            z-index: 999999 !important;
+            pointer-events: none !important;
+        }
+
+        #btn-close-ad {
+            border: 2px solid #333 !important;
+            background: rgba(255, 255, 255, 0.3) !important;
+            font-size: 16px !important;
+            font-weight: bold !important;
+            cursor: pointer !important;
+            padding: 6px 18px !important;
+            border-radius: 6px !important;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.3) !important;
+            color: #333 !important;
+            font-family: Arial, sans-serif !important;
+            transition: all 0.2s ease !important;
+        }
+
+        #btn-close-ad:hover {
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4) !important;
+            transform: scale(1.05) !important;
+        }
+
+        #ad-click-detector {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            z-index: 999998 !important;
+            cursor: pointer !important;
+        }
+
+        #sticky-ad-container .adsbygoogle {
+            display: block !important;
+        }
+
+        /* MOBILE OPTIMIZATION */
+        @media only screen and (max-width: 480px) {
             #sticky-ad-container {
-                position: fixed !important;
-                bottom: 0 !important;
-                left: 0 !important;
-                width: 100% !important;
-                text-align: center !important;
-                z-index: 400 !important;
-                background: rgba(255, 255, 255, 0.3) !important;
-                padding: 2px 0 !important;
-                box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1) !important;
-                transition: all 0.3s ease !important;
-                min-height: 60px !important;
-            }
-
-            #ad-close-wrapper {
-                position: absolute !important;
-                top: 10px !important;
-                left: 50% !important;
-                transform: translateX(-50%) !important;
-                z-index: 999999 !important;
-                pointer-events: none !important;
-            }
-
-            #btn-close-ad {
-                border: 2px solid #333 !important;
-                background: rgba(255, 255, 255, 0.3) !important;
-                font-size: 16px !important;
-                font-weight: bold !important;
-                cursor: pointer !important;
-                padding: 6px 18px !important;
-                border-radius: 6px !important;
-                box-shadow: 0 3px 8px rgba(0,0,0,0.3) !important;
-                color: #333 !important;
-                font-family: Arial, sans-serif !important;
-                transition: all 0.2s ease !important;
-            }
-
-            #btn-close-ad:hover {
-                box-shadow: 0 4px 10px rgba(0,0,0,0.4) !important;
-                transform: scale(1.05) !important;
-            }
-
-            #ad-click-detector {
-                position: absolute !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100% !important;
-                height: 100% !important;
-                z-index: 999998 !important;
-                cursor: pointer !important;
-            }
-
-            #sticky-ad-container .adsbygoogle {
-                display: block !important;
-            }
-
-            @media only screen and (max-width: 480px) {
-                #sticky-ad-container {
-                    height: 130px !important;
-                    max-height: 130px !important;
-                    min-height: 130px !important;
-                    overflow: hidden !important;
-                    padding: 0 !important;
-                }
-                
-                #sticky-ad-container .adsbygoogle {
-                    height: 130px !important;
-                    max-height: 130px !important;
-                    min-height: 130px !important;
-                    overflow: hidden !important;
-                }
-                
-                #ad-close-wrapper {
-                    top: 6px !important;
-                }
-                
-                #btn-close-ad {
-                    font-size: 13px !important;
-                    padding: 4px 12px !important;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    } catch(e) {
-        console.error('Ad style injection failed:', e);
-    }
-})();
-
-(function() {
-    try {
-        const adContainer = document.getElementById("sticky-ad-container");
-        const adIns = adContainer ? adContainer.querySelector('.adsbygoogle') : null;
-        
-        if (!adContainer) return;
-        
-        const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-        const isSmallScreen = window.innerWidth <= 480;
-        
-        if (isMobileDevice || isSmallScreen) {
-            adContainer.style.cssText = `
-                position: fixed !important;
-                bottom: 0 !important;
-                left: 0 !important;
-                width: 100% !important;
                 height: 130px !important;
                 max-height: 130px !important;
                 min-height: 130px !important;
                 overflow: hidden !important;
                 padding: 0 !important;
-                z-index: 400 !important;
-                background: rgba(255, 255, 255, 0.95) !important;
-            `;
-            
-            if (adIns) {
-                adIns.style.cssText = `
-                    display: block !important;
-                    height: 130px !important;
-                    max-height: 130px !important;
-                    min-height: 130px !important;
-                    overflow: hidden !important;
-                `;
             }
             
-            const observer = new MutationObserver(function() {
-                if (adContainer.style.height !== '130px') {
-                    adContainer.style.height = '130px';
-                    adContainer.style.maxHeight = '130px';
-                }
-                if (adIns && adIns.style.height !== '130px') {
-                    adIns.style.height = '130px';
-                    adIns.style.maxHeight = '130px';
-                }
-            });
+            #sticky-ad-container .adsbygoogle {
+                height: 130px !important;
+                max-height: 130px !important;
+                min-height: 130px !important;
+                overflow: hidden !important;
+            }
             
-            observer.observe(adContainer, {
-                attributes: true,
-                attributeFilter: ['style'],
-                subtree: true
-            });
+            #ad-close-wrapper {
+                top: 6px !important;
+            }
+            
+            #btn-close-ad {
+                font-size: 13px !important;
+                padding: 4px 12px !important;
+            }
         }
-    } catch(e) {
-        console.error('Ad mobile optimization failed:', e);
+    `;
+    document.head.appendChild(style);
+})();
+
+// ======================================================
+// MOBILE DETECTION & INLINE STYLE ENFORCEMENT
+// ======================================================
+(function() {
+    const adContainer = document.getElementById("sticky-ad-container");
+    const adIns = adContainer ? adContainer.querySelector('.adsbygoogle') : null;
+    
+    if (!adContainer) return;
+    
+    const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isSmallScreen = window.innerWidth <= 480;
+    
+    if (isMobileDevice || isSmallScreen) {
+        // Paksa inline style untuk container
+        adContainer.style.cssText = `
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 130px !important;
+            max-height: 130px !important;
+            min-height: 130px !important;
+            overflow: hidden !important;
+            padding: 0 !important;
+            z-index: 400 !important;
+            background: rgba(255, 255, 255, 0.95) !important;
+        `;
+        
+        // Paksa inline style untuk iklan
+        if (adIns) {
+            adIns.style.cssText = `
+                display: block !important;
+                height: 130px !important;
+                max-height: 130px !important;
+                min-height: 130px !important;
+                overflow: hidden !important;
+            `;
+        }
+        
+        console.log("%c📱 Mobile: Forced 130px height via inline styles", "color: blue; font-weight:bold");
+        
+        // Monitor perubahan tinggi (jika AdSense coba ubah)
+        const observer = new MutationObserver(function() {
+            if (adContainer.style.height !== '130px') {
+                adContainer.style.height = '130px';
+                adContainer.style.maxHeight = '130px';
+                console.log("%c🔧 Height reset to 130px", "color: orange;");
+            }
+            if (adIns && adIns.style.height !== '130px') {
+                adIns.style.height = '130px';
+                adIns.style.maxHeight = '130px';
+            }
+        });
+        
+        observer.observe(adContainer, {
+            attributes: true,
+            attributeFilter: ['style'],
+            subtree: true
+        });
     }
 })();
 </script>
 
 <script>
-try {
-    (adsbygoogle = window.adsbygoogle || []).push({});
+// ======================================================
+// AD INTERACTION CONTROLS
+// ======================================================
+(adsbygoogle = window.adsbygoogle || []).push({});
 
-    const btnClose = document.getElementById("btn-close-ad");
-    const closeWrapper = document.getElementById("ad-close-wrapper");
-    const adContainer = document.getElementById("sticky-ad-container");
-    const clickDetector = document.getElementById("ad-click-detector");
+const btnClose = document.getElementById("btn-close-ad");
+const closeWrapper = document.getElementById("ad-close-wrapper");
+const adContainer = document.getElementById("sticky-ad-container");
+const clickDetector = document.getElementById("ad-click-detector");
 
-    let closeActive = false;
+let closeActive = false;
 
-    function hideAd() {
-        if (adContainer) adContainer.style.display = "none";
-    }
-
-    function enableClose() {
-        if (!closeActive) {
-            closeActive = true;
-            if (closeWrapper) closeWrapper.style.pointerEvents = "auto";
-            if (clickDetector) clickDetector.style.pointerEvents = "none";
-            setTimeout(hideAd, 3000);
-        }
-    }
-
-    if (clickDetector) {
-        clickDetector.addEventListener("click", function(e) {
-            enableClose();
-        });
-    }
-
-    if (btnClose) {
-        btnClose.addEventListener("click", function(e) {
-            e.stopPropagation();
-            if (closeActive) {
-                hideAd();
-            }
-        });
-    }
-} catch(e) {
-    console.error('Ad interaction setup failed:', e);
+// Close ad function
+function hideAd() {
+    adContainer.style.display = "none";
+    console.log("%c❌ Ad closed", "color: red; font-weight: bold;");
 }
+
+// Activate close button
+function enableClose() {
+    if (!closeActive) {
+        closeActive = true;
+        closeWrapper.style.pointerEvents = "auto";
+        clickDetector.style.pointerEvents = "none";
+        
+        console.log("%c✅ Close button enabled", "color: green; font-weight: bold;");
+        console.log("%c⏱️ Auto-close in 3s...", "color: blue;");
+        
+        setTimeout(hideAd, 3000);
+    }
+}
+
+// Click layer listener
+clickDetector.addEventListener("click", function(e) {
+    console.log("%c🎯 Click detected", "color: orange; font-weight: bold;");
+    enableClose();
+});
+
+// Close button listener
+btnClose.addEventListener("click", function(e) {
+    e.stopPropagation();
+    if (closeActive) {
+        hideAd();
+    } else {
+        console.log("%c⚠️ Button not active", "color: orange;");
+    }
+});
 </script>
 
-<!-- Google AdSense Auto Ads - DEFERRED -->  
+<!-- Google AdSense Auto Ads -->  
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467"  
      crossorigin="anonymous"></script>  
   
 <script>  
-  try {
-    (adsbygoogle = window.adsbygoogle || []).push({  
-      google_ad_client: "ca-pub-8582564022805467",  
-      enable_page_level_ads: true  
-    });
-  } catch(e) {
-    console.error('AdSense initialization failed:', e);
-  }
+  (adsbygoogle = window.adsbygoogle || []).push({  
+    google_ad_client: "ca-pub-8582564022805467",  
+    enable_page_level_ads: true  
+  });  
 </script>
 
-<!-- ✅ CRITICAL: LEAFLET FIRST -->
+<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>    
+    
 
-<!-- Google Sign-In - DEFERRED -->
+<!-- Google Sign-In -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>  
-
-<!-- ✅ OPTIMIZED SCRIPT LOADING WITH ENHANCED ERROR HANDLING -->
+<script src="username.js"></script>    
+    
+<!-- Application Scripts -->    
 <script>
   const v = Date.now();
-  const loadedScripts = new Set();
-  const failedScripts = new Set();
 
-  // PRIORITY 1: Critical files needed for initial map render
-  const criticalFiles = [
-    "ikon.js",           // Icons must load before map
-    "peta.js"            // Map initialization
-  ];
-
-  // PRIORITY 2: Important but can load in parallel
-  const importantFiles = [
-    "username.js",
+  const files = [
     "cookie-consent.js",
     "memuat-data.js",
-    "penanda.js",
-    "zoom_optimizer.js"
-  ];
-
-  // PRIORITY 3: Features that can load last
-  const featureFiles = [
     "feedbackmatker.js",
     "descmanager.js",
     "knowladge-series.js",
+    "penanda.js",
     "region-management.js",
+    "zoom_optimizer.js",
     "leaderboard.js",
     "editing-image-upload.js",
     "marker-image-handler.js",
+
+    // ⛔ PENTING: ikon HARUS sebelum peta & main
+    "ikon.js",
+    "peta.js",
+
     "booklist.js",
     "knowladgelist.js",
     "mystic-skill-panel.js",
@@ -972,6 +777,7 @@ try {
     "profile.js",
     "form.js",
     "layer.js",
+    "dev_tools.js",
     "comment.js",
     "patchnote.js",
     "setting.js",
@@ -979,170 +785,35 @@ try {
     "region.js"
   ];
 
-  // ✅ ENHANCED SCRIPT LOADER WITH RETRY & FALLBACK
-  function loadScript(src, async = true, retries = 3) {
-    return new Promise((resolve, reject) => {
-      if (loadedScripts.has(src)) {
-        console.log(`⏭️ Script already loaded: ${src}`);
-        resolve();
-        return;
-      }
-
-      const attemptLoad = (attemptsLeft) => {
-        const script = document.createElement('script');
-        script.src = `${src}?v=${v}`;
-        if (async) script.async = true;
-        
-        script.onload = () => {
-          loadedScripts.add(src);
-          console.log(`✅ Script loaded: ${src}`);
-          resolve();
-        };
-        
-        script.onerror = (error) => {
-          console.error(`❌ Failed to load: ${src} (${attemptsLeft} retries left)`);
-          script.remove();
-          
-          if (attemptsLeft > 0) {
-            setTimeout(() => attemptLoad(attemptsLeft - 1), 1000);
-          } else {
-            failedScripts.add(src);
-            console.error(`💀 Script permanently failed: ${src}`);
-            // Don't reject - continue loading other scripts
-            resolve();
-          }
-        };
-        
-        document.body.appendChild(script);
-      };
-
-      attemptLoad(retries);
-    });
-  }
-
-  // Update loading progress
-  function updateProgress(current, total) {
-    const overlay = document.getElementById('preloadOverlay');
-    const barFill = document.getElementById('preloadBarFill');
-    const barPercent = document.getElementById('preloadBarPercent');
-    
-    if (barFill && barPercent) {
-      const percent = Math.round((current / total) * 100);
-      barFill.style.width = percent + '%';
-      barPercent.textContent = percent + '%';
+  function loadScriptsSequentially(list, index = 0) {
+    if (index >= list.length) {
+      // ✅ Setelah SEMUA selesai → load main.js
+      const main = document.createElement("script");
+      main.src = `main.js?v=${v}`;
+      main.defer = true;
+      document.body.appendChild(main);
+      return;
     }
+
+    const s = document.createElement("script");
+    s.src = `${list[index]}?v=${v}`;
+    s.onload = () => loadScriptsSequentially(list, index + 1);
+    s.onerror = () => {
+      console.error("Failed to load:", list[index]);
+      loadScriptsSequentially(list, index + 1);
+    };
+    document.body.appendChild(s);
   }
 
-  // Load critical files sequentially (needed for map)
-  async function loadCriticalScripts() {
-    console.log('🔵 Loading critical scripts...');
-    for (let i = 0; i < criticalFiles.length; i++) {
-      await loadScript(criticalFiles[i], false);
-      updateProgress(i + 1, criticalFiles.length + importantFiles.length + 2);
-    }
-    console.log('✅ Critical scripts loaded');
-  }
-
-  // Load important files in parallel
-  async function loadImportantScripts() {
-    console.log('🟡 Loading important scripts...');
-    const promises = importantFiles.map((file, index) => 
-      loadScript(file).then(() => {
-        updateProgress(criticalFiles.length + index + 1, criticalFiles.length + importantFiles.length + 2);
-      })
-    );
-    await Promise.all(promises);
-    console.log('✅ Important scripts loaded');
-  }
-
-  // Load feature files in parallel (no waiting)
-  function loadFeatureScripts() {
-    console.log('🟢 Loading feature scripts...');
-    featureFiles.forEach(file => loadScript(file));
-  }
-
-  // ✅ EXECUTION ORDER WITH ERROR HANDLING
-  (async function initializeApp() {
-    try {
-      // Load critical scripts
-      await loadCriticalScripts();
-      
-      // Map is ready, hide preloader after short delay
-      setTimeout(() => {
-        const overlay = document.getElementById('preloadOverlay');
-        if (overlay) {
-          overlay.classList.add('hidden');
-          setTimeout(() => overlay.style.display = 'none', 500);
-        }
-      }, 800);
-      
-      // Load important scripts
-      await loadImportantScripts();
-      
-      // Load main.js
-      console.log('🔵 Loading main.js...');
-      await loadScript('main.js');
-      updateProgress(criticalFiles.length + importantFiles.length + 1, criticalFiles.length + importantFiles.length + 2);
-      console.log('✅ Main.js loaded');
-      
-      // Load feature scripts (non-blocking)
-      loadFeatureScripts();
-      
-      // Final progress
-      updateProgress(criticalFiles.length + importantFiles.length + 2, criticalFiles.length + importantFiles.length + 2);
-      
-      // Log summary
-      console.log('='.repeat(50));
-      console.log('✅ Application initialized');
-      console.log(`📊 Loaded: ${loadedScripts.size} scripts`);
-      if (failedScripts.size > 0) {
-        console.warn(`⚠️ Failed: ${failedScripts.size} scripts`, Array.from(failedScripts));
-      }
-      console.log('='.repeat(50));
-      
-    } catch (error) {
-      console.error('💥 Critical initialization error:', error);
-      
-      // Show error message to user
-      const overlay = document.getElementById('preloadOverlay');
-      const message = document.getElementById('preloadMessage');
-      if (message) {
-        message.textContent = 'Error loading map. Please refresh the page.';
-        message.style.color = '#ff4444';
-      }
-    }
-  })();
+  loadScriptsSequentially(files);
 </script>
-
-<!-- Service Worker - DEFERRED -->
 <script>
 if ("serviceWorker" in navigator) {
-  window.addEventListener('load', () => {
-    const v = Date.now();
-    navigator.serviceWorker.register(`/sw.js?v=${v}`)
-      .then(() => console.log("✅ SW registered"))
-      .catch(err => console.error("❌ SW registration failed:", err));
-  });
+  const v = Date.now();
+  navigator.serviceWorker.register(`/sw.js?v=${v}`)
+    .then(() => console.log("✅ SW registered"))
+    .catch(err => console.error("❌ SW registration failed:", err));
 }
 </script>
-
-<!-- Eruda Debug Console - DEFERRED & CONDITIONAL -->
-<script>
-  if (location.hostname === 'localhost' || location.search.includes('debug=1')) {
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/eruda';
-    script.onload = () => {
-      try {
-        eruda.init();
-        console.log("✅ Eruda initialized");
-      } catch(e) {
-        console.error("❌ Eruda init failed:", e);
-      }
-    };
-    script.onerror = () => console.error("❌ Eruda load failed");
-    document.body.appendChild(script);
-  }
-</script>
-
 </body>  
 </html>
