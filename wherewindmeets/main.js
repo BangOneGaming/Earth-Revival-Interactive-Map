@@ -189,18 +189,62 @@
   }
 
   // ============================================
+  // WAIT FOR FUNCTIONS
+  // ============================================
+  async function waitForFunction(fnName, timeout = 5000) {
+    const start = Date.now();
+    while (Date.now() - start < timeout) {
+      if (typeof window[fnName] === 'function') return true;
+      await new Promise(r => setTimeout(r, 50));
+    }
+    return false;
+  }
+
+  async function waitForUndergroundManager() {
+    for (let i = 0; i < 50; i++) {
+      if (window.UndergroundManager) return true;
+      await new Promise(r => setTimeout(r, 100));
+    }
+    return false;
+  }
+
+  async function waitForRegionManager() {
+    for (let i = 0; i < 50; i++) {
+      if (window.RegionManager) return true;
+      await new Promise(r => setTimeout(r, 100));
+    }
+    return false;
+  }
+
+  function waitForProfileReady(retry = 0) {
+    if (
+      window.ProfileContainer &&
+      typeof isLoggedIn === 'function' &&
+      isLoggedIn() &&
+      typeof getUserProfile === 'function' &&
+      getUserProfile()
+    ) {
+      ProfileContainer.create();
+      console.log('✅ ProfileContainer auto-created after reload');
+      return;
+    }
+
+    if (retry < 20) {
+      setTimeout(() => waitForProfileReady(retry + 1), 200);
+    }
+  }
+
+  // ============================================
   // ✨ SHOW ALL UI ELEMENTS
   // ============================================
   function showAllUIElements() {
     console.log('🎨 Showing all UI elements...');
     
-    // Hapus style control
     const styleControl = document.getElementById('ui-visibility-control');
     if (styleControl) {
       styleControl.remove();
     }
     
-    // Pastikan semua elemen visible
     const elements = [
       'leaderboardPanel',
       'leaderboardToggle',
@@ -230,43 +274,155 @@
     await showPreload();
 
     try {
+      // ============================================
+      // STEP 1: Icon Manager
+      // ============================================
       updateLoadingText('Preparing icon system...');
       await loadIconManager();
       window.initializeIcons();
 
+      // ============================================
+      // STEP 2: Initialize Map
+      // ============================================
       updateLoadingText('Initializing map...');
+      
+      const mapReady = await waitForFunction('initializeMap');
+      if (!mapReady) {
+        throw new Error('initializeMap not found');
+      }
+      
       window.map = initializeMap();
 
+      // ============================================
+      // STEP 3: Load Marker Data
+      // ============================================
       updateLoadingText('Loading marker data...');
-      if (window.DataLoader?.init) await DataLoader.init();
+      if (window.DataLoader?.init) {
+        await DataLoader.init();
+      }
 
-      updateLoadingText('Initializing systems...');
+      // ============================================
+      // STEP 4: Load Descriptions
+      // ============================================
+      if (window.DescriptionLoader) {
+        updateLoadingText('Loading descriptions...');
+        try {
+          await DescriptionLoader.init();
+          DescriptionLoader.mergeAllDescriptions();
+        } catch (error) {
+          console.warn('⚠️ Description loading failed:', error);
+        }
+      }
+
+      // ============================================
+      // STEP 5: Load CSS
+      // ============================================
+      updateLoadingText('Loading styles...');
       loadDeferredCSS();
 
-      MarkerManager?.init?.(window.map);
-      RegionLabelManager?.init?.(window.map);
-      MarkerImageHandler?.init?.();
+      // ============================================
+      // STEP 6: Initialize Core Systems
+      // ============================================
+      updateLoadingText('Initializing systems...');
 
+      // MarkerManager
+      if (window.MarkerManager?.init) {
+        MarkerManager.init(window.map);
+      } else {
+        throw new Error('MarkerManager not found');
+      }
+
+      // RegionLabelManager
+      if (window.RegionLabelManager?.init) {
+        try {
+          RegionLabelManager.init(window.map);
+        } catch (error) {
+          console.warn('⚠️ RegionLabelManager init failed:', error);
+        }
+      }
+
+      // MarkerImageHandler
+      if (window.MarkerImageHandler?.init) {
+        try {
+          MarkerImageHandler.init();
+        } catch (error) {
+          console.warn('⚠️ MarkerImageHandler init failed:', error);
+        }
+      }
+
+      // ============================================
+      // STEP 7: Initialize Underground System
+      // ============================================
+      updateLoadingText('Initializing underground system...');
+      
+      if (await waitForUndergroundManager()) {
+        try {
+          await UndergroundManager.init(window.map);
+          console.log('✅ UndergroundManager initialized');
+        } catch (error) {
+          console.warn('⚠️ UndergroundManager init failed:', error);
+        }
+      }
+
+      // ============================================
+      // STEP 8: Initialize Region Manager
+      // ============================================
+      updateLoadingText('Initializing region system...');
+      
+      if (await waitForRegionManager()) {
+        try {
+          await RegionManager.init(window.map);
+          console.log('✅ RegionManager initialized');
+        } catch (error) {
+          console.warn('⚠️ RegionManager init failed:', error);
+        }
+      }
+
+      // ============================================
+      // STEP 9: Dev Tools (Optional)
+      // ============================================
+      if (typeof createDevToolsPanel === 'function') {
+        try {
+          createDevToolsPanel(window.map);
+        } catch (error) {
+          console.warn('⚠️ Dev tools init failed:', error);
+        }
+      }
+
+      // ============================================
+      // STEP 10: Wait for loading animation
+      // ============================================
       updateLoadingText('Ready to explore!');
       await simulateFinalLoading();
 
     } catch (err) {
       console.error(err);
       updateLoadingText('Error loading map');
-      alert(`Failed to initialize map:\n${err.message}`);
+      alert(`Failed to initialize map:\n${err.message}\n\nPlease refresh the page.`);
     } finally {
-      // ✨ STEP 1: Tambahkan class app-ready
+      // ✨ STEP 1: Add app-ready class
       document.body.classList.add('app-ready');
       
-      // ✨ STEP 2: Hide preload (ini juga trigger showAllIcons untuk marker)
-      hidePreload();
+      // ✨ STEP 2: Hide preload & show icons
+      setTimeout(() => {
+        hidePreload();
+        waitForProfileReady();
 
-      // ✨ STEP 3: Show semua UI elements setelah delay
+        // ✨ STEP 3: Show patch notes
+        setTimeout(() => {
+          if (window.showPatchPopup) {
+            showPatchPopup();
+          }
+        }, 800);
+
+      }, 300);
+
+      // ✨ STEP 4: Show all UI elements
       setTimeout(() => {
         showAllUIElements();
       }, 500);
 
-      // ✨ STEP 4: Cookie consent setelah semua siap
+      // ✨ STEP 5: Cookie consent
       if (window.WWMCookieConsent) {
         setTimeout(() => {
           WWMCookieConsent.initAfterLoad(2000);
@@ -278,8 +434,10 @@
   // ============================================
   // BOOT
   // ============================================
-  document.readyState === 'loading'
-    ? document.addEventListener('DOMContentLoaded', initApp)
-    : initApp();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+  } else {
+    setTimeout(initApp, 100);
+  }
 
 })();
