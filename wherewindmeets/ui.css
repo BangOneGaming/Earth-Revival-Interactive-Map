@@ -1,7 +1,4 @@
-/* ========================================
-   FILTER GROUP STYLES
-   Add this to ui.css
-   ======================================== */
+
 
 /* ===== FILTER GROUP CONTAINER ===== */
 .filter-group {
@@ -53,6 +50,7 @@
 .filter-group.collapsed .filter-group-toggle {
   transform: rotate(-90deg);
 }
+
 
 /* ===== GROUP ITEMS CONTAINER ===== */
 .filter-group-items {
@@ -135,6 +133,7 @@
 
 /* judul gambar tetap kecil */
 .filter-title-img img {
+  background: url("https://ik.imagekit.io/k3lv5clxs/wherewindmeet/alternate.png") center / contain no-repeat;
   height: 100px;
   width: auto;
   display: block;

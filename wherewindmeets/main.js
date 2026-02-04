@@ -2,381 +2,284 @@
  * Main application entry point
  * Clean version with integrated cookie consent + Region Manager
  */
-(function() {
+(function () {
   'use strict';
 
   // ============================================
-  // PRELOAD UI FUNCTIONS
+  // ICON MANAGER LOADER (FIXED)
   // ============================================
-  
-async function showPreload() {
-  const overlay = document.getElementById('preloadOverlay');
-  if (overlay) overlay.style.display = 'block';
-
-  const emotions = [
-    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/impressed.webp',
-    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/cry.webp',
-    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/hehe.webp',
-    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/well.webp',
-    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/thinking.webp'
-  ];
-
-  // 🔥 PENTING
-  await preloadImages(emotions);
-
-  startEmotionFlip(emotions);
-  startTextAnimation();
-  startLoadingBar();
-}
-
-function hidePreload() {
-  const overlay = document.getElementById('preloadOverlay');
-  if (overlay) {
-    overlay.style.opacity = '0';
-    overlay.style.transition = 'opacity 0.3s ease';
-    setTimeout(() => overlay.remove(), 300);
-  }
-}
-
-  function updateLoadingText(message) {
-    const textElement = document.getElementById('preloadMessage');
-    if (textElement) {
-      textElement.style.animation = 'preloadFadeOut 0.3s ease-out';
-      setTimeout(() => {
-        textElement.textContent = message;
-        textElement.style.animation = 'preloadFadeIn 0.3s ease-in';
-      }, 300);
-    }
-  }
-  
-function waitForProfileReady(retry = 0) {
-  if (
-    window.ProfileContainer &&
-    typeof isLoggedIn === 'function' &&
-    isLoggedIn() &&
-    typeof getUserProfile === 'function' &&
-    getUserProfile()
-  ) {
-    ProfileContainer.create();
-    console.log('✅ ProfileContainer auto-created after reload');
-    return;
-  }
-
-  if (retry < 20) {
-    setTimeout(() => waitForProfileReady(retry + 1), 200);
-  }
-}
-  // ============================================
-  // EMOTION FLIP ANIMATION
-  // ============================================
-function preloadImages(urls) {
-  return Promise.all(
-    urls.map(src => {
-      return new Promise(resolve => {
-        const img = new Image();
-        img.onload = resolve;
-        img.onerror = resolve;
-        img.src = src;
-      });
-    })
-  );
-}
-function startEmotionFlip(emotions) {
-  const emotionImg = document.getElementById('preloadEmotionIcon');
-  if (!emotionImg) return;
-
-  let currentIndex = 0;
-  emotionImg.src = emotions[0];
-
-  const flipInterval = setInterval(() => {
-    emotionImg.classList.add('flip-animation');
-
-    setTimeout(() => {
-      emotionImg.classList.remove('flip-animation');
-      currentIndex = (currentIndex + 1) % emotions.length;
-      emotionImg.src = emotions[currentIndex];
-    }, 600);
-  }, 800);
-
-  setTimeout(() => clearInterval(flipInterval), 5000);
-}
-
-  // ============================================
-  // TEXT ANIMATION
-  // ============================================
-  
-  function startTextAnimation() {
-    updateLoadingText('Better Experience With Mobile Desktop mode');
-
-    setTimeout(() => {
-      updateLoadingText('You can add new marker in this map');
-    }, 2500);
-  }
-
-  // ============================================
-  // LOADING BAR ANIMATION
-  // ============================================
-  
-  function startLoadingBar() {
-    const barFill = document.getElementById('preloadBarFill');
-    const barPercent = document.getElementById('preloadBarPercent');
-    
-    if (!barFill || !barPercent) return;
-
-    let progress = 0;
-    const totalDuration = 5000;
-    const intervalTime = 50;
-    const increment = (100 / totalDuration) * intervalTime;
-
-    const loadingInterval = setInterval(() => {
-      progress += increment;
-      
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(loadingInterval);
+  function loadIconManager() {
+    return new Promise((resolve, reject) => {
+      if (window.IconManager && typeof window.initializeIcons === 'function') {
+        resolve();
+        return;
       }
 
-      barFill.style.width = progress + '%';
-      barPercent.textContent = Math.floor(progress) + '%';
-    }, intervalTime);
-  }
+      const script = document.createElement('script');
+      script.src = 'icon-manager.js?v=1.0.0';
+      script.defer = true;
 
-  // ============================================
-  // SIMULATE LOADING DELAY
-  // ============================================
-  
-  function simulateFinalLoading() {
-    return new Promise(resolve => {
-      setTimeout(resolve, 5000);
+      script.onload = () => {
+        if (typeof window.initializeIcons === 'function') {
+          // ✨ SEMBUNYIKAN ICON SEGERA SETELAH LOAD
+          if (window.IconManager?.hideAllIcons) {
+            window.IconManager.hideAllIcons();
+          }
+          resolve();
+        } else {
+          reject(new Error('initializeIcons not found'));
+        }
+      };
+
+      script.onerror = () => reject(new Error('Failed to load icon-manager.js'));
+      document.head.appendChild(script);
     });
   }
 
   // ============================================
-  // VALIDATE MARKER DATA
+  // DEFERRED CSS
   // ============================================
-  
-  function validateMarkerData() {
-    const sources = [
-      'chest', 'batutele', 'strangecollection', 'yellow', 'gua', 
-      'blue', 'red', 'peninggalan', 'kucing', 'ketidakadilan', 
-      'petualangan', 'meong', 'pengetahuan', 'cerita', 'bulan', 
-      'tidakterhitung', 'berharga', 'kulinari', 'spesial', 'wc', 
-      'penyembuhan', 'buatteman', 'perdebatan', 'buku', 'penjaga', 
-      'benteng', 'bos', 'jurus', 'pemancing', 'mabuk', 'kartu', 
-      'panah', 'melodi', 'tebakan', 'gulat', 'tehnik', 'innerwaylist',
-      'npc', 'terbaru'
+  function loadDeferredCSS() {
+    const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.0.0';
+    
+    const cssFiles = [
+      'marker-image-handler.css',
+      'editing-image-upload.css',
+      'knowladgelist.css',
+      'mystic-skill-panel.css',
+      'innerway.css',
+      'patchnote.css',
+      'form.css',
+      'layer.css',
+      'region-management.css',
+      'booklist.css',
+      'ui.css',
+      'login.css',
+      'comment.css',
+      'profile-container.css',
+      'setting.css',
+      'donate.css',
+      'region.css'
     ];
 
-    let totalMarkers = 0;
-
-    sources.forEach(source => {
-      if (window[source]) {
-        totalMarkers += Object.keys(window[source]).length;
-      }
+    cssFiles.forEach(file => {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = `${file}?v=${cssVersion}`;
+      document.head.appendChild(link);
     });
 
-    return totalMarkers > 0;
+    console.log('🎨 Deferred CSS loaded');
   }
-  
-// ============================================
-// WAIT FOR REQUIRED GLOBAL FUNCTION
-// ============================================
-async function waitForFunction(fnName, timeout = 5000) {
-  const start = Date.now();
-  while (Date.now() - start < timeout) {
-    if (typeof window[fnName] === "function") return true;
-    await new Promise(r => setTimeout(r, 50));
-  }
-  return false;
-}
 
   // ============================================
-  // MAIN INITIALIZATION
+  // PRELOAD UI
   // ============================================
-  
+  async function showPreload() {
+    const overlay = document.getElementById('preloadOverlay');
+    if (!overlay) return;
+
+    const emotions = [
+      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/impressed.webp',
+      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/cry.webp',
+      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/hehe.webp',
+      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/well.webp',
+      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/thinking.webp'
+    ];
+
+    await Promise.race([
+      preloadImages(emotions),
+      new Promise(r => setTimeout(r, 1000))
+    ]);
+
+    overlay.style.visibility = 'hidden';
+    overlay.style.opacity = '0';
+
+    requestAnimationFrame(() => {
+      overlay.style.visibility = 'visible';
+      overlay.style.opacity = '1';
+
+      startEmotionFlip(emotions);
+      startTextAnimation();
+      startLoadingBar();
+    });
+  }
+
+  function hidePreload() {
+    const overlay = document.getElementById('preloadOverlay');
+    if (!overlay) return;
+
+    overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity 0.3s ease';
+    setTimeout(() => {
+      overlay.remove();
+      
+      // ✨ TAMPILKAN ICON SETELAH PRELOAD HILANG
+      if (window.IconManager?.showAllIcons) {
+        setTimeout(() => {
+          window.IconManager.showAllIcons();
+        }, 100);
+      }
+    }, 300);
+  }
+
+  function updateLoadingText(message) {
+    const el = document.getElementById('preloadMessage');
+    if (!el) return;
+
+    el.style.opacity = '0';
+    requestAnimationFrame(() => {
+      el.textContent = message;
+      el.style.transition = 'opacity 0.25s ease';
+      el.style.opacity = '1';
+    });
+  }
+
+  // ============================================
+  // EMOTION / ANIMATION
+  // ============================================
+  function preloadImages(urls) {
+    return Promise.all(urls.map(src => new Promise(res => {
+      const img = new Image();
+      img.onload = img.onerror = res;
+      img.src = src;
+    })));
+  }
+
+  function startEmotionFlip(emotions) {
+    const el = document.getElementById('preloadEmotionIcon');
+    if (!el) return;
+
+    let i = 0;
+    el.src = emotions[0];
+
+    const interval = setInterval(() => {
+      el.classList.add('flip-animation');
+      setTimeout(() => {
+        el.classList.remove('flip-animation');
+        i = (i + 1) % emotions.length;
+        el.src = emotions[i];
+      }, 600);
+    }, 800);
+
+    setTimeout(() => clearInterval(interval), 5000);
+  }
+
+  function startTextAnimation() {
+    updateLoadingText('Better Experience With Mobile Desktop mode');
+    setTimeout(() => updateLoadingText('You can add new marker in this map'), 2500);
+  }
+
+  function startLoadingBar() {
+    const bar = document.getElementById('preloadBarFill');
+    const pct = document.getElementById('preloadBarPercent');
+    if (!bar || !pct) return;
+
+    let p = 0;
+    const i = setInterval(() => {
+      p += 1;
+      bar.style.width = p + '%';
+      pct.textContent = p + '%';
+      if (p >= 100) clearInterval(i);
+    }, 50);
+  }
+
+  function simulateFinalLoading() {
+    return new Promise(r => setTimeout(r, 5000));
+  }
+
+  // ============================================
+  // ✨ SHOW ALL UI ELEMENTS
+  // ============================================
+  function showAllUIElements() {
+    console.log('🎨 Showing all UI elements...');
+    
+    // Hapus style control
+    const styleControl = document.getElementById('ui-visibility-control');
+    if (styleControl) {
+      styleControl.remove();
+    }
+    
+    // Pastikan semua elemen visible
+    const elements = [
+      'leaderboardPanel',
+      'leaderboardToggle',
+      'filterPanel',
+      'filterToggle',
+      'notificationIcon',
+      'topLoginBtn',
+      'undergroundContainer'
+    ];
+    
+    elements.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.opacity = '1';
+        el.style.visibility = 'visible';
+        el.style.pointerEvents = 'auto';
+      }
+    });
+    
+    console.log('✅ All UI elements visible');
+  }
+
+  // ============================================
+  // MAIN INIT
+  // ============================================
   async function initApp() {
     await showPreload();
 
     try {
-// ============================================
-// WAIT FOR CORE DEPENDENCIES
-// ============================================
-updateLoadingText('Preparing core systems...');
+      updateLoadingText('Preparing icon system...');
+      await loadIconManager();
+      window.initializeIcons();
 
-const iconReady = await waitForFunction("initializeIcons");
-const mapReady  = await waitForFunction("initializeMap");
-
-if (!iconReady || !mapReady) {
-  throw new Error("Core system not ready (icons or map)");
-}
-
-      // ============================================
-      // STEP 1: Load Marker Data
-      // ============================================
-      let dataLoadSuccess = false;
-      
-      if (typeof DataLoader !== "undefined" && DataLoader.init) {
-        updateLoadingText('Loading marker data...');
-        
-        try {
-          await DataLoader.init();
-          dataLoadSuccess = validateMarkerData();
-          
-          if (!dataLoadSuccess) {
-            throw new Error("No marker data found after loading");
-          }
-        } catch (error) {
-          throw new Error(`DataLoader failed: ${error.message}`);
-        }
-      } else {
-        dataLoadSuccess = validateMarkerData();
-        
-        if (!dataLoadSuccess) {
-          throw new Error("No marker data available");
-        }
-      }
-
-      // ============================================
-      // STEP 2: Load Descriptions
-      // ============================================
-      if (typeof DescriptionLoader !== "undefined") {
-        updateLoadingText('Loading descriptions...');
-        
-        try {
-          await DescriptionLoader.init();
-          
-          if (dataLoadSuccess) {
-            DescriptionLoader.mergeAllDescriptions();
-          }
-        } catch (error) {
-          // Non-critical, continue without descriptions
-        }
-      }
-
-      // ============================================
-      // STEP 3: Initialize Map & Core Systems
-      // ============================================
-      updateLoadingText('Initializing map interface...');
-
-      // Initialize icons
-      initializeIcons();
-
-      // Initialize map
+      updateLoadingText('Initializing map...');
       window.map = initializeMap();
 
-      // Initialize MarkerManager
-      if (typeof MarkerManager !== "undefined" && MarkerManager.init) {
-        MarkerManager.init(window.map);
-      } else {
-        throw new Error("MarkerManager not found");
-      }
+      updateLoadingText('Loading marker data...');
+      if (window.DataLoader?.init) await DataLoader.init();
 
-      // Initialize RegionLabelManager
-      if (typeof RegionLabelManager !== "undefined" && RegionLabelManager.init) {
-        try {
-          RegionLabelManager.init(window.map);
-        } catch (error) {
-          // Optional feature
-        }
-      }
+      updateLoadingText('Initializing systems...');
+      loadDeferredCSS();
 
-      // Initialize MarkerImageHandler
-      if (typeof MarkerImageHandler !== "undefined" && MarkerImageHandler.init) {
-        try {
-          MarkerImageHandler.init();
-        } catch (error) {
-          // Optional feature
-        }
-      }
-
-      // ============================================
-      // STEP 4: Initialize Underground System
-      // ============================================
-      updateLoadingText('Initializing underground system...');
-      
-async function waitForUndergroundManager() {
-  for (let i = 0; i < 50; i++) {
-    if (window.UndergroundManager) return true;
-    await new Promise(r => setTimeout(r, 100));
-  }
-  return false;
-}
-
-if (await waitForUndergroundManager()) {
-  await UndergroundManager.init(window.map);
-}
-
-      // ============================================
-      // STEP 5: Initialize Region Manager (NEW!)
-      // ============================================
-      updateLoadingText('Initializing region system...');
-      
-async function waitForRegionManager() {
-  for (let i = 0; i < 50; i++) {
-    if (window.RegionManager) return true;
-    await new Promise(r => setTimeout(r, 100));
-  }
-  return false;
-}
-
-if (await waitForRegionManager()) {
-  try {
-    await RegionManager.init(window.map);
-    console.log('✅ RegionManager initialized');
-  } catch (error) {
-    console.warn('⚠️ RegionManager init failed:', error);
-    // Non-critical, continue without region filtering
-  }
-}
-
-      // ============================================
-      // OPTIONAL: Dev Tools
-      // ============================================
-      if (typeof createDevToolsPanel === "function") {
-        try {
-          createDevToolsPanel(window.map);
-        } catch (error) {
-          // Dev tools are optional
-        }
-      }
-
-      // Wait for loading animation to complete
-      await simulateFinalLoading();
+      MarkerManager?.init?.(window.map);
+      RegionLabelManager?.init?.(window.map);
+      MarkerImageHandler?.init?.();
 
       updateLoadingText('Ready to explore!');
-      
-    } catch (error) {
+      await simulateFinalLoading();
+
+    } catch (err) {
+      console.error(err);
       updateLoadingText('Error loading map');
-      alert(`Failed to initialize map:\n${error.message}\n\nPlease refresh the page.`);
-      
+      alert(`Failed to initialize map:\n${err.message}`);
     } finally {
-  document.body.classList.add('app-ready');
+      // ✨ STEP 1: Tambahkan class app-ready
+      document.body.classList.add('app-ready');
+      
+      // ✨ STEP 2: Hide preload (ini juga trigger showAllIcons untuk marker)
+      hidePreload();
 
-  setTimeout(() => {
-  hidePreload();
-  waitForProfileReady();
+      // ✨ STEP 3: Show semua UI elements setelah delay
+      setTimeout(() => {
+        showAllUIElements();
+      }, 500);
 
-  // ✅ SHOW PATCH NOTES AFTER APP READY
-  setTimeout(() => {
-    if (window.showPatchPopup) {
-      showPatchPopup();
+      // ✨ STEP 4: Cookie consent setelah semua siap
+      if (window.WWMCookieConsent) {
+        setTimeout(() => {
+          WWMCookieConsent.initAfterLoad(2000);
+        }, 1000);
+      }
     }
-  }, 800);
-
-}, 300);
-
-  if (typeof window.WWMCookieConsent !== "undefined") {
-    window.WWMCookieConsent.initAfterLoad(2000);
   }
-}
-}
+
   // ============================================
-  // AUTO-START
+  // BOOT
   // ============================================
-  
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initApp);
-  } else {
-    setTimeout(initApp, 100);
-  }
+  document.readyState === 'loading'
+    ? document.addEventListener('DOMContentLoaded', initApp)
+    : initApp();
+
 })();

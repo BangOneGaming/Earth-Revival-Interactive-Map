@@ -6,12 +6,56 @@ html, body {
   background: #000;
   
 }
+.filter-actions,
+#btnSelectAll,
+#btnSelectNone,
+#filterStats, 
+.leaderboard-loading,
+.leaderboard-stats,
+.leaderboard-toggle {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  contain: paint;
+}
+
+/* Filter toggle */
+.filter-toggle {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  contain: paint;
+}
+
+/* =====================================
+   UNLOCK AFTER MAP READY
+   ===================================== */
+
+body.app-ready .filter-actions,
+body.app-ready #btnSelectAll,
+body.app-ready #btnSelectNone,
+body.app-ready #filterStats,
+body.app-ready .filter-toggle,
+body.app-ready .leaderboard-loading,
+body.app-ready .leaderboard-stats,
+body.app-ready .leaderboard-toggle{
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.3s ease;
+}
 
 /* === Map Container === */
 #map {
   width: 100%;
-  height: 100%;
+  min-height: 100vh; /* kunci anti CLS */
+  background-color: #000; /* fallback solid */
+  background-image: url("assets/ui/map-placeholder.webp");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   position: relative;
+  overflow: hidden; /* cegah spill */
 }
 
 /* === Dev Tools Panel === */
@@ -1672,7 +1716,9 @@ html, body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-
+  visibility: hidden;
+  opacity: 0;
+  contain: paint;
 }
 
 @media (min-width: 769px) {
@@ -1712,11 +1758,10 @@ html, body {
 #preloadEmotionIcon {
   width: 120px;
   height: 120px;
-  object-fit: contain;
+  object-fit: contain; /* ✅ untuk <img> tag */
+  display: block;
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.6));
   transform-style: preserve-3d;
-  background: transparent;
-  mix-blend-mode: normal;
   animation: iconBounce 1s ease-in-out infinite;
 }
 
@@ -1745,6 +1790,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
+  
 }
 
 /* === Loading Bar Container === */
@@ -1903,4 +1949,8 @@ html, body {
   #preloadBarPercent {
     font-size: 12px;
   }
+}
+#seo-content {
+  content-visibility: hidden;
+  contain-intrinsic-size: 1px 1px;
 }

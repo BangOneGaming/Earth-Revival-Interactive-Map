@@ -6,6 +6,9 @@
 // Base URL for API
 const API_BASE_URL = 'https://autumn-dream-8c07.square-spon.workers.dev';
 
+// 🔐 DATA VERSION (ubah ini kalau ada update data)
+const DATA_VERSION = '1.0.0';
+
 // API endpoints configuration
 const DATA_ENDPOINTS = {
   list: `${API_BASE_URL}/list`,
@@ -98,33 +101,79 @@ const DataLoader = {
   loadedData: {},
   loadingProgress: {},
   isLoading: false,
+  isBackgroundRefresh: false,
+  endpointFingerprint: {},
+  dataSource: 'unknown', // cache | server
   useBatchLoading: true,
+  cacheExpiry: 7 * 24 * 60 * 60 * 1000, // 7 days
 
+generateFingerprint(data) {
+  if (!data || typeof data !== 'object') return 'empty';
+
+  const keys = Object.keys(data);
+  let sum = keys.length;
+
+  // ambil 5 key pertama aja (hemat)
+  for (let i = 0; i < Math.min(5, keys.length); i++) {
+    sum += keys[i].length;
+  }
+
+  return `${keys.length}-${sum}`;
+},
+
+
+  /* =====================================================
+   * INIT
+   * ===================================================== */
   async init() {
     this.showLoadingSpinner(true);
     this.isLoading = true;
 
     try {
-      // Load all marker data
-      await this.loadAllEndpoints();
+      const cached = this.getCachedData();
 
-      // Load feedback data separately
-      const feedbackRes = await fetch(`${API_BASE_URL}/userfeedback`);
-      const feedbackData = await feedbackRes.json();
+      /* ===== CACHE HIT ===== */
+      if (cached) {
+        this.dataSource = 'cache';
 
-      // Sync feedback to markers
-      if (typeof syncFeedbackToMarkers === "function") {
-        Object.keys(this.loadedData).forEach(endpointKey => {
-          const endpointMarkers = this.loadedData[endpointKey];
-          if (endpointMarkers && typeof endpointMarkers === "object") {
-            syncFeedbackToMarkers(endpointMarkers, feedbackData);
-          }
+        console.log(
+          '%c📦 DATA SOURCE: LOCAL CACHE',
+          'color:#00c853;font-weight:bold'
+        );
+
+        this.loadedData = cached;
+
+        Object.keys(cached).forEach(key => {
+          const globalVar = ENDPOINT_TO_GLOBAL[key];
+          if (globalVar) window[globalVar] = cached[key];
         });
+
+        this.isLoading = false;
+        this.showLoadingSpinner(false);
+
+        await this.loadFeedback();
+        
+
+        return true;
       }
+
+      /* ===== CACHE MISS → SERVER ===== */
+      this.dataSource = 'server';
+
+      console.log(
+        '%c🌐 DATA SOURCE: SERVER (NO LOCAL CACHE)',
+        'color:#ff9100;font-weight:bold'
+      );
+
+      await this.loadAllEndpoints();
+      await this.loadFeedback();
+
+      this.setCachedData(this.loadedData);
 
       this.isLoading = false;
       this.showLoadingSpinner(false);
-      console.log('✅ Data loaded successfully via batch endpoint');
+
+      console.log('✅ Initial load complete (server)');
       return true;
 
     } catch (error) {
@@ -135,174 +184,271 @@ const DataLoader = {
     }
   },
 
+  /* =====================================================
+   * FEEDBACK
+   * ===================================================== */
+  async loadFeedback() {
+    try {
+      const res = await fetch(`${API_BASE_URL}/userfeedback`);
+      const data = await res.json();
+
+      if (typeof syncFeedbackToMarkers === "function") {
+        Object.keys(this.loadedData).forEach(key => {
+          const markers = this.loadedData[key];
+          if (markers && typeof markers === 'object') {
+            syncFeedbackToMarkers(markers, data);
+          }
+        });
+      }
+    } catch (err) {
+      console.warn('⚠️ Feedback load failed:', err);
+    }
+  },
+
+  /* =====================================================
+   * CACHE
+   * ===================================================== */
+  getCachedData() {
+  try {
+    const raw = localStorage.getItem('markerData');
+    if (!raw) return null;
+
+    const { data, timestamp, version } = JSON.parse(raw);
+
+    // 🔥 VERSION BERUBAH → FORCE SERVER
+    if (version !== DATA_VERSION) {
+      console.log(
+        `%c🔁 Data version changed (${version} → ${DATA_VERSION})`,
+        'color:#ff5252;font-weight:bold'
+      );
+      localStorage.removeItem('markerData');
+      return null;
+    }
+
+    const age = Date.now() - timestamp;
+
+    // ⏰ EXPIRED (1 MINGGU)
+    if (age > this.cacheExpiry) {
+      console.log('⏰ Cache expired (weekly)');
+      localStorage.removeItem('markerData');
+      return null;
+    }
+
+    console.log(
+      `%c✅ Cache valid (weekly + version)`,
+      'color:#4caf50;font-weight:bold'
+    );
+
+    return data;
+
+  } catch (err) {
+    console.warn('⚠️ Cache read error:', err);
+    return null;
+  }
+},
+
+  setCachedData(data) {
+  try {
+    localStorage.setItem(
+      'markerData',
+      JSON.stringify({
+        data,
+        timestamp: Date.now(),
+        version: DATA_VERSION // 🔐 SIMPAN VERSI
+      })
+    );
+    console.log('💾 Cached to localStorage (weekly + version)');
+  } catch (err) {
+    console.warn('⚠️ Cache write failed:', err);
+  }
+},
+
+  clearCache() {
+    localStorage.removeItem('markerData');
+    console.log('🗑️ Cache cleared');
+  },
+
+  /* =====================================================
+   * BACKGROUND REFRESH
+   * ===================================================== */
+  async backgroundRefresh() {
+  console.log('%c🔄 Background refresh (diff mode)', 'color:#03a9f4');
+
+  this.isBackgroundRefresh = true;
+
+  const updatedEndpoints = [];
+  const oldFingerprints = { ...this.endpointFingerprint };
+  const oldData = { ...this.loadedData };
+
+  try {
+    await this.loadAllEndpoints();
+
+    Object.keys(this.loadedData).forEach(key => {
+      const oldFP = oldFingerprints[key];
+      const newFP = this.generateFingerprint(this.loadedData[key]);
+
+      if (oldFP !== newFP) {
+        updatedEndpoints.push(key);
+        this.endpointFingerprint[key] = newFP;
+      } else {
+        this.loadedData[key] = oldData[key];
+        this.endpointFingerprint[key] = oldFP;
+      }
+    });
+
+    if (updatedEndpoints.length > 0) {
+      this.setCachedData(this.loadedData);
+      MarkerManager?.updateMarkersInView?.(updatedEndpoints);
+    }
+
+  } catch (err) {
+    console.warn('⚠️ Background refresh diff failed:', err);
+  } finally {
+    this.isBackgroundRefresh = false;
+  }
+},
+
+  /* =====================================================
+   * LOADERS
+   * ===================================================== */
   async loadAllEndpoints() {
     if (this.useBatchLoading) {
       await this.loadBatch();
     } else {
-      const promises = Object.keys(DATA_ENDPOINTS).map(key =>
-        this.loadEndpoint(key, DATA_ENDPOINTS[key])
+      await Promise.all(
+        Object.keys(DATA_ENDPOINTS).map(key =>
+          this.loadEndpoint(key, DATA_ENDPOINTS[key])
+        )
       );
-      await Promise.all(promises);
     }
   },
 
   async loadBatch() {
     try {
-      const endpointPaths = Object.entries(DATA_ENDPOINTS).map(([key, url]) => ({
-        key: key,
+      const endpoints = Object.entries(DATA_ENDPOINTS).map(([key, url]) => ({
+        key,
         path: new URL(url).pathname.slice(1)
       }));
 
-      console.log(`📦 Loading ${endpointPaths.length} endpoints via batch...`);
+      console.log(
+        `%c📦 BATCH LOAD (${endpoints.length} endpoints)`,
+        'color:#673ab7;font-weight:bold'
+      );
 
-      const response = await fetch(`${API_BASE_URL}/batch`, {
+      const res = await fetch(`${API_BASE_URL}/batch`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          endpoints: endpointPaths.map(e => e.path)
+          endpoints: endpoints.map(e => e.path)
         })
       });
 
-      if (!response.ok) {
-        throw new Error(`Batch request failed: ${response.status}`);
-      }
+      console.log(
+        '%c📦 BATCH RESPONSE',
+        'color:#673ab7',
+        {
+          status: res.status,
+          cfCache: res.headers.get('cf-cache-status') || 'N/A'
+        }
+      );
 
-      const batchData = await response.json();
+      if (!res.ok) throw new Error(`Batch HTTP ${res.status}`);
 
-      endpointPaths.forEach(({ key, path }) => {
+      const batchData = await res.json();
+
+      endpoints.forEach(({ key, path }) => {
         let data = batchData[path] || {};
-        
-        // ✅ FILTER khusus untuk endpoint terbaru
+
         if (key === 'terbaru') {
           data = this.filterApprovedMarkers(data);
-          console.log(`✅ Filtered terbaru: ${Object.keys(data).length} approved markers`);
+          console.log(`🆕 terbaru approved: ${Object.keys(data).length}`);
         }
-        
-        this.loadedData[key] = data;
 
-        const globalVar = ENDPOINT_TO_GLOBAL[key];
-        if (globalVar) {
-          window[globalVar] = data;
-        }
+this.loadedData[key] = data;
+
+if (!this.isBackgroundRefresh) {
+  this.endpointFingerprint[key] = this.generateFingerprint(data);
+}
+
+const globalVar = ENDPOINT_TO_GLOBAL[key];
+if (globalVar) window[globalVar] = data;
       });
 
-      console.log(`✅ Batch loading complete: ${Object.keys(batchData).length} endpoints loaded`);
-
-    } catch (error) {
-      console.error('❌ Batch loading failed, falling back to individual requests:', error);
-      
+    } catch (err) {
+      console.error('❌ Batch failed → fallback individual', err);
       this.useBatchLoading = false;
-      const promises = Object.keys(DATA_ENDPOINTS).map(key =>
-        this.loadEndpoint(key, DATA_ENDPOINTS[key])
-      );
-      await Promise.all(promises);
-    }
-  },
 
-  /**
-   * ✅ Filter marker yang approved === true
-   */
-  filterApprovedMarkers(data) {
-    if (!data || typeof data !== 'object') return {};
-    
-    const filtered = {};
-    Object.keys(data).forEach(key => {
-      const marker = data[key];
-      // Hanya ambil marker dengan approved === true (strict check)
-      if (marker && marker.approved === true) {
-        filtered[key] = marker;
-      }
-    });
-    
-    return filtered;
+      await Promise.all(
+        Object.keys(DATA_ENDPOINTS).map(key =>
+          this.loadEndpoint(key, DATA_ENDPOINTS[key])
+        )
+      );
+    }
   },
 
   async loadEndpoint(key, url) {
     try {
-      const response = await fetch(url);
+      const res = await fetch(url);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      console.log(
+        `%c🌐 [${key}] FETCH`,
+        'color:#2196f3',
+        {
+          status: res.status,
+          cfCache: res.headers.get('cf-cache-status') || 'N/A'
+        }
+      );
 
-      let data = await response.json();
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-      // ✅ FILTER khusus untuk endpoint terbaru
+      let data = await res.json();
+
       if (key === 'terbaru') {
         data = this.filterApprovedMarkers(data);
-        console.log(`✅ Filtered terbaru: ${Object.keys(data).length} approved markers`);
       }
 
       this.loadedData[key] = data;
 
-      const globalVar = ENDPOINT_TO_GLOBAL[key];
-      if (globalVar) window[globalVar] = data;
+if (!this.isBackgroundRefresh) {
+  this.endpointFingerprint[key] = this.generateFingerprint(data);
+}
+
+const globalVar = ENDPOINT_TO_GLOBAL[key];
+if (globalVar) window[globalVar] = data;
 
       return data;
 
-    } catch (error) {
-      console.error(`Error loading ${key}:`, error);
+    } catch (err) {
+      console.error(`❌ ${key} load failed`, err);
       this.loadedData[key] = {};
       const globalVar = ENDPOINT_TO_GLOBAL[key];
       if (globalVar) window[globalVar] = {};
-      throw error;
     }
   },
 
-  async reloadEndpoint(key) {
-    if (!DATA_ENDPOINTS[key]) return;
-    await this.loadEndpoint(key, DATA_ENDPOINTS[key]);
-    if (typeof MarkerManager !== 'undefined' && MarkerManager.updateMarkersInView) {
-      MarkerManager.updateMarkersInView();
-    }
+  filterApprovedMarkers(data) {
+    if (!data || typeof data !== 'object') return {};
+    return Object.fromEntries(
+      Object.entries(data).filter(([_, m]) => m?.approved === true)
+    );
   },
 
-  async reloadAll() {
-    this.showLoadingSpinner(true);
-
-    try {
-      await this.loadAllEndpoints();
-      if (typeof MarkerManager !== 'undefined' && MarkerManager.updateMarkersInView) {
-        MarkerManager.updateMarkersInView();
-      }
-    } finally {
-      this.showLoadingSpinner(false);
-    }
-  },
-
-  getAllMarkers() {
-    const allMarkers = [];
-
-    Object.keys(this.loadedData).forEach(endpointKey => {
-      const data = this.loadedData[endpointKey];
-      if (data && typeof data === 'object') {
-        allMarkers.push(...Object.values(data));
-      }
-    });
-
-    return allMarkers;
-  },
-
-  getMarkersByEndpoint(key) {
-    const data = this.loadedData[key];
-    return data ? Object.values(data) : [];
-  },
-
+  /* =====================================================
+   * UTILS
+   * ===================================================== */
   showLoadingSpinner(show) {
-    const spinner = document.getElementById('loadingSpinner');
-    if (spinner) spinner.style.display = show ? 'block' : 'none';
+    const el = document.getElementById('loadingSpinner');
+    if (el) el.style.display = show ? 'block' : 'none';
   },
 
   getStatus() {
     return {
+      dataSource: this.dataSource,
       isLoading: this.isLoading,
       loadedEndpoints: Object.keys(this.loadedData).length,
       totalEndpoints: Object.keys(DATA_ENDPOINTS).length,
-      endpoints: Object.keys(DATA_ENDPOINTS),
       batchMode: this.useBatchLoading,
-      terbaruCount: this.loadedData.terbaru ? Object.keys(this.loadedData.terbaru).length : 0
+      cacheStatus: this.getCachedData() ? 'HIT' : 'MISS'
     };
   }
 };

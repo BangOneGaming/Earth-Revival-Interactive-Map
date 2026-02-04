@@ -467,19 +467,60 @@ function getIconByCategoryWithSpecial(categoryId, specialIcon) {
 }
 
 
+// Di bagian akhir icon-manager.js, sebelum window.IconManager = {...}
+
+// ============================================
+// VISIBILITY CONTROL
+// ============================================
+let iconsVisible = false;
+
+function hideAllIcons() {
+  const style = document.createElement('style');
+  style.id = 'icon-visibility-control';
+  style.textContent = `
+    .leaflet-marker-icon {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      transition: none !important;
+    }
+  `;
+  document.head.appendChild(style);
+  iconsVisible = false;
+}
+
+function showAllIcons() {
+  const style = document.getElementById('icon-visibility-control');
+  if (style) {
+    style.remove();
+  }
+  iconsVisible = true;
+}
+
+// Sembunyikan icon saat pertama kali load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', hideAllIcons);
+} else {
+  hideAllIcons();
+}
+
+// Update window.IconManager untuk include fungsi baru
 window.IconManager = {
   getIconUrl,
   getCategoryName,
   getOverlayUrl,
   getAllCategories,
   getIconByCategory,
-  getIconByCategoryWithMarkerName, // ✅ BARU
+  getIconByCategoryWithMarkerName,
   createIconHTML,
   createCompositeIconHTML,
   getIconUrlWithSpecial,
   getIconByCategoryWithSpecial,
   createCompositeLeafletIconWithSpecial,
+  hideAllIcons,      // ✨ TAMBAHAN
+  showAllIcons,      // ✨ TAMBAHAN
   ICON_CONFIG,
   ICONS,
   FAILED_ICONS
 };
+// Make initializeIcons globally available
+window.initializeIcons = initializeIcons;
