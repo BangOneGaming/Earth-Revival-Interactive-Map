@@ -237,35 +237,39 @@
   // ============================================
   // ✨ SHOW ALL UI ELEMENTS
   // ============================================
-  function showAllUIElements() {
-    console.log('🎨 Showing all UI elements...');
-    
-    const styleControl = document.getElementById('ui-visibility-control');
-    if (styleControl) {
-      styleControl.remove();
-    }
-    
-    const elements = [
-      'leaderboardPanel',
-      'leaderboardToggle',
-      'filterPanel',
-      'filterToggle',
-      'notificationIcon',
-      'topLoginBtn',
-      'undergroundContainer'
-    ];
-    
-    elements.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.style.opacity = '1';
-        el.style.visibility = 'visible';
+function showAllUIElements() {
+  console.log('🎨 Showing all UI elements...');
+  
+  const styleControl = document.getElementById('ui-visibility-control');
+  if (styleControl) {
+    styleControl.remove();
+  }
+  
+  const elements = [
+    'leaderboardPanel',
+    'leaderboardToggle',
+    'filterPanel',
+    'filterToggle',
+    'notificationIcon',
+    'topLoginBtn',
+    'undergroundContainer'
+  ];
+  
+  elements.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.opacity = '1';
+      el.style.visibility = 'visible';
+      
+      // ✅ Only set pointer-events for non-container elements
+      if (id !== 'undergroundContainer') {
         el.style.pointerEvents = 'auto';
       }
-    });
-    
-    console.log('✅ All UI elements visible');
-  }
+    }
+  });
+  
+  console.log('✅ All UI elements visible');
+}
 
   // ============================================
   // MAIN INIT
