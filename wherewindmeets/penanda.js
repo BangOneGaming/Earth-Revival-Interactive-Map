@@ -11,7 +11,7 @@ const MARKER_CONFIG = {
   debounceDelay: 120
 };
 const EDIT_PERMISSION = {
-  loc_type: false // 🔒 default TIDAK bisa diedit
+  loc_type: true // 🔒 default TIDAK bisa diedit
 };
 // ========================================
 // FILTER GROUP CONFIGURATION
@@ -21,7 +21,7 @@ const filterGroupConfig = {
   hot : {
     title: 'Hot',
     icon: '',
-    categories: [2, 3, 13, 24, 36, 37]  // Teleport + Treasure Chest
+    categories: [2, 17, 19, 3, 13, 24, 36, 37]  // Teleport + Treasure Chest
   },
   discover: {
     title: 'Discover',
@@ -31,7 +31,7 @@ const filterGroupConfig = {
   collection: {
     title: 'Collection',
     icon: '',
-    categories: [5, 4, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20]
+    categories: [5, 4, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 18, 20]
   },
     minigame: {
     title: "Mini Game's",
