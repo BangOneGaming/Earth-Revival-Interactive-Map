@@ -31,95 +31,236 @@ zoom_5: [
 
   // Kaifeng surroundings
   { name: 'Kaifeng City',       lat: 148.45886927147313, lng: 167.75539636611938, size: 26 },
-  { name: 'Granary of Plenty',  lat: 165.93423477511217, lng: 175.93012166023254,    size: 26 },
-  { name: 'Jadewood Court',     lat: 161.8376638217751, lng: 161.29809069633484,    size: 26 },
-  { name: 'Roaring Sands',      lat: 141.4049587992937, lng: 155.73852682113647,    size: 26 }
+  { name: 'Granary of Plenty',  lat: 165.93423477511217, lng: 175.93012166023254, size: 26 },
+  { name: 'Jadewood Court',     lat: 161.8376638217751,  lng: 161.29809069633484, size: 26 },
+  { name: 'Roaring Sands',      lat: 141.4049587992937,  lng: 155.73852682113647, size: 26 },
+
+  // New Regions
+  { name: 'Yumen Pass', lat: 34.19193026737213, lng: 27.556250003245143,  size: 24 },
+  { name: 'Liangzhou',  lat: 46.23956782958546, lng: 51.31959538855816,  size: 24 },
+  { name: 'Qinchuan',   lat: 76.38501880776012, lng: 77.3876244232804, size: 24 },
+  { name: 'Suixiang',   lat: 102.03556094524335, lng: 196.38766062491666,    size: 24 },
+  { name: 'Tianxing',   lat: 91.8496558876488, lng: 197.92790860819716,      size: 24 },
+  { name: 'Fukasawa',   lat: 110.99789399003295, lng: 197.58816012975927,     size: 24 }
 ],
 
 // Zoom level 6: Subareas
 zoom_6: [
   {
+    "name": "Hallo Peak",
+    "cn_name": "佛光顶",
+    "lat": 119.781249,
+    "lng": 188.906244,
+    "size": 24
+  },
+  {
+    "name": "Bodhi Sea",
+    "cn_name": "菩提苦海",
+    "lat": 122.624999,
+    "lng": 196.124994,
+    "size": 24
+  },
+  {
+    "name": "Mercyheart Town",
+    "cn_name": "慈心镇",
+    "lat": 119.937499,
+    "lng": 182.031244,
+    "size": 24
+  },
+  {
+    "name": "Finesteed",
+    "cn_name": "伏马庄",
+    "lat": 120.468749,
+    "lng": 200.812494,
+    "size": 24
+  },
+  {
+    "name": "Flower Expanse",
+    "cn_name": "花海",
+    "lat": 123.156249,
+    "lng": 183.624994,
+    "size": 24
+  },
+  {
+    "name": "Mercyhearth Monastery",
+    "cn_name": "慈心山院",
+    "lat": 114.624999,
+    "lng": 183.499994,
+    "size": 24
+  },
+  {
+    "name": "Buddha Fort",
+    "cn_name": "佛爷寨",
+    "lat": 121.156249,
+    "lng": 205.218744,
+    "size": 24
+  },
+  {
+    "name": "Thousand Buddha Village",
+    "cn_name": "千佛村",
+    "lat": 115.843749,
+    "lng": 190.749994,
+    "size": 24
+  },
+  {
+    "name": "Millennium Crossing",
+    "cn_name": "千年渡",
+    "lat": 111.03426752733685,
+    "lng": 198.67107928042327,
+    "size": 24
+  },
+  {
+    "name": "Qu'an",
+    "cn_name": "曲岸",
+    "lat": 108.4923941728395,
+    "lng": 202.74151235273368,
+    "size": 24
+  },
+  {
+    "name": "Juezhangling",
+    "cn_name": "绝嶂岭",
+    "lat": 106.39265735449735,
+    "lng": 196.48740286419752,
+    "size": 24
+  },
+  {
+    "name": "Mexico City",
+    "cn_name": "墨城",
+    "lat": 99.1058958871252,
+    "lng": 195.71300946737213,
+    "size": 24
+  },
+  {
+    "name": "Clear water and clouds",
+    "cn_name": "碧水云涛",
+    "lat": 102.21518821869488,
+    "lng": 201.46898768253968,
+    "size": 24
+  },
+  {
+    "name": "Former site of Mocheng",
+    "cn_name": "墨城旧址",
+    "lat": 102.27812224338624,
+    "lng": 188.38030823280423,
+    "size": 24
+  },
+  {
+    "name": "Fuyao Peak",
+    "cn_name": "扶摇峰",
+    "lat": 88.9706032297178,
+    "lng": 198.88379422949725,
+    "size": 24
+  },
+  {
+    "name": "Huigu",
+    "cn_name": "晦谷",
+    "lat": 95.1078937940917,
+    "lng": 189.995647665895,
+    "size": 24
+  },
+  {
+    "name": "Woxingyan",
+    "cn_name": "卧星岩",
+    "lat": 90.68985615079364,
+    "lng": 191.10805224867724,
+    "size": 24
+  },
+  {
+    "name": "Liujinpo",
+    "cn_name": "流金坡",
+    "lat": 90.85729441975309,
+    "lng": 204.98317625396822,
+    "size": 24
+  },
+  {
     "name": "General's Shrine",
+    "cn_name": "将军祠",
     "lat": 126.906249,
     "lng": 199.624994,
     "size": 24
   },
   {
     "name": "Battlecrest Slope",
+    "cn_name": "七伐坡",
     "lat": 131.687499,
     "lng": 197.781244,
     "size": 24
   },
   {
     "name": "Bamboo Abode",
+    "cn_name": "竹林旧居",
     "lat": 129.906249,
     "lng": 204.687494,
     "size": 24
   },
   {
     "name": "Stonewash Strand",
+    "cn_name": "浣石浦",
     "lat": 130.687499,
     "lng": 194.812494,
     "size": 24
   },
   {
-    "name": "Kilnfire Ridge",
-    "lat": 129.562499,
-    "lng": 184.187494,
-    "size": 24
-  },
-  {
-    "name": "Pallace of Annals",
-    "lat": 139.312499,
-    "lng": 189.031244,
-    "size": 24
-  },
-  {
     "name": "Heaven Pier's",
+    "cn_name": "神仙渡",
     "lat": 130.687499,
     "lng": 189.374994,
     "size": 24
   },
   {
+    "name": "Kilnfire Ridge",
+    "cn_name": "烧瓷岭",
+    "lat": 129.562499,
+    "lng": 184.187494,
+    "size": 24
+  },
+  {
     "name": "Blissful Retreat",
+    "cn_name": "不羡仙",
     "lat": 126.874999,
     "lng": 183.312494,
     "size": 24
   },
   {
-    "name": "Harvest Village",
-    "lat": 128.031249,
-    "lng": 176.156244,
+    "name": "Still Shores",
+    "cn_name": "弱水岸",
+    "lat": 128.437499,
+    "lng": 181.468744,
     "size": 24
   },
   {
     "name": "Witherwilds",
+    "cn_name": "荒蚀林",
     "lat": 132.281249,
     "lng": 179.062494,
     "size": 24
   },
   {
+    "name": "Pallace of Annals",
+    "cn_name": "春秋别馆",
+    "lat": 139.312499,
+    "lng": 189.031244,
+    "size": 24
+  },
+  {
+    "name": "Harvest Village",
+    "cn_name": "丰禾村",
+    "lat": 128.031249,
+    "lng": 176.156244,
+    "size": 24
+  },
+  {
     "name": "Crimson Cliff",
+    "cn_name": "丹崖",
     "lat": 134.749999,
     "lng": 192.812494,
     "size": 24
   },
   {
-    "name": "Peace Bell Tower",
-    "lat": 132.406249,
-    "lng": 186.687494,
-    "size": 24
-  },
-  {
-    "name": "Riverview Terrace",
-    "lat": 135.593749,
-    "lng": 176.687494,
-    "size": 24
-  },
-    {
-    "name": "Riverside Station",
-    "lat": 132.21474461735212,
-    "lng": 172.29927253723145,
+    "name": "Gleaming Abbys",
+    "cn_name": "荧渊",
+    "lat": 133.187499,
+    "lng": 175.374994,
     "size": 24
   },
   {
@@ -129,45 +270,17 @@ zoom_6: [
     "size": 24
   },
   {
-    "name": "Sage's Knoll",
-    "lat": 137.374999,
-    "lng": 185.781244,
+    "name": "Peace Bell Tower",
+    "cn_name": "太平钟楼",
+    "lat": 132.406249,
+    "lng": 186.687494,
     "size": 24
   },
   {
-    "name": "Encircling Lake",
-    "lat": 142.156249,
-    "lng": 183.093744,
-    "size": 24
-  },
-  {
-    "name": "Gleaming Abbys",
-    "lat": 133.187499,
-    "lng": 175.374994,
-    "size": 24
-  },
-  {
-    "name": "Still Shores",
-    "lat": 128.437499,
-    "lng": 181.468744,
-    "size": 24
-  },
-  {
-    "name": "Mercyheart Town",
-    "lat": 119.937499,
-    "lng": 182.031244,
-    "size": 24
-  },
-  {
-    "name": "Hallo Peak",
-    "lat": 119.781249,
-    "lng": 188.906244,
-    "size": 24
-  },
-  {
-    "name": "Thousand Buddha Village",
-    "lat": 115.843749,
-    "lng": 190.749994,
+    "name": "Jadebrook Mountain",
+    "cn_name": "璧泉山",
+    "lat": 125.031249,
+    "lng": 190.093744,
     "size": 24
   },
   {
@@ -177,111 +290,9 @@ zoom_6: [
     "size": 24
   },
   {
-    "name": "Bodhi Sea",
-    "lat": 122.624999,
-    "lng": 196.124994,
-    "size": 24
-  },
-  {
-    "name": "Finesteed",
-    "lat": 120.468749,
-    "lng": 200.812494,
-    "size": 24
-  },
-  {
-    "name": "Flower Expanse",
-    "lat": 123.156249,
-    "lng": 183.624994,
-    "size": 24
-  },
-  {
-    "name": "Mercyhearth Monastery",
-    "lat": 114.624999,
-    "lng": 183.499994,
-    "size": 24
-  },
-  {
-    "name": "Jadebrook Mountain",
-    "lat": 125.031249,
-    "lng": 190.093744,
-    "size": 24
-  },
-  {
-    "name": "Buddha Fort",
-    "lat": 121.156249,
-    "lng": 205.218744,
-    "size": 24
-  },
-  {
-    "name": "Wildmare Ranch",
-    "lat": 124.687499,
-    "lng": 201.781244,
-    "size": 24
-  },
-  {
-    "name": "Song Dynasty Palace",
-    "lat": 144.812499,
-    "lng": 168.562494,
-    "size": 24
-  },
-  {
-    "name": "Prosperity Haven ",
-    "lat": 142.906249,
-    "lng": 164.218744,
-    "size": 24
-  },
-  {
-    "name": "Kifeng Prefecture",
-    "lat": 150.156249,
-    "lng": 168.406244,
-    "size": 24
-  },
-  {
-    "name": "Furnace Area",
-    "lat": 148.843749,
-    "lng": 164.249994,
-    "size": 24
-  },
-  {
-    "name": "Imperial Artisan Court",
-    "lat": 154.593749,
-    "lng": 163.968744,
-    "size": 24
-  },
-  {
-    "name": "Velvet Shade",
-    "lat": 143.249999,
-    "lng": 172.124994,
-    "size": 24
-  },
-  {
-    "name": "Fairgrounds",
-    "lat": 152.874999,
-    "lng": 172.499994,
-    "size": 24
-  },
-  {
-    "name": "South Gate Avenue",
-    "lat": 154.156249,
-    "lng": 168.656244,
-    "size": 24
-  },
-  {
-    "name": "Stillhearth Grove",
-    "lat": 143.437499,
-    "lng": 176.906244,
-    "size": 24
-  },
-  {
-    "name": "Abandoned Mercy Hall",
-    "lat": 146.999999,
-    "lng": 181.812494,
-    "size": 24
-  },
-  {
-    "name": "Kaifeng Suburbs-East",
-    "lat": 149.406249,
-    "lng": 176.312494,
+    "name": "Encircling Lake",
+    "lat": 142.156249,
+    "lng": 183.093744,
     "size": 24
   },
   {
@@ -291,166 +302,395 @@ zoom_6: [
     "size": 24
   },
   {
-    "name": "Heavenfall",
-    "lat": 134.249999,
-    "lng": 164.656244,
+    "name": "Wildmare Ranch",
+    "cn_name": "不伏马场",
+    "lat": 124.687499,
+    "lng": 201.781244,
     "size": 24
   },
   {
-    "name": "Baima Crossing",
-    "lat": 137.218749,
-    "lng": 171.749994,
+    "name": "South Gate Avenue",
+    "cn_name": "南门大街",
+    "lat": 154.156249,
+    "lng": 168.656244,
     "size": 24
   },
   {
-    "name": "Kaifeng Suburbs-North",
-    "lat": 138.062499,
-    "lng": 164.781244,
-    "size": 24
-  },
-  {
-    "name": "Fishwood River",
-    "lat": 137.656249,
-    "lng": 156.374994,
-    "size": 24
-  },
-  {
-    "name": "Enternal Mountain",
-    "lat": 144.468749,
-    "lng": 153.156244,
-    "size": 24
-  },
-  {
-    "name": "Kaifeng Suburbs-West",
-    "lat": 143.749999,
-    "lng": 160.093744,
-    "size": 24
-  },
-  {
-    "name": "Starveil Grassland",
-    "lat": 148.749999,
-    "lng": 154.343744,
-    "size": 24
-  },
-  {
-    "name": "Wansheng Town",
-    "lat": 148.843749,
-    "lng": 159.906244,
-    "size": 24
-  },
-  {
-    "name": "Ghost Market",
-    "lat": 158.031249,
+    "name": "Kifeng Prefecture",
+    "cn_name": "开封府",
+    "lat": 150.156249,
     "lng": 168.406244,
-    "floor": 1,
+    "size": 24
+  },
+  {
+    "name": "Fairgrounds",
+    "cn_name": "勾栏瓦肆",
+    "lat": 152.874999,
+    "lng": 172.499994,
+    "size": 24
+  },
+  {
+    "name": "Velvet Shade",
+    "cn_name": "醉花阴",
+    "lat": 143.249999,
+    "lng": 172.124994,
+    "size": 24
+  },
+  {
+    "name": "Prosperity Haven",
+    "cn_name": "寿昌坊",
+    "lat": 142.906249,
+    "lng": 164.218744,
+    "size": 24
+  },
+  {
+    "name": "Imperial Artisan Court",
+    "cn_name": "百工坊",
+    "lat": 154.593749,
+    "lng": 163.968744,
     "size": 24
   },
   {
     "name": "Forsaken Quarter",
+    "cn_name": "角门里",
     "lat": 155.718749,
     "lng": 172.718744,
     "size": 24
   },
   {
     "name": "Unbound Cavern",
+    "cn_name": "无忧洞",
     "lat": 155.968749,
     "lng": 174.874994,
     "size": 24
   },
   {
+    "name": "Furnace Area",
+    "cn_name": "熔炉区",
+    "lat": 148.843749,
+    "lng": 164.249994,
+    "size": 24
+  },
+  {
+    "name": "Kaifeng Suburbs-East",
+    "cn_name": "开封东郊",
+    "lat": 149.406249,
+    "lng": 176.312494,
+    "size": 24
+  },
+  {
+    "name": "Hidden Mist Forest",
+    "cn_name": "隐雾林",
+    "lat": 181.09375,
+    "lng": 169.25,
+    "size": 24
+  },
+  {
+    "name": "Stillhearth Grove",
+    "cn_name": "清心圃",
+    "lat": 143.437499,
+    "lng": 176.906244,
+    "size": 24
+  },
+  {
+    "name": "Abandoned Mercy Hall",
+    "cn_name": "六疾馆遗址",
+    "lat": 146.999999,
+    "lng": 181.812494,
+    "size": 24
+  },
+  {
     "name": "Jinming Pool",
+    "cn_name": "金明池",
     "lat": 156.156249,
     "lng": 157.812494,
     "size": 24
   },
   {
-    "name": "Petalfall Crossing",
-    "lat": 162.999999,
-    "lng": 156.999994,
+    "name": "Wansheng Town",
+    "cn_name": "万胜镇",
+    "lat": 148.843749,
+    "lng": 159.906244,
     "size": 24
   },
   {
-    "name": "North Imperial Garrden",
-    "lat": 159.812499,
-    "lng": 159.656244,
+    "name": "Kaifeng Suburbs-West",
+    "cn_name": "开封西郊",
+    "lat": 143.749999,
+    "lng": 160.093744,
     "size": 24
   },
   {
-    "name": "South Imperial Garden",
-    "lat": 163.624999,
-    "lng": 161.374994,
+    "name": "Starveil Grassland",
+    "cn_name": "星隐野",
+    "lat": 148.749999,
+    "lng": 154.343744,
+    "size": 24
+  },
+  {
+    "name": "Enternal Mountain",
+    "cn_name": "浮戏山",
+    "lat": 144.468749,
+    "lng": 153.156244,
+    "size": 24
+  },
+  {
+    "name": "Fishwood River",
+    "cn_name": "鱼柏川",
+    "lat": 137.656249,
+    "lng": 156.374994,
+    "size": 24
+  },
+  {
+    "name": "Kaifeng Suburbs-North",
+    "cn_name": "开封北郊",
+    "lat": 138.062499,
+    "lng": 164.781244,
+    "size": 24
+  },
+  {
+    "name": "Heavenfall",
+    "cn_name": "天上来",
+    "lat": 134.249999,
+    "lng": 164.656244,
+    "size": 24
+  },
+  {
+    "name": "Baima Crossing",
+    "cn_name": "白马津",
+    "lat": 137.218749,
+    "lng": 171.749994,
+    "size": 24
+  },
+  {
+    "name": "Plainfield",
+    "cn_name": "平野原",
+    "lat": 161.999999,
+    "lng": 174.562494,
+    "size": 24
+  },
+  {
+    "name": "Kaifeng Suburbs-South",
+    "cn_name": "开封南郊",
+    "lat": 158.437499,
+    "lng": 168.906244,
+    "size": 24
+  },
+  {
+    "name": "Sorrowfield Village",
+    "cn_name": "达安村",
+    "lat": 157.124999,
+    "lng": 177.687494,
+    "size": 24
+  },
+  {
+    "name": "Ever-Normal Granary",
+    "cn_name": "常平仓",
+    "lat": 164.562499,
+    "lng": 177.968744,
+    "size": 24
+  },
+  {
+    "name": "Gracetown",
+    "cn_name": "承恩镇",
+    "lat": 172.906249,
+    "lng": 174.281244,
     "size": 24
   },
   {
     "name": "Masterwood Hamlet",
+    "cn_name": "梓匠居",
     "lat": 160.718749,
     "lng": 164.562494,
     "size": 24
   },
   {
     "name": "Buddha Statue Site",
+    "cn_name": "造像处",
     "lat": 164.874999,
     "lng": 164.749994,
     "size": 24
   },
   {
     "name": "Grand Canal",
+    "cn_name": "鸿沟古渠",
     "lat": 163.999999,
     "lng": 170.156244,
     "size": 24
   },
   {
-    "name": "Pipa Chasm",
-    "lat": 167.593749,
-    "lng": 159.406244,
-    "size": 24
-  },
-  {
     "name": "Dreamfall Cliff",
+    "cn_name": "望淮南崖",
     "lat": 167.718749,
     "lng": 168.437494,
     "size": 24
   },
   {
-    "name": "Sorrowfield Village",
-    "lat": 157.124999,
-    "lng": 177.687494,
-    "size": 24
-  },
-  {
-    "name": "Kaifeng Suburbs-South",
-    "lat": 158.437499,
-    "lng": 168.906244,
-    "size": 24
-  },
-  {
-    "name": "Plainfield",
-    "lat": 161.999999,
-    "lng": 174.562494,
-    "size": 24
-  },
-  {
-    "name": "Ever-Normal Granary",
-    "lat": 164.562499,
-    "lng": 177.968744,
-    "size": 24
-  },
-  {
     "name": "Martial Temple",
+    "cn_name": "武成王庙",
     "lat": 167.906249,
     "lng": 164.531244,
     "size": 24
   },
   {
-    "name": "Gracetown",
-    "lat": 172.906249,
-    "lng": 174.281244,
+    "name": "Pipa Chasm",
+    "cn_name": "琵琶沟",
+    "lat": 167.593749,
+    "lng": 159.406244,
+    "size": 24
+  },
+  {
+    "name": "Petalfall Crossing",
+    "cn_name": "飞花渡",
+    "lat": 162.999999,
+    "lng": 156.999994,
+    "size": 24
+  },
+  {
+    "name": "South Imperial Garden",
+    "cn_name": "御苑南",
+    "lat": 163.624999,
+    "lng": 161.374994,
+    "size": 24
+  },
+  {
+    "name": "North Imperial Garrden",
+    "cn_name": "御苑北",
+    "lat": 159.812499,
+    "lng": 159.656244,
     "size": 24
   },
   {
     "name": "Desperation Ridge",
+    "cn_name": "鹰愁岭",
     "lat": 173.937499,
     "lng": 184.031244,
+    "size": 24
+  },
+  {
+    "name": "jade terrace",
+    "cn_name": "玉露台",
+    "lat": 57.76500667372133,
+    "lng": 42.161156303350964,
+    "size": 24
+  },
+  {
+    "name": "Xiaoguan Ancient Road",
+    "cn_name": "萧关古道",
+    "lat": 65.61156752028218,
+    "lng": 63.33366030335096,
+    "size": 24
+  },
+  {
+    "name": "Fufengdian",
+    "cn_name": "扶风甸",
+    "lat": 71.34976610934744,
+    "lng": 69.2235688042328,
+    "size": 24
+  },
+  {
+    "name": "lion grave",
+    "cn_name": "狮子坟",
+    "lat": 76.35493310758376,
+    "lng": 76.24801214814813,
+    "size": 24
+  },
+  {
+    "name": "Drifting in the wilderness",
+    "cn_name": "荡莽原",
+    "lat": 70.07440647619048,
+    "lng": 75.52361289594354,
+    "size": 24
+  },
+  {
+    "name": "Huayin North",
+    "cn_name": "华阴北",
+    "lat": 84.36208423280422,
+    "lng": 79.3443318659612,
+    "size": 24
+  },
+  {
+    "name": "Huayudao",
+    "cn_name": "华舆道",
+    "lat": 76.99836894532628,
+    "lng": 81.24693052557318,
+    "size": 24
+  },
+  {
+    "name": "Wangjingchuan",
+    "cn_name": "望泾川",
+    "lat": 72.05891238095238,
+    "lng": 85.66714519929452,
+    "size": 24
+  },
+  {
+    "name": "Chengcheng Lake",
+    "cn_name": "陷城湖",
+    "lat": 81.333799,
+    "lng": 28.39068,
+    "size": 24
+  },
+  {
+    "name": "Mijindu",
+    "cn_name": "迷津渡",
+    "lat": 28.411461751689593,
+    "lng": 27.00979439153439,
+    "size": 24
+  },
+  {
+    "name": "jinshachuan",
+    "cn_name": "金沙川",
+    "lat": 36.78444664691357,
+    "lng": 22.11654574109347,
+    "size": 24
+  },
+  {
+    "name": "Ma Miitu",
+    "cn_name": "马迷途",
+    "lat": 35.83257033791887,
+    "lng": 33.10039456790123,
+    "size": 24
+  },
+  {
+    "name": "aysu",
+    "cn_name": "阿依苏",
+    "lat": 47.32836784479717,
+    "lng": 24.016079935097,
+    "size": 24
+  },
+  {
+    "name": "Yinma Pass",
+    "cn_name": "饮马隘",
+    "lat": 42.42554528818342,
+    "lng": 44.50366278659612,
+    "size": 24
+  },
+  {
+    "name": "Yuchi",
+    "cn_name": "玉池",
+    "lat": 46.23956782958546,
+    "lng": 51.31959538855816,
+    "size": 24
+  },
+  {
+    "name": "Jiuquan Town",
+    "cn_name": "酒泉镇",
+    "lat": 47.52018229276896,
+    "lng": 52.08769365784831,
+    "size": 24
+  },
+  {
+    "name": "Wuwei Mountain",
+    "cn_name": "武威山",
+    "lat": 42.46588059118165,
+    "lng": 60.874973544973535,
+    "size": 24
+  },
+  {
+    "name": "Jiedushi Mansion",
+    "cn_name": "节度使府",
+    "lat": 46.70663856084656,
+    "lng": 60.05222222222222,
     "size": 24
   }
 ]
@@ -731,14 +971,17 @@ function createLabelIcon(text, fontSize) {
   // ==========================================
 
   return {
-    init,
-    show,        // NEW!
-    hide,        // NEW!
-    addLabelConfig,
-    refresh,
-    destroy,
-    isVisible: isLabelsVisible // NEW!
-  };
+  init,
+  show,
+  hide,
+  addLabelConfig,
+  refresh,
+  destroy,
+  isVisible: isLabelsVisible,
+  _getLabelConfig: function(zoomKey) {   // ← TAMBAHKAN INI
+    return LABEL_CONFIG[zoomKey] || [];
+  }
+};
 
 })();
 

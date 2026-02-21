@@ -34,145 +34,184 @@ this.setActiveRegion('all', false);
   /**
    * Extract unique regions from all markers
    */
-  extractRegions() {
-    const regionsSet = new Set();
-    
-    // Get all markers
-    if (typeof MarkerManager !== 'undefined' && MarkerManager.getAllMarkers) {
-      const markers = MarkerManager.getAllMarkers();
-      
-      markers.forEach(marker => {
-        if (marker.loc_type && marker.loc_type.trim() !== '') {
-          regionsSet.add(marker.loc_type.trim());
-        }
-      });
-    }
-    
-    // Sort regions alphabetically
-    const regionsList = Array.from(regionsSet).sort();
-    
-    // Build regions array with 'All Regions' first
-    this.availableRegions = [
-      {
-        id: 'all',
-        name: 'All Regions',
-        icon: `${ICON_BASE_URL}region.webp`
-      },
-      ...regionsList.map(region => ({
-        id: region,
-        name: region,
-        icon: `${ICON_BASE_URL}layericon.png`
-      }))
-    ];
-    
-    console.log(`📍 Found ${regionsList.length} unique regions:`, regionsList);
-  },
+extractRegions() {
+  const regionsSet = new Set();
+
+  if (typeof MarkerManager !== 'undefined' && MarkerManager.getAllMarkers) {
+    const markers = MarkerManager.getAllMarkers();
+
+    markers.forEach(marker => {
+      // ✅ Hanya ambil region dari marker main map
+      const mapType = (marker.map_type || '').trim().toLowerCase();
+      if (mapType === 'hutuo') return; // skip marker hutuo
+
+      if (marker.loc_type && marker.loc_type.trim() !== '') {
+        regionsSet.add(marker.loc_type.trim());
+      }
+    });
+  }
+
+  const regionsList = Array.from(regionsSet).sort();
+
+  this.availableRegions = [
+    { id: 'all', name: 'All Regions', icon: `${ICON_BASE_URL}region.webp` },
+    ...regionsList.map(region => ({
+      id: region,
+      name: region,
+      icon: `${ICON_BASE_URL}region.webp`
+    }))
+  ];
+
+  console.log(`📍 Found ${regionsList.length} unique regions (main map only):`, regionsList);
+},
 
   /**
    * Setup region selection UI
    */
   setupUI() {
-    // Create container if not exists
-    let container = document.querySelector('.region-container');
-    if (!container) {
-      container = document.createElement('div');
-      container.className = 'region-container';
-      document.body.appendChild(container);
-    }
-    
-    // Create toggle button
-    let toggleBtn = document.getElementById('regionToggle');
-    if (!toggleBtn) {
-      toggleBtn = document.createElement('button');
-      toggleBtn.id = 'regionToggle';
-      toggleBtn.className = 'region-toggle';
-      toggleBtn.title = 'Switch Region';
-      toggleBtn.innerHTML = `<img src="${ICON_BASE_URL}outland.png" alt="Region">`;
-      container.appendChild(toggleBtn);
-    }
-    
-    // Create panel
-    let panel = document.getElementById('regionPanel');
-    if (!panel) {
-      panel = document.createElement('div');
-      panel.id = 'regionPanel';
-      panel.className = 'region-panel';
-      container.appendChild(panel);
-    }
-    
-    // Create content
-    let content = document.getElementById('regionContent');
-    if (!content) {
-      content = document.createElement('div');
-      content.id = 'regionContent';
-      content.className = 'region-content';
-      panel.appendChild(content);
-    }
-    
-    // Populate regions
-    content.innerHTML = '';
-    
-    this.availableRegions.forEach((region) => {
-      const isActive = this.activeRegion === region.id;
-      
-      const regionItem = document.createElement('div');
-      regionItem.className = `region-item ${isActive ? 'active' : ''}`;
-      regionItem.dataset.regionId = region.id;
-      
-      regionItem.innerHTML = `
-        <img src="${region.icon}" alt="${region.name}" class="region-icon">
-        <div class="region-info">
-          <div class="region-name">${region.name}</div>
-        </div>
-      `;
-      
-      content.appendChild(regionItem);
-    });
-    
-    this.updateStats();
-  },
+  // Create container if not exists
+  let container = document.querySelector('.region-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.className = 'region-container';
+    document.body.appendChild(container);
+  }
+
+  // Create toggle button
+  let toggleBtn = document.getElementById('regionToggle');
+  if (!toggleBtn) {
+    toggleBtn = document.createElement('button');
+    toggleBtn.id = 'regionToggle';
+    toggleBtn.className = 'region-toggle';
+    toggleBtn.title = 'Switch Region';
+    toggleBtn.innerHTML = `<img src="${ICON_BASE_URL}outland.png" alt="Region">`;
+    container.appendChild(toggleBtn);
+  }
+
+  // Create panel
+  let panel = document.getElementById('regionPanel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'regionPanel';
+    panel.className = 'region-panel';
+    container.appendChild(panel);
+  }
+
+  // === STICKY HEADER: All Regions ===
+  let stickyHeader = document.getElementById('regionStickyHeader');
+  if (!stickyHeader) {
+    stickyHeader = document.createElement('div');
+    stickyHeader.id = 'regionStickyHeader';
+    stickyHeader.className = 'region-sticky-header';
+    panel.appendChild(stickyHeader);
+  }
+
+  const allRegion = this.availableRegions.find(r => r.id === 'all');
+  const allItem = document.createElement('div');
+  allItem.className = `region-item ${this.activeRegion === 'all' ? 'active' : ''}`;
+  allItem.dataset.regionId = 'all';
+  allItem.innerHTML = `
+    <img src="${allRegion.icon}" alt="${allRegion.name}" class="region-icon">
+    <div class="region-info">
+      <div class="region-name">${allRegion.name}</div>
+    </div>
+  `;
+  stickyHeader.innerHTML = '';
+  stickyHeader.appendChild(allItem);
+
+  // === SCROLLABLE CONTENT: Region lainnya ===
+  let content = document.getElementById('regionContent');
+  if (!content) {
+    content = document.createElement('div');
+    content.id = 'regionContent';
+    content.className = 'region-content';
+    panel.appendChild(content);
+  }
+  content.innerHTML = '';
+
+  const otherRegions = this.availableRegions.filter(r => r.id !== 'all');
+  otherRegions.forEach((region) => {
+    const isActive = this.activeRegion === region.id;
+
+    const regionItem = document.createElement('div');
+    regionItem.className = `region-item ${isActive ? 'active' : ''}`;
+    regionItem.dataset.regionId = region.id;
+    regionItem.innerHTML = `
+      <img src="${region.icon}" alt="${region.name}" class="region-icon">
+      <div class="region-info">
+        <div class="region-name">${region.name}</div>
+      </div>
+    `;
+    content.appendChild(regionItem);
+  });
+
+  this.updateStats();
+},
 
 /**
- * Focus map to one marker in active region
+ * Cek apakah region ini ada di map hutuo atau main
+ * Berdasarkan marker yang punya loc_type tersebut
+ */
+getRegionMapType(regionId) {
+  if (regionId === 'all') return 'main';
+  
+  if (typeof MarkerManager === 'undefined') return 'main';
+  const markers = MarkerManager.getAllMarkers();
+  
+  // Cari marker pertama yang punya loc_type ini
+  const found = markers.find(m => 
+    m.loc_type && m.loc_type.trim() === regionId
+  );
+  
+  if (!found) return 'main';
+  return (found.map_type || '').trim().toLowerCase() === 'hutuo' ? 'hutuo' : 'main';
+},
+
+/**
+ * Focus map to region — switch map dulu jika beda
  */
 focusToRegion(regionId) {
   if (!this.map || regionId === 'all') return;
-  if (typeof MarkerManager === 'undefined') return;
 
-  const markers = MarkerManager.getAllMarkers?.();
-  if (!markers || !markers.length) return;
-
-  // Cari SEMUA marker region (data level)
-  const regionMarkers = markers.filter(m =>
-    m.loc_type && m.loc_type.trim() === regionId
-  );
-
-  if (!regionMarkers.length) return;
-
-  // Prioritas 1: marker leaflet yang sudah ada
-  const leafletReady = regionMarkers.find(m => m.marker);
-
-  let latlng = null;
-
-  if (leafletReady) {
-    latlng = leafletReady.marker.getLatLng();
-  } 
-  // Fallback: pakai data koordinat mentah
-  else {
-    const raw = regionMarkers[0];
-
-    if (raw.latitude != null && raw.longitude != null) {
-      latlng = L.latLng(raw.latitude, raw.longitude);
+  const targetMapType = this.getRegionMapType(regionId);
+  const currentMap = typeof getCurrentMapPreset === 'function' ? getCurrentMapPreset() : 'main';
+  
+  const doFly = () => {
+    // Cari di zoom_6 labels dulu
+    if (
+      typeof RegionLabelManager !== 'undefined' &&
+      typeof RegionLabelManager._getLabelConfig === 'function'
+    ) {
+      const zoom6Labels = RegionLabelManager._getLabelConfig('zoom_6');
+      const matchedLabel = zoom6Labels?.find(
+        label => label.name.trim().toLowerCase() === regionId.trim().toLowerCase()
+      );
+      if (matchedLabel) {
+        this.map.flyTo([matchedLabel.lat, matchedLabel.lng], 6, { duration: 1.0 });
+        console.log(`🎯 Focused to zoom_6 label: ${matchedLabel.name}`);
+        return;
+      }
     }
+
+    // Fallback: pakai marker
+    const markers = MarkerManager.getAllMarkers?.();
+    if (!markers?.length) return;
+    const regionMarkers = markers.filter(m => m.loc_type && m.loc_type.trim() === regionId);
+    if (!regionMarkers.length) return;
+    const raw = regionMarkers[0];
+    if (raw.lat && raw.lng) {
+      this.map.flyTo([parseFloat(raw.lat), parseFloat(raw.lng)], 6, { duration: 0.8 });
+    }
+  };
+
+  // ✅ Jika beda map, switch dulu baru fly to
+  if (targetMapType !== currentMap) {
+    console.log(`🔄 Switching map dari ${currentMap} ke ${targetMapType} untuk region: ${regionId}`);
+    switchMapPreset(targetMapType, true);
+    setTimeout(doFly, 900); // Tunggu switch + refresh selesai
+  } else {
+    doFly();
   }
-
-  if (!latlng) return;
-
-  this.map.flyTo(latlng, Math.max(this.map.getZoom(), 6), {
-    duration: 0.8
-  });
-
-  console.log(`🎯 Focused to region (lazy-safe): ${regionId}`, latlng);
 },
 
 
@@ -199,7 +238,17 @@ focusToRegion(regionId) {
         this.closePanel();
       }
     });
-    
+    // Sticky header click (All Regions)
+const stickyHeader = document.getElementById('regionStickyHeader');
+if (stickyHeader) {
+  stickyHeader.addEventListener('click', (e) => {
+    const regionItem = e.target.closest('.region-item');
+    if (!regionItem) return;
+    const regionId = regionItem.dataset.regionId;
+    this.setActiveRegion(regionId);
+    setTimeout(() => this.closePanel(), 300);
+  });
+}
     // Region item clicks
     const content = document.getElementById('regionContent');
     if (content) {
@@ -276,17 +325,17 @@ focusToRegion(regionId) {
    * Check if a marker should be visible based on active region
    */
   shouldShowMarker(marker) {
-    // If 'All Regions' is active, show all markers
-    if (this.activeRegion === 'all') {
-      return true;
-    }
-    
-    // Check if marker has loc_type
-    const markerRegion = marker.loc_type ? marker.loc_type.trim() : '';
-    
-    // Show only if matches active region
-    return markerRegion === this.activeRegion;
-  },
+  // Jika map hutuo aktif, skip region filter sepenuhnya
+  const currentMap = typeof getCurrentMapPreset === 'function' 
+    ? getCurrentMapPreset() : 'main';
+  if (currentMap === 'hutuo') return true;
+
+  // All Regions = tampilkan semua
+  if (this.activeRegion === 'all') return true;
+
+  const markerRegion = marker.loc_type ? marker.loc_type.trim() : '';
+  return markerRegion === this.activeRegion;
+},
 
   /**
    * Get active region info

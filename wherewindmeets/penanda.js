@@ -10,6 +10,8 @@ const MARKER_CONFIG = {
   bufferPercent: 0.2,
   debounceDelay: 120
 };
+
+
 const EDIT_PERMISSION = {
   loc_type: false // 🔒 default TIDAK bisa diedit
 };
@@ -943,7 +945,10 @@ addMarkersBatch(markers, bounds) {
       if (!passesRegionFilter) {
         continue;
       }
-
+     // ✅ CHECK X: map_type filter - sesuaikan dengan map aktif
+      if (!this.isMarkerVisibleOnCurrentMap(markerData)) {
+        continue;
+      }
       // 🆕 CHECK 4: Check if series view is active (NEW!)
       if (typeof KnowledgePartNavigation !== 'undefined' && 
           KnowledgePartNavigation.isSeriesViewActive) {
@@ -1164,12 +1169,16 @@ showFloorSwitchNotification(floorId) {
  */
 updateMarkersInView() {
   if (!this.map) return;
-  
+
   const bounds = this.getBufferedBounds();
   const markers = this.getAllMarkers();
-  
+
   this.removeOutOfBoundsMarkers(bounds);
-  this.addMarkersBatch(markers, bounds);
+
+  // ✅ Filter by map_type sebelum dikirim ke addMarkersBatch
+  const filteredMarkers = markers.filter(m => this.isMarkerVisibleOnCurrentMap(m));
+
+  this.addMarkersBatch(filteredMarkers, bounds);
 },
 
 /**
@@ -1208,6 +1217,26 @@ updateStats() {
   }
 
   statsEl.innerHTML = statsHTML;
+},
+
+/**
+ * Check apakah marker boleh tampil di map yang sedang aktif
+ * - map "main"  → marker tanpa map_type (kosong/null/undefined)
+ * - map "hutuo" → marker dengan map_type === "hutuo"
+ */
+isMarkerVisibleOnCurrentMap(markerData) {
+  const currentMap = typeof getCurrentMapPreset === 'function'
+    ? getCurrentMapPreset()
+    : 'main';
+
+  const markerMapType = (markerData.map_type || '').trim().toLowerCase();
+
+  if (currentMap === 'hutuo') {
+    return markerMapType === 'hutuo';
+  }
+
+  // default: main map → hanya marker tanpa map_type
+  return markerMapType === '';
 },
 
 /**

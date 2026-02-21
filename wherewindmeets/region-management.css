@@ -73,7 +73,12 @@
   overflow-y: auto;
   max-height: 320px;
 }
-
+/* Sticky All Regions header */
+.region-sticky-header {
+  padding: 0;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
 .region-content::-webkit-scrollbar { 
   width: 4px; 
 }
