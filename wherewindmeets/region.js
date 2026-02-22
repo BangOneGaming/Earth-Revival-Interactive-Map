@@ -894,9 +894,9 @@ function addLabels(labels) {
 
   // cek map aktif
   const currentMap =
-    typeof getCurrentMapPreset === 'function'
-      ? getCurrentMapPreset()
-      : 'main';
+  typeof getCurrentMapPreset === 'function'
+    ? (getCurrentMapPreset() || 'main').toLowerCase()
+    : 'main';
 
   labels.forEach(labelConfig => {
 
@@ -908,7 +908,11 @@ function addLabels(labels) {
       rawType === '' ? 'main' : rawType;
 
     // filter universal
-    if (labelMap !== currentMap) return;
+    const shouldShow =
+  currentMap === 'main' ||
+  labelMap === currentMap;
+
+if (!shouldShow) return;
 
     const icon = createLabelIcon(
       labelConfig.name,
