@@ -1,728 +1,1142 @@
 /**
- * Region Manager - Filter markers by loc_type
- * With hierarchical grouping based on zoom_3_4 / zoom_5 labels
+ * Region Label Manager
+ * Displays region/area names on the map based on zoom level
+ * Labels are text-only (no popup), with black text and white stroke
+ * 
+ * @author Where Wind Meet Map
+ * @version 1.1.0 - Added show/hide methods
  */
 
-const RegionManager = {
-  map: null,
-  activeRegion: 'all',
-  availableRegions: [],
-  groupedRegions: [],   // Hierarchical structure
-  isOpen: false,
-  expandedGroups: {},   // Track which groups are expanded
+const RegionLabelManager = (function() {
+  'use strict';
+
+  // ==========================================
+  // CONFIGURATION
+  // ==========================================
   
-  /**
-   * Initialize region manager
-   */
-  async init(map) {
-    this.map = map;
-    this.majorRegionIds = new Set();
-    // Extract unique regions from markers
-    this.extractRegions();
-    
-    // Build grouped structure from label config
-    this.buildGroupedRegions();
-    
-    // Setup UI
-    this.setupUI();
-    this.setupEventListeners();
-    
-    // Always reset to All Regions on page load
-    this.setActiveRegion('all', false);
-    
-    // Show hint after delay
-    setTimeout(() => {
-      this.showRegionHint();
-    }, 3000);
+const LABEL_CONFIG = {
+  // Zoom level 3–4: Major regions (PALING BESAR)
+  zoom_3_4: [
+    { name: 'Qinghe',  lat: 130.2765, lng: 187.7205, size: 60 },
+    { name: 'Kaifeng', lat: 159.1016220096778, lng: 167.6629340648651, size: 60 },
+    { name: 'Hexi',  lat: 51.29972139261508, lng: 51.52788323668682, size: 60 },
+    { name: 'Bujian Mountain',  lat: 102.05143525952718, lng: 196.66018867492676, size: 60 }
+  ],
+
+// Zoom level 5: Sub-regions (SEDANG)
+zoom_5: [
+  { "name": "Verdant Wilds",     "lat": 130.92766841618575, "lng": 198.2494502067566,  "size": 26, "map_type": "Qinghe" },
+  { "name": "Moonveil Mountain", "lat": 131.34873125328068, "lng": 182.43181371688843, "size": 26, "map_type": "Qinghe" },
+  { "name": "Sundara Land",      "lat": 120.95253073067192, "lng": 187.95543956756592, "size": 26, "map_type": "Qinghe" },
+
+  { "name": "Kaifeng City",      "lat": 148.45886927147313, "lng": 167.75539636611938, "size": 26, "map_type": "Kaifeng" },
+  { "name": "Granary of Plenty", "lat": 165.93423477511217, "lng": 175.93012166023254, "size": 26, "map_type": "Kaifeng" },
+  { "name": "Jadewood Court",    "lat": 161.8376638217751,  "lng": 161.29809069633484, "size": 26, "map_type": "Kaifeng" },
+  { "name": "Roaring Sands",     "lat": 141.4049587992937,  "lng": 155.73852682113647, "size": 26, "map_type": "Kaifeng" },
+
+  { "name": "Yumen Pass", "lat": 34.19193026737213,  "lng": 27.556250003245143, "size": 26, "map_type": "Hexi" },
+  { "name": "Liangzhou",  "lat": 46.23956782958546,  "lng": 51.31959538855816,  "size": 26, "map_type": "Hexi" },
+  { "name": "Qinchuan",   "lat": 76.38501880776012,  "lng": 77.3876244232804,   "size": 26, "map_type": "Hexi" },
+
+  { "name": "Suixiang", "lat": 102.03556094524335, "lng": 196.38766062491666, "size": 26, "map_type": "Bujian Mountain" },
+  { "name": "Tianxing", "lat": 91.8496558876488,   "lng": 197.92790860819716, "size": 26, "map_type": "Bujian Mountain" },
+  { "name": "Fukasawa", "lat": 110.99789399003295,  "lng": 197.58816012975927, "size": 26, "map_type": "Bujian Mountain" },
+  { "name": "Hutuo", "lat": 34.207554,  "lng": 18.271504, "size": 24, "map_type": "Bujian Mountain" }
+],
+
+// Zoom level 6: Subareas
+zoom_6: [
+  {
+    "name": "Hallo Peak",
+    "cn_name": "佛光顶",
+    "lat": 119.781249,
+    "lng": 188.906244,
+    "size": 24,
+    "sub_regions": "Sundara Land"
   },
+  {
+    "name": "Bodhi Sea",
+    "cn_name": "菩提苦海",
+    "lat": 122.624999,
+    "lng": 196.124994,
+    "size": 24,
+    "sub_regions": "Sundara Land"
+  },
+  {
+    "name": "Mercyheart Town",
+    "cn_name": "慈心镇",
+    "lat": 119.937499,
+    "lng": 182.031244,
+    "size": 24,
+    "sub_regions": "Sundara Land"
+  },
+  {
+    "name": "Finesteed",
+    "cn_name": "伏马庄",
+    "lat": 120.468749,
+    "lng": 200.812494,
+    "size": 24,
+    "sub_regions": "Sundara Land"
+  },
+  {
+    "name": "Flower Expanse",
+    "cn_name": "花海",
+    "lat": 123.156249,
+    "lng": 183.624994,
+    "size": 24,
+    "sub_regions": "Sundara Land"
+  },
+  {
+    "name": "Mercyhearth Monastery",
+    "cn_name": "慈心山院",
+    "lat": 114.624999,
+    "lng": 183.499994,
+    "size": 24,
+    "sub_regions": "Sundara Land"
+  },
+  {
+    "name": "Buddha Fort",
+    "cn_name": "佛爷寨",
+    "lat": 121.156249,
+    "lng": 205.218744,
+    "size": 24,
+    "sub_regions": "Sundara Land"
+  },
+  {
+    "name": "Thousand Buddha Village",
+    "cn_name": "千佛村",
+    "lat": 115.843749,
+    "lng": 190.749994,
+    "size": 24,
+    "sub_regions": "Sundara Land"
+  },
+  {
+    "name": "Millennium Crossing",
+    "cn_name": "千年渡",
+    "lat": 111.03426752733685,
+    "lng": 198.67107928042327,
+    "size": 24,
+    "sub_regions": "Fukasawa"
+  },
+  {
+    "name": "Qu'an",
+    "cn_name": "曲岸",
+    "lat": 108.4923941728395,
+    "lng": 202.74151235273368,
+    "size": 24,
+    "sub_regions": "Fukasawa"
+  },
+  {
+    "name": "Juezhangling",
+    "cn_name": "绝嶂岭",
+    "lat": 106.39265735449735,
+    "lng": 196.48740286419752,
+    "size": 24,
+    "sub_regions": "Suixiang"
+  },
+  {
+    "name": "Mexico City",
+    "cn_name": "墨城",
+    "lat": 99.1058958871252,
+    "lng": 195.71300946737213,
+    "size": 24,
+    "sub_regions": "Suixiang"
+  },
+  {
+    "name": "Clear water and clouds",
+    "cn_name": "碧水云涛",
+    "lat": 102.21518821869488,
+    "lng": 201.46898768253968,
+    "size": 24,
+    "sub_regions": "Suixiang"
+  },
+  {
+    "name": "Former site of Mocheng",
+    "cn_name": "墨城旧址",
+    "lat": 102.27812224338624,
+    "lng": 188.38030823280423,
+    "size": 24,
+    "sub_regions": "Suixiang"
+  },
+  {
+    "name": "Fuyao Peak",
+    "cn_name": "扶摇峰",
+    "lat": 88.9706032297178,
+    "lng": 198.88379422949725,
+    "size": 24,
+    "sub_regions": "Tianxing"
+  },
+  {
+    "name": "Huigu",
+    "cn_name": "晦谷",
+    "lat": 95.1078937940917,
+    "lng": 189.995647665895,
+    "size": 24,
+    "sub_regions": "Tianxing"
+  },
+  {
+    "name": "Woxingyan",
+    "cn_name": "卧星岩",
+    "lat": 90.68985615079364,
+    "lng": 191.10805224867724,
+    "size": 24,
+    "sub_regions": "Tianxing"
+  },
+  {
+    "name": "Liujinpo",
+    "cn_name": "流金坡",
+    "lat": 90.85729441975309,
+    "lng": 204.98317625396822,
+    "size": 24,
+    "sub_regions": "Tianxing"
+  },
+  {
+    "name": "General's Shrine",
+    "cn_name": "将军祠",
+    "lat": 126.906249,
+    "lng": 199.624994,
+    "size": 24,
+    "sub_regions": "Verdant Wilds"
+  },
+  {
+    "name": "Battlecrest Slope",
+    "cn_name": "七伐坡",
+    "lat": 131.687499,
+    "lng": 197.781244,
+    "size": 24,
+    "sub_regions": "Verdant Wilds"
+  },
+  {
+    "name": "Bamboo Abode",
+    "cn_name": "竹林旧居",
+    "lat": 129.906249,
+    "lng": 204.687494,
+    "size": 24,
+    "sub_regions": "Verdant Wilds"
+  },
+  {
+    "name": "Stonewash Strand",
+    "cn_name": "浣石浦",
+    "lat": 130.687499,
+    "lng": 194.812494,
+    "size": 24,
+    "sub_regions": "Verdant Wilds"
+  },
+  {
+    "name": "Heaven Pier's",
+    "cn_name": "神仙渡",
+    "lat": 130.687499,
+    "lng": 189.374994,
+    "size": 24,
+    "sub_regions": "Moonveil Mountain"
+  },
+  {
+    "name": "Kilnfire Ridge",
+    "cn_name": "烧瓷岭",
+    "lat": 129.562499,
+    "lng": 184.187494,
+    "size": 24,
+    "sub_regions": "Moonveil Mountain"
+  },
+  {
+    "name": "Blissful Retreat",
+    "cn_name": "不羡仙",
+    "lat": 126.874999,
+    "lng": 183.312494,
+    "size": 24,
+    "sub_regions": "Moonveil Mountain"
+  },
+  {
+    "name": "Still Shores",
+    "cn_name": "弱水岸",
+    "lat": 128.437499,
+    "lng": 181.468744,
+    "size": 24,
+    "sub_regions": "Moonveil Mountain"
+  },
+  {
+    "name": "Witherwilds",
+    "cn_name": "荒蚀林",
+    "lat": 132.281249,
+    "lng": 179.062494,
+    "size": 24,
+    "sub_regions": "Moonveil Mountain"
+  },
+  {
+    "name": "Pallace of Annals",
+    "cn_name": "春秋别馆",
+    "lat": 139.312499,
+    "lng": 189.031244,
+    "size": 24,
+    "sub_regions": "Moonveil Mountain"
+  },
+  {
+    "name": "Harvest Village",
+    "cn_name": "丰禾村",
+    "lat": 128.031249,
+    "lng": 176.156244,
+    "size": 24,
+    "sub_regions": "Moonveil Mountain"
+  },
+  {
+    "name": "Crimson Cliff",
+    "cn_name": "丹崖",
+    "lat": 134.749999,
+    "lng": 192.812494,
+    "size": 24,
+    "sub_regions": "Moonveil Mountain"
+  },
+  {
+    "name": "Gleaming Abbys",
+    "cn_name": "荧渊",
+    "lat": 133.187499,
+    "lng": 175.374994,
+    "size": 24,
+    "sub_regions": "Moonveil Mountain"
+  },
+  {
+    "name": "Twinbeast Ridge",
+    "lat": 138.343749,
+    "lng": 181.531244,
+    "size": 24,
+    "sub_regions": "Moonveil Mountain"
+  },
+  {
+    "name": "Peace Bell Tower",
+    "cn_name": "太平钟楼",
+    "lat": 132.406249,
+    "lng": 186.687494,
+    "size": 24,
+    "sub_regions": "Moonveil Mountain"
+  },
+  {
+    "name": "Jadebrook Mountain",
+    "cn_name": "璧泉山",
+    "lat": 125.031249,
+    "lng": 190.093744,
+    "size": 24,
+    "sub_regions": "Sundara Land"
+  },
+  {
+    "name": "Floral Expanse Beyond",
+    "lat": 118.406249,
+    "lng": 197.187494,
+    "size": 24,
+    "sub_regions": "Sundara Land"
+  },
+  {
+    "name": "Encircling Lake",
+    "lat": 142.156249,
+    "lng": 183.093744,
+    "size": 24,
+    "sub_regions": "Moonveil Mountain"
+  },
+  {
+    "name": "Mistveil Forest",
+    "lat": 152.999999,
+    "lng": 180.312494,
+    "size": 24,
+    "sub_regions": "Granary of Plenty"
+  },
+  {
+    "name": "Wildmare Ranch",
+    "cn_name": "不伏马场",
+    "lat": 124.687499,
+    "lng": 201.781244,
+    "size": 24,
+    "sub_regions": "Sundara Land"
+  },
+  {
+    "name": "South Gate Avenue",
+    "cn_name": "南门大街",
+    "lat": 154.156249,
+    "lng": 168.656244,
+    "size": 24,
+    "sub_regions": "Kaifeng City"
+  },
+  {
+    "name": "Kifeng Prefecture",
+    "cn_name": "开封府",
+    "lat": 150.156249,
+    "lng": 168.406244,
+    "size": 24,
+    "sub_regions": "Kaifeng City"
+  },
+  {
+    "name": "Fairgrounds",
+    "cn_name": "勾栏瓦肆",
+    "lat": 152.874999,
+    "lng": 172.499994,
+    "size": 24,
+    "sub_regions": "Kaifeng City"
+  },
+  {
+    "name": "Velvet Shade",
+    "cn_name": "醉花阴",
+    "lat": 143.249999,
+    "lng": 172.124994,
+    "size": 24,
+    "sub_regions": "Kaifeng City"
+  },
+  {
+    "name": "Prosperity Haven",
+    "cn_name": "寿昌坊",
+    "lat": 142.906249,
+    "lng": 164.218744,
+    "size": 24,
+    "sub_regions": "Kaifeng City"
+  },
+  {
+    "name": "Imperial Artisan Court",
+    "cn_name": "百工坊",
+    "lat": 154.593749,
+    "lng": 163.968744,
+    "size": 24,
+    "sub_regions": "Kaifeng City"
+  },
+  {
+    "name": "Forsaken Quarter",
+    "cn_name": "角门里",
+    "lat": 155.718749,
+    "lng": 172.718744,
+    "size": 24,
+    "sub_regions": "Kaifeng City"
+  },
+  {
+    "name": "Unbound Cavern",
+    "cn_name": "无忧洞",
+    "lat": 155.968749,
+    "lng": 174.874994,
+    "size": 24,
+    "sub_regions": "Kaifeng City"
+  },
+  {
+    "name": "Furnace Area",
+    "cn_name": "熔炉区",
+    "lat": 148.843749,
+    "lng": 164.249994,
+    "size": 24,
+    "sub_regions": "Kaifeng City"
+  },
+  {
+    "name": "Kaifeng Suburbs-East",
+    "cn_name": "开封东郊",
+    "lat": 149.406249,
+    "lng": 176.312494,
+    "size": 24,
+    "sub_regions": "Granary of Plenty"
+  },
+  {
+    "name": "Stillhearth Grove",
+    "cn_name": "清心圃",
+    "lat": 143.437499,
+    "lng": 176.906244,
+    "size": 24,
+    "sub_regions": "Granary of Plenty"
+  },
+  {
+    "name": "Abandoned Mercy Hall",
+    "cn_name": "六疾馆遗址",
+    "lat": 146.999999,
+    "lng": 181.812494,
+    "size": 24,
+    "sub_regions": "Granary of Plenty"
+  },
+  {
+    "name": "Jinming Pool",
+    "cn_name": "金明池",
+    "lat": 156.156249,
+    "lng": 157.812494,
+    "size": 24,
+    "sub_regions": "Jadewood Court"
+  },
+  {
+    "name": "Wansheng Town",
+    "cn_name": "万胜镇",
+    "lat": 148.843749,
+    "lng": 159.906244,
+    "size": 24,
+    "sub_regions": "Roaring Sands"
+  },
+  {
+    "name": "Kaifeng Suburbs-West",
+    "cn_name": "开封西郊",
+    "lat": 143.749999,
+    "lng": 160.093744,
+    "size": 24,
+    "sub_regions": "Roaring Sands"
+  },
+  {
+    "name": "Starveil Grassland",
+    "cn_name": "星隐野",
+    "lat": 148.749999,
+    "lng": 154.343744,
+    "size": 24,
+    "sub_regions": "Roaring Sands"
+  },
+  {
+    "name": "Enternal Mountain",
+    "cn_name": "浮戏山",
+    "lat": 144.468749,
+    "lng": 153.156244,
+    "size": 24,
+    "sub_regions": "Roaring Sands"
+  },
+  {
+    "name": "Fishwood River",
+    "cn_name": "鱼柏川",
+    "lat": 137.656249,
+    "lng": 156.374994,
+    "size": 24,
+    "sub_regions": "Roaring Sands"
+  },
+  {
+    "name": "Kaifeng Suburbs-North",
+    "cn_name": "开封北郊",
+    "lat": 138.062499,
+    "lng": 164.781244,
+    "size": 24,
+    "sub_regions": "Roaring Sands"
+  },
+  {
+    "name": "Heavenfall",
+    "cn_name": "天上来",
+    "lat": 134.249999,
+    "lng": 164.656244,
+    "size": 24,
+    "sub_regions": "Roaring Sands"
+  },
+  {
+    "name": "Baima Crossing",
+    "cn_name": "白马津",
+    "lat": 137.218749,
+    "lng": 171.749994,
+    "size": 24,
+    "sub_regions": "Roaring Sands"
+  },
+  {
+    "name": "Plainfield",
+    "cn_name": "平野原",
+    "lat": 161.999999,
+    "lng": 174.562494,
+    "size": 24,
+    "sub_regions": "Granary of Plenty"
+  },
+  {
+    "name": "Kaifeng Suburbs-South",
+    "cn_name": "开封南郊",
+    "lat": 158.437499,
+    "lng": 168.906244,
+    "size": 24,
+    "sub_regions": "Granary of Plenty"
+  },
+  {
+    "name": "Sorrowfield Village",
+    "cn_name": "达安村",
+    "lat": 157.124999,
+    "lng": 177.687494,
+    "size": 24,
+    "sub_regions": "Granary of Plenty"
+  },
+  {
+    "name": "Ever-Normal Granary",
+    "cn_name": "常平仓",
+    "lat": 164.562499,
+    "lng": 177.968744,
+    "size": 24,
+    "sub_regions": "Granary of Plenty"
+  },
+  {
+    "name": "Gracetown",
+    "cn_name": "承恩镇",
+    "lat": 172.906249,
+    "lng": 174.281244,
+    "size": 24,
+    "sub_regions": "Granary of Plenty"
+  },
+  {
+    "name": "Masterwood Hamlet",
+    "cn_name": "梓匠居",
+    "lat": 160.718749,
+    "lng": 164.562494,
+    "size": 24,
+    "sub_regions": "Jadewood Court"
+  },
+  {
+    "name": "Buddha Statue Site",
+    "cn_name": "造像处",
+    "lat": 164.874999,
+    "lng": 164.749994,
+    "size": 24,
+    "sub_regions": "Jadewood Court"
+  },
+  {
+    "name": "Grand Canal",
+    "cn_name": "鸿沟古渠",
+    "lat": 163.999999,
+    "lng": 170.156244,
+    "size": 24,
+    "sub_regions": "Jadewood Court"
+  },
+  {
+    "name": "Dreamfall Cliff",
+    "cn_name": "望淮南崖",
+    "lat": 167.718749,
+    "lng": 168.437494,
+    "size": 24,
+    "sub_regions": "Jadewood Court"
+  },
+  {
+    "name": "Martial Temple",
+    "cn_name": "武成王庙",
+    "lat": 167.906249,
+    "lng": 164.531244,
+    "size": 24,
+    "sub_regions": "Jadewood Court"
+  },
+  {
+    "name": "Pipa Chasm",
+    "cn_name": "琵琶沟",
+    "lat": 167.593749,
+    "lng": 159.406244,
+    "size": 24,
+    "sub_regions": "Jadewood Court"
+  },
+  {
+    "name": "Petalfall Crossing",
+    "cn_name": "飞花渡",
+    "lat": 162.999999,
+    "lng": 156.999994,
+    "size": 24,
+    "sub_regions": "Jadewood Court"
+  },
+  {
+    "name": "South Imperial Garden",
+    "cn_name": "御苑南",
+    "lat": 163.624999,
+    "lng": 161.374994,
+    "size": 24,
+    "sub_regions": "Jadewood Court"
+  },
+  {
+    "name": "North Imperial Garrden",
+    "cn_name": "御苑北",
+    "lat": 159.812499,
+    "lng": 159.656244,
+    "size": 24,
+    "sub_regions": "Jadewood Court"
+  },
+  {
+    "name": "Desperation Ridge",
+    "cn_name": "鹰愁岭",
+    "lat": 173.937499,
+    "lng": 184.031244,
+    "size": 24,
+    "sub_regions": "Granary of Plenty"
+  },
+  {
+    "name": "jade terrace",
+    "cn_name": "玉露台",
+    "lat": 57.76500667372133,
+    "lng": 42.161156303350964,
+    "size": 24,
+    "sub_regions": "Liangzhou"
+  },
+  {
+    "name": "Xiaoguan Ancient Road",
+    "cn_name": "萧关古道",
+    "lat": 65.61156752028218,
+    "lng": 63.33366030335096,
+    "size": 24,
+    "sub_regions": "Qinchuan"
+  },
+  {
+    "name": "Fufengdian",
+    "cn_name": "扶风甸",
+    "lat": 71.34976610934744,
+    "lng": 69.2235688042328,
+    "size": 24,
+    "sub_regions": "Qinchuan"
+  },
+  {
+    "name": "lion grave",
+    "cn_name": "狮子坟",
+    "lat": 76.35493310758376,
+    "lng": 76.24801214814813,
+    "size": 24,
+    "sub_regions": "Qinchuan"
+  },
+  {
+    "name": "Drifting in the wilderness",
+    "cn_name": "荡莽原",
+    "lat": 70.07440647619048,
+    "lng": 75.52361289594354,
+    "size": 24,
+    "sub_regions": "Qinchuan"
+  },
+  {
+    "name": "Huayin North",
+    "cn_name": "华阴北",
+    "lat": 84.36208423280422,
+    "lng": 79.3443318659612,
+    "size": 24,
+    "sub_regions": "Qinchuan"
+  },
+  {
+    "name": "Huayudao",
+    "cn_name": "华舆道",
+    "lat": 76.99836894532628,
+    "lng": 81.24693052557318,
+    "size": 24,
+    "sub_regions": "Qinchuan"
+  },
+  {
+    "name": "Wangjingchuan",
+    "cn_name": "望泾川",
+    "lat": 72.05891238095238,
+    "lng": 85.66714519929452,
+    "size": 24,
+    "sub_regions": "Qinchuan"
+  },
+  {
+    "name": "Chengcheng Lake",
+    "cn_name": "陷城湖",
+    "lat": 84.73135721906898,
+    "lng": 94.34381977280691,
+    "size": 24,
+    "sub_regions": "Qinchuan"
+  },
+  {
+    "name": "Mijindu",
+    "cn_name": "迷津渡",
+    "lat": 28.411461751689593,
+    "lng": 27.00979439153439,
+    "size": 24,
+    "sub_regions": "Yumen Pass"
+  },
+  {
+    "name": "jinshachuan",
+    "cn_name": "金沙川",
+    "lat": 36.78444664691357,
+    "lng": 22.11654574109347,
+    "size": 24,
+    "sub_regions": "Yumen Pass"
+  },
+  {
+    "name": "Ma Miitu",
+    "cn_name": "马迷途",
+    "lat": 35.83257033791887,
+    "lng": 33.10039456790123,
+    "size": 24,
+    "sub_regions": "Yumen Pass"
+  },
+  {
+    "name": "aysu",
+    "cn_name": "阿依苏",
+    "lat": 47.32836784479717,
+    "lng": 24.016079935097,
+    "size": 24,
+    "sub_regions": "Yumen Pass"
+  },
+  {
+    "name": "Yinma Pass",
+    "cn_name": "饮马隘",
+    "lat": 42.42554528818342,
+    "lng": 44.50366278659612,
+    "size": 24,
+    "sub_regions": "Liangzhou"
+  },
+  {
+    "name": "Yuchi",
+    "cn_name": "玉池",
+    "lat": 46.23956782958546,
+    "lng": 51.31959538855816,
+    "size": 24,
+    "sub_regions": "Liangzhou"
+  },
+  {
+    "name": "Jiuquan Town",
+    "cn_name": "酒泉镇",
+    "lat": 47.52018229276896,
+    "lng": 52.08769365784831,
+    "size": 24,
+    "sub_regions": "Liangzhou"
+  },
+  {
+    "name": "Wuwei Mountain",
+    "cn_name": "武威山",
+    "lat": 42.46588059118165,
+    "lng": 60.874973544973535,
+    "size": 24,
+    "sub_regions": "Liangzhou"
+  },
+  {
+    "name": "Jiedushi Mansion",
+    "cn_name": "节度使府",
+    "lat": 46.70663856084656,
+    "lng": 60.05222222222222,
+    "size": 24,
+    "sub_regions": "Liangzhou"
+  },
+  {
+    "name": "Yunqiu",
+    "cn_name": "耘丘",
+    "lat": 46.04665,
+    "lng": 24.945735,
+    "sub_regions": "Hutuo",
+    "map_type": "Hutuo",
+    "size": 24
+  },
+  {
+    "name": "Luancheng",
+    "cn_name": "栾城",
+    "lat": 36.452067,
+    "lng": 29.179591,
+    "map_type": "Hutuo",
+    "sub_regions": "Hutuo",
+    "size": 24
+  },
+  {
+    "name": "Hutuo South Bank",
+    "cn_name": "滹沱南岸",
+    "lat": 30.261353,
+    "lng": 21.956183,
+    "sub_regions": "Hutuo",
+    "map_type": "Hutuo",
+    "size": 24
+  },
+  {
+    "name": "Fenglong Mountain",
+    "cn_name": "封龙山",
+    "lat": 35.891044,
+    "lng": 10.763835,
+    "sub_regions": "Hutuo",
+    "map_type": "Hutuo",
+    "size": 24
+  }
+]
+
+  // Zoom level 7–8: No labels
+};
+
+  // ==========================================
+  // PRIVATE VARIABLES
+  // ==========================================
+  
+  let map = null;
+  let activeLabels = [];
+  let currentZoom = 0;
+  let isVisible = true; // Track visibility state (NEW!)
+
+  // ==========================================
+  // PRIVATE METHODS
+  // ==========================================
 
   /**
-   * Extract unique regions from all markers
+   * Create label icon with text
+   * @param {string} text - Label text
+   * @returns {L.DivIcon}
    */
-  extractRegions() {
-    const regionsSet = new Set();
+function createLabelIcon(text, fontSize) {
+  return L.divIcon({
+    html: `
+      <div class="region-label">
+        <span class="region-label-text" style="font-size:${fontSize}px">
+          ${text}
+        </span>
+      </div>
+    `,
+    className: 'region-label-container',
+    iconSize: [200, 40],
+    iconAnchor: [100, 20]
+  });
+}
 
-    if (typeof MarkerManager !== 'undefined' && MarkerManager.getAllMarkers) {
-      const markers = MarkerManager.getAllMarkers();
-
-      markers.forEach(marker => {
-        if (marker.loc_type && marker.loc_type.trim() !== '') {
-          regionsSet.add(marker.loc_type.trim());
-        }
-      });
+  /**
+   * Get labels for current zoom level
+   * @param {number} zoom - Current zoom level
+   * @returns {Array}
+   */
+  function getLabelsForZoom(zoom) {
+    if (zoom >= 3 && zoom <= 4) {
+      return LABEL_CONFIG.zoom_3_4;
+    } else if (zoom === 5) {
+      return LABEL_CONFIG.zoom_5;
+    } else if (zoom === 6) {
+      return LABEL_CONFIG.zoom_6;
+    } else if (zoom >= 7) {
+      // Zoom 7 dan 8: tidak ada label
+      return [];
     }
-
-    const regionsList = Array.from(regionsSet).sort();
-
-    this.availableRegions = [
-      { id: 'all', name: 'All Regions', icon: `${ICON_BASE_URL}region.webp` },
-      ...regionsList.map(region => ({
-        id: region,
-        name: region,
-        icon: `${ICON_BASE_URL}region.webp`
-      }))
-    ];
-
-    console.log(`📍 Found ${regionsList.length} unique regions (all maps):`, regionsList);
-  },
+    return [];
+  }
 
   /**
-   * Build hierarchical grouped regions from label config
-   * zoom_3_4 = top-level groups
-   * zoom_5 = sub-regions inside each group (matched by map_type)
-   * anything not matched = "Other"
+   * Clear all active labels from map
    */
-  buildGroupedRegions() {
-    if (typeof RegionLabelManager === 'undefined') {
-      // Fallback: flat list
-      this.groupedRegions = this.availableRegions.filter(r => r.id !== 'all');
+  function clearLabels() {
+    activeLabels.forEach(label => {
+      if (map && map.hasLayer(label)) {
+        map.removeLayer(label);
+      }
+    });
+    activeLabels = [];
+    console.log('🗑️ Cleared all region labels');
+  }
+
+/**
+ * Add labels to map
+ * @param {Array} labels - Array of label configs
+ */
+function addLabels(labels) {
+
+  if (!isVisible) return;
+
+  // cek map aktif
+  const currentMap =
+  typeof getCurrentMapPreset === 'function'
+    ? (getCurrentMapPreset() || 'main').toLowerCase()
+    : 'main';
+
+  labels.forEach(labelConfig => {
+
+    const rawType =
+      (labelConfig.map_type || '').trim().toLowerCase();
+
+    // label tanpa map_type → milik main
+    const labelMap =
+      rawType === '' ? 'main' : rawType;
+
+    // filter universal
+    const shouldShow =
+  currentMap === 'main' ||
+  labelMap === currentMap;
+
+if (!shouldShow) return;
+
+    const icon = createLabelIcon(
+      labelConfig.name,
+      labelConfig.size || 18
+    );
+
+    const marker = L.marker(
+      [labelConfig.lat, labelConfig.lng],
+      {
+        icon: icon,
+        interactive: false,
+        keyboard: false,
+        zIndexOffset: 1000
+      }
+    ).addTo(map);
+
+    activeLabels.push(marker);
+
+    console.log(
+      "[Label]",
+      labelConfig.name,
+      "→ map:", labelMap
+    );
+  });
+}
+
+  /**
+   * Update labels based on zoom level
+   * @param {number} zoom - Current zoom level
+   */
+  function updateLabels(zoom) {
+    // Skip if zoom hasn't changed significantly
+    if (Math.floor(zoom) === Math.floor(currentZoom)) {
       return;
     }
 
-    const zoom34 = RegionLabelManager._getLabelConfig('zoom_3_4'); // e.g. Qinghe, Kaifeng
-    const zoom5  = RegionLabelManager._getLabelConfig('zoom_5');   // e.g. Verdant Wilds (map_type=Qinghe)
-    const zoom6  = RegionLabelManager._getLabelConfig('zoom_6');   // e.g. Bamboo Abode (sub_regions=Verdant Wilds)
+    currentZoom = zoom;
+    const labels = getLabelsForZoom(Math.floor(zoom));
 
-    // Build map: parentName → list of zoom5 children
-    // zoom5 entries have map_type = name of their zoom34 parent
-    const zoom5ByParent = {};
-  zoom34.forEach(z34 => {
-    zoom5ByParent[z34.name] = zoom5
-      .filter(z5 => (z5.map_type || '').trim().toLowerCase() === z34.name.trim().toLowerCase()) // ← tambah .toLowerCase()
-      .map(z5 => ({
-        id: z5.name,
-        name: z5.name,
-        icon: `${ICON_BASE_URL}region.webp`,
-        children: zoom6
-          .filter(z6 => (z6.sub_regions || '').trim().toLowerCase() === z5.name.trim().toLowerCase()) // ← tambah .toLowerCase()
-          .map(z6 => ({
-            id: z6.name,
-            name: z6.name,
-            icon: `${ICON_BASE_URL}region.webp`
-          }))
-      }));
-  });
+    // Clear existing labels
+    clearLabels();
 
-    // Collect all region IDs that are accounted for in zoom3_4 hierarchy
-    const accountedIds = new Set();
-    zoom34.forEach(z34 => accountedIds.add(z34.name));
-    zoom5.forEach(z5 => accountedIds.add(z5.name));
-    zoom6.forEach(z6 => accountedIds.add(z6.name));
-
-    // Build top-level groups from zoom_3_4
-    const groups = zoom34.map(z34 => ({
-      id: z34.name,
-      name: z34.name,
-      icon: `${ICON_BASE_URL}region.webp`,
-      isGroup: true,
-      children: zoom5ByParent[z34.name] || []
-    }));
-    this.majorRegionIds = new Set(zoom34.map(z => z.name.trim().toLowerCase()));
-    
-    // "Other" group: any loc_type from markers not in the hierarchy
-    const otherRegions = this.availableRegions
-      .filter(r => r.id !== 'all' && !accountedIds.has(r.id))
-      .map(r => ({ ...r, children: [] }));
-
-    if (otherRegions.length > 0) {
-      groups.push({
-        id: 'other',
-        name: 'Other',
-        icon: `${ICON_BASE_URL}region.webp`,
-        isGroup: true,
-        children: otherRegions
-      });
+    // Add new labels if any (will check isVisible inside)
+    if (labels.length > 0) {
+      addLabels(labels);
     }
-
-    this.groupedRegions = groups;
-    console.log('🗂️ Grouped regions built:', groups);
-  },
-
-  /**
-   * Setup region selection UI
-   */
-  setupUI() {
-    let container = document.querySelector('.region-container');
-    if (!container) {
-      container = document.createElement('div');
-      container.className = 'region-container';
-      document.body.appendChild(container);
-    }
-
-    let toggleBtn = document.getElementById('regionToggle');
-    if (!toggleBtn) {
-      toggleBtn = document.createElement('button');
-      toggleBtn.id = 'regionToggle';
-      toggleBtn.className = 'region-toggle';
-      toggleBtn.title = 'Switch Region';
-      toggleBtn.innerHTML = `<img src="${ICON_BASE_URL}outland.png" alt="Region">`;
-      container.appendChild(toggleBtn);
-    }
-
-    let panel = document.getElementById('regionPanel');
-    if (!panel) {
-      panel = document.createElement('div');
-      panel.id = 'regionPanel';
-      panel.className = 'region-panel';
-      container.appendChild(panel);
-    }
-
-    // Build panel content
-    this.buildPanelContent(panel);
-  },
-
-  /**
-   * Build panel inner content (scrollable groups + sticky All Regions)
-   */
-  buildPanelContent(panel) {
-    panel.innerHTML = '';
-
-    // === SCROLLABLE CONTENT: Groups ===
-    let content = document.createElement('div');
-    content.id = 'regionContent';
-    content.className = 'region-content';
-    panel.appendChild(content);
-
-    this.renderGroupedList(content);
-
-    // === STICKY FOOTER: All Regions ===
-    let stickyFooter = document.createElement('div');
-    stickyFooter.id = 'regionStickyHeader';
-    stickyFooter.className = 'region-sticky-header';
-
-    const allRegion = this.availableRegions.find(r => r.id === 'all');
-    const allItem = document.createElement('div');
-    allItem.className = `region-item ${this.activeRegion === 'all' ? 'active' : ''}`;
-    allItem.dataset.regionId = 'all';
-    allItem.innerHTML = `
-      <img src="${allRegion.icon}" alt="${allRegion.name}" class="region-icon">
-      <div class="region-info">
-        <div class="region-name">${allRegion.name}</div>
-      </div>
-    `;
-    stickyFooter.appendChild(allItem);
-    panel.appendChild(stickyFooter);
-  },
-
-  /**
-   * Render grouped list into content element
-   */
-  renderGroupedList(content) {
-    content.innerHTML = '';
-
-    this.groupedRegions.forEach(group => {
-      const isExpanded = !!this.expandedGroups[group.id];
-      const isGroupActive = this.activeRegion === group.id;
-
-      // Group header row
-      const groupEl = document.createElement('div');
-      groupEl.className = `region-item region-group-header ${isGroupActive ? 'active' : ''}`;
-      groupEl.dataset.regionId = group.id;
-      groupEl.dataset.isGroup = 'true';
-      groupEl.innerHTML = `
-        <img src="${group.icon}" alt="${group.name}" class="region-icon">
-        <div class="region-info">
-          <div class="region-name">${group.name}</div>
-        </div>
-        ${group.children && group.children.length > 0 
-          ? `<span class="region-chevron ${isExpanded ? 'expanded' : ''}">▶</span>` 
-          : ''}
-      `;
-      content.appendChild(groupEl);
-
-      // Children (zoom5 sub-regions)
-      if (group.children && group.children.length > 0) {
-        const childrenContainer = document.createElement('div');
-        childrenContainer.className = `region-children ${isExpanded ? 'expanded' : ''}`;
-        childrenContainer.dataset.groupId = group.id;
-
-        group.children.forEach(child => {
-          const isChildActive = this.activeRegion === child.id;
-          const hasGrandchildren = child.children && child.children.length > 0;
-          const isChildExpanded = !!this.expandedGroups[child.id];
-
-          const childEl = document.createElement('div');
-          childEl.className = `region-item region-sub-item ${isChildActive ? 'active' : ''}`;
-          childEl.dataset.regionId = child.id;
-          childEl.dataset.isGroup = hasGrandchildren ? 'true' : 'false';
-          childEl.innerHTML = `
-            <img src="${child.icon}" alt="${child.name}" class="region-icon">
-            <div class="region-info">
-              <div class="region-name">${child.name}</div>
-            </div>
-            ${hasGrandchildren 
-              ? `<span class="region-chevron ${isChildExpanded ? 'expanded' : ''}">▶</span>` 
-              : ''}
-          `;
-          childrenContainer.appendChild(childEl);
-
-          // Grandchildren (zoom6)
-          if (hasGrandchildren) {
-            const grandContainer = document.createElement('div');
-            grandContainer.className = `region-children region-grandchildren ${isChildExpanded ? 'expanded' : ''}`;
-            grandContainer.dataset.groupId = child.id;
-
-            child.children.forEach(grand => {
-              const isGrandActive = this.activeRegion === grand.id;
-              const grandEl = document.createElement('div');
-              grandEl.className = `region-item region-grand-item ${isGrandActive ? 'active' : ''}`;
-              grandEl.dataset.regionId = grand.id;
-              grandEl.dataset.isGroup = 'false';
-              grandEl.innerHTML = `
-                <img src="${grand.icon}" alt="${grand.name}" class="region-icon">
-                <div class="region-info">
-                  <div class="region-name">${grand.name}</div>
-                </div>
-              `;
-              grandContainer.appendChild(grandEl);
-            });
-
-            childrenContainer.appendChild(grandContainer);
-          }
-        });
-
-        content.appendChild(childrenContainer);
-      }
-    });
-  },
-
-  /**
-   * Check if a region ID is a group (has children)
-   */
-  isGroupId(regionId) {
-    return this.groupedRegions.some(g => g.id === regionId) ||
-      this.groupedRegions.some(g => 
-        g.children && g.children.some(c => c.id === regionId && c.children && c.children.length > 0)
-      );
-  },
-
-  /**
-   * Toggle expand/collapse a group
-   */
-  toggleGroup(groupId) {
-    this.expandedGroups[groupId] = !this.expandedGroups[groupId];
-    
-    // Animate children container
-    const childrenContainer = document.querySelector(`.region-children[data-group-id="${groupId}"]`);
-    const chevron = document.querySelector(`[data-region-id="${groupId}"] .region-chevron`);
-    
-    if (childrenContainer) {
-      if (this.expandedGroups[groupId]) {
-        childrenContainer.classList.add('expanded');
-      } else {
-        childrenContainer.classList.remove('expanded');
-      }
-    }
-    if (chevron) {
-      if (this.expandedGroups[groupId]) {
-        chevron.classList.add('expanded');
-      } else {
-        chevron.classList.remove('expanded');
-      }
-    }
-  },
-
-/**
- * Cek map_type dominan dari suatu region
- */
-getRegionMapType(regionId) {
-
-  if (regionId === 'all') return 'main';
-  if (typeof MarkerManager === 'undefined') return 'main';
-
-  const markers = MarkerManager.getAllMarkers();
-
-  const regionMarkers = markers.filter(m =>
-    m.loc_type && m.loc_type.trim() === regionId
-  );
-
-  if (!regionMarkers.length) return 'main';
-
-  // Hitung jumlah tiap map_type
-  const mapCounts = {};
-
-  regionMarkers.forEach(m => {
-    const type = (m.map_type || 'main').trim().toLowerCase();
-    mapCounts[type] = (mapCounts[type] || 0) + 1;
-  });
-
-  // Cari map_type dengan jumlah terbanyak
-  let dominantMap = 'main';
-  let maxCount = 0;
-
-  Object.keys(mapCounts).forEach(type => {
-    if (mapCounts[type] > maxCount) {
-      maxCount = mapCounts[type];
-      dominantMap = type;
-    }
-  });
-
-  console.log(
-    "[RegionMapType]",
-    regionId,
-    "→",
-    dominantMap,
-    mapCounts
-  );
-
-  return dominantMap;
-},
-
-  /**
-   * Focus map to region
-   */
-focusToRegion(regionId) {
-  if (!this.map || regionId === 'all') return;
-
-  // ============================================
-  // SPECIAL: Region/sub-area yang butuh map sendiri
-  // ============================================
-  const REGION_MAP_OVERRIDE = {
-    'Hutuo': 'hutuo',
-    // Royal Palace nanti:
-    // 'Royal Palace': 'royal_palace',
-  };
-
-  // Cari override berdasarkan regionId sendiri,
-  // ATAU dari parent group-nya di zoom_5
-  const getTargetMap = (id) => {
-    // Cek langsung
-    if (REGION_MAP_OVERRIDE[id]) return REGION_MAP_OVERRIDE[id];
-
-    // Cek apakah dia sub-area dari region yang punya override
-    // Cari di zoom_6: ambil sub_regions-nya, lalu cek apakah sub_regions itu ada di override
-    const zoom6Labels = RegionLabelManager._getLabelConfig('zoom_6');
-    const z6 = zoom6Labels?.find(
-      l => l.name.trim().toLowerCase() === id.trim().toLowerCase()
-    );
-    if (z6 && z6.sub_regions && REGION_MAP_OVERRIDE[z6.sub_regions]) {
-      return REGION_MAP_OVERRIDE[z6.sub_regions];
-    }
-
-    // Cek map_type langsung di zoom_6 (kasus Yunqiu yg pakai map_type)
-    if (z6 && z6.map_type) {
-      const mapTypeKey = Object.keys(REGION_MAP_OVERRIDE).find(
-        k => REGION_MAP_OVERRIDE[k] === z6.map_type.toLowerCase()
-      );
-      if (mapTypeKey) return REGION_MAP_OVERRIDE[mapTypeKey];
-      // Atau langsung pakai map_type sebagai preset name
-      if (z6.map_type.toLowerCase() === 'hutuo') return 'hutuo';
-    }
-
-    return 'main';
-  };
-
-  const currentMap = typeof getCurrentMapPreset === 'function'
-    ? getCurrentMapPreset()
-    : 'main';
-
-  const targetMap = getTargetMap(regionId);
-
-  const doFly = () => {
-    if (typeof RegionLabelManager !== 'undefined') {
-      const zoom6Labels = RegionLabelManager._getLabelConfig('zoom_6');
-      const matchedZ6 = zoom6Labels?.find(
-        l => l.name.trim().toLowerCase() === regionId.trim().toLowerCase()
-      );
-      if (matchedZ6) {
-        this.map.flyTo([matchedZ6.lat, matchedZ6.lng], 6, { duration: 1.0 });
-        return;
-      }
-
-      const zoom5Labels = RegionLabelManager._getLabelConfig('zoom_5');
-      const matchedZ5 = zoom5Labels?.find(
-        l => l.name.trim().toLowerCase() === regionId.trim().toLowerCase()
-      );
-      if (matchedZ5) {
-        this.map.flyTo([matchedZ5.lat, matchedZ5.lng], 5, { duration: 1.0 });
-        return;
-      }
-
-      const zoom34Labels = RegionLabelManager._getLabelConfig('zoom_3_4');
-      const matchedZ34 = zoom34Labels?.find(
-        l => l.name.trim().toLowerCase() === regionId.trim().toLowerCase()
-      );
-      if (matchedZ34) {
-        this.map.flyTo([matchedZ34.lat, matchedZ34.lng], 4, { duration: 1.0 });
-        return;
-      }
-    }
-
-    const markers = MarkerManager.getAllMarkers?.();
-    if (!markers?.length) return;
-    const regionMarkers = markers.filter(m =>
-      m.loc_type && m.loc_type.trim() === regionId
-    );
-    if (!regionMarkers.length) return;
-    const raw = regionMarkers[0];
-    if (raw.lat && raw.lng) {
-      this.map.flyTo([parseFloat(raw.lat), parseFloat(raw.lng)], 6, { duration: 0.8 });
-    }
-  };
-
-  // ============================================
-  // Switch map hanya jika perlu, lalu fly
-  // ============================================
-  if (currentMap === targetMap) {
-    // Sudah di map yang benar → langsung fly, tidak reload tile
-    doFly();
-  } else {
-    console.log(`🔄 Switch map: "${currentMap}" → "${targetMap}" untuk region: ${regionId}`);
-    switchMapPreset(targetMap, true);
-    setTimeout(doFly, 900);
   }
-},
 
   /**
-   * Setup event listeners
+   * Setup map event listeners
    */
-  setupEventListeners() {
-    const toggleBtn = document.getElementById('regionToggle');
-    const panel = document.getElementById('regionPanel');
-    
-    if (!toggleBtn || !panel) return;
-    
-    toggleBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.togglePanel();
-    });
-    
-    document.addEventListener('click', (e) => {
-      if (this.isOpen && 
-          !panel.contains(e.target) && 
-          !toggleBtn.contains(e.target)) {
-        this.closePanel();
-      }
+  function setupEventListeners() {
+    if (!map) return;
+
+    // Update on zoom end
+    map.on('zoomend', function() {
+      const zoom = map.getZoom();
+      updateLabels(zoom);
     });
 
-    // Sticky footer (All Regions)
-    const stickyFooter = document.getElementById('regionStickyHeader');
-    if (stickyFooter) {
-      stickyFooter.addEventListener('click', (e) => {
-        const regionItem = e.target.closest('.region-item');
-        if (!regionItem) return;
-        const regionId = regionItem.dataset.regionId;
-        this.setActiveRegion(regionId);
-        setTimeout(() => this.closePanel(), 300);
-      });
-    }
+    
+  }
 
-    // Region content clicks (delegated)
-    const content = document.getElementById('regionContent');
-    if (content) {
-      content.addEventListener('click', (e) => {
-        const regionItem = e.target.closest('.region-item');
-        if (!regionItem) return;
-        
-        const regionId = regionItem.dataset.regionId;
-        const isGroup = regionItem.dataset.isGroup === 'true';
-
-        if (isGroup) {
-          // Toggle expand
-          this.toggleGroup(regionId);
-          // Also select this region
-          this.setActiveRegion(regionId);
-        } else {
-          this.setActiveRegion(regionId);
-          setTimeout(() => this.closePanel(), 300);
-        }
-      });
-    }
-  },
+  // ==========================================
+  // PUBLIC METHODS
+  // ==========================================
 
   /**
-   * Toggle panel visibility
+   * Initialize region label manager
+   * @param {L.Map} leafletMap - Leaflet map instance
    */
-  togglePanel() {
-    this.isOpen = !this.isOpen;
+  function init(leafletMap) {
+    if (!leafletMap) {
+      
+      return;
+    }
+
+    map = leafletMap;
+    currentZoom = map.getZoom();
+    isVisible = true; // Reset to visible on init
+
     
-    const panel = document.getElementById('regionPanel');
-    if (!panel) return;
+    // Add initial labels
+    const initialLabels = getLabelsForZoom(Math.floor(currentZoom));
     
-    if (this.isOpen) {
-      panel.classList.add('visible');
+    
+    if (initialLabels.length > 0) {
+      addLabels(initialLabels);
     } else {
-      panel.classList.remove('visible');
+      console.log('⚠️ No labels to show at current zoom level');
     }
-  },
 
-  /**
-   * Close panel
-   */
-  closePanel() {
-    const panel = document.getElementById('regionPanel');
-    if (!panel) return;
+    // Setup event listeners
+    setupEventListeners();
+
     
-    this.isOpen = false;
-    panel.classList.remove('visible');
-  },
-
-  /**
-   * Set active region and update markers
-   */
-  setActiveRegion(regionId, updateMarkers = true) {
-  this.activeRegion = regionId;
-
-  document.querySelectorAll('.region-item').forEach(item => {
-    item.classList.toggle('active', item.dataset.regionId === regionId);
-  });
-
-  // Major regions → tidak filter marker, tidak fly
-  const isMajorRegion = RegionLabelManager._getLabelConfig('zoom_3_4')
-    .some(l => l.name.trim().toLowerCase() === regionId.trim().toLowerCase());
-
-  if (!isMajorRegion) {
-    if (updateMarkers && typeof MarkerManager !== 'undefined') {
-      MarkerManager.forceRefreshMarkers();
-    }
-    this.focusToRegion(regionId);
   }
 
-  this.updateStats();
-  this.showRegionNotification(regionId);
-},
-
   /**
-   * Check if a marker should be visible based on active region
+   * Show labels (NEW!)
+   * Re-displays labels if hidden
    */
-  shouldShowMarker(marker) {
-  if (this.activeRegion === 'all') return true;
+  function show() {
+    if (isVisible) {
+      
+      return;
+    }
 
-  // Major regions → tampilkan semua marker, tidak ada filter
-  if (this.majorRegionIds?.has(this.activeRegion.trim().toLowerCase())) return true;
+    isVisible = true;
+    
+    // If map not initialized, do nothing
+    if (!map) {
+      
+      return;
+    }
 
-  // If active region is a top-level group (zoom_3_4 name),
-  // show all markers whose loc_type belongs to that group's subtree
-  const group = this.groupedRegions.find(g => g.id === this.activeRegion);
-  if (group && group.isGroup) {
-    const leafIds = this.collectLeafIds(group);
-    const markerRegion = marker.loc_type ? marker.loc_type.trim() : '';
-    return leafIds.has(markerRegion) || markerRegion === this.activeRegion;
+    // Re-add labels for current zoom
+    const labels = getLabelsForZoom(Math.floor(currentZoom || map.getZoom()));
+    if (labels.length > 0) {
+      clearLabels(); // Clear any stale labels
+      addLabels(labels);
+      
+    }
   }
 
-  // Check if activeRegion is a zoom5 group with children
-  const zoom5Group = this.findZoom5Group(this.activeRegion);
-  if (zoom5Group && zoom5Group.children && zoom5Group.children.length > 0) {
-    const leafIds = this.collectLeafIds(zoom5Group);
-    const markerRegion = marker.loc_type ? marker.loc_type.trim() : '';
-    return leafIds.has(markerRegion) || markerRegion === this.activeRegion;
+  /**
+   * Hide labels (NEW!)
+   * Removes labels without destroying manager
+   */
+  function hide() {
+    if (!isVisible) {
+      
+      return;
+    }
+
+    isVisible = false;
+    clearLabels();
+    
   }
 
-  const markerRegion = marker.loc_type ? marker.loc_type.trim() : '';
-  return markerRegion === this.activeRegion;
-},
-
   /**
-   * Collect all leaf region IDs under a group node
+   * Add or update label configuration
+   * @param {number} zoomLevel - Zoom level (3-4, 5, or 6)
+   * @param {Array} labels - Array of label configs
    */
-  collectLeafIds(node) {
-    const ids = new Set();
-    const traverse = (n) => {
-      if (!n.children || n.children.length === 0) {
-        ids.add(n.id);
-      } else {
-        n.children.forEach(traverse);
-      }
-    };
-    traverse(node);
-    return ids;
-  },
-
-  /**
-   * Find a zoom5-level group by id
-   */
-  findZoom5Group(id) {
-    for (const group of this.groupedRegions) {
-      if (group.children) {
-        const found = group.children.find(c => c.id === id);
-        if (found) return found;
-      }
+  function addLabelConfig(zoomLevel, labels) {
+    if (zoomLevel >= 3 && zoomLevel <= 4) {
+      LABEL_CONFIG.zoom_3_4 = labels;
+    } else if (zoomLevel === 5) {
+      LABEL_CONFIG.zoom_5 = labels;
+    } else if (zoomLevel === 6) {
+      LABEL_CONFIG.zoom_6 = labels;
     }
-    return null;
-  },
 
-  /**
-   * Get active region info
-   */
-  getActiveRegionInfo() {
-    // Check all regions first
-    const found = this.availableRegions.find(r => r.id === this.activeRegion);
-    if (found) return found;
-    // Check groups
-    const group = this.groupedRegions.find(g => g.id === this.activeRegion);
-    if (group) return group;
-    return null;
-  },
-
-  /**
-   * Update stats display
-   */
-  updateStats() {
-    const regionInfo = this.getActiveRegionInfo();
-    const toggleBtn = document.getElementById('regionToggle');
-    if (toggleBtn && regionInfo) {
-      const img = toggleBtn.querySelector('img');
-      if (img) img.src = regionInfo.icon;
+    // Refresh if currently at this zoom level
+    if (map && isVisible) {
+      updateLabels(map.getZoom());
     }
-  },
 
-  /**
-   * Show notification when switching region
-   */
-  showRegionNotification(regionId) {
-    const oldNotif = document.querySelector('.region-notification');
-    if (oldNotif) oldNotif.remove();
     
-    const regionInfo = this.getActiveRegionInfo();
-    if (!regionInfo) return;
-    
-    const notif = document.createElement('div');
-    notif.className = 'region-notification';
-    notif.innerHTML = `<span>Region: <strong>${regionInfo.name}</strong></span>`;
-    document.body.appendChild(notif);
-    
-    setTimeout(() => {
-      notif.style.animation = 'slideDown .3s ease-in reverse';
-      setTimeout(() => notif.remove(), 300);
-    }, 2000);
-  },
-
-  /**
-   * Show hint for region toggle button
-   */
-  showRegionHint() {
-    const toggleBtn = document.getElementById('regionToggle');
-    if (!toggleBtn) return;
-    
-    const old = document.querySelector('.region-hint');
-    if (old) old.remove();
-    
-    const hint = document.createElement('div');
-    hint.className = 'region-hint';
-    hint.textContent = 'Beta Feature — Minor issues may occur.';
-    document.body.appendChild(hint);
-    
-    const rect = toggleBtn.getBoundingClientRect();
-    const isMobile = window.innerWidth <= 768;
-    
-    if (isMobile) {
-      hint.style.position = 'fixed';
-      hint.style.left = (rect.right + 15) + 'px';
-      hint.style.top = (rect.top + rect.height / 2) + 'px';
-      hint.style.transform = 'translateY(-50%)';
-    } else {
-      hint.style.position = 'fixed';
-      hint.style.left = (rect.left + rect.width / 2) + 'px';
-      hint.style.top = (rect.bottom + 15) + 'px';
-      hint.style.transform = 'translateX(-50%)';
-    }
-    
-    setTimeout(() => hint.classList.add('show'), 50);
-    setTimeout(() => {
-      hint.classList.remove('show');
-      setTimeout(() => hint.remove(), 300);
-    }, 10000);
   }
-};
 
-window.RegionManager = RegionManager;
+  /**
+   * Manually refresh labels
+   */
+  function refresh() {
+    if (!map) return;
+    if (!isVisible) {
+      console.log('⏭️ Skipped refresh (hidden)');
+      return;
+    }
+    updateLabels(map.getZoom());
+  }
+
+  /**
+   * Destroy manager and remove all labels
+   */
+  function destroy() {
+    clearLabels();
+    if (map) {
+      map.off('zoomend');
+    }
+    map = null;
+    currentZoom = 0;
+    isVisible = true;
+    console.log('❌ RegionLabelManager destroyed');
+  }
+
+  /**
+   * Check if labels are visible (NEW!)
+   * @returns {boolean}
+   */
+  function isLabelsVisible() {
+    return isVisible;
+  }
+
+  // ==========================================
+  // PUBLIC API
+  // ==========================================
+
+return {
+    init,
+    show,
+    hide,
+    addLabelConfig,
+    refresh,
+    destroy,
+    isVisible: isLabelsVisible,
+    _getLabelConfig: function(zoomKey) {
+      return LABEL_CONFIG[zoomKey] || [];
+    },
+    _forceRefresh: function() {        // ← TAMBAHKAN INI
+      if (!map) return;
+      currentZoom = -1;               // Reset agar updateLabels tidak skip
+      updateLabels(map.getZoom());
+    }
+  };
+
+})();
+
+// ==========================================
+// GLOBAL EXPORTS
+// ==========================================
+
+window.RegionLabelManager = RegionLabelManager;
+
+console.log('✅ RegionLabelManager module loaded (v1.1.0 with show/hide)');
