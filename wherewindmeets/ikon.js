@@ -161,6 +161,7 @@ function isCommonChest(markerName) {
     "Chest Collection - Star-Grabbing Moon (Snakes Gathered, Guarded by Humans)",
     "Treasure Collection", // Nama polos tanpa tambahan
     "Treasure Chest Gathering",
+    "Treasure Chest Collection",
     "Chest Collection", // Nama polos tanpa tambahan
     "Treasure Chest" // ✅ TAMBAHAN: nama polos "Treasure Chest"
   ];

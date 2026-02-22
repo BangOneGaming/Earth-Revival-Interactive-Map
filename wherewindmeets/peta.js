@@ -1,15 +1,14 @@
 /**
  * Map initialization module
- * Supports runtime tile + center switching
+ * Optimized Performance Version
  */
 
 // ============================================
 // CONFIG
 // ============================================
 
-const TILE_VERSION = "20251121"; // samakan dengan SW
+const TILE_VERSION = "20251121";
 
-// preset map
 const MAP_PRESETS = {
   main: {
     center: [128, 180],
@@ -19,6 +18,11 @@ const MAP_PRESETS = {
   hutuo: {
     center: [32, 32],
     tiles: "https://tiles.bgonegaming.win/wherewindmeet/tiles/hutuo/{z}_{x}_{y}.webp"
+  },
+
+  royal_palace: {
+    center: [30, 30],
+    tiles: "https://tiles.bgonegaming.win/wherewindmeet/tiles/royal_palace/{z}_{x}_{y}.webp"
   }
 };
 
@@ -41,6 +45,7 @@ let currentPreset = "main";
 // ============================================
 
 function initializeMap() {
+
   const TILE_BOUNDS = {
     minX: 0,
     maxX: 256,
@@ -66,13 +71,43 @@ function initializeMap() {
     maxBounds: mapBounds,
     maxBoundsViscosity: 0.7,
     zoomControl: true,
-    attributionControl: false
+    attributionControl: false,
+
+    // 🔥 PERFORMANCE MODE
+    preferCanvas: true,
+    inertia: true,
+    inertiaDeceleration: 3000,
+    inertiaMaxSpeed: 1500,
+    updateWhenIdle: true
   });
 
-  // load default preset
+  // default map
   switchMapPreset("main", false);
 
   return map;
+}
+
+// ============================================
+// TILE OPTIONS (REUSABLE)
+// ============================================
+
+function getTileOptions(maxNativeZoom) {
+  return {
+    minZoom: MAP_ZOOM.min,
+    maxZoom: MAP_ZOOM.max,
+    maxNativeZoom: maxNativeZoom,
+
+    // 🔥 PERFORMANCE BOOST
+    updateWhenIdle: true,
+    updateWhenZooming: false,
+    keepBuffer: 2,
+    reuseTiles: true,
+
+    noWrap: true,
+    crossOrigin: true,
+    errorTileUrl:
+      "https://tiles.bgonegaming.win/wherewindmeet/tiles/7_127_126.webp"
+  };
 }
 
 // ============================================
@@ -80,7 +115,9 @@ function initializeMap() {
 // ============================================
 
 function switchMapPreset(type, animate = true) {
+
   if (!map || !MAP_PRESETS[type]) return;
+
   const preset = MAP_PRESETS[type];
   currentPreset = type;
 
@@ -88,62 +125,74 @@ function switchMapPreset(type, animate = true) {
     map.removeLayer(currentTileLayer);
   }
 
-  currentTileLayer = L.tileLayer(
-    preset.tiles + `?v=${TILE_VERSION}`,
-    {
-      minZoom: MAP_ZOOM.min,
-      maxZoom: MAP_ZOOM.max,
-      maxNativeZoom: 7,
-      noWrap: true,
-      crossOrigin: true,
-      errorTileUrl: "https://tiles.bgonegaming.win/wherewindmeet/tiles/7_127_126.webp"
-    }
-  ).addTo(map);
+  // ============================================
+  // SPECIAL MAPS (ZOOM CLAMP)
+  // ============================================
+
+  if (type === "hutuo" || type === "royal_palace") {
+
+    const forcedMaxZoom =
+      type === "hutuo" ? 6 : 7;
+
+    currentTileLayer = L.tileLayer(
+      preset.tiles + `?v=${TILE_VERSION}`,
+      getTileOptions(forcedMaxZoom)
+    );
+
+    currentTileLayer.getTileUrl = function(coords) {
+
+      const forcedZoom = Math.min(coords.z, forcedMaxZoom);
+
+      return L.Util.template(this._url, {
+        x: coords.x,
+        y: coords.y,
+        z: forcedZoom
+      });
+    };
+  }
+
+  // ============================================
+  // MAIN MAP NORMAL
+  // ============================================
+
+  else {
+
+    currentTileLayer = L.tileLayer(
+      preset.tiles + `?v=${TILE_VERSION}`,
+      getTileOptions(7)
+    );
+  }
+
+  currentTileLayer.addTo(map);
 
   map.setView(
     preset.center,
     MAP_ZOOM.initial,
-    animate ? { animate: true, duration: 0.6 } : { animate: false }
+    animate ? { animate: true, duration: 0.4 } : { animate: false }
   );
 
-  // ✅ Sembunyikan/tampilkan RegionManager & RegionLabelManager
-  if (type === 'hutuo') {
-    // Sembunyikan region UI
-    const regionContainer = document.querySelector('.region-container');
-    if (regionContainer) regionContainer.style.display = 'none';
-    
-    // Sembunyikan region labels
-    if (typeof RegionLabelManager !== 'undefined') {
-      RegionLabelManager.hide();
-    }
-    
-    // Reset region ke 'all' tanpa trigger refresh dulu
-    if (typeof RegionManager !== 'undefined') {
-      RegionManager.activeRegion = 'all';
-    }
-  } else {
-    // Tampilkan kembali region UI
-    const regionContainer = document.querySelector('.region-container');
-    if (regionContainer) regionContainer.style.display = '';
-    
-    // Tampilkan region labels
-    if (typeof RegionLabelManager !== 'undefined') {
-      RegionLabelManager.show();
-    }
-  }
+  // ============================================
+  // REFRESH UI
+  // ============================================
 
-  // Refresh markers sesuai map baru
-  if (typeof MarkerManager !== 'undefined' && MarkerManager.forceRefreshMarkers) {
+  if (typeof RegionLabelManager !== 'undefined')
+    RegionLabelManager._forceRefresh();
+
+  if (typeof MarkerManager !== 'undefined' &&
+      MarkerManager.forceRefreshMarkers)
     MarkerManager.forceRefreshMarkers();
-  }
 }
 
 // ============================================
-// OPTIONAL HELPERS
+// HELPERS
 // ============================================
 
 function toggleMapPreset() {
-  const next = currentPreset === "main" ? "hutuo" : "main";
+
+  const order = ["main", "hutuo", "royal_palace"];
+  const currentIndex = order.indexOf(currentPreset);
+  const next = order[(currentIndex + 1) % order.length];
+
   switchMapPreset(next);
 }
 

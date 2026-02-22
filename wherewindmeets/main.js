@@ -40,7 +40,7 @@
   // DEFERRED CSS
   // ============================================
   function loadDeferredCSS() {
-    const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.0.0';
+    const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.1.1';
     
     const cssFiles = [
       'marker-image-handler.css',
@@ -59,6 +59,7 @@
       'profile-container.css',
       'setting.css',
       'donate.css',
+      'tip-guide.css',
       'region.css'
     ];
 
@@ -408,18 +409,22 @@ function showAllUIElements() {
       document.body.classList.add('app-ready');
       
       // ✨ STEP 2: Hide preload & show icons
-      setTimeout(() => {
-        hidePreload();
-        waitForProfileReady();
+setTimeout(() => {
+  hidePreload();
+  waitForProfileReady();
 
-        // ✨ STEP 3: Show patch notes
-        setTimeout(() => {
-          if (window.showPatchPopup) {
-            showPatchPopup();
-          }
-        }, 800);
+  // ✨ STEP 3: Show patch notes
+  setTimeout(() => {
+    const patchShown = window.showPatchPopup ? showPatchPopup() : false;
 
-      }, 300);
+    // Jika patch note tidak tampil → langsung start tip guide
+    if (!patchShown && window.TipGuide) {
+      TipGuide.start();
+    }
+    // Jika patch note tampil → TipGuide.start() dipanggil oleh closePatchPopup()
+  }, 800);
+
+}, 300);
 
       // ✨ STEP 4: Show all UI elements
       setTimeout(() => {

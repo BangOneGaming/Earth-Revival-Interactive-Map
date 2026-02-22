@@ -1221,22 +1221,22 @@ updateStats() {
 
 /**
  * Check apakah marker boleh tampil di map yang sedang aktif
- * - map "main"  → marker tanpa map_type (kosong/null/undefined)
- * - map "hutuo" → marker dengan map_type === "hutuo"
  */
 isMarkerVisibleOnCurrentMap(markerData) {
-  const currentMap = typeof getCurrentMapPreset === 'function'
-    ? getCurrentMapPreset()
-    : 'main';
 
-  const markerMapType = (markerData.map_type || '').trim().toLowerCase();
+  const currentMap =
+    typeof getCurrentMapPreset === 'function'
+      ? getCurrentMapPreset()
+      : 'main';
 
-  if (currentMap === 'hutuo') {
-    return markerMapType === 'hutuo';
-  }
+  const markerMapType =
+    (markerData.map_type || '').trim().toLowerCase();
 
-  // default: main map → hanya marker tanpa map_type
-  return markerMapType === '';
+  // marker tanpa map_type → milik main
+  const normalizedMarkerMap =
+    markerMapType === '' ? 'main' : markerMapType;
+
+  return normalizedMarkerMap === currentMap;
 },
 
 /**

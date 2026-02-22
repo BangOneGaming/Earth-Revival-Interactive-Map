@@ -1,0 +1,178 @@
+/* ==========================================
+   TIP GUIDE SYSTEM
+   Matching the gold/dark WWM aesthetic
+========================================== */
+
+/* ── Backdrop with cutout hole ── */
+.tg-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 9998;
+  pointer-events: auto;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  /* clip-path applied inline via JS */
+}
+
+.tg-backdrop--visible {
+  opacity: 1;
+}
+
+/* ── Tip bubble ── */
+.tg-tip {
+  position: fixed;
+  z-index: 9999;
+  width: 230px;
+  pointer-events: auto;
+  opacity: 0;
+  transform: scale(0.88) translateY(6px);
+  transition: opacity 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tg-tip--visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.tg-tip--hiding {
+  opacity: 0;
+  transform: scale(0.92) translateY(4px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* Inner card */
+.tg-tip__inner {
+  position: relative;
+  background: linear-gradient(145deg, #2a1a06, #3d2608);
+  border: 1px solid rgba(243, 213, 155, 0.5);
+  border-radius: 12px;
+  padding: 14px 14px 12px;
+  box-shadow:
+    0 0 0 1px rgba(243, 213, 155, 0.15),
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(212, 167, 74, 0.15);
+}
+
+/* ── Header ── */
+.tg-tip__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.tg-tip__icon {
+  font-size: 16px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.tg-tip__title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 700;
+  color: #f3d59b;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.tg-tip__close {
+  background: none;
+  border: none;
+  color: rgba(243, 213, 155, 0.5);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color 0.2s, background 0.2s;
+  flex-shrink: 0;
+}
+
+.tg-tip__close:hover {
+  color: #f3d59b;
+  background: rgba(243, 213, 155, 0.15);
+}
+
+/* ── Body text ── */
+.tg-tip__body {
+  margin: 0;
+  font-size: 12px;
+  color: #d4b87a;
+  line-height: 1.55;
+}
+
+/* ── Animated pulse ring on highlighted element ── */
+@keyframes tgPulseRing {
+  0%   { box-shadow: 0 0 0 0 rgba(243, 213, 155, 0.7); }
+  70%  { box-shadow: 0 0 0 10px rgba(243, 213, 155, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(243, 213, 155, 0); }
+}
+
+/* Applied via JS to the target element while tip is active */
+.tg-target-pulse {
+  animation: tgPulseRing 1.4s ease-out infinite;
+  position: relative;
+  z-index: 9999 !important;
+}
+
+/* ── Arrow pointer ── */
+.tg-tip__arrow {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #2a1a06;
+  border: 1px solid rgba(243, 213, 155, 0.5);
+  transform: rotate(45deg);
+}
+
+/* Arrow positions per tip placement */
+.tg-tip--right .tg-tip__arrow {
+  left: -6px;
+  top: 50%;
+  margin-top: -5px;
+  border-right: none;
+  border-top: none;
+}
+
+.tg-tip--left .tg-tip__arrow {
+  right: -6px;
+  top: 50%;
+  margin-top: -5px;
+  border-left: none;
+  border-bottom: none;
+}
+
+.tg-tip--bottom .tg-tip__arrow {
+  top: -6px;
+  left: 50%;
+  margin-left: -5px;
+  border-bottom: none;
+  border-right: none;
+}
+
+.tg-tip--top .tg-tip__arrow {
+  bottom: -6px;
+  left: 50%;
+  margin-left: -5px;
+  border-top: none;
+  border-left: none;
+}
+
+/* ── Mobile adjustments ── */
+@media (max-width: 768px) {
+  .tg-tip {
+    width: 190px;
+  }
+
+  .tg-tip__title {
+    font-size: 11px;
+  }
+
+  .tg-tip__body {
+    font-size: 11px;
+  }
+}

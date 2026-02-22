@@ -1,19 +1,23 @@
     // Show popup after map loads
     function showPatchPopup() {
-      const overlay = document.getElementById('patchOverlay');
-      const hasSeenPatch = localStorage.getItem('seenPatchV7'); // Change version number for new updates
-      
-      if (!hasSeenPatch) {
-        overlay.classList.add('active');
-      }
-    }
+  const overlay = document.getElementById('patchOverlay');
+  const hasSeenPatch = localStorage.getItem('seenPatchV8');
+  
+  if (!hasSeenPatch) {
+    overlay.classList.add('active');
+    return true;  // ← patch note ditampilkan
+  }
+  return false;   // ← sudah pernah lihat, tidak tampil
+}
 
-    // Close popup
-    function closePatchPopup() {
-      const overlay = document.getElementById('patchOverlay');
-      overlay.classList.remove('active');
-      localStorage.setItem('seenPatchV7', 'true'); // Mark as seen
-    }
+function closePatchPopup() {
+  const overlay = document.getElementById('patchOverlay');
+  overlay.classList.remove('active');
+  localStorage.setItem('seenPatchV8', 'true');
+  
+  // ← Start tip guide setelah patch note ditutup
+  if (window.TipGuide) TipGuide.start();
+}
 
     // Close on overlay click
     document.getElementById('patchOverlay').addEventListener('click', function(e) {

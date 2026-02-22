@@ -71,7 +71,7 @@
   <link rel="stylesheet" href="styles.css?v=5.9.8">
 <link href="https://fonts.googleapis.com/css2?family=Lato:wght@700&display=swap" rel="stylesheet">
   <script>
-    const CSS_VERSION = "5.9.8";
+    const CSS_VERSION = "6.0.0";
   </script>
 <style id="ui-visibility-control">
   /* ✨ DISABLE SCROLL SAAT BELUM SIAP */
@@ -381,7 +381,7 @@
       <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/BangOne.webp"
            alt="Update" class="patch-image">
       <h2 class="patch-title">Interactive Map Update</h2>
-      <p class="patch-subtitle">Enhanced Features, Region Filters & Performance Improvements</p>
+      <p class="patch-subtitle">New Regions, Fly-to Navigation & Region Filter Improvements</p>
     </div>
 
     <!-- Content -->
@@ -389,8 +389,87 @@
       <h3>What's New in This Version</h3>
 
       <ul class="patch-list">
-        
-        <!-- Chest Icon Differentiation -->
+
+        <!-- New Regions -->
+        <li>
+          <strong>
+            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon" alt="Region">
+            New Regions Added
+          </strong>
+          <p class="patch-description">Three new regions are now available on the map:</p>
+          <ul class="patch-sublist">
+            <li>
+              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon-inline" alt="">
+              <strong>Hexi</strong> — A vast region with sub-areas including
+              Yumen Pass, Liangzhou, and Qinchuan.
+            </li>
+            <li>
+              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon-inline" alt="">
+              <strong>Hutuo</strong> — Part of Bujian Mountain that spans its own
+              dedicated map. Includes sub-areas: Yunqiu, Luancheng,
+              Hutuo South Bank, and Fenglong Mountain.
+            </li>
+            <li>
+              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon-inline" alt="">
+              <strong>Royal Palace</strong> — A new sub-region coming to the map.
+              Stay tuned for further updates.
+            </li>
+          </ul>
+        </li>
+
+        <!-- Fly To -->
+        <li>
+          <strong>
+            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/petiharta.webp" class="patch-icon" alt="">
+            Fly-to Navigation <span class="patch-badge patch-badge--beta">Beta</span>
+          </strong>
+          <p class="patch-description">
+            Selecting a sub-region or sub-area from the Region list will now 
+            automatically fly the map camera to that location. Regions that 
+            belong to a separate map (such as Hutuo) will also automatically 
+            switch to the correct map before flying.
+          </p>
+        </li>
+
+        <!-- Region Filter -->
+        <li>
+          <strong>
+            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon" alt="Region">
+            Region Marker Filtering <span class="patch-badge patch-badge--beta">Beta</span>
+          </strong>
+          <p class="patch-description">
+            Selecting a sub-region or sub-area now filters markers to show only 
+            those belonging to that area. Major regions (top-level) do not filter 
+            markers — they only expand the list for easier navigation.
+            We will continue to improve this feature based on your feedback.
+          </p>
+        </li>
+
+        <!-- Region List UX -->
+        <li>
+          <strong>
+            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon" alt="Region">
+            Cleaner Region List
+          </strong>
+          <p class="patch-description">
+            The region panel has been reorganized into a clear three-level hierarchy:
+          </p>
+          <ul class="patch-sublist">
+            <li><strong>Level 1</strong> — Major regions (Qinghe, Kaifeng, Hexi, Bujian Mountain)</li>
+            <li><strong>Level 2</strong> — Sub-regions (e.g. Verdant Wilds, Kaifeng City, Hutuo)</li>
+            <li><strong>Level 3</strong> — Sub-areas (e.g. Bamboo Abode, Jinming Pool)</li>
+          </ul>
+          <p class="patch-description">
+            Tap a group to expand it. The list is now easier to read and navigate 
+            on both desktop and mobile.
+          </p>
+        </li>
+
+      </ul>
+
+      <h3>Previous Improvements</h3>
+      <ul class="patch-list">
+
         <li>
           <strong>Chest Icon Differentiation</strong>
           <div class="patch-feature-icons">
@@ -404,48 +483,27 @@
             </div>
           </div>
           <p class="patch-description">
-            Treasure Chests now have distinct icons. Common chests use the standard icon, 
-            while puzzle chests (hidden from in-game minimap) use a special icon to help 
-            you identify collectibles that require exploration.
+            Puzzle chests (hidden from in-game minimap) now use a distinct icon 
+            to help you identify collectibles that require exploration.
           </p>
         </li>
 
-        <!-- Region System -->
         <li>
           <strong>
-            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon" alt="Region">
-            Region Information & Filtering
+            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/petiharta.webp" class="patch-icon" alt="">
+            Optimized Image Loading
           </strong>
-<p class="patch-description">
-  <strong>Note:</strong><br>
-  This feature is still in beta testing. We will improve it slowly based on your feedback.<br>
-  Every marker popup now displays its region name, making it easy to identify 
-  location areas. A new region filter allows you to display markers from specific 
-  regions only, helping you focus on exploration by area.
-</p>
-        </li>
-
-        <!-- Image Loading Optimization -->
-        <li>
-          <strong>Optimized Image Loading</strong>
           <p class="patch-description">
-            Images in marker popups are now hidden by default and will only load when you 
-            click "Show Image". This improves performance and reduces data usage, especially 
-            on mobile devices.
+            Images in marker popups load only when you click "Show Image", 
+            improving performance especially on mobile.
           </p>
         </li>
 
-      </ul>
-
-      <h3>Previous Improvements</h3>
-      <ul class="patch-list">
         <li>
           <strong>
-            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/camp.webp"
-                 class="patch-icon" alt="Camp">
+            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/camp.webp" class="patch-icon" alt="Camp">
             Camp &
-            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/NPC.webp"
-                 class="patch-icon" alt="NPC">
+            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/NPC.webp" class="patch-icon" alt="NPC">
             NPC Markers
           </strong>
           <p class="patch-description">
@@ -454,46 +512,26 @@
         </li>
 
         <li>
-          <strong>Enhanced Marker Descriptions</strong>
-          <p class="patch-description">Improved descriptions for:</p>
-          <div class="patch-category-icons">
-            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/knoweverything.webp"
-                 class="patch-icon" alt="Wandering Tales" title="Wandering Tales">
-            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/meow.webp"
-                 class="patch-icon" alt="Meow Meow Treasure" title="Meow Meow Treasure">
-            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/adventure.webp"
-                 class="patch-icon" alt="Encounter" title="Encounter">
-            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/book.webp"
-                 class="patch-icon" alt="Experience" title="Experience">
-          </div>
+          <strong>
+            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/knoweverything.webp" class="patch-icon" alt="Wandering Tales">
+            Wandering Tales Navigation
+          </strong>
+          <p class="patch-description">
+            Improved title translations and part navigation buttons for related quest items.
+          </p>
         </li>
 
         <li>
           <strong>
-            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/knoweverything.webp"
-                 class="patch-icon" alt="Wandering Tales">
-            Wandering Tales Navigation
+            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/petiharta.webp" class="patch-icon" alt="">
+            General Improvements
           </strong>
-          <p class="patch-description">
-            Improved title translations and added part navigation buttons to easily locate 
-            related quest items and navigate between interconnected objectives.
-          </p>
-        </li>
-
-        <li>
-          <strong>Image System Stability</strong>
-          <p class="patch-description">
-            The marker image system is now fully stable and functional.
-          </p>
-        </li>
-
-        <li>
-          <strong>General Improvements</strong>
           <p class="patch-description">
             Offline visited marker support, improved zoom clarity, better performance 
             with large marker sets, and refined mobile interactions.
           </p>
         </li>
+
       </ul>
     </div>
 
@@ -811,7 +849,8 @@ btnClose.addEventListener("click", function(e) {
     "patchnote.js",
     "setting.js",
     "donate.js",
-    "region.js"
+    "region.js",
+    "tip-guide.js"
   ];
 
   function loadScriptsSequentially(list, index = 0) {
