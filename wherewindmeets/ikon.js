@@ -74,7 +74,10 @@ const ICON_CONFIG = {
     "36": "tehnik.webp",
     "37": "innerway.webp",
     "38": "NPC.webp",
-    "39": "camp.webp"
+    "39": "camp.webp",
+    "40": "dogplay.webp",
+    "41": "board.webp",
+    "42": "rideandarcher.webp"
   },
 
   names: {
@@ -116,7 +119,10 @@ const ICON_CONFIG = {
     "36": "Mystic Skill",
     "37": "Inner Ways",
     "38": "Old Friend",
-    "39": "Camp"
+    "39": "Camp",
+    "40": "Dog Play",
+    "41": "Board",
+    "42": "Ride And Archer Challenge"
   },
 
   // Custom sizes per category

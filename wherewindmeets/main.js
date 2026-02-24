@@ -40,7 +40,7 @@
   // DEFERRED CSS
   // ============================================
   function loadDeferredCSS() {
-    const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.1.1';
+    const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.1.5';
     
     const cssFiles = [
       'marker-image-handler.css',
@@ -60,6 +60,8 @@
       'setting.css',
       'donate.css',
       'tip-guide.css',
+      'map-switcher.css',
+      'MapTransition.css',
       'region.css'
     ];
 
@@ -369,7 +371,7 @@ function showAllUIElements() {
         }
       }
 
-      // ============================================
+// ============================================
       // STEP 8: Initialize Region Manager
       // ============================================
       updateLoadingText('Initializing region system...');
@@ -378,6 +380,13 @@ function showAllUIElements() {
         try {
           await RegionManager.init(window.map);
           console.log('✅ RegionManager initialized');
+
+          // MapSwitcher
+          if (window.MapSwitcher) {
+            MapSwitcher.init(window.map);
+            console.log('✅ MapSwitcher initialized');
+          }
+
         } catch (error) {
           console.warn('⚠️ RegionManager init failed:', error);
         }

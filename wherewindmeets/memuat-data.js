@@ -7,7 +7,7 @@
 const API_BASE_URL = 'https://autumn-dream-8c07.square-spon.workers.dev';
 
 // 🔐 DATA VERSION (ubah ini kalau ada update data)
-const DATA_VERSION = '1.1.2';
+const DATA_VERSION = '1.1.12';
 
 // API endpoints configuration
 const DATA_ENDPOINTS = {
@@ -50,6 +50,9 @@ const DATA_ENDPOINTS = {
   innerwayslist: `${API_BASE_URL}/innerwayslist`,
   npc: `${API_BASE_URL}/npclist`,
   kemah: `${API_BASE_URL}/camp`,
+  anjing: `${API_BASE_URL}/dog`,
+  papan: `${API_BASE_URL}/board`,
+  kudadanpanah: `${API_BASE_URL}/rideandarcher`,
   terbaru: `${API_BASE_URL}/terbaru` // ✅ Tambah endpoint baru
 };
 
@@ -94,6 +97,9 @@ const ENDPOINT_TO_GLOBAL = {
   innerwayslist: 'innerwaylist',
   npc: 'npc',
   kemah: 'kemah',
+  anjing: 'anjing',
+  papan: 'papan',
+  kudadanpanah: 'kudadanpanah',
   terbaru: 'terbaru' // ✅ Tambah mapping global
 };
 

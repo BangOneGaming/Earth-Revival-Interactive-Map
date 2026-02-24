@@ -81,8 +81,8 @@ function initializeMap() {
     updateWhenIdle: true
   });
 
-  // default map
-  switchMapPreset("main", false);
+  // Default map — NO transition on initial load
+  _applyMapPreset("main", false);
 
   return map;
 }
@@ -111,28 +111,26 @@ function getTileOptions(maxNativeZoom) {
 }
 
 // ============================================
-// SWITCH MAP PRESET
+// _applyMapPreset — RAW switch, no transition
+// Called by switchMapPreset (inside callback)
+// and on initial load
 // ============================================
 
-function switchMapPreset(type, animate = true) {
+function _applyMapPreset(type, animate = true) {
 
   if (!map || !MAP_PRESETS[type]) return;
 
-  const preset = MAP_PRESETS[type];
+  const preset  = MAP_PRESETS[type];
   currentPreset = type;
 
   if (currentTileLayer) {
     map.removeLayer(currentTileLayer);
   }
 
-  // ============================================
   // SPECIAL MAPS (ZOOM CLAMP)
-  // ============================================
-
   if (type === "hutuo" || type === "royal_palace") {
 
-    const forcedMaxZoom =
-      type === "hutuo" ? 6 : 7;
+    const forcedMaxZoom = type === "hutuo" ? 6 : 7;
 
     currentTileLayer = L.tileLayer(
       preset.tiles + `?v=${TILE_VERSION}`,
@@ -140,23 +138,15 @@ function switchMapPreset(type, animate = true) {
     );
 
     currentTileLayer.getTileUrl = function(coords) {
-
       const forcedZoom = Math.min(coords.z, forcedMaxZoom);
-
       return L.Util.template(this._url, {
         x: coords.x,
         y: coords.y,
         z: forcedZoom
       });
     };
-  }
 
-  // ============================================
-  // MAIN MAP NORMAL
-  // ============================================
-
-  else {
-
+  } else {
     currentTileLayer = L.tileLayer(
       preset.tiles + `?v=${TILE_VERSION}`,
       getTileOptions(7)
@@ -171,16 +161,37 @@ function switchMapPreset(type, animate = true) {
     animate ? { animate: true, duration: 0.4 } : { animate: false }
   );
 
-  // ============================================
   // REFRESH UI
-  // ============================================
-
   if (typeof RegionLabelManager !== 'undefined')
     RegionLabelManager._forceRefresh();
 
-  if (typeof MarkerManager !== 'undefined' &&
-      MarkerManager.forceRefreshMarkers)
+  if (typeof MarkerManager !== 'undefined' && MarkerManager.forceRefreshMarkers)
     MarkerManager.forceRefreshMarkers();
+}
+
+// ============================================
+// switchMapPreset — PUBLIC, always with transition
+// This is the function called from anywhere in
+// the project (MapSwitcher, RegionManager, etc.)
+// ============================================
+
+function switchMapPreset(type, animate = true) {
+
+  if (!map || !MAP_PRESETS[type]) return;
+
+  // Skip if already on this map
+  if (type === currentPreset) return;
+
+  // If MapTransition is available → play smoke, switch inside callback
+  if (typeof MapTransition !== 'undefined') {
+    MapTransition.play(type, () => {
+      _applyMapPreset(type, animate);
+    });
+    return;
+  }
+
+  // Fallback: no transition, switch directly
+  _applyMapPreset(type, animate);
 }
 
 // ============================================
@@ -188,11 +199,9 @@ function switchMapPreset(type, animate = true) {
 // ============================================
 
 function toggleMapPreset() {
-
   const order = ["main", "hutuo", "royal_palace"];
   const currentIndex = order.indexOf(currentPreset);
   const next = order[(currentIndex + 1) % order.length];
-
   switchMapPreset(next);
 }
 

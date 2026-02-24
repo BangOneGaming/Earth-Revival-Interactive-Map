@@ -23,7 +23,7 @@ const filterGroupConfig = {
   hot : {
     title: 'Hot',
     icon: '',
-    categories: [2, 17, 19, 3, 13, 24, 36, 37]  // Teleport + Treasure Chest
+    categories: [2, 17, 19, 3, 13, 24]  // Teleport + Treasure Chest
   },
   discover: {
     title: 'Discover',
@@ -33,12 +33,12 @@ const filterGroupConfig = {
   collection: {
     title: 'Collection',
     icon: '',
-    categories: [5, 4, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 18, 20]
+    categories: [5, 4, 6, 7, 8, 9, 40, 10, 11, 12, 14, 15, 16, 18, 20, 41]
   },
     minigame: {
     title: "Mini Game's",
     icon: '',
-    categories: [29, 30, 31, 32, 33, 34, 35]
+    categories: [29, 30, 31, 32, 33, 34, 35, 42]
   },
   traveler: {
     title: 'Traveler',
@@ -53,7 +53,7 @@ const filterGroupConfig = {
   materialart: {
     title: 'Material Art',
     icon: '',
-    categories: [28]
+    categories: [37, 36, 28]
   }
 
 };
@@ -389,6 +389,9 @@ getAllMarkers() {
     window.innerwaylist,
     window.npc,
     window.kemah,
+    window.anjing,
+    window.papan,
+    window.kudadanpanah,
     window.terbaru
   ];
 

@@ -1,0 +1,309 @@
+/* ============================================================
+   MapSwitcher.css
+   Drop-in styles for MapSwitcher.js
+   Depends on: Cinzel font, ICON_BASE_URL, .region-toggle class
+   ============================================================ */
+
+/* ── Toggle button ──────────────────────────────────────────
+   Independent fixed button, visually stacked below .region-toggle.
+   .region-container sits at top:10px, left:23% on desktop.
+   We mirror that left, then offset top by button height + gap.
+
+   Desktop: region-toggle = 50px tall, top: 10px
+            → mapSw sits at top: 10px + 50px + 8px = 68px, left: 23%
+
+   Mobile:  region-container sits at top:65vh
+            region-toggle = 45px tall
+            → mapSw sits at top: 65vh + 45px + 6px, left: 10px
+   ──────────────────────────────────────────────────────────── */
+.mapsw-toggle-btn {
+  position: fixed !important;
+  top: 68px;          /* 10px (container top) + 50px (region btn) + 8px gap */
+  left: 23%;
+  z-index: 1000;
+  pointer-events: auto;
+}
+/* Outlander icon jadi negative */
+#mapSwBtn img {
+  filter: brightness(0) invert(1);
+}
+.mapsw-toggle-btn.active {
+  background: linear-gradient(135deg, #f3d59b, #d4a74a) !important;
+  box-shadow: 0 0 0 3px rgba(243,213,155,0.45), 0 0 22px rgba(212,167,74,0.4) !important;
+}
+.mapsw-toggle-btn.active img {
+  filter: brightness(0) invert(1) !important;
+}
+
+@media (max-width: 768px) {
+  .mapsw-toggle-btn {
+    top: calc(65vh + 45px + 6px) !important;  /* below region toggle on mobile */
+    left: 10px !important;
+    width: 45px !important;
+    height: 45px !important;
+  }
+  .mapsw-toggle-btn img {
+    width: 24px !important;
+    height: 24px !important;
+  }
+}
+
+/* ── Overlay ────────────────────────────────────────────────── */
+.mapsw-overlay {
+  position: fixed; inset: 0; z-index: 600;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  pointer-events: none; opacity: 0;
+  transition: opacity 0.38s ease;
+}
+.mapsw-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.mapsw-overlay::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.58) 100%);
+  opacity: 0; transition: opacity 0.38s ease; pointer-events: none;
+}
+.mapsw-overlay.visible::before { opacity: 1; }
+
+/* ── Close ── */
+.mapsw-close {
+  position: absolute; top: 18px; right: 22px;
+  font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 3px;
+  color: rgba(212,167,74,0.38); cursor: pointer; z-index: 10;
+  text-transform: uppercase; transition: color 0.2s;
+  pointer-events: auto;
+}
+.mapsw-close:hover { color: #f3d59b; }
+
+/* ── Heading ── */
+.mapsw-heading {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(10px, 1.4vw, 13px);
+  font-weight: 600; letter-spacing: 6px; text-transform: uppercase;
+  color: rgba(212,167,74,0.72);
+  margin-bottom: 30px; position: relative; z-index: 1;
+  opacity: 0; transform: translateY(-12px);
+  transition: opacity 0.38s ease 0.1s, transform 0.38s ease 0.1s;
+}
+.mapsw-overlay.visible .mapsw-heading { opacity: 1; transform: translateY(0); }
+.mapsw-heading::before, .mapsw-heading::after {
+  content: ''; position: absolute; top: 50%;
+  width: 48px; height: 1px;
+  background: linear-gradient(to right, transparent, rgba(212,167,74,0.5));
+  transform: translateY(-50%);
+}
+.mapsw-heading::before { right: 100%; margin-right: 14px; transform: translateY(-50%) scaleX(-1); }
+.mapsw-heading::after  { left:  100%; margin-left:  14px; }
+
+/* ── Carousel outer ── */
+:root {
+  --mapsw-card-w: clamp(180px, 25vw, 300px);
+  --mapsw-card-gap: clamp(16px, 2.5vw, 30px);
+}
+
+.mapsw-carousel-outer {
+  position: relative; width: 100vw; z-index: 1;
+  opacity: 0; transform: translateY(22px);
+  transition: opacity 0.42s ease 0.14s, transform 0.42s ease 0.14s;
+  /* row: arrow | track | arrow */
+  display: flex; align-items: center;
+}
+.mapsw-overlay.visible .mapsw-carousel-outer { opacity: 1; transform: translateY(0); }
+
+/* side fades — on the outer div, not the track */
+.mapsw-carousel-outer::before,
+.mapsw-carousel-outer::after {
+  content: ''; position: absolute; top: 0; bottom: 0;
+  width: clamp(90px, 18vw, 240px); z-index: 2; pointer-events: none;
+}
+.mapsw-carousel-outer::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(4,2,1,0.99) 0%, rgba(4,2,1,0.5) 60%, transparent 100%);
+}
+.mapsw-carousel-outer::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(4,2,1,0.99) 0%, rgba(4,2,1,0.5) 60%, transparent 100%);
+}
+
+/* ── Arrow buttons ── */
+.mapsw-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  z-index: 5;
+  width: 44px; height: 44px;
+  background: rgba(20,12,4,0.7);
+  border: 1px solid rgba(212,167,74,0.3);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: #d4a74a;
+  font-size: 26px; line-height: 1;
+  transition: background 0.2s, border-color 0.2s, opacity 0.25s, transform 0.2s;
+  backdrop-filter: blur(6px);
+  pointer-events: auto;
+  padding: 0;
+}
+.mapsw-arrow span { display: block; margin-top: -2px; }
+.mapsw-arrow:hover {
+  background: rgba(212,167,74,0.25);
+  border-color: rgba(243,213,155,0.6);
+  color: #f3d59b;
+  transform: translateY(-50%) scale(1.08);
+}
+.mapsw-arrow-left  { left:  clamp(12px, 3.5vw, 48px); }
+.mapsw-arrow-right { right: clamp(12px, 3.5vw, 48px); }
+.mapsw-arrow.hidden { opacity: 0; pointer-events: none; }
+
+/* ── Track ── */
+.mapsw-track {
+  display: flex;
+  padding: 40px 0 48px;
+  overflow-x: scroll;
+  overflow-y: visible;
+  scrollbar-width: none;
+  align-items: center;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+.mapsw-track::-webkit-scrollbar { display: none; }
+
+.mapsw-spacer {
+  flex: 0 0 calc(50vw - var(--mapsw-card-w) / 2 - var(--mapsw-card-gap) / 2);
+  pointer-events: none;
+}
+
+/* ── Card ── */
+.mapsw-item {
+  flex: 0 0 var(--mapsw-card-w);
+  margin: 0 calc(var(--mapsw-card-gap) / 2);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid rgba(212,167,74,0.12);
+  cursor: pointer;
+  position: relative;
+  background: #080502;
+  transform: scale(0.68) translateZ(0);
+  opacity: 0.35;
+  will-change: transform, opacity;
+  /* NO transition on transform/opacity — JS drives these every frame */
+}
+
+/* image */
+.mapsw-img-wrap {
+  position: relative; overflow: hidden;
+  height: clamp(120px, 18vw, 220px);
+}
+.mapsw-img-wrap::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 55%;
+  background: linear-gradient(to top, rgba(0,0,0,0.78), transparent);
+  pointer-events: none;
+}
+.mapsw-thumb {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.mapsw-thumb-text {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(13px, 2vw, 20px);
+  font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+  color: rgba(212,167,74,0.45);
+  background: linear-gradient(160deg, rgba(30,20,8,1) 0%, rgba(12,8,3,1) 100%);
+  border-bottom: 1px solid rgba(212,167,74,0.08);
+}
+
+/* badge */
+.mapsw-badge {
+  position: absolute; top: 10px; left: 10px;
+  font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: 2.5px;
+  text-transform: uppercase; color: #3d2800;
+  background: linear-gradient(135deg,#f3d59b,#d4a74a);
+  padding: 3px 8px; border-radius: 4px; font-weight: 700;
+  opacity: 0; transform: translateY(-4px);
+  transition: opacity 0.2s, transform 0.2s; z-index: 3;
+}
+.mapsw-item.selected .mapsw-badge { opacity: 1; transform: translateY(0); }
+
+/* name */
+.mapsw-item-name {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(9px, 1.1vw, 12px);
+  font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+  color: #7a5a28; text-align: center;
+  padding: 11px 8px 14px;
+}
+
+/* ── Controls (below carousel) ── */
+.mapsw-controls {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 13px; margin-top: 4px; z-index: 1;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.38s ease 0.22s, transform 0.38s ease 0.22s;
+}
+.mapsw-overlay.visible .mapsw-controls { opacity: 1; transform: translateY(0); }
+
+.mapsw-label {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(13px, 1.8vw, 17px);
+  font-weight: 600; letter-spacing: 4px; text-transform: uppercase;
+  color: #f3d59b; min-height: 1.4em; text-align: center;
+}
+
+.mapsw-dots { display: flex; gap: 8px; align-items: center; }
+.mapsw-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(212,167,74,0.2); cursor: pointer;
+  transition: background 0.25s, transform 0.25s, width 0.25s;
+  flex-shrink: 0;
+}
+.mapsw-dot.active {
+  background: #f3d59b; width: 16px; border-radius: 3px;
+  box-shadow: 0 0 8px rgba(243,213,155,0.5);
+}
+
+.mapsw-confirm {
+  font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 3px;
+  text-transform: uppercase; color: #3d2800;
+  background: linear-gradient(135deg,#f3d59b,#d4a74a);
+  border: none; border-radius: 8px;
+  padding: 11px 32px; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(212,167,74,0.28);
+  transition: box-shadow 0.2s, transform 0.2s, opacity 0.2s;
+}
+.mapsw-confirm:hover {
+  box-shadow: 0 8px 28px rgba(212,167,74,0.55);
+  transform: translateY(-2px);
+}
+.mapsw-confirm:active { transform: scale(0.97); }
+.mapsw-confirm.is-active-map {
+  opacity: 0.4; cursor: default;
+}
+.mapsw-confirm.is-active-map:hover {
+  transform: none;
+  box-shadow: 0 4px 20px rgba(212,167,74,0.28);
+}
+
+.mapsw-hint {
+  font-size: 11px; color: rgba(180,145,80,0.3);
+  font-style: italic; letter-spacing: 1px;
+  pointer-events: none; user-select: none;
+  font-family: 'Crimson Text', Georgia, serif;
+}
+
+/* ── Mobile ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  :root {
+    --mapsw-card-w: clamp(155px, 55vw, 220px);
+    --mapsw-card-gap: 14px;
+  }
+
+  /* On mobile the toggle btn sits below the region toggle,
+     handled by the flex-column direction on .region-container */
+  .mapsw-arrow {
+    width: 36px; height: 36px; font-size: 22px;
+  }
+  .mapsw-arrow-left  { left:  10px; }
+  .mapsw-arrow-right { right: 10px; }
+}

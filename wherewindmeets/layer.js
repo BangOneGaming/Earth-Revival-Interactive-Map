@@ -16,7 +16,7 @@ const UndergroundManager = {
     { 
       id: 'surface', 
       name: 'Jianghua', 
-      icon: `${ICON_BASE_URL}outland.png`,
+      icon: `${ICON_BASE_URL}outlander.webp`,
       description: 'Ground level',
       filterValue: null,
       brightness: 1.0,

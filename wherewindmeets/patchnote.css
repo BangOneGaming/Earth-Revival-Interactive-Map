@@ -1,18 +1,4 @@
-/* ========================================
-   PATCH POPUP STYLES (Desktop + Mobile)
-   ======================================== */
-/* Blokir auto ads masuk ke patch popup */
-.patch-overlay ins.adsbygoogle,
-.patch-overlay > ins,
-.patch-popup ins.adsbygoogle,
-.patch-popup > ins,
-#patchOverlay ins.adsbygoogle {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  overflow: hidden !important;
-  pointer-events: none !important;
-}
+
 
 /* Overlay */
 .patch-overlay {
