@@ -5,6 +5,7 @@ const TILE_VERSION = "20251121"; // Samakan dengan peta.js
 
 const CACHE_MAIN = "wwm-main-" + TILE_VERSION;
 const CACHE_HUTUO = "wwm-hutuo-" + TILE_VERSION;
+const CACHE_ROYAL = "wwm-royal-" + TILE_VERSION;
 
 const TILE_URL_PREFIX =
   "https://tiles.bgonegaming.win/wherewindmeet/tiles/";
@@ -36,7 +37,11 @@ self.addEventListener("activate", (event) => {
   console.log("[SW] Activated");
   logToClients("Activated");
 
-  const validCaches = [CACHE_MAIN, CACHE_HUTUO];
+  const validCaches = [
+    CACHE_MAIN,
+    CACHE_HUTUO,
+    CACHE_ROYAL
+  ];
 
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -45,7 +50,8 @@ self.addEventListener("activate", (event) => {
           const isTileCache =
             key.startsWith("wwm-main-") ||
             key.startsWith("wwm-hutuo-") ||
-            key.startsWith("wwm-tiles-"); // purge legacy cache
+            key.startsWith("wwm-royal-") ||
+            key.startsWith("wwm-tiles-"); // purge legacy
 
           if (isTileCache && !validCaches.includes(key)) {
             console.log("[SW] Delete old cache:", key);
@@ -70,10 +76,19 @@ self.addEventListener("fetch", (event) => {
   if (!url.startsWith(TILE_URL_PREFIX)) return;
 
   const isHutuo = url.includes("/hutuo/");
-  const cacheName = isHutuo ? CACHE_HUTUO : CACHE_MAIN;
+  const isRoyal = url.includes("/royal_palace/");
+
+  let cacheName = CACHE_MAIN;
+
+  if (isHutuo) {
+    cacheName = CACHE_HUTUO;
+  } else if (isRoyal) {
+    cacheName = CACHE_ROYAL;
+  }
 
   event.respondWith(
     caches.open(cacheName).then(async (cache) => {
+
       const cached = await cache.match(event.request);
 
       if (cached) {
