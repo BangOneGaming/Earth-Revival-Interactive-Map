@@ -53,6 +53,7 @@ const PipMap = (function () {
   function _injectStyles(doc) {
     const BASE_URL = 'https://bgonegaming.win/wherewindmeets/';
 
+    // Semua CSS dari project (sama persis dengan loadDeferredCSS di main.js)
     const allCSS = [
       // Leaflet
       'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
@@ -202,7 +203,7 @@ const PipMap = (function () {
 
         pipMap.eachLayer(layer => {
           if (layer instanceof L.Marker) {
-            const markerCat = layer.options._categoryId;
+            const markerCat = layer.categoryId;
             if (String(markerCat) === String(categoryId)) {
               if (isChecked) {
                 layer.setOpacity(1);
@@ -294,8 +295,9 @@ const PipMap = (function () {
         const pipMarker = L.marker(latlng, {
           icon: options.icon,
           opacity: options.opacity || 1,
-          _categoryId: options._categoryId || marker.options._categoryId || null,
         });
+        // Simpan categoryId langsung di marker (sama seperti MarkerManager)
+        pipMarker.categoryId = marker.categoryId || null;
 
         // Copy popup content jika ada
         const popup = marker.getPopup();
