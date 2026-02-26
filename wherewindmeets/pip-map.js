@@ -43,7 +43,7 @@ const PipMap = (function () {
         <line x1="8" y1="21" x2="16" y2="21"/>
         <line x1="12" y1="17" x2="12" y2="21"/>
       </svg>
-      <span>PiP Map</span>
+      <span>Floating Window (Beta)</span>
     `;
     btnToggle.addEventListener('click', toggle);
     document.body.appendChild(btnToggle);
@@ -172,26 +172,19 @@ const PipMap = (function () {
     const filterPanel = document.getElementById('filterPanel');
     if (!filterPanel) return;
 
-    // Clone dengan semua children
     const clone = filterPanel.cloneNode(true);
     clone.id = 'filterPanel-pip';
 
-    // Tambah style override agar filter panel tampil di PiP
-    clone.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100%;
-      z-index: 800;
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-      overflow-y: auto;
-    `;
+    // Hanya pastikan visible — biarkan CSS asli (right:0, fixed) yang atur posisi
+    clone.style.opacity = '1';
+    clone.style.visibility = 'visible';
+    clone.style.pointerEvents = 'auto';
+    // Hapus class hidden jika ada
+    clone.classList.remove('hidden');
 
     doc.body.appendChild(clone);
 
-    // Disable checkbox interaksi (read-only di PiP)
+    // Disable checkbox (read-only di PiP)
     clone.querySelectorAll('input[type="checkbox"]').forEach(cb => {
       cb.disabled = true;
     });
