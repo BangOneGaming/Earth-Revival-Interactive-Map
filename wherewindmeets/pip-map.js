@@ -163,6 +163,12 @@ const PipMap = (function () {
     // Clone filter panel dari halaman utama
     _cloneFilterPanel(doc);
 
+    // Clone region container (toggle + label)
+    _cloneRegionContainer(doc);
+
+    // Clone underground/layer panel
+    _cloneUndergroundPanel(doc);
+
     // Mulai virtual rendering setelah map siap
     pipMap.whenReady(() => {
       setTimeout(_initVirtualRendering, 300);
@@ -357,10 +363,20 @@ const PipMap = (function () {
         const isVisited = visitedMarkers[key] || false;
         if (isVisited) m.setOpacity(0.5);
 
-        // Popup sederhana
+        // Popup dengan konten lengkap (termasuk marker image)
         if (window.MarkerManager.createPopupContent) {
           try {
-            m.bindPopup(window.MarkerManager.createPopupContent(markerData), { maxWidth: 280 });
+            const popupContent = window.MarkerManager.createPopupContent(markerData);
+            m.bindPopup(popupContent, { maxWidth: 300, className: 'pip-popup' });
+
+            // Load marker image setelah popup terbuka
+            m.on('popupopen', () => {
+              if (window.MarkerImageHandler?.loadImagesForMarker) {
+                try {
+                  window.MarkerImageHandler.loadImagesForMarker(markerData._key);
+                } catch(e) {}
+              }
+            });
           } catch(e) {}
         }
 
@@ -421,6 +437,97 @@ const PipMap = (function () {
     }
 
     _updatePipMarkersInView();
+  }
+
+  // ── Clone region container ke PiP ────────────────────────────
+  function _cloneRegionContainer(doc) {
+    const regionContainer = document.querySelector('.region-container');
+    if (!regionContainer) return;
+
+    const clone = regionContainer.cloneNode(true);
+    clone.id = 'regionContainer-pip';
+
+    // Pastikan visible dan pointer events aktif
+    clone.style.opacity = '1';
+    clone.style.visibility = 'visible';
+    clone.style.pointerEvents = 'auto';
+
+    doc.body.appendChild(clone);
+
+    // Sync state aktif dari map utama ke PiP setiap 2 detik
+    // (region label muncul/hilang mengikuti map utama)
+    setInterval(() => {
+      if (!pipWindow || pipWindow.closed) return;
+
+      const mainRegion = document.querySelector('.region-container');
+      const pipRegion  = doc.getElementById('regionContainer-pip');
+      if (!mainRegion || !pipRegion) return;
+
+      // Sync class active pada toggle button
+      const mainBtn = mainRegion.querySelector('.region-toggle');
+      const pipBtn  = pipRegion.querySelector('.region-toggle');
+      if (mainBtn && pipBtn) {
+        pipBtn.className = mainBtn.className;
+      }
+
+      // Sync panel visibility
+      const mainPanel = mainRegion.querySelector('.region-panel');
+      const pipPanel  = pipRegion.querySelector('.region-panel');
+      if (mainPanel && pipPanel) {
+        pipPanel.className = mainPanel.className;
+      }
+    }, 500);
+  }
+
+  // ── Clone underground/layer panel ke PiP ──────────────────
+  function _cloneUndergroundPanel(doc) {
+    const panel = document.getElementById('undergroundPanel');
+    if (!panel) return;
+
+    const clone = panel.cloneNode(true);
+    clone.id = 'undergroundPanel-pip';
+    clone.style.visibility = 'visible';
+    clone.style.pointerEvents = 'auto';
+    doc.body.appendChild(clone);
+
+    // Clone toggle button juga
+    const toggleBtn = document.getElementById('undergroundToggle');
+    if (toggleBtn) {
+      const btnClone = toggleBtn.cloneNode(true);
+      btnClone.id = 'undergroundToggle-pip';
+      doc.body.appendChild(btnClone);
+
+      // Klik di PiP toggle → trigger toggle di map utama juga
+      btnClone.addEventListener('click', (e) => {
+        e.stopPropagation();
+        // Toggle panel di PiP
+        const pipPanel = doc.getElementById('undergroundPanel-pip');
+        if (pipPanel) pipPanel.classList.toggle('open');
+        // Sync ke map utama
+        document.getElementById('undergroundToggle')?.click();
+      });
+    }
+
+    // Sync state underground dari map utama ke PiP setiap 500ms
+    setInterval(() => {
+      if (!pipWindow || pipWindow.closed) return;
+
+      const mainPanel = document.getElementById('undergroundPanel');
+      const pipPanel  = doc.getElementById('undergroundPanel-pip');
+      if (!mainPanel || !pipPanel) return;
+
+      // Sync class (open/close, active floor)
+      pipPanel.className = mainPanel.className;
+
+      // Sync active floor item
+      const mainItems = mainPanel.querySelectorAll('.floor-item');
+      const pipItems  = pipPanel.querySelectorAll('.floor-item');
+      mainItems.forEach((item, i) => {
+        if (pipItems[i]) {
+          pipItems[i].className = item.className;
+        }
+      });
+    }, 500);
   }
 
   // ── Buka PiP window ────────────────────────────────────────
