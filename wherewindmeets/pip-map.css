@@ -1,0 +1,66 @@
+/* ============================================================
+   PiP Map Button
+   Hanya muncul di desktop (> 768px)
+   ============================================================ */
+
+.pip-map-btn {
+  position: fixed;
+  top: 9vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+
+  background: linear-gradient(135deg, rgba(30, 20, 8, 0.92), rgba(60, 40, 10, 0.92));
+  color: #f3d59b;
+  border: 1px solid rgba(243, 213, 155, 0.35);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+
+  transition: all 0.2s ease;
+}
+
+.pip-map-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: #f3d59b;
+}
+
+.pip-map-btn:hover {
+  background: linear-gradient(135deg, rgba(110, 75, 31, 0.95), rgba(160, 110, 40, 0.95));
+  border-color: rgba(243, 213, 155, 0.7);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+  transform: translateX(-50%) translateY(-2px);
+}
+
+.pip-map-btn.active {
+  background: linear-gradient(135deg, rgba(110, 75, 31, 0.95), rgba(212, 167, 74, 0.95));
+  border-color: rgba(243, 213, 155, 0.8);
+  box-shadow: 0 4px 14px rgba(212, 167, 74, 0.3);
+  color: #1a1008;
+  transform: translateX(-50%);
+}
+
+.pip-map-btn.active svg {
+  color: #1a1008;
+}
+
+/* Sembunyikan di mobile */
+@media (max-width: 768px) {
+  .pip-map-btn {
+    display: none !important;
+  }
+}

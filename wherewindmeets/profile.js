@@ -695,7 +695,24 @@ const CATEGORY_ICONS = {
 
     container.appendChild(titleBg);
     container.appendChild(content);
+
+    // ── Tab slide toggle ──
+    const slideTab = document.createElement('button');
+    slideTab.id = 'profileSlideTab';
+    slideTab.title = 'Hide / Show Profile';
+    slideTab.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>';
+    slideTab.addEventListener('click', function(e) {
+      e.stopPropagation();
+      ProfileContainer.slideToggle();
+    });
+    container.appendChild(slideTab);
+
     document.body.appendChild(container);
+
+    // Restore state tersembunyi jika sebelumnya di-hide
+    if (localStorage.getItem('profileContainerHidden') === '1') {
+      container.classList.add('profile-hidden');
+    }
 
     // ✅ INITIALIZE SETTINGS BUTTON (for logged-in users)
     if (window.SettingsManager) {
@@ -827,6 +844,15 @@ const CATEGORY_ICONS = {
   // PUBLIC API
   // ==========================================
 
+  /**
+   * Slide toggle: sembunyikan / tampilkan container ke kiri
+   */
+  function slideToggle() {
+    if (!container) return;
+    const isHidden = container.classList.toggle('profile-hidden');
+    localStorage.setItem('profileContainerHidden', isHidden ? '1' : '0');
+  }
+
   return {
     create,
     update,
@@ -835,7 +861,8 @@ const CATEGORY_ICONS = {
     show,
     hide,
     exists,
-    getElement
+    getElement,
+    slideToggle
   };
 
 })();

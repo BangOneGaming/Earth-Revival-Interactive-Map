@@ -40,7 +40,7 @@
   // DEFERRED CSS
   // ============================================
   function loadDeferredCSS() {
-    const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.1.5';
+    const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.1.10';
     
     const cssFiles = [
       'marker-image-handler.css',
@@ -62,6 +62,7 @@
       'tip-guide.css',
       'map-switcher.css',
       'MapTransition.css',
+      'pip-map.js',
       'region.css'
     ];
 

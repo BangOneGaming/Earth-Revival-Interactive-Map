@@ -5,24 +5,28 @@
    ============================================================ */
 
 /* ── Toggle button ──────────────────────────────────────────
-   Independent fixed button, visually stacked below .region-toggle.
-   .region-container sits at top:10px, left:23% on desktop.
-   We mirror that left, then offset top by button height + gap.
+   Desktop: sejajar dengan region-toggle di top:10px
+            di KIRI region-toggle → left: 23%
+            region-toggle sendiri bergeser ke kanan otomatis karena
+            .region-container juga left:23% tapi btn ini independen.
 
-   Desktop: region-toggle = 50px tall, top: 10px
-            → mapSw sits at top: 10px + 50px + 8px = 68px, left: 23%
+   Posisi: left = 23% (sama dengan region-container)
+           top  = 10px (sama dengan region-container)
 
-   Mobile:  region-container sits at top:65vh
-            region-toggle = 45px tall
-            → mapSw sits at top: 65vh + 45px + 6px, left: 10px
+   Region-container perlu digeser ke kanan agar tidak overlap:
+   → left: calc(23% + 50px + 8px)   [lebar btn + gap]
+
+   Mobile: di bawah region toggle, left:10px
    ──────────────────────────────────────────────────────────── */
 .mapsw-toggle-btn {
   position: fixed !important;
-  top: 68px;          /* 10px (container top) + 50px (region btn) + 8px gap */
-  left: 23%;
+  top: 10px;
+  right: 23%;
   z-index: 1000;
   pointer-events: auto;
 }
+
+
 /* Outlander icon jadi negative */
 #mapSwBtn img {
   filter: brightness(0) invert(1);
@@ -36,8 +40,14 @@
 }
 
 @media (max-width: 768px) {
+  /* Reset region-container ke posisi aslinya di mobile */
+  .region-container {
+    left: 10px !important;
+  }
+
+  /* mapSwBtn di bawah region toggle */
   .mapsw-toggle-btn {
-    top: calc(65vh + 45px + 6px) !important;  /* below region toggle on mobile */
+    top: calc(65vh + 45px + 6px) !important;
     left: 10px !important;
     width: 45px !important;
     height: 45px !important;

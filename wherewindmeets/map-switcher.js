@@ -40,7 +40,7 @@ const MapSwitcher = {
 
   // ── Build DOM ─────────────────────────────────
   _buildDOM() {
-    // ── Toggle button — independent, positioned below region toggle ──
+    // ── Toggle button — independent fixed button, di kiri region toggle (desktop) ──
     if (!document.getElementById('mapSwBtn')) {
       const btn = document.createElement('button');
       btn.id        = 'mapSwBtn';
