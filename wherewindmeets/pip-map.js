@@ -43,7 +43,7 @@ const PipMap = (function () {
         <line x1="8" y1="21" x2="16" y2="21"/>
         <line x1="12" y1="17" x2="12" y2="21"/>
       </svg>
-      <span>PiP Map</span>
+      <span>Floating Window (Beta)</span>
     `;
     btnToggle.addEventListener('click', toggle);
     document.body.appendChild(btnToggle);
@@ -51,11 +51,30 @@ const PipMap = (function () {
 
   // ── Inject semua CSS yang dibutuhkan ke PiP window ─────────
   function _injectStyles(doc) {
-    // Inject semua stylesheet dari halaman utama
+    const BASE_URL = 'https://bgonegaming.win/wherewindmeets/';
+
+    // CSS yang perlu di-inject eksplisit (termasuk yang di-load deferred)
+    const explicitCSS = [
+      BASE_URL + 'styles.css',
+      BASE_URL + 'ui.css',
+      BASE_URL + 'layer.css',
+      BASE_URL + 'form.css',
+      BASE_URL + 'region-management.css',
+      'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+    ];
+
+    explicitCSS.forEach(href => {
+      const link = doc.createElement('link');
+      link.rel  = 'stylesheet';
+      link.href = href;
+      doc.head.appendChild(link);
+    });
+
+    // Inject semua stylesheet lain dari halaman utama yang punya href
     const styleSheets = Array.from(document.styleSheets);
     styleSheets.forEach(sheet => {
       try {
-        if (sheet.href) {
+        if (sheet.href && !explicitCSS.includes(sheet.href)) {
           const link = doc.createElement('link');
           link.rel  = 'stylesheet';
           link.href = sheet.href;
@@ -137,8 +156,41 @@ const PipMap = (function () {
     // Tile layer — sama dengan preset map utama
     _applyPreset(preset, L);
 
+    // Clone filter panel dari halaman utama
+    _cloneFilterPanel(doc);
+
     // Load markers
     _loadMarkers(L);
+  }
+
+  // ── Clone filter panel ke PiP window ───────────────────────
+  function _cloneFilterPanel(doc) {
+    const filterPanel = document.getElementById('filterPanel');
+    if (!filterPanel) return;
+
+    // Clone dengan semua children
+    const clone = filterPanel.cloneNode(true);
+    clone.id = 'filterPanel-pip';
+
+    // Tambah style override agar filter panel tampil di PiP
+    clone.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      z-index: 800;
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      overflow-y: auto;
+    `;
+
+    doc.body.appendChild(clone);
+
+    // Disable checkbox interaksi (read-only di PiP)
+    clone.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.disabled = true;
+    });
   }
 
   // ── Apply tile preset ke PiP map ───────────────────────────
