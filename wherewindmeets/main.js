@@ -62,7 +62,7 @@
       'tip-guide.css',
       'map-switcher.css',
       'MapTransition.css',
-      'pip-map.js',
+      'pip-map.css',
       'region.css'
     ];
 
