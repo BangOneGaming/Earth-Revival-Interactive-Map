@@ -40,7 +40,7 @@
   // DEFERRED CSS
   // ============================================
   function loadDeferredCSS() {
-    const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.1.10';
+    const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.1.5';
     
     const cssFiles = [
       'marker-image-handler.css',
@@ -446,6 +446,11 @@ setTimeout(() => {
         setTimeout(() => {
           WWMCookieConsent.initAfterLoad(2000);
         }, 1000);
+      }
+
+      // ✨ STEP 6: PiP Map (desktop only)
+      if (window.PipMap) {
+        PipMap.init();
       }
     }
   }
