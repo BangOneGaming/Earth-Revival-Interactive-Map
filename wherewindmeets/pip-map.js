@@ -51,61 +51,43 @@ const PipMap = (function () {
 
   // ── Inject semua CSS yang dibutuhkan ke PiP window ─────────
   function _injectStyles(doc) {
-    const BASE_URL = 'https://bgonegaming.win/wherewindmeets/';
+  const cssVersion = window.CSS_VERSION || '1.1.5';
 
-    // CSS yang perlu di-inject eksplisit (termasuk yang di-load deferred)
-    const explicitCSS = [
-      BASE_URL + 'styles.css',
-      BASE_URL + 'ui.css',
-      BASE_URL + 'layer.css',
-      BASE_URL + 'form.css',
-      BASE_URL + 'region-management.css',
-      'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
-    ];
+  const cssFiles = [
+    'styles.css',
+    'marker-image-handler.css',
+    'editing-image-upload.css',
 
-    explicitCSS.forEach(href => {
-      const link = doc.createElement('link');
-      link.rel  = 'stylesheet';
-      link.href = href;
-      doc.head.appendChild(link);
-    });
+    'mystic-skill-panel.css',
+    'innerway.css',
+    'patchnote.css',
+    'form.css',
+    'layer.css',
 
-    // Inject semua stylesheet lain dari halaman utama yang punya href
-    const styleSheets = Array.from(document.styleSheets);
-    styleSheets.forEach(sheet => {
-      try {
-        if (sheet.href && !explicitCSS.includes(sheet.href)) {
-          const link = doc.createElement('link');
-          link.rel  = 'stylesheet';
-          link.href = sheet.href;
-          doc.head.appendChild(link);
-        }
-      } catch (e) {}
-    });
 
-    // Style tambahan khusus PiP window
-    const style = doc.createElement('style');
-    style.textContent = `
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1008; }
-      #pip-map-container { width: 100%; height: 100%; }
-      .leaflet-container { background: #1a1008; }
-      /* Sembunyikan UI yang tidak perlu di PiP */
-      .leaflet-control-zoom { display: block; }
-      /* Popup styling */
-      .leaflet-popup-content-wrapper {
-        background: rgba(30, 20, 8, 0.95) !important;
-        color: #f3d59b !important;
-        border: 1px solid rgba(243, 213, 155, 0.4) !important;
-        border-radius: 8px !important;
-        font-size: 12px !important;
-      }
-      .leaflet-popup-tip {
-        background: rgba(30, 20, 8, 0.95) !important;
-      }
-    `;
-    doc.head.appendChild(style);
-  }
+    'ui.css',
+
+    'comment.css',
+    'profile-container.css',
+    'setting.css',
+
+
+    'map-switcher.css',
+    'MapTransition.css',
+
+    'region.css',
+    'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
+  ];
+
+  cssFiles.forEach(file => {
+    const link = doc.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = file.includes('http')
+      ? file
+      : `${file}?v=${cssVersion}`;
+    doc.head.appendChild(link);
+  });
+}
 
   // ── Inject Leaflet ke PiP window ───────────────────────────
   function _injectLeaflet(doc) {
