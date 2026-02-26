@@ -449,6 +449,11 @@ setTimeout(() => {
           WWMCookieConsent.initAfterLoad(2000);
         }, 1000);
       }
+
+      // ✨ STEP 6: PiP Map (desktop only)
+      if (window.PipMap) {
+        PipMap.init();
+      }
     }
   }
 
