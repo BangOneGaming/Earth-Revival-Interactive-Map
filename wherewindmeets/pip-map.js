@@ -43,7 +43,7 @@ const PipMap = (function () {
         <line x1="8" y1="21" x2="16" y2="21"/>
         <line x1="12" y1="17" x2="12" y2="21"/>
       </svg>
-      <span>Floating Window (Beta)</span>
+      <span>PiP Map</span>
     `;
     btnToggle.addEventListener('click', toggle);
     document.body.appendChild(btnToggle);
@@ -51,43 +51,65 @@ const PipMap = (function () {
 
   // ── Inject semua CSS yang dibutuhkan ke PiP window ─────────
   function _injectStyles(doc) {
-  const cssVersion = window.CSS_VERSION || '1.1.5';
+    const BASE_URL = 'https://bgonegaming.win/wherewindmeets/';
 
-  const cssFiles = [
-    'styles.css',
-    'marker-image-handler.css',
-    'editing-image-upload.css',
+    // Semua CSS dari project (sama persis dengan loadDeferredCSS di main.js)
+    const allCSS = [
+      // Leaflet
+      'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+      // Base
+      BASE_URL + 'styles.css',
+      // Deferred CSS (dari main.js loadDeferredCSS)
+      BASE_URL + 'marker-image-handler.css',
+      BASE_URL + 'editing-image-upload.css',
 
-    'mystic-skill-panel.css',
-    'innerway.css',
-    'patchnote.css',
-    'form.css',
-    'layer.css',
+      
+
+      BASE_URL + 'layer.css',
+      BASE_URL + 'region-management.css',
+
+      BASE_URL + 'ui.css',
+
+      BASE_URL + 'comment.css',
 
 
-    'ui.css',
 
-    'comment.css',
-    'profile-container.css',
-    'setting.css',
+      BASE_URL + 'map-switcher.css',
+      BASE_URL + 'MapTransition.css',
+      BASE_URL + 'region.css',
+      BASE_URL + 'pip-map.css',
+    ];
 
+    allCSS.forEach(href => {
+      const link = doc.createElement('link');
+      link.rel  = 'stylesheet';
+      link.href = href;
+      doc.head.appendChild(link);
+    });
 
-    'map-switcher.css',
-    'MapTransition.css',
-
-    'region.css',
-    'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
-  ];
-
-  cssFiles.forEach(file => {
-    const link = doc.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = file.includes('http')
-      ? file
-      : `${file}?v=${cssVersion}`;
-    doc.head.appendChild(link);
-  });
-}
+    // Style tambahan khusus PiP window
+    const style = doc.createElement('style');
+    style.textContent = `
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1008; }
+      #pip-map-container { width: 100%; height: 100%; }
+      .leaflet-container { background: #1a1008; }
+      /* Sembunyikan UI yang tidak perlu di PiP */
+      .leaflet-control-zoom { display: block; }
+      /* Popup styling */
+      .leaflet-popup-content-wrapper {
+        background: rgba(30, 20, 8, 0.95) !important;
+        color: #f3d59b !important;
+        border: 1px solid rgba(243, 213, 155, 0.4) !important;
+        border-radius: 8px !important;
+        font-size: 12px !important;
+      }
+      .leaflet-popup-tip {
+        background: rgba(30, 20, 8, 0.95) !important;
+      }
+    `;
+    doc.head.appendChild(style);
+  }
 
   // ── Inject Leaflet ke PiP window ───────────────────────────
   function _injectLeaflet(doc) {
