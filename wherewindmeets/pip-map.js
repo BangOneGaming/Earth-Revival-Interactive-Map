@@ -43,7 +43,7 @@ const PipMap = (function () {
         <line x1="8" y1="21" x2="16" y2="21"/>
         <line x1="12" y1="17" x2="12" y2="21"/>
       </svg>
-      <span>Floating Window (Beta)</span>
+      <span>PiP Map</span>
     `;
     btnToggle.addEventListener('click', toggle);
     document.body.appendChild(btnToggle);
@@ -163,8 +163,10 @@ const PipMap = (function () {
     // Clone filter panel dari halaman utama
     _cloneFilterPanel(doc);
 
-    // Load markers
-    _loadMarkers(L);
+    // Mulai virtual rendering setelah map siap
+    pipMap.whenReady(() => {
+      setTimeout(_initVirtualRendering, 300);
+    });
   }
 
   // ── Clone filter panel ke PiP window ───────────────────────
@@ -197,22 +199,18 @@ const PipMap = (function () {
           filterItem.classList.toggle('active', isChecked);
         }
 
-        // Tampilkan/sembunyikan marker di pipMap berdasarkan category
-        if (!pipMap || !pipWindow) return;
-        const L = pipWindow.L;
-
-        pipMap.eachLayer(layer => {
-          if (layer instanceof L.Marker) {
-            const markerCat = layer.categoryId;
-            if (String(markerCat) === String(categoryId)) {
-              if (isChecked) {
-                layer.setOpacity(1);
-              } else {
-                layer.setOpacity(0);
-              }
-            }
+        // Sync ke MarkerManager activeFilters agar isFilterActive() benar
+        if (categoryId && window.MarkerManager?.activeFilters) {
+          if (isChecked) {
+            window.MarkerManager.activeFilters.add(String(categoryId));
+          } else {
+            window.MarkerManager.activeFilters.delete(String(categoryId));
           }
-        });
+        }
+
+        // Refresh virtual rendering berdasarkan filter baru
+        if (!pipMap || !pipWindow) return;
+        _refreshPipMarkers();
       });
     });
 
@@ -225,10 +223,11 @@ const PipMap = (function () {
         clone.querySelectorAll('input[type="checkbox"]').forEach(cb => {
           cb.checked = true;
           cb.closest('.filter-item')?.classList.add('active');
+          // Sync ke MarkerManager activeFilters
+          const cat = cb.getAttribute('data-category');
+          if (cat) window.MarkerManager?.activeFilters?.add(String(cat));
         });
-        pipMap?.eachLayer(layer => {
-          if (layer instanceof pipWindow.L.Marker) layer.setOpacity(1);
-        });
+        _refreshPipMarkers();
       });
     }
 
@@ -237,10 +236,11 @@ const PipMap = (function () {
         clone.querySelectorAll('input[type="checkbox"]').forEach(cb => {
           cb.checked = false;
           cb.closest('.filter-item')?.classList.remove('active');
+          // Sync ke MarkerManager activeFilters
+          const cat = cb.getAttribute('data-category');
+          if (cat) window.MarkerManager?.activeFilters?.delete(String(cat));
         });
-        pipMap?.eachLayer(layer => {
-          if (layer instanceof pipWindow.L.Marker) layer.setOpacity(0);
-        });
+        _refreshPipMarkers();
       });
     }
   }
@@ -276,43 +276,151 @@ const PipMap = (function () {
     pipTileLayer.addTo(pipMap);
   }
 
-  // ── Load marker dari data yang sudah ada di halaman utama ──
-  function _loadMarkers(L) {
-    if (!pipMap || !window.MarkerManager) return;
-    L = L || pipWindow.L;
+  // ── Virtual rendering state ────────────────────────────────
+  const pipActiveMarkers = {};  // key → L.marker
+  let   pipRafId         = null;
+  let   pipDebounce      = null;
 
-    // Ambil semua marker yang aktif di map utama
-    const activeMarkers = window.MarkerManager.activeMarkers || {};
+  // ── Buat icon untuk marker (reuse fungsi dari halaman utama) ─
+  function _getMarkerIcon(markerData) {
+    try {
+      if (String(markerData.category_id) === '2' && typeof getIconByCategoryWithMarkerName !== 'undefined') {
+        return getIconByCategoryWithMarkerName(markerData.category_id, markerData.name);
+      }
+      if (markerData.special_icon && typeof getIconByCategoryWithSpecial !== 'undefined') {
+        return getIconByCategoryWithSpecial(markerData.category_id, markerData.special_icon);
+      }
+      if (typeof getIconByCategory !== 'undefined') {
+        return getIconByCategory(markerData.category_id);
+      }
+    } catch(e) {}
 
-    Object.values(activeMarkers).forEach(marker => {
-      if (!marker) return;
+    // Fallback: ambil dari activeMarkers map utama
+    const existing = window.MarkerManager?.activeMarkers?.[markerData._key];
+    return existing?.options?.icon || null;
+  }
 
-      try {
-        const latlng  = marker.getLatLng();
-        const options = marker.options || {};
+  // ── Hitung buffered bounds pipMap ──────────────────────────
+  function _getPipBounds() {
+    const bounds = pipMap.getBounds();
+    const bufLat = (bounds.getNorth() - bounds.getSouth()) * 0.2;
+    const bufLng = (bounds.getEast()  - bounds.getWest())  * 0.2;
+    return pipWindow.L.latLngBounds(
+      [bounds.getSouth() - bufLat, bounds.getWest() - bufLng],
+      [bounds.getNorth() + bufLat, bounds.getEast() + bufLng]
+    );
+  }
 
-        // Buat marker baru di PiP dengan icon yang sama
-        const pipMarker = L.marker(latlng, {
-          icon: options.icon,
-          opacity: options.opacity || 1,
-        });
-        // Simpan categoryId langsung di marker (sama seperti MarkerManager)
-        pipMarker.categoryId = marker.categoryId || null;
+  // ── Hapus marker di luar bounds ────────────────────────────
+  function _removePipOutOfBounds(bounds) {
+    for (const key in pipActiveMarkers) {
+      const m = pipActiveMarkers[key];
+      if (!bounds.contains(m.getLatLng())) {
+        pipMap.removeLayer(m);
+        delete pipActiveMarkers[key];
+      }
+    }
+  }
 
-        // Copy popup content jika ada
-        const popup = marker.getPopup();
-        if (popup) {
-          pipMarker.bindPopup(popup.getContent(), {
-            maxWidth: 250,
-            className: 'pip-popup'
-          });
+  // ── Load marker dalam bounds (batch) ───────────────────────
+  function _addPipMarkersBatch(markers, bounds) {
+    const L = pipWindow.L;
+    const visitedMarkers = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');
+    const batchSize = 200;
+    let index = 0;
+
+    const addNext = () => {
+      const end = Math.min(index + batchSize, markers.length);
+
+      for (let i = index; i < end; i++) {
+        const markerData = markers[i];
+        const key = markerData._key;
+
+        if (pipActiveMarkers[key]) continue;
+
+        const lat = parseFloat(markerData.lat || markerData.y);
+        const lng = parseFloat(markerData.lng || markerData.x);
+        if (isNaN(lat) || isNaN(lng)) continue;
+        if (!bounds.contains([lat, lng])) continue;
+
+        // Cek filter category
+        if (!window.MarkerManager.isFilterActive(markerData.category_id)) continue;
+
+        const icon = _getMarkerIcon(markerData);
+        if (!icon) continue;
+
+        const m = L.marker([lat, lng], { icon });
+        m.categoryId = markerData.category_id;
+        m.markerKey  = key;
+
+        // Opacity: visited = 0.5
+        const isVisited = visitedMarkers[key] || false;
+        if (isVisited) m.setOpacity(0.5);
+
+        // Popup sederhana
+        if (window.MarkerManager.createPopupContent) {
+          try {
+            m.bindPopup(window.MarkerManager.createPopupContent(markerData), { maxWidth: 280 });
+          } catch(e) {}
         }
 
-        pipMarker.addTo(pipMap);
-      } catch (e) {}
-    });
+        m.addTo(pipMap);
+        pipActiveMarkers[key] = m;
+      }
 
-    console.log(`✅ PiP: Loaded ${Object.keys(activeMarkers).length} markers`);
+      index = end;
+      if (index < markers.length) {
+        pipRafId = requestAnimationFrame(addNext);
+      }
+    };
+
+    addNext();
+  }
+
+  // ── Update marker di viewport PiP ─────────────────────────
+  function _updatePipMarkersInView() {
+    if (!pipMap || !pipWindow || !window.MarkerManager) return;
+
+    const bounds  = _getPipBounds();
+    const allData = window.MarkerManager.getAllMarkers();
+
+    _removePipOutOfBounds(bounds);
+
+    const filtered = allData.filter(m =>
+      window.MarkerManager.isMarkerVisibleOnCurrentMap(m)
+    );
+
+    _addPipMarkersBatch(filtered, bounds);
+  }
+
+  // ── Debounced update (dipanggil saat moveend/zoomend) ──────
+  function _schedulePipUpdate() {
+    clearTimeout(pipDebounce);
+    pipDebounce = setTimeout(_updatePipMarkersInView, 120);
+  }
+
+  // ── Inisialisasi virtual rendering setelah map siap ────────
+  function _initVirtualRendering() {
+    if (!pipMap) return;
+
+    pipMap.on('moveend', _schedulePipUpdate);
+    pipMap.on('zoomend', _schedulePipUpdate);
+
+    // Load awal
+    _updatePipMarkersInView();
+  }
+
+  // ── Public: refresh marker (dipanggil dari filter checkbox) ─
+  function _refreshPipMarkers() {
+    if (!pipMap || !pipWindow) return;
+
+    // Hapus semua marker lama
+    for (const key in pipActiveMarkers) {
+      pipMap.removeLayer(pipActiveMarkers[key]);
+      delete pipActiveMarkers[key];
+    }
+
+    _updatePipMarkersInView();
   }
 
   // ── Buka PiP window ────────────────────────────────────────
@@ -366,9 +474,14 @@ const PipMap = (function () {
   }
 
   function _cleanup() {
-    pipMap      = null;
+    // Bersihkan virtual rendering state
+    clearTimeout(pipDebounce);
+    if (pipRafId) cancelAnimationFrame(pipRafId);
+    for (const key in pipActiveMarkers) delete pipActiveMarkers[key];
+
+    pipMap       = null;
     pipTileLayer = null;
-    pipWindow   = null;
+    pipWindow    = null;
     if (btnToggle) btnToggle.classList.remove('active');
   }
 
@@ -381,20 +494,9 @@ const PipMap = (function () {
     }
   }
 
-  // ── Refresh marker (bisa dipanggil saat marker update) ─────
+  // ── Refresh marker public (bisa dipanggil dari luar) ───────
   function refreshMarkers() {
-    if (!pipMap || !pipWindow) return;
-    const L = pipWindow.L;
-
-    // Hapus semua marker lama
-    pipMap.eachLayer(layer => {
-      if (layer instanceof L.Marker) {
-        pipMap.removeLayer(layer);
-      }
-    });
-
-    // Load ulang
-    _loadMarkers(L);
+    _refreshPipMarkers();
   }
 
   // ── Init ───────────────────────────────────────────────────
