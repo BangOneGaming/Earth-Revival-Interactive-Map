@@ -56,15 +56,16 @@ const PipMap = (function () {
       // Style minimal
       const style = pipWindow.document.createElement('style');
       style.textContent = `
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-        iframe { width: 100%; height: 100%; border: none; display: block; }
+        body, html { margin: 0; padding: 0; overflow: hidden; }
+        iframe { border: none; width: 100svw; height: 100svh; display: block; }
       `;
       pipWindow.document.head.appendChild(style);
 
-      // iframe ke web asli
+      // iframe ke web asli — tambah ?pip=1 untuk skip preload
+      const url = new URL(window.location.href);
+      url.searchParams.set('pip', '1');
       const iframe = pipWindow.document.createElement('iframe');
-      iframe.src = window.location.href;
+      iframe.src = url.toString();
       iframe.allow = 'same-origin';
       pipWindow.document.body.appendChild(iframe);
 
