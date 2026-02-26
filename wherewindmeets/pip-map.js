@@ -53,7 +53,6 @@ const PipMap = (function () {
   function _injectStyles(doc) {
     const BASE_URL = 'https://bgonegaming.win/wherewindmeets/';
 
-    // Semua CSS dari project (sama persis dengan loadDeferredCSS di main.js)
     const allCSS = [
       // Leaflet
       'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
@@ -184,10 +183,65 @@ const PipMap = (function () {
 
     doc.body.appendChild(clone);
 
-    // Disable checkbox (read-only di PiP)
+    // Aktifkan checkbox dan hubungkan ke pipMap
     clone.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-      cb.disabled = true;
+      cb.disabled = false;
+      cb.addEventListener('change', function() {
+        const categoryId = this.getAttribute('data-category');
+        const isChecked = this.checked;
+
+        // Update visual active class
+        const filterItem = this.closest('.filter-item');
+        if (filterItem) {
+          filterItem.classList.toggle('active', isChecked);
+        }
+
+        // Tampilkan/sembunyikan marker di pipMap berdasarkan category
+        if (!pipMap || !pipWindow) return;
+        const L = pipWindow.L;
+
+        pipMap.eachLayer(layer => {
+          if (layer instanceof L.Marker) {
+            const markerCat = layer.options._categoryId;
+            if (String(markerCat) === String(categoryId)) {
+              if (isChecked) {
+                layer.setOpacity(1);
+              } else {
+                layer.setOpacity(0);
+              }
+            }
+          }
+        });
+      });
     });
+
+    // Tombol Select All / Clear All
+    const btnAll  = clone.querySelector('#btnSelectAll');
+    const btnNone = clone.querySelector('#btnSelectNone');
+
+    if (btnAll) {
+      btnAll.addEventListener('click', () => {
+        clone.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+          cb.checked = true;
+          cb.closest('.filter-item')?.classList.add('active');
+        });
+        pipMap?.eachLayer(layer => {
+          if (layer instanceof pipWindow.L.Marker) layer.setOpacity(1);
+        });
+      });
+    }
+
+    if (btnNone) {
+      btnNone.addEventListener('click', () => {
+        clone.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+          cb.checked = false;
+          cb.closest('.filter-item')?.classList.remove('active');
+        });
+        pipMap?.eachLayer(layer => {
+          if (layer instanceof pipWindow.L.Marker) layer.setOpacity(0);
+        });
+      });
+    }
   }
 
   // ── Apply tile preset ke PiP map ───────────────────────────
@@ -240,6 +294,7 @@ const PipMap = (function () {
         const pipMarker = L.marker(latlng, {
           icon: options.icon,
           opacity: options.opacity || 1,
+          _categoryId: options._categoryId || marker.options._categoryId || null,
         });
 
         // Copy popup content jika ada
