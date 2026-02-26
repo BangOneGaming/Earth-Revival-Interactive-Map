@@ -279,7 +279,9 @@ function showAllUIElements() {
   // MAIN INIT
   // ============================================
   async function initApp() {
-    await showPreload();
+    // Skip preload jika dibuka dari PiP iframe
+    const isPip = new URLSearchParams(window.location.search).get('pip') === '1';
+    if (!isPip) await showPreload();
 
     try {
       // ============================================
@@ -446,11 +448,6 @@ setTimeout(() => {
         setTimeout(() => {
           WWMCookieConsent.initAfterLoad(2000);
         }, 1000);
-      }
-
-      // ✨ STEP 6: PiP Map (desktop only)
-      if (window.PipMap) {
-        PipMap.init();
       }
     }
   }
