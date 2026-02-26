@@ -62,18 +62,21 @@ const PipMap = (function () {
       // Deferred CSS (dari main.js loadDeferredCSS)
       BASE_URL + 'marker-image-handler.css',
       BASE_URL + 'editing-image-upload.css',
-
-      
-
+      BASE_URL + 'knowladgelist.css',
+      BASE_URL + 'mystic-skill-panel.css',
+      BASE_URL + 'innerway.css',
+      BASE_URL + 'patchnote.css',
+      BASE_URL + 'form.css',
       BASE_URL + 'layer.css',
       BASE_URL + 'region-management.css',
-
+      BASE_URL + 'booklist.css',
       BASE_URL + 'ui.css',
-
+      BASE_URL + 'login.css',
       BASE_URL + 'comment.css',
-
-
-
+      BASE_URL + 'profile-container.css',
+      BASE_URL + 'setting.css',
+      BASE_URL + 'donate.css',
+      BASE_URL + 'tip-guide.css',
       BASE_URL + 'map-switcher.css',
       BASE_URL + 'MapTransition.css',
       BASE_URL + 'region.css',
@@ -160,14 +163,8 @@ const PipMap = (function () {
     // Tile layer — sama dengan preset map utama
     _applyPreset(preset, L);
 
-    // Clone filter panel dari halaman utama
-    _cloneFilterPanel(doc);
-
-    // Clone region container (toggle + label)
-    _cloneRegionContainer(doc);
-
-    // Clone underground/layer panel
-    _cloneUndergroundPanel(doc);
+    // Clone semua UI dari map utama
+    _cloneAllUI(doc);
 
     // Mulai virtual rendering setelah map siap
     pipMap.whenReady(() => {
