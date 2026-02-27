@@ -281,6 +281,7 @@ function showAllUIElements() {
   async function initApp() {
     // Skip preload jika dibuka dari PiP iframe
     const isPip = new URLSearchParams(window.location.search).get('pip') === '1';
+    if (isPip) document.body.classList.add('pip-mode');
     if (!isPip) await showPreload();
 
     try {
