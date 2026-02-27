@@ -1954,3 +1954,73 @@ body.app-ready .leaderboard-toggle{
   content-visibility: hidden;
   contain-intrinsic-size: 1px 1px;
 }
+
+/* ============================================================
+   PiP MODE — Popup lebih kecil (aktif saat ?pip=1)
+   Class .pip-mode ditambahkan ke body oleh main.js
+============================================================ */
+body.pip-mode .marker-popup {
+  min-width: 180px;
+  max-width: 220px;
+  font-size: 11px;
+}
+
+body.pip-mode .marker-popup-category {
+  padding: 6px 10px;
+  gap: 6px;
+}
+
+body.pip-mode .marker-popup-category-name {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+body.pip-mode .marker-popup-header {
+  padding: 8px 10px;
+}
+
+body.pip-mode .marker-popup-header h3 {
+  font-size: 12px;
+}
+
+body.pip-mode .marker-popup-image {
+  height: 100px;
+  padding: 8px 8px 4px 8px;
+}
+
+body.pip-mode .marker-popup-coords {
+  padding: 6px 10px;
+}
+
+body.pip-mode .marker-popup-coords-title {
+  font-size: 10px;
+}
+
+body.pip-mode .marker-popup-body {
+  padding: 6px 10px;
+}
+
+body.pip-mode .marker-popup-description {
+  font-size: 11px;
+  padding: 6px 10px;
+}
+
+body.pip-mode .marker-popup-actions {
+  padding: 6px 10px;
+  gap: 4px;
+}
+
+body.pip-mode .marker-popup-action-btn,
+body.pip-mode .marker-popup-edit-btn {
+  padding: 4px 8px;
+  font-size: 10px;
+}
+
+body.pip-mode .marker-popup-image-toggle {
+  padding: 6px 12px;
+  font-size: 11px;
+}
+
+body.pip-mode .leaflet-popup-content-wrapper {
+  border-radius: 8px;
+}
