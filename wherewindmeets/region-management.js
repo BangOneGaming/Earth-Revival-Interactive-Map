@@ -63,7 +63,6 @@ const RegionManager = {
       }))
     ];
 
-    console.log(`📍 Found ${regionsList.length} unique regions (all maps):`, regionsList);
   },
 
   /**
@@ -135,7 +134,7 @@ const RegionManager = {
     }
 
     this.groupedRegions = groups;
-    console.log('🗂️ Grouped regions built:', groups);
+
   },
 
   /**

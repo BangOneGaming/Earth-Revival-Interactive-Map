@@ -1,0 +1,282 @@
+/* ============================================
+   TALES AND ECHOES PANEL
+   ============================================ */
+
+/* Toggle button — disembunyikan oleh search-info, tapi tetap ada di DOM */
+#talesToggleBtn {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  width: 50px;
+  height: 50px;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0);
+  border: 2px solid #f4e5c0;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(139, 105, 20, 0.4);
+  transition: all 0.3s ease;
+  padding: 0;
+}
+#talesToggleBtn:hover {
+  background: linear-gradient(135deg, #DAA520 0%, #FFD700 100%);
+  box-shadow: 0 6px 16px rgba(218, 165, 32, 0.6);
+  transform: scale(1.05);
+}
+#talesToggleBtn.active {
+  background: linear-gradient(135deg, #DAA520 0%, #FFD700 100%);
+}
+.tales-toggle-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: block;
+}
+
+/* ── Panel ── */
+#talesPanel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  width: min(420px, 92vw);
+  max-height: 70vh;
+  z-index: 8000;
+  background: linear-gradient(160deg, #1a1005 0%, #0d0803 100%);
+  border: 1px solid rgba(212, 167, 74, 0.35);
+  border-radius: 14px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(212,167,74,0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+}
+#talesPanel.open {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Header */
+.tales-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 10px;
+  border-bottom: 1px solid rgba(212,167,74,0.15);
+  flex-shrink: 0;
+}
+.tales-title {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #f3d59b;
+  margin: 0;
+}
+.tales-close-btn {
+  font-size: 22px;
+  color: rgba(212,167,74,0.5);
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s;
+  padding: 0 4px;
+}
+.tales-close-btn:hover { color: #f3d59b; }
+
+/* Search */
+.tales-search-container {
+  padding: 10px 14px;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(212,167,74,0.1);
+}
+#talesSearchInput {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(212,167,74,0.25);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #f3d59b;
+  font-size: 13px;
+  font-family: 'Crimson Text', Georgia, serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+#talesSearchInput:focus { border-color: rgba(212,167,74,0.6); }
+#talesSearchInput::placeholder { color: rgba(212,167,74,0.3); }
+
+/* List container */
+.tales-list-container {
+  overflow-y: auto;
+  flex: 1;
+  padding: 8px 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212,167,74,0.2) transparent;
+}
+.tales-list-container::-webkit-scrollbar { width: 4px; }
+.tales-list-container::-webkit-scrollbar-thumb {
+  background: rgba(212,167,74,0.25);
+  border-radius: 2px;
+}
+
+/* ── Major Region ── */
+.tales-region {
+  margin-bottom: 6px;
+}
+.tales-region-title {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #f3d59b;
+  padding: 12px 18px 8px;
+  border-bottom: 1px solid rgba(212,167,74,0.3);
+  position: sticky;
+  top: 0;
+  background: linear-gradient(160deg, #1a1005 0%, #0d0803 100%);
+  z-index: 1;
+}
+
+/* ── Series ID ── */
+.tales-series {
+  margin-bottom: 2px;
+}
+.tales-series-title {
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 13px;
+  font-weight: 600;
+  font-style: italic;
+  color: rgba(212,167,74,0.7);
+  padding: 7px 18px 4px 22px;
+  border-bottom: 1px solid rgba(212,167,74,0.08);
+  letter-spacing: 0.5px;
+}
+
+/* ── Marker item ── */
+.tales-item {
+  display: flex;
+  align-items: center;
+  padding: 6px 18px 6px 34px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-left: 2px solid transparent;
+}
+.tales-item:hover {
+  background: rgba(212,167,74,0.07);
+  border-left-color: rgba(212,167,74,0.35);
+}
+.tales-item-name {
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 13px;
+  color: rgba(243,213,155,0.4);
+  line-height: 1.4;
+}
+
+/* Loading & empty */
+.tales-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: rgba(212,167,74,0.4);
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 14px;
+  gap: 12px;
+}
+.tales-loading-spinner {
+  width: 28px; height: 28px;
+  border: 2px solid rgba(212,167,74,0.15);
+  border-top-color: rgba(212,167,74,0.6);
+  border-radius: 50%;
+  animation: talesSpinner 0.8s linear infinite;
+}
+@keyframes talesSpinner {
+  to { transform: rotate(360deg); }
+}
+.tales-empty {
+  padding: 30px 20px;
+  text-align: center;
+  color: rgba(212,167,74,0.35);
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 14px;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  #talesPanel {
+    width: 94vw;
+    max-height: 75vh;
+    top: 50%;
+  }
+}
+
+/* ── Expand button (^/v) ── */
+.tales-item {
+  justify-content: space-between;
+}
+.tales-expand-btn {
+  background: none;
+  border: none;
+  color: rgba(212,167,74,0.45);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  transition: color 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+.tales-expand-btn:hover { color: #f3d59b; }
+.tales-expand-btn.open {
+  color: #f3d59b;
+  transform: rotate(180deg);
+}
+
+/* ── Desc panel ── */
+.tales-desc-panel {
+  display: none;
+  padding: 8px 18px 10px 34px;
+  border-left: 2px solid rgba(212,167,74,0.15);
+  margin-left: 0;
+  background: rgba(212,167,74,0.03);
+}
+.tales-desc-panel.open {
+  display: block;
+}
+.tales-desc-text {
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 13px;
+  color: rgba(243,213,155,0.55);
+  line-height: 1.6;
+  margin: 0 0 10px 0;
+}
+.tales-goto-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #3d2800;
+  background: linear-gradient(135deg, #f3d59b, #d4a74a);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(212,167,74,0.2);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.tales-goto-btn:hover {
+  box-shadow: 0 4px 14px rgba(212,167,74,0.45);
+  transform: translateY(-1px);
+}
+.tales-goto-btn:active { transform: scale(0.97); }

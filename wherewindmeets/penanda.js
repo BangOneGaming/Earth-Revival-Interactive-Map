@@ -6,15 +6,26 @@ console.log("📦 Loading marker-manager.js...");
 
 // Marker loading configuration
 const MARKER_CONFIG = {
-  batchSize: 200,
+  batchSize: 200,        // ✅ OPTIMIZED: 200 → 30, tiap frame lebih ringan
   bufferPercent: 0.2,
-  debounceDelay: 120
+  debounceDelay: 300    // ✅ OPTIMIZED: 120 → 300ms
 };
 
 
 const EDIT_PERMISSION = {
   loc_type: false // 🔒 default TIDAK bisa diedit
 };
+
+// ========================================
+// 🚀 PERFORMANCE CACHE - localStorage only
+// ========================================
+let _markerEditsCache = null;
+let _visitedCache     = null;
+
+function invalidateLocalStorageCache() {
+  _markerEditsCache = null;
+  _visitedCache     = null;
+}
 // ========================================
 // FILTER GROUP CONFIGURATION
 // Category IDs berdasarkan ICON_CONFIG
@@ -347,7 +358,10 @@ this.map.on('popupopen', (e) => {
 
 getAllMarkers() {
   const allMarkers = [];
-  const markerEdits = JSON.parse(localStorage.getItem('markerEdits') || '{}');
+  if (!_markerEditsCache) {
+    _markerEditsCache = JSON.parse(localStorage.getItem('markerEdits') || '{}');
+  }
+  const markerEdits = _markerEditsCache;
 
   const sources = [
     window.chest,
@@ -466,7 +480,10 @@ createPopupContent(markerData, editState = {}) {
     : description;
 
   // Check visited status from localStorage
-  const visitedMarkers = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');
+  if (!_visitedCache) {
+    _visitedCache = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');
+  }
+  const visitedMarkers = _visitedCache;
   const isVisited = visitedMarkers[markerKey] || false;
 
   // Check if X, Y coordinates exist and are valid
@@ -1030,7 +1047,9 @@ createAndAddMarker(markerData, lat, lng, markerKey) {
   const popupContent = this.createPopupContent(markerData);
   const leafletMarker = L.marker([lat, lng], { icon: finalIcon })
     .bindPopup(popupContent);
-  
+  leafletMarker.on('popupopen', () => {
+  console.log("📍 Active Marker:", markerKey);
+});
   if (needsBadge) {
     leafletMarker.on('click', () => {
       this.map.closePopup();
@@ -1053,7 +1072,10 @@ createAndAddMarker(markerData, lat, lng, markerKey) {
   }
   
   // ✅ Check visited status and hidden marker setting
-  const visitedMarkers = JSON.parse(localStorage.getItem("visitedMarkers") || "{}");
+  if (!_visitedCache) {
+    _visitedCache = JSON.parse(localStorage.getItem("visitedMarkers") || "{}");
+  }
+  const visitedMarkers = _visitedCache;
   const isVisited = visitedMarkers[markerKey] || false;
   const isHiddenEnabled = window.SettingsManager && window.SettingsManager.isHiddenMarkerEnabled();
   
@@ -1304,6 +1326,7 @@ window.toggleVisited = function (markerKey) {
   // Simpan ke lokal saja
   visitedMarkers[markerKey] = newStatus;
   localStorage.setItem('visitedMarkers', JSON.stringify(visitedMarkers));
+  invalidateLocalStorageCache(); // ✅ reset cache
   
   // Update opacity marker
   const marker = MarkerManager.activeMarkers[markerKey];
@@ -1337,6 +1360,7 @@ window.toggleVisited = function (markerKey) {
   // Save to local
   visitedMarkers[markerKey] = newStatus;
   localStorage.setItem('visitedMarkers', JSON.stringify(visitedMarkers));
+  invalidateLocalStorageCache(); // ✅ reset cache
   
   // Update marker based on hidden setting
   const marker = MarkerManager.activeMarkers[markerKey];
@@ -1655,6 +1679,7 @@ window.cancelEdit = function(markerKey) {
   const marker = MarkerManager.activeMarkers[markerKey];
   if (!marker) return;
   
+  invalidateLocalStorageCache(); // ✅ reset cache
   const markerData = MarkerManager.getAllMarkers().find(m => m._key === markerKey);
   if (markerData) {
     marker.getPopup().setContent(MarkerManager.createPopupContent(markerData));

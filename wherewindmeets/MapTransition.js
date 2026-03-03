@@ -19,6 +19,7 @@ const MapTransition = {
 
   NAMES: {
     main:         'Jianghua',
+    dreamspace:   'Dreamspace',
     hutuo:        'Hutuo',
     royal_palace: 'Royal Palace (Beta)',
   },

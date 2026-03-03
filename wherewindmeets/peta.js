@@ -23,6 +23,12 @@ const MAP_PRESETS = {
   royal_palace: {
     center: [30, 30],
     tiles: "https://tiles.bgonegaming.win/wherewindmeet/tiles/royal_palace/{z}_{x}_{y}.webp"
+  },
+
+  // 🔥 NEW MAP
+  dreamspace: {
+    center: [36, 18], // sesuaikan jika ukuran berbeda
+    tiles: "https://tiles.bgonegaming.win/wherewindmeet/tiles/dreamscape/{z}_{x}_{y}.webp"
   }
 };
 
@@ -111,16 +117,14 @@ function getTileOptions(maxNativeZoom) {
 }
 
 // ============================================
-// _applyMapPreset — RAW switch, no transition
-// Called by switchMapPreset (inside callback)
-// and on initial load
+// APPLY MAP PRESET (RAW SWITCH)
 // ============================================
 
 function _applyMapPreset(type, animate = true) {
 
   if (!map || !MAP_PRESETS[type]) return;
 
-  const preset  = MAP_PRESETS[type];
+  const preset = MAP_PRESETS[type];
   currentPreset = type;
 
   if (currentTileLayer) {
@@ -128,9 +132,13 @@ function _applyMapPreset(type, animate = true) {
   }
 
   // SPECIAL MAPS (ZOOM CLAMP)
-  if (type === "hutuo" || type === "royal_palace") {
+  if (type === "hutuo" || type === "royal_palace" || type === "dreamspace") {
 
-    const forcedMaxZoom = type === "hutuo" ? 6 : 7;
+    let forcedMaxZoom = 7;
+
+    if (type === "hutuo") forcedMaxZoom = 6;
+    if (type === "royal_palace") forcedMaxZoom = 7;
+    if (type === "dreamspace") forcedMaxZoom = 6;
 
     currentTileLayer = L.tileLayer(
       preset.tiles + `?v=${TILE_VERSION}`,
@@ -147,10 +155,12 @@ function _applyMapPreset(type, animate = true) {
     };
 
   } else {
+
     currentTileLayer = L.tileLayer(
       preset.tiles + `?v=${TILE_VERSION}`,
       getTileOptions(7)
     );
+
   }
 
   currentTileLayer.addTo(map);
@@ -158,39 +168,39 @@ function _applyMapPreset(type, animate = true) {
   map.setView(
     preset.center,
     MAP_ZOOM.initial,
-    animate ? { animate: true, duration: 0.4 } : { animate: false }
+    animate
+      ? { animate: true, duration: 0.4 }
+      : { animate: false }
   );
 
   // REFRESH UI
-  if (typeof RegionLabelManager !== 'undefined')
+  if (typeof RegionLabelManager !== "undefined")
     RegionLabelManager._forceRefresh();
 
-  if (typeof MarkerManager !== 'undefined' && MarkerManager.forceRefreshMarkers)
+  if (typeof MarkerManager !== "undefined" &&
+      MarkerManager.forceRefreshMarkers)
     MarkerManager.forceRefreshMarkers();
 }
 
 // ============================================
-// switchMapPreset — PUBLIC, always with transition
-// This is the function called from anywhere in
-// the project (MapSwitcher, RegionManager, etc.)
+// PUBLIC SWITCH (WITH TRANSITION)
 // ============================================
 
 function switchMapPreset(type, animate = true) {
 
   if (!map || !MAP_PRESETS[type]) return;
 
-  // Skip if already on this map
   if (type === currentPreset) return;
 
-  // If MapTransition is available → play smoke, switch inside callback
-  if (typeof MapTransition !== 'undefined') {
+  // With transition if available
+  if (typeof MapTransition !== "undefined") {
     MapTransition.play(type, () => {
       _applyMapPreset(type, animate);
     });
     return;
   }
 
-  // Fallback: no transition, switch directly
+  // Fallback
   _applyMapPreset(type, animate);
 }
 
@@ -199,7 +209,7 @@ function switchMapPreset(type, animate = true) {
 // ============================================
 
 function toggleMapPreset() {
-  const order = ["main", "hutuo", "royal_palace"];
+  const order = ["main", "hutuo", "royal_palace", "dreamspace"];
   const currentIndex = order.indexOf(currentPreset);
   const next = order[(currentIndex + 1) % order.length];
   switchMapPreset(next);

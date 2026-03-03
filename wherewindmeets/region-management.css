@@ -3,7 +3,7 @@
 .region-container {
   position: fixed;
   top: 10px;
-  left: 23%;
+  left: 58%;
   z-index: 1000;
   display: flex;
   flex-direction: row;

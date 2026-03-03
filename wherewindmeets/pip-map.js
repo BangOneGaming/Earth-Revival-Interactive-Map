@@ -47,7 +47,7 @@ const PipMap = (function () {
 
     try {
       pipWindow = await window.documentPictureInPicture.requestWindow({
-        width: 480, height: 360,
+        width: 640, height: 420,
         disallowReturnToOpener: false,
       });
 

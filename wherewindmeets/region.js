@@ -824,14 +824,59 @@ zoom_6: [
   // ==========================================
   
   let map = null;
-  let activeLabels = [];
-  let currentZoom = 0;
-  let isVisible = true; // Track visibility state (NEW!)
+let currentZoom = 0;
+let isVisible = true;
 
+let labelLayers = {
+  zoom_3_4: null,
+  zoom_5: null,
+  zoom_6: null
+};
+
+let activeLayer = null;
   // ==========================================
   // PRIVATE METHODS
   // ==========================================
 
+function buildLayerForZoom(zoomKey, labels) {
+  const layerGroup = L.layerGroup();
+
+  const currentMap =
+    typeof getCurrentMapPreset === 'function'
+      ? (getCurrentMapPreset() || 'main').toLowerCase()
+      : 'main';
+
+  labels.forEach(labelConfig => {
+
+    const rawType = (labelConfig.map_type || '').trim().toLowerCase();
+    const labelMap = rawType === '' ? 'main' : rawType;
+
+    const shouldShow =
+      currentMap === 'main' ||
+      labelMap === currentMap;
+
+    if (!shouldShow) return;
+
+    const icon = createLabelIcon(
+      labelConfig.name,
+      labelConfig.size || 18
+    );
+
+    const marker = L.marker(
+      [labelConfig.lat, labelConfig.lng],
+      {
+        icon,
+        interactive: false,
+        keyboard: false,
+        zIndexOffset: 1000
+      }
+    );
+
+    layerGroup.addLayer(marker);
+  });
+
+  labelLayers[zoomKey] = layerGroup;
+}
   /**
    * Create label icon with text
    * @param {string} text - Label text
@@ -871,18 +916,7 @@ function createLabelIcon(text, fontSize) {
     return [];
   }
 
-  /**
-   * Clear all active labels from map
-   */
-  function clearLabels() {
-    activeLabels.forEach(label => {
-      if (map && map.hasLayer(label)) {
-        map.removeLayer(label);
-      }
-    });
-    activeLabels = [];
-    console.log('🗑️ Cleared all region labels');
-  }
+
 
 /**
  * Add labels to map
@@ -894,9 +928,9 @@ function addLabels(labels) {
 
   // cek map aktif
   const currentMap =
-  typeof getCurrentMapPreset === 'function'
-    ? (getCurrentMapPreset() || 'main').toLowerCase()
-    : 'main';
+    typeof getCurrentMapPreset === 'function'
+      ? (getCurrentMapPreset() || 'main').toLowerCase()
+      : 'main';
 
   labels.forEach(labelConfig => {
 
@@ -909,10 +943,10 @@ function addLabels(labels) {
 
     // filter universal
     const shouldShow =
-  currentMap === 'main' ||
-  labelMap === currentMap;
+      currentMap === 'main' ||
+      labelMap === currentMap;
 
-if (!shouldShow) return;
+    if (!shouldShow) return;
 
     const icon = createLabelIcon(
       labelConfig.name,
@@ -930,12 +964,6 @@ if (!shouldShow) return;
     ).addTo(map);
 
     activeLabels.push(marker);
-
-    console.log(
-      "[Label]",
-      labelConfig.name,
-      "→ map:", labelMap
-    );
   });
 }
 
@@ -944,22 +972,41 @@ if (!shouldShow) return;
    * @param {number} zoom - Current zoom level
    */
   function updateLabels(zoom) {
-    // Skip if zoom hasn't changed significantly
-    if (Math.floor(zoom) === Math.floor(currentZoom)) {
-      return;
-    }
 
-    currentZoom = zoom;
-    const labels = getLabelsForZoom(Math.floor(zoom));
+  const zoomFloor = Math.floor(zoom);
 
-    // Clear existing labels
-    clearLabels();
+  if (zoomFloor === Math.floor(currentZoom)) return;
 
-    // Add new labels if any (will check isVisible inside)
-    if (labels.length > 0) {
-      addLabels(labels);
-    }
+  currentZoom = zoomFloor;
+
+  if (!isVisible || !map) return;
+
+  let zoomKey = null;
+
+  if (zoomFloor >= 3 && zoomFloor <= 4) {
+    zoomKey = 'zoom_3_4';
+  } else if (zoomFloor === 5) {
+    zoomKey = 'zoom_5';
+  } else if (zoomFloor === 6) {
+    zoomKey = 'zoom_6';
   }
+
+  // Remove old layer
+  if (activeLayer) {
+    map.removeLayer(activeLayer);
+    activeLayer = null;
+  }
+
+  if (!zoomKey) return;
+
+  // Build layer once if not cached
+  if (!labelLayers[zoomKey]) {
+    buildLayerForZoom(zoomKey, LABEL_CONFIG[zoomKey]);
+  }
+
+  activeLayer = labelLayers[zoomKey];
+  map.addLayer(activeLayer);
+}
 
   /**
    * Setup map event listeners
@@ -985,73 +1032,43 @@ if (!shouldShow) return;
    * @param {L.Map} leafletMap - Leaflet map instance
    */
   function init(leafletMap) {
-    if (!leafletMap) {
-      
-      return;
-    }
+  if (!leafletMap) return;
 
-    map = leafletMap;
-    currentZoom = map.getZoom();
-    isVisible = true; // Reset to visible on init
+  map = leafletMap;
+  currentZoom = -1;
+  isVisible = true;
 
-    
-    // Add initial labels
-    const initialLabels = getLabelsForZoom(Math.floor(currentZoom));
-    
-    
-    if (initialLabels.length > 0) {
-      addLabels(initialLabels);
-    } else {
-      console.log('⚠️ No labels to show at current zoom level');
-    }
-
-    // Setup event listeners
-    setupEventListeners();
-
-    
-  }
+  updateLabels(map.getZoom());
+  setupEventListeners();
+}
 
   /**
    * Show labels (NEW!)
    * Re-displays labels if hidden
    */
   function show() {
-    if (isVisible) {
-      
-      return;
-    }
+  if (isVisible) return;
 
-    isVisible = true;
-    
-    // If map not initialized, do nothing
-    if (!map) {
-      
-      return;
-    }
+  isVisible = true;
 
-    // Re-add labels for current zoom
-    const labels = getLabelsForZoom(Math.floor(currentZoom || map.getZoom()));
-    if (labels.length > 0) {
-      clearLabels(); // Clear any stale labels
-      addLabels(labels);
-      
-    }
-  }
+  if (!map) return;
+
+  updateLabels(map.getZoom());
+}
 
   /**
    * Hide labels (NEW!)
    * Removes labels without destroying manager
    */
   function hide() {
-    if (!isVisible) {
-      
-      return;
-    }
+  if (!isVisible) return;
 
-    isVisible = false;
-    clearLabels();
-    
+  isVisible = false;
+
+  if (activeLayer && map) {
+    map.removeLayer(activeLayer);
   }
+}
 
   /**
    * Add or update label configuration
@@ -1091,7 +1108,7 @@ if (!shouldShow) return;
    * Destroy manager and remove all labels
    */
   function destroy() {
-    clearLabels();
+    
     if (map) {
       map.off('zoomend');
     }

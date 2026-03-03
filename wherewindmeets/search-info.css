@@ -1,0 +1,304 @@
+/* ============================================
+   SEARCH INFO — Carousel overlay
+   Gaya identik dengan map-switcher
+   ============================================ */
+
+/* ── Toggle button ── */
+#searchInfoBtn {
+  position: fixed;
+  top: 10px;
+  right: 51%;
+  width: 45px;
+  height: 46px;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0);
+  border: 2px solid #f4e5c0;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(139, 105, 20, 0.4);
+  transition: all 0.3s ease;
+  padding: 0;
+}
+#searchInfoBtn:hover {
+  background: linear-gradient(135deg, #DAA520 0%, #FFD700 100%);
+  box-shadow: 0 6px 16px rgba(218, 165, 32, 0.6);
+  transform: scale(1.05);
+}
+#searchInfoBtn:active { transform: scale(0.95); }
+#searchInfoBtn.active {
+  background: linear-gradient(135deg, #f3d59b, #d4a74a);
+  box-shadow: 0 0 0 3px rgba(243,213,155,0.45), 0 0 22px rgba(212,167,74,0.4);
+}
+#searchInfoBtn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ── Overlay fullscreen ── */
+#searchInfoOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.38s ease;
+}
+#searchInfoOverlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.75) 100%);
+  opacity: 0;
+  transition: opacity 0.38s ease;
+  pointer-events: none;
+}
+#searchInfoOverlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+#searchInfoOverlay.visible::before { opacity: 1; }
+
+/* ── Close ── */
+.si-close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: rgba(212,167,74,0.38);
+  cursor: pointer;
+  z-index: 10;
+  text-transform: uppercase;
+  transition: color 0.2s;
+  pointer-events: auto;
+}
+.si-close:hover { color: #f3d59b; }
+
+/* ── Heading ── */
+.si-heading {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(10px, 1.4vw, 13px);
+  font-weight: 600;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: rgba(212,167,74,0.72);
+  margin-bottom: 30px;
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  transform: translateY(-12px);
+  transition: opacity 0.38s ease 0.1s, transform 0.38s ease 0.1s;
+}
+#searchInfoOverlay.visible .si-heading { opacity: 1; transform: translateY(0); }
+.si-heading::before, .si-heading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 48px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(212,167,74,0.5));
+  transform: translateY(-50%);
+}
+.si-heading::before { right: 100%; margin-right: 14px; transform: translateY(-50%) scaleX(-1); }
+.si-heading::after  { left: 100%;  margin-left:  14px; }
+
+/* ── Carousel outer ── */
+:root {
+  --si-card-w:   clamp(140px, 20vw, 220px);
+  --si-card-gap: clamp(14px, 2vw, 26px);
+}
+
+.si-carousel-outer {
+  position: relative;
+  width: 100vw;
+  z-index: 1;
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.42s ease 0.14s, transform 0.42s ease 0.14s;
+  display: flex;
+  align-items: center;
+}
+#searchInfoOverlay.visible .si-carousel-outer { opacity: 1; transform: translateY(0); }
+
+/* side fades */
+.si-carousel-outer::before,
+.si-carousel-outer::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: clamp(80px, 15vw, 200px);
+  z-index: 2;
+  pointer-events: none;
+}
+.si-carousel-outer::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(4,2,1,0.99) 0%, rgba(4,2,1,0.5) 60%, transparent 100%);
+}
+.si-carousel-outer::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(4,2,1,0.99) 0%, rgba(4,2,1,0.5) 60%, transparent 100%);
+}
+
+/* ── Arrow buttons ── */
+.si-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 44px; height: 44px;
+  background: rgba(20,12,4,0.7);
+  border: 1px solid rgba(212,167,74,0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #d4a74a;
+  font-size: 26px;
+  line-height: 1;
+  transition: background 0.2s, border-color 0.2s, opacity 0.25s, transform 0.2s;
+  backdrop-filter: blur(6px);
+  pointer-events: auto;
+  padding: 0;
+}
+.si-arrow span { display: block; margin-top: -2px; }
+.si-arrow:hover {
+  background: rgba(212,167,74,0.25);
+  border-color: rgba(243,213,155,0.6);
+  color: #f3d59b;
+  transform: translateY(-50%) scale(1.08);
+}
+.si-arrow-left  { left:  clamp(12px, 3.5vw, 48px); }
+.si-arrow-right { right: clamp(12px, 3.5vw, 48px); }
+.si-arrow.hidden { opacity: 0; pointer-events: none; }
+
+/* ── Track ── */
+.si-track {
+  display: flex;
+  padding: 40px 0 48px;
+  overflow-x: scroll;
+  overflow-y: visible;
+  scrollbar-width: none;
+  align-items: center;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+.si-track::-webkit-scrollbar { display: none; }
+
+.si-spacer {
+  flex: 0 0 calc(50vw - var(--si-card-w) / 2 - var(--si-card-gap) / 2);
+  pointer-events: none;
+}
+
+/* ── Card ── */
+.si-item {
+  flex: 0 0 var(--si-card-w);
+  margin: 0 calc(var(--si-card-gap) / 2);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid rgba(212,167,74,0.12);
+  cursor: pointer;
+  position: relative;
+  background: #080502;
+  transform: scale(0.68) translateZ(0);
+  opacity: 0.35;
+  will-change: transform, opacity;
+}
+
+/* image wrap */
+.si-img-wrap {
+  position: relative;
+  overflow: hidden;
+  height: clamp(110px, 15vw, 180px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(20,12,4,0.8);
+}
+.si-img-wrap::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 45%;
+  background: linear-gradient(to top, rgba(0,0,0,0.78), transparent);
+  pointer-events: none;
+}
+.si-thumb {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.6));
+}
+.si-thumb-text {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(12px, 1.8vw, 18px);
+  font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(212,167,74,0.45);
+}
+
+/* name */
+.si-item-name {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(8px, 1vw, 11px);
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #7a5a28;
+  text-align: center;
+  padding: 10px 8px 13px;
+}
+
+/* ── Hint ── */
+.si-hint {
+  font-size: 11px;
+  color: rgba(180,145,80,0.3);
+  font-style: italic;
+  letter-spacing: 1px;
+  pointer-events: none;
+  user-select: none;
+  font-family: 'Crimson Text', Georgia, serif;
+  margin-top: 16px;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.38s ease 0.28s;
+}
+#searchInfoOverlay.visible .si-hint { opacity: 1; }
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  :root {
+    --si-card-w:   clamp(130px, 50vw, 180px);
+    --si-card-gap: 12px;
+  }
+  #searchInfoBtn {
+    top: 59vh;
+    left: 10px;
+    right: auto;
+  }
+  .si-arrow {
+    width: 36px; height: 36px; font-size: 22px;
+  }
+  .si-arrow-left  { left:  10px; }
+  .si-arrow-right { right: 10px; }
+}
+
+/* Sembunyikan tombol toggle asli — sudah digantikan oleh Search Info carousel */
+#mysticToggleBtn,
+#innerWaysToggleBtn,
+#knowledgeToggleBtn,
+#bookToggleBtn,
+#talesToggleBtn {
+  display: none !important;
+}

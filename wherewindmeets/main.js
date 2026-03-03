@@ -40,7 +40,7 @@
   // DEFERRED CSS
   // ============================================
   function loadDeferredCSS() {
-    const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.1.5';
+    const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.1.7';
     
     const cssFiles = [
       'marker-image-handler.css',
@@ -51,6 +51,7 @@
       'patchnote.css',
       'form.css',
       'layer.css',
+      'tales-echoes.css',
       'region-management.css',
       'booklist.css',
       'ui.css',
@@ -63,6 +64,7 @@
       'map-switcher.css',
       'MapTransition.css',
       'pip-map.css',
+      'search-info.css',
       'region.css'
     ];
 

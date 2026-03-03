@@ -5,7 +5,6 @@
 
 const KnowledgePartNavigation = {
 
-  // Store hidden markers state
   hiddenMarkers: new Set(),
   isSeriesViewActive: false,
   activeSeriesId: null,
@@ -22,6 +21,22 @@ const KnowledgePartNavigation = {
     return name.replace(/\s*\(Part\s+\d+\)\s*$/i, '').trim();
   },
 
+  // Helper: ambil data marker dari semua store
+  getMarkerData(markerKey) {
+    return window.pengetahuan?.[markerKey] || window.cerita?.[markerKey] || null;
+  },
+
+  // Helper: cari store berdasarkan seriesId
+  getStoreBySeriesId(seriesId) {
+    for (const storeName of ['pengetahuan', 'cerita']) {
+      const store = window[storeName];
+      if (!store) continue;
+      const found = Object.keys(store).find(k => store[k].series_id === seriesId);
+      if (found) return store;
+    }
+    return window.pengetahuan;
+  },
+
   findSeriesMarkers(markerData) {
     const partNumber = this.extractPartNumber(markerData.name);
     if (partNumber === null) return null;
@@ -34,16 +49,10 @@ const KnowledgePartNavigation = {
 
     Object.keys(window.pengetahuan).forEach(key => {
       const marker = window.pengetahuan[key];
-
       if (marker.series_id !== seriesId) return;
-
       const pn = this.extractPartNumber(marker.name);
       if (pn === null) return;
-
-      if (seriesMarkers[pn]) {
-        return;
-      }
-
+      if (seriesMarkers[pn]) return;
       seriesMarkers[pn] = { key, partNumber: pn, marker };
     });
 
@@ -59,25 +68,53 @@ const KnowledgePartNavigation = {
     };
   },
 
+  findSeriesMarkersCategory14(markerData) {
+    const seriesId = markerData.series_id;
+    if (!seriesId) return null;
+
+    const store = this.getStoreBySeriesId(seriesId);
+    if (!store) return null;
+
+    const seriesMarkers = {};
+    Object.keys(store).forEach(key => {
+      const marker = store[key];
+      if (marker.series_id !== seriesId) return;
+      if (!marker.name) return;
+      if (seriesMarkers[key]) return;
+      seriesMarkers[key] = { key, marker };
+    });
+
+    const parts = Object.values(seriesMarkers);
+    if (parts.length <= 1) return null;
+
+    const currentKey = Object.keys(store).find(k => {
+      const m = store[k];
+      return m.series_id === markerData.series_id &&
+             m.name === markerData.name &&
+             m.lat === markerData.lat &&
+             m.lng === markerData.lng;
+    });
+
+    return { seriesId, currentKey, parts };
+  },
+
   hideNonSeriesMarkers(seriesId) {
     if (!window.MarkerManager?.activeMarkers) return;
-    
+
     if (this.restoreTimeout) {
       clearTimeout(this.restoreTimeout);
       this.restoreTimeout = null;
     }
-    
+
     this.isSeriesViewActive = true;
     this.activeSeriesId = seriesId;
     this.hiddenMarkers.clear();
 
     Object.keys(window.MarkerManager.activeMarkers).forEach(markerKey => {
       const leafletMarker = window.MarkerManager.activeMarkers[markerKey];
-      const markerData = window.pengetahuan?.[markerKey];
+      const markerData = this.getMarkerData(markerKey);
 
-      if (markerData?.series_id === seriesId) {
-        return;
-      }
+      if (markerData?.series_id === seriesId) return;
 
       if (leafletMarker && window.map.hasLayer(leafletMarker)) {
         window.map.removeLayer(leafletMarker);
@@ -102,14 +139,12 @@ const KnowledgePartNavigation = {
           const isVisited = visitedMarkers[markerKey] || false;
           const isHiddenEnabled = window.SettingsManager?.isHiddenMarkerEnabled();
 
-          if (isVisited && isHiddenEnabled) {
-            return;
-          }
+          if (isVisited && isHiddenEnabled) return;
 
           leafletMarker.addTo(window.map);
         }
       });
-      
+
       this.hiddenMarkers.clear();
       this.isSeriesViewActive = false;
       this.activeSeriesId = null;
@@ -118,8 +153,20 @@ const KnowledgePartNavigation = {
   },
 
   createPartNavigationHTML(markerData) {
-    if (markerData.category_id !== "13") return '';
+    const categoryId = markerData.category_id;
 
+    if (categoryId === "13") {
+      return this._createCategory13HTML(markerData);
+    }
+
+    if (categoryId === "14") {
+      return this._createCategory14HTML(markerData);
+    }
+
+    return '';
+  },
+
+  _createCategory13HTML(markerData) {
     const series = this.findSeriesMarkers(markerData);
     if (!series) return '';
 
@@ -143,13 +190,40 @@ const KnowledgePartNavigation = {
     `;
   },
 
+  _createCategory14HTML(markerData) {
+    const seriesId = markerData.series_id;
+    if (!seriesId) return '';
+
+    const series = this.findSeriesMarkersCategory14(markerData);
+    if (!series) return '';
+
+    const partsHTML = series.parts.map(({ key, marker }) => {
+      const isCurrent = key === series.currentKey;
+      return `
+        <button
+          class="part-btn part-btn-named ${isCurrent ? 'current' : ''}"
+          ${isCurrent ? 'disabled' : ''}
+          onclick="KnowledgePartNavigation.navigateToPart('${key}')">
+          ${marker.name}
+        </button>
+      `;
+    }).join('');
+
+    return `
+      <div class="knowledge-part-navigation">
+        <div class="part-nav-header">${seriesId}</div>
+        <div class="part-nav-buttons part-nav-list">${partsHTML}</div>
+      </div>
+    `;
+  },
+
   navigateToPart(markerKey) {
-    if (!window.map || !window.pengetahuan?.[markerKey]) {
+    if (!window.map || !this.getMarkerData(markerKey)) {
       console.error('[KPN] Map or marker data missing');
       return;
     }
 
-    const data = window.pengetahuan[markerKey];
+    const data = this.getMarkerData(markerKey);
     const lat = parseFloat(data.lat);
     const lng = parseFloat(data.lng);
 
