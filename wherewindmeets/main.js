@@ -40,7 +40,7 @@
   // DEFERRED CSS
   // ============================================
   function loadDeferredCSS() {
-    const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.1.7';
+    const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.1.8';
     
     const cssFiles = [
       'marker-image-handler.css',
@@ -60,6 +60,7 @@
       'profile-container.css',
       'setting.css',
       'donate.css',
+      'riddle-search.css',
       'tip-guide.css',
       'map-switcher.css',
       'MapTransition.css',

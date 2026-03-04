@@ -1,0 +1,2818 @@
+[
+  {
+    "clue": "absorption",
+    "answer": "gecko"
+  },
+  {
+    "clue": "aerial",
+    "answer": "dragonfly"
+  },
+  {
+    "clue": "africa",
+    "answer": "giraffe"
+  },
+  {
+    "clue": "against the current",
+    "answer": "salmon"
+  },
+  {
+    "clue": "agaric fungi",
+    "answer": "mushroom"
+  },
+  {
+    "clue": "agile",
+    "answer": "leopard"
+  },
+  {
+    "clue": "aim, throw",
+    "answer": "tou hu"
+  },
+  {
+    "clue": "aiming",
+    "answer": "archery"
+  },
+  {
+    "clue": "air core",
+    "answer": "water spinach"
+  },
+  {
+    "clue": "ancient",
+    "answer": "ginkgo"
+  },
+  {
+    "clue": "antartic animal",
+    "answer": "penguin"
+  },
+  {
+    "clue": "aoba",
+    "answer": "chinese cabbage"
+  },
+  {
+    "clue": "apricots",
+    "answer": "apricot blossoms"
+  },
+  {
+    "clue": "aquaculture",
+    "answer": "buffalo, daffodils"
+  },
+  {
+    "clue": "aquatic",
+    "answer": "lotus root, calla lily, water spinach, taro"
+  },
+  {
+    "clue": "arctic",
+    "answer": "walrus"
+  },
+  {
+    "clue": "aromatic",
+    "answer": "clove, hyacinth"
+  },
+  {
+    "clue": "arrow",
+    "answer": "tou hu"
+  },
+  {
+    "clue": "arrow flower",
+    "answer": "amaryllis"
+  },
+  {
+    "clue": "arrows",
+    "answer": "tou hu"
+  },
+  {
+    "clue": "art",
+    "answer": "bonsai"
+  },
+  {
+    "clue": "artemisia",
+    "answer": "garland chrysanthemum"
+  },
+  {
+    "clue": "at night",
+    "answer": "raccoon"
+  },
+  {
+    "clue": "auspicious",
+    "answer": "lucky bamboo"
+  },
+  {
+    "clue": "australia",
+    "answer": "platypus"
+  },
+  {
+    "clue": "autumn colors",
+    "answer": "maple"
+  },
+  {
+    "clue": "bait",
+    "answer": "fishhook"
+  },
+  {
+    "clue": "balance",
+    "answer": "tumbler"
+  },
+  {
+    "clue": "balance doll",
+    "answer": "tumbler"
+  },
+  {
+    "clue": "ball juggling",
+    "answer": "sea lions"
+  },
+  {
+    "clue": "bamboo fish container",
+    "answer": "fish basket"
+  },
+  {
+    "clue": "bamboo forest",
+    "answer": "bamboo shoots"
+  },
+  {
+    "clue": "bark",
+    "answer": "cinnamon"
+  },
+  {
+    "clue": "barking moon",
+    "answer": "dog"
+  },
+  {
+    "clue": "beach",
+    "answer": "starfish"
+  },
+  {
+    "clue": "beard",
+    "answer": "schnauzer"
+  },
+  {
+    "clue": "beating the chest",
+    "answer": "chimpanzees"
+  },
+  {
+    "clue": "beauty",
+    "answer": "mermaid"
+  },
+  {
+    "clue": "bedroom",
+    "answer": "bed"
+  },
+  {
+    "clue": "bedside furniture, dressing table",
+    "answer": "dressing table"
+  },
+  {
+    "clue": "bedside furniture",
+    "answer": "dressing table"
+  },
+  {
+    "clue": "berry",
+    "answer": "blueberry"
+  },
+  {
+    "clue": "big eyes",
+    "answer": "deer"
+  },
+  {
+    "clue": "big fruit",
+    "answer": "fig"
+  },
+  {
+    "clue": "big grain",
+    "answer": "broad beans"
+  },
+  {
+    "clue": "big mouth",
+    "answer": "hippopotamus, hippo, bullfrog"
+  },
+  {
+    "clue": "bites",
+    "answer": "mosquito"
+  },
+  {
+    "clue": "black hair",
+    "answer": "watermelon seeds"
+  },
+  {
+    "clue": "black and white skin",
+    "answer": "penguin"
+  },
+  {
+    "clue": "black bird",
+    "answer": "crow, turkey"
+  },
+  {
+    "clue": "black feather",
+    "answer": "turkey"
+  },
+  {
+    "clue": "black feather, animal",
+    "answer": "crow"
+  },
+  {
+    "clue": "black feathers",
+    "answer": "turkey"
+  },
+  {
+    "clue": "black hair",
+    "answer": "polygonum multiflorum"
+  },
+  {
+    "clue": "black seeds",
+    "answer": "watermelon seeds"
+  },
+  {
+    "clue": "blade",
+    "answer": "scissors"
+  },
+  {
+    "clue": "blind",
+    "answer": "mole"
+  },
+  {
+    "clue": "bloom",
+    "answer": "fireworks"
+  },
+  {
+    "clue": "blue and black",
+    "answer": "blueberry"
+  },
+  {
+    "clue": "blue and purple",
+    "answer": "hyacinth, wisteria, catharanthus roseus, morning glory"
+  },
+  {
+    "clue": "blue and white",
+    "answer": "porcelain"
+  },
+  {
+    "clue": "blue back",
+    "answer": "tuna"
+  },
+  {
+    "clue": "blue flowers",
+    "answer": "rosemary"
+  },
+  {
+    "clue": "blue sky",
+    "answer": "pigeon"
+  },
+  {
+    "clue": "blueback",
+    "answer": "tuna"
+  },
+  {
+    "clue": "born on stone",
+    "answer": "dendrobrium"
+  },
+  {
+    "clue": "bow",
+    "answer": "tou hu"
+  },
+  {
+    "clue": "boxing",
+    "answer": "tai chi"
+  },
+  {
+    "clue": "brachiopods",
+    "answer": "squid"
+  },
+  {
+    "clue": "braided decoration",
+    "answer": "chinese knot"
+  },
+  {
+    "clue": "breakfast",
+    "answer": "oat"
+  },
+  {
+    "clue": "broad leaves",
+    "answer": "clivia"
+  },
+  {
+    "clue": "brocade",
+    "answer": "weaver girl"
+  },
+  {
+    "clue": "broccoli",
+    "answer": "cauliflower"
+  },
+  {
+    "clue": "brood parasitism",
+    "answer": "azalea"
+  },
+  {
+    "clue": "brown fruit",
+    "answer": "durian"
+  },
+  {
+    "clue": "bud",
+    "answer": "clove, apricot blossom"
+  },
+  {
+    "clue": "buddha flame",
+    "answer": "calla lilly"
+  },
+  {
+    "clue": "buds like nails",
+    "answer": "clove"
+  },
+  {
+    "clue": "bulb",
+    "answer": "onion"
+  },
+  {
+    "clue": "bushes",
+    "answer": "chameleon"
+  },
+  {
+    "clue": "buzz",
+    "answer": "fly"
+  },
+  {
+    "clue": "buzzing",
+    "answer": "bee"
+  },
+  {
+    "clue": "camel bells",
+    "answer": "alpaca"
+  },
+  {
+    "clue": "camouflage",
+    "answer": "chameleon, flounder"
+  },
+  {
+    "clue": "campaign gown",
+    "answer": "armor"
+  },
+  {
+    "clue": "camphor",
+    "answer": "camphor tree"
+  },
+  {
+    "clue": "candied haws",
+    "answer": "candied haws"
+  },
+  {
+    "clue": "candy-covered fruit",
+    "answer": "candied haws"
+  },
+  {
+    "clue": "carrion",
+    "answer": "vulture"
+  },
+  {
+    "clue": "carry food",
+    "answer": "ant, rats"
+  },
+  {
+    "clue": "carrying things",
+    "answer": "donkey"
+  },
+  {
+    "clue": "casual activity",
+    "answer": "fishing"
+  },
+  {
+    "clue": "catching scales",
+    "answer": "fishing nets"
+  },
+  {
+    "clue": "cave dwelling",
+    "answer": "bamboo rat"
+  },
+  {
+    "clue": "celadon",
+    "answer": "porcelain"
+  },
+  {
+    "clue": "ceramic",
+    "answer": "vase/vases"
+  },
+  {
+    "clue": "ceramics",
+    "answer": "vase"
+  },
+  {
+    "clue": "ceremonial gown",
+    "answer": "armor"
+  },
+  {
+    "clue": "chasing the sun",
+    "answer": "sunflower"
+  },
+  {
+    "clue": "chew",
+    "answer": "guinea pig"
+  },
+  {
+    "clue": "chewing bamboo",
+    "answer": "bamboo rat"
+  },
+  {
+    "clue": "children's toy",
+    "answer": "swing"
+  },
+  {
+    "clue": "chinese architecture",
+    "answer": "great wall"
+  },
+  {
+    "clue": "chinese green drinks",
+    "answer": "tea, green tea"
+  },
+  {
+    "clue": "chinese valentine's day, altair",
+    "answer": "cowherd"
+  },
+  {
+    "clue": "chinese valentine's day, vega",
+    "answer": "weaver girl"
+  },
+  {
+    "clue": "chopsticks",
+    "answer": "bamboo shoot"
+  },
+  {
+    "clue": "christmas",
+    "answer": "reindeer"
+  },
+  {
+    "clue": "chubby",
+    "answer": "seal"
+  },
+  {
+    "clue": "cigarette",
+    "answer": "tobacco"
+  },
+  {
+    "clue": "circling",
+    "answer": "vulture"
+  },
+  {
+    "clue": "clamshell",
+    "answer": "pearl"
+  },
+  {
+    "clue": "claws",
+    "answer": "lynx"
+  },
+  {
+    "clue": "clear water",
+    "answer": "water tank"
+  },
+  {
+    "clue": "clever",
+    "answer": "shepherd dog"
+  },
+  {
+    "clue": "cliff",
+    "answer": "golden monkey"
+  },
+  {
+    "clue": "climb",
+    "answer": "rose/rosa, ivy"
+  },
+  {
+    "clue": "climbing vine",
+    "answer": "campsis/trumpet vine"
+  },
+  {
+    "clue": "cloth",
+    "answer": "belt"
+  },
+  {
+    "clue": "clumping",
+    "answer": "hydrangea"
+  },
+  {
+    "clue": "coastal",
+    "answer": "sea lions"
+  },
+  {
+    "clue": "cocoon",
+    "answer": "butterfly"
+  },
+  {
+    "clue": "cold blooded",
+    "answer": "snake, crocodile"
+  },
+  {
+    "clue": "cold water",
+    "answer": "cod"
+  },
+  {
+    "clue": "cold-blooded",
+    "answer": "crocodile, snake"
+  },
+  {
+    "clue": "color grading",
+    "answer": "chameleon"
+  },
+  {
+    "clue": "colorful",
+    "answer": "impatiens, hydrangea, zinnia, tulip"
+  },
+  {
+    "clue": "combustion",
+    "answer": "candle"
+  },
+  {
+    "clue": "community",
+    "answer": "hyena"
+  },
+  {
+    "clue": "competitive sports",
+    "answer": "sumo"
+  },
+  {
+    "clue": "compound eyes",
+    "answer": "dragonfly"
+  },
+  {
+    "clue": "condiment",
+    "answer": "soy sauce"
+  },
+  {
+    "clue": "coniferous",
+    "answer": "pine"
+  },
+  {
+    "clue": "container",
+    "answer": "sugar bowl, flagon, salt shaker"
+  },
+  {
+    "clue": "continuous",
+    "answer": "catharantus roseus"
+  },
+  {
+    "clue": "cool",
+    "answer": "water tank, menthol"
+  },
+  {
+    "clue": "cotton",
+    "answer": "marshmallow"
+  },
+  {
+    "clue": "cough relief",
+    "answer": "loquat"
+  },
+  {
+    "clue": "cover",
+    "answer": "mask, moss"
+  },
+  {
+    "clue": "cranberries",
+    "answer": "lemon"
+  },
+  {
+    "clue": "creeping",
+    "answer": "earthworm"
+  },
+  {
+    "clue": "crescent bean",
+    "answer": "lentils"
+  },
+  {
+    "clue": "crisp",
+    "answer": "apple"
+  },
+  {
+    "clue": "crisp and sweet",
+    "answer": "carrot"
+  },
+  {
+    "clue": "crisp sound",
+    "answer": "wind chime"
+  },
+  {
+    "clue": "crispy and tender",
+    "answer": "lettuce"
+  },
+  {
+    "clue": "crop",
+    "answer": "green beans"
+  },
+  {
+    "clue": "cropping",
+    "answer": "scissors"
+  },
+  {
+    "clue": "crouch down",
+    "answer": "hedgehog"
+  },
+  {
+    "clue": "crowing",
+    "answer": "chicken, rooster"
+  },
+  {
+    "clue": "cruise",
+    "answer": "shark"
+  },
+  {
+    "clue": "cunning",
+    "answer": "fox"
+  },
+  {
+    "clue": "cup-shaped",
+    "answer": "tulip"
+  },
+  {
+    "clue": "curved blade",
+    "answer": "sickle"
+  },
+  {
+    "clue": "cutting vegetables",
+    "answer": "chopping board"
+  },
+  {
+    "clue": "dam construction",
+    "answer": "beaver"
+  },
+  {
+    "clue": "damp",
+    "answer": "moss"
+  },
+  {
+    "clue": "dark",
+    "answer": "soy sauce"
+  },
+  {
+    "clue": "dark spots",
+    "answer": "leopard"
+  },
+  {
+    "clue": "decorate",
+    "answer": "vase, sedan chair"
+  },
+  {
+    "clue": "deep forest",
+    "answer": "chimpanzee"
+  },
+  {
+    "clue": "deep love",
+    "answer": "rose"
+  },
+  {
+    "clue": "deep sea",
+    "answer": "squid, shark, cod"
+  },
+  {
+    "clue": "deep water",
+    "answer": "electric eel"
+  },
+  {
+    "clue": "dense",
+    "answer": "rosa"
+  },
+  {
+    "clue": "dense forest",
+    "answer": "owl"
+  },
+  {
+    "clue": "desert",
+    "answer": "populus euphratica, scorpion"
+  },
+  {
+    "clue": "devour",
+    "answer": "catfish"
+  },
+  {
+    "clue": "diet",
+    "answer": "dishes"
+  },
+  {
+    "clue": "digging",
+    "answer": "mole"
+  },
+  {
+    "clue": "digging a hole to hide",
+    "answer": "ostrich"
+  },
+  {
+    "clue": "diligent",
+    "answer": "ant"
+  },
+  {
+    "clue": "discharge",
+    "answer": "electric eel"
+  },
+  {
+    "clue": "discoloration",
+    "answer": "lizard"
+  },
+  {
+    "clue": "divine bird",
+    "answer": "phoenix"
+  },
+  {
+    "clue": "diving",
+    "answer": "walrus"
+  },
+  {
+    "clue": "docile",
+    "answer": "manatee, sika deer, sheep"
+  },
+  {
+    "clue": "doll",
+    "answer": "tumbler"
+  },
+  {
+    "clue": "drilling holes",
+    "answer": "groundhog"
+  },
+  {
+    "clue": "drinks",
+    "answer": "tea"
+  },
+  {
+    "clue": "drive away",
+    "answer": "shepherd dog"
+  },
+  {
+    "clue": "drought",
+    "answer": "tequila"
+  },
+  {
+    "clue": "dyeing nails",
+    "answer": "impatiens"
+  },
+  {
+    "clue": "early morning",
+    "answer": "morning glory"
+  },
+  {
+    "clue": "early spring",
+    "answer": "cherry"
+  },
+  {
+    "clue": "edible",
+    "answer": "broad bean, sheep"
+  },
+  {
+    "clue": "efficacy",
+    "answer": "ginseng"
+  },
+  {
+    "clue": "elliptical leaves",
+    "answer": "elm"
+  },
+  {
+    "clue": "emerald green",
+    "answer": "water spinach"
+  },
+  {
+    "clue": "emotionally stable",
+    "answer": "capybara"
+  },
+  {
+    "clue": "essential oils",
+    "answer": "lemon"
+  },
+  {
+    "clue": "everblooming",
+    "answer": "chinese rose"
+  },
+  {
+    "clue": "evergreen",
+    "answer": "pine, boxwood"
+  },
+  {
+    "clue": "face",
+    "answer": "mask"
+  },
+  {
+    "clue": "facial decoration",
+    "answer": "mask"
+  },
+  {
+    "clue": "fairy tale",
+    "answer": "mermaid"
+  },
+  {
+    "clue": "fallen petals",
+    "answer": "cherry blossoms"
+  },
+  {
+    "clue": "fan blades",
+    "answer": "ginkgo"
+  },
+  {
+    "clue": "fan-blades",
+    "answer": "ginkgo"
+  },
+  {
+    "clue": "fan-shaped leaves",
+    "answer": "clivia"
+  },
+  {
+    "clue": "far sighted",
+    "answer": "giraffe"
+  },
+  {
+    "clue": "farm",
+    "answer": "turkey"
+  },
+  {
+    "clue": "farming",
+    "answer": "ox, buffalo"
+  },
+  {
+    "clue": "farming and weaving",
+    "answer": "cowherd"
+  },
+  {
+    "clue": "fasten",
+    "answer": "belt"
+  },
+  {
+    "clue": "female general",
+    "answer": "mulan"
+  },
+  {
+    "clue": "festive food",
+    "answer": "moon cake"
+  },
+  {
+    "clue": "fiber",
+    "answer": "oat"
+  },
+  {
+    "clue": "field",
+    "answer": "corn, maize, rabbit, garland chrysanthemum"
+  },
+  {
+    "clue": "fiery red",
+    "answer": "fox"
+  },
+  {
+    "clue": "filamentous flower",
+    "answer": "chrysanthemum"
+  },
+  {
+    "clue": "fin",
+    "answer": "shark"
+  },
+  {
+    "clue": "fish tail",
+    "answer": "mermaid"
+  },
+  {
+    "clue": "fishing",
+    "answer": "otter, cormorant, fish basket, fishing rod"
+  },
+  {
+    "clue": "fixed",
+    "answer": "nail"
+  },
+  {
+    "clue": "flame",
+    "answer": "phoenix"
+  },
+  {
+    "clue": "flapping wings",
+    "answer": "cricket"
+  },
+  {
+    "clue": "flat",
+    "answer": "iron"
+  },
+  {
+    "clue": "flat mouth",
+    "answer": "platypus"
+  },
+  {
+    "clue": "flat tail",
+    "answer": "beaver"
+  },
+  {
+    "clue": "flaunting",
+    "answer": "peacock, peafowl"
+  },
+  {
+    "clue": "flight",
+    "answer": "firefly"
+  },
+  {
+    "clue": "floating catkins",
+    "answer": "poplar"
+  },
+  {
+    "clue": "flower arrangement",
+    "answer": "vase"
+  },
+  {
+    "clue": "flower arrow",
+    "answer": "amaryllis"
+  },
+  {
+    "clue": "flower filament",
+    "answer": "chrysanthemum"
+  },
+  {
+    "clue": "flowers",
+    "answer": "peony, butterfly, daffodils, bee"
+  },
+  {
+    "clue": "flowers before leaves",
+    "answer": "plum blossom"
+  },
+  {
+    "clue": "flowers in the water",
+    "answer": "daffodils"
+  },
+  {
+    "clue": "fluttering",
+    "answer": "willow"
+  },
+  {
+    "clue": "flying",
+    "answer": "antelope, cherry blossoms, flying, dragonfly, butterfly"
+  },
+  {
+    "clue": "flying catkins",
+    "answer": "poplar"
+  },
+  {
+    "clue": "footwear",
+    "answer": "boots"
+  },
+  {
+    "clue": "foraging",
+    "answer": "chicken"
+  },
+  {
+    "clue": "forest",
+    "answer": "loriot, sika deer, oriole, bamboo rat, porcupine"
+  },
+  {
+    "clue": "forests",
+    "answer": "fox, bear, bamboo rat"
+  },
+  {
+    "clue": "four seasons",
+    "answer": "catharanthus roseus, ivy, chinese rose, cypress"
+  },
+  {
+    "clue": "four seasons flowers",
+    "answer": "chinese rose"
+  },
+  {
+    "clue": "fragrance",
+    "answer": "patchouli"
+  },
+  {
+    "clue": "fresh and tender",
+    "answer": "bamboo shoots"
+  },
+  {
+    "clue": "fresh fragrance",
+    "answer": "jasmine, garland chrysanthemum"
+  },
+  {
+    "clue": "fresh water",
+    "answer": "tilapia"
+  },
+  {
+    "clue": "freshwater",
+    "answer": "tilapia"
+  },
+  {
+    "clue": "fruit",
+    "answer": "olives, tangerine, apple"
+  },
+  {
+    "clue": "fruit acid",
+    "answer": "plum blossom"
+  },
+  {
+    "clue": "fruit flower",
+    "answer": "peach blossom"
+  },
+  {
+    "clue": "fruitful results",
+    "answer": "pear tree"
+  },
+  {
+    "clue": "fruits with hard thorns",
+    "answer": "durian"
+  },
+  {
+    "clue": "full",
+    "answer": "rice jar"
+  },
+  {
+    "clue": "furniture with mirrors",
+    "answer": "dressing table"
+  },
+  {
+    "clue": "gallop",
+    "answer": "horse"
+  },
+  {
+    "clue": "game",
+    "answer": "football, hide and seek"
+  },
+  {
+    "clue": "gardening tool",
+    "answer": "rake"
+  },
+  {
+    "clue": "garlic leaves",
+    "answer": "garlic scape"
+  },
+  {
+    "clue": "gel",
+    "answer": "aloe vera"
+  },
+  {
+    "clue": "general",
+    "answer": "mulan"
+  },
+  {
+    "clue": "giant fruit",
+    "answer": "jackfruit"
+  },
+  {
+    "clue": "golden and round",
+    "answer": "tangerine"
+  },
+  {
+    "clue": "golden stigma",
+    "answer": "corn"
+  },
+  {
+    "clue": "gorgeous",
+    "answer": "clown fish"
+  },
+  {
+    "clue": "grains",
+    "answer": "wheat"
+  },
+  {
+    "clue": "grass",
+    "answer": "cricket"
+  },
+  {
+    "clue": "grass nest",
+    "answer": "guinea pig"
+  },
+  {
+    "clue": "grassland",
+    "answer": "antelope, deer, zebra, horse, hedgehog, football, groundhog, shepherd dog, horse riding, ostrich"
+  },
+  {
+    "clue": "grasslands",
+    "answer": "horse, ostrich, deer, hedgehog, football, antelope, groundhog"
+  },
+  {
+    "clue": "grateful",
+    "answer": "turkey"
+  },
+  {
+    "clue": "gray",
+    "answer": "schnauzer, snow leopard"
+  },
+  {
+    "clue": "gray birds",
+    "answer": "azalea"
+  },
+  {
+    "clue": "great strength",
+    "answer": "bear"
+  },
+  {
+    "clue": "green",
+    "answer": "cypress, evergreen"
+  },
+  {
+    "clue": "green bamboo shoots",
+    "answer": "lettuce"
+  },
+  {
+    "clue": "green crown",
+    "answer": "camphor tree"
+  },
+  {
+    "clue": "green eyes",
+    "answer": "fly"
+  },
+  {
+    "clue": "green festival",
+    "answer": "lucky bamboo"
+  },
+  {
+    "clue": "green fruit",
+    "answer": "cantaloupe"
+  },
+  {
+    "clue": "green leaves",
+    "answer": "spinach, hardy banana, boxwood, mint, menthol, coriander"
+  },
+  {
+    "clue": "green plants",
+    "answer": "clivia"
+  },
+  {
+    "clue": "green shade",
+    "answer": "elm, banyan tree"
+  },
+  {
+    "clue": "green steel",
+    "answer": "sword"
+  },
+  {
+    "clue": "green stem",
+    "answer": "aloe vera, tomato, pear tree, peach, garlic sprouts, celery"
+  },
+  {
+    "clue": "green vegetables",
+    "answer": "chinese cabbage"
+  },
+  {
+    "clue": "green velvet",
+    "answer": "moss"
+  },
+  {
+    "clue": "greenery",
+    "answer": "ivy"
+  },
+  {
+    "clue": "group attack",
+    "answer": "piranhas"
+  },
+  {
+    "clue": "growing in pairs",
+    "answer": "cherry"
+  },
+  {
+    "clue": "hair",
+    "answer": "comb"
+  },
+  {
+    "clue": "hanging",
+    "answer": "wisteria"
+  },
+  {
+    "clue": "hanging sleep",
+    "answer": "sloths"
+  },
+  {
+    "clue": "hanging toy",
+    "answer": "swing"
+  },
+  {
+    "clue": "hard shell",
+    "answer": "sea turtles"
+  },
+  {
+    "clue": "hard thorns",
+    "answer": "porcupine"
+  },
+  {
+    "clue": "haricot vert",
+    "answer": "green beans"
+  },
+  {
+    "clue": "harunobu",
+    "answer": "hyacinth"
+  },
+  {
+    "clue": "harvest",
+    "answer": "sickle, wheat"
+  },
+  {
+    "clue": "hawthorn",
+    "answer": "tanghulu, candied haws"
+  },
+  {
+    "clue": "head guard",
+    "answer": "helmet"
+  },
+  {
+    "clue": "heat relief",
+    "answer": "watermelon"
+  },
+  {
+    "clue": "heating",
+    "answer": "iron"
+  },
+  {
+    "clue": "heavy",
+    "answer": "hippo"
+  },
+  {
+    "clue": "herbivorous",
+    "answer": "yak"
+  },
+  {
+    "clue": "herbs",
+    "answer": "rosemary"
+  },
+  {
+    "clue": "hercules",
+    "answer": "sumo"
+  },
+  {
+    "clue": "hibernation",
+    "answer": "groundhog, bear"
+  },
+  {
+    "clue": "hidden",
+    "answer": "scorpion"
+  },
+  {
+    "clue": "hidden flower",
+    "answer": "fig"
+  },
+  {
+    "clue": "hide",
+    "answer": "hide and seek"
+  },
+  {
+    "clue": "historic sites",
+    "answer": "great wall"
+  },
+  {
+    "clue": "hit, bull's eye",
+    "answer": "archery"
+  },
+  {
+    "clue": "hold food",
+    "answer": "dishes"
+  },
+  {
+    "clue": "holds food",
+    "answer": "dishes"
+  },
+  {
+    "clue": "holes",
+    "answer": "lotus root"
+  },
+  {
+    "clue": "hollow",
+    "answer": "celery"
+  },
+  {
+    "clue": "honey",
+    "answer": "bee"
+  },
+  {
+    "clue": "hook",
+    "answer": "fishhook"
+  },
+  {
+    "clue": "housekeeping",
+    "answer": "dog"
+  },
+  {
+    "clue": "houskeeping",
+    "answer": "dog"
+  },
+  {
+    "clue": "huge",
+    "answer": "whale"
+  },
+  {
+    "clue": "hunting",
+    "answer": "lynx"
+  },
+  {
+    "clue": "hybridization",
+    "answer": "mule"
+  },
+  {
+    "clue": "ice surface",
+    "answer": "seal"
+  },
+  {
+    "clue": "ignite",
+    "answer": "fireworks"
+  },
+  {
+    "clue": "illumination",
+    "answer": "candle, lantern"
+  },
+  {
+    "clue": "in the sea",
+    "answer": "clownfish, pufferfish"
+  },
+  {
+    "clue": "indifferent gaze",
+    "answer": "snake"
+  },
+  {
+    "clue": "indoor",
+    "answer": "schnauzer"
+  },
+  {
+    "clue": "inflate",
+    "answer": "pufferfish"
+  },
+  {
+    "clue": "ink jet",
+    "answer": "squid"
+  },
+  {
+    "clue": "iroha",
+    "answer": "parrot"
+  },
+  {
+    "clue": "iron",
+    "answer": "locks, sickle"
+  },
+  {
+    "clue": "ironing",
+    "answer": "iron"
+  },
+  {
+    "clue": "ishita",
+    "answer": "centipede"
+  },
+  {
+    "clue": "jade",
+    "answer": "bracelet"
+  },
+  {
+    "clue": "japan",
+    "answer": "cherry blossoms"
+  },
+  {
+    "clue": "jewelry",
+    "answer": "necklace, pearl"
+  },
+  {
+    "clue": "join the army",
+    "answer": "mulan"
+  },
+  {
+    "clue": "juicy",
+    "answer": "aloe vera, tomato, pear tree, peach"
+  },
+  {
+    "clue": "jump",
+    "answer": "rabbit, golden monkey, bullfrog"
+  },
+  {
+    "clue": "jungle",
+    "answer": "elephant, leopard"
+  },
+  {
+    "clue": "keep warm",
+    "answer": "boots"
+  },
+  {
+    "clue": "kiln fire",
+    "answer": "porcelain"
+  },
+  {
+    "clue": "kitchen",
+    "answer": "chopping board"
+  },
+  {
+    "clue": "land and sea",
+    "answer": "turtle"
+  },
+  {
+    "clue": "large flowers",
+    "answer": "peony"
+  },
+  {
+    "clue": "large particles",
+    "answer": "rice"
+  },
+  {
+    "clue": "leaf",
+    "answer": "tobacco"
+  },
+  {
+    "clue": "leaping waves",
+    "answer": "dolphin"
+  },
+  {
+    "clue": "leather",
+    "answer": "boot/boots"
+  },
+  {
+    "clue": "leaves as big as fans",
+    "answer": "hardy banana"
+  },
+  {
+    "clue": "leguminosae",
+    "answer": "broad bean"
+  },
+  {
+    "clue": "licking claws",
+    "answer": "cat"
+  },
+  {
+    "clue": "lifting",
+    "answer": "sedan chair"
+  },
+  {
+    "clue": "light and shadow",
+    "answer": "lantern"
+  },
+  {
+    "clue": "light point",
+    "answer": "firefly"
+  },
+  {
+    "clue": "long and pointed",
+    "answer": "chili"
+  },
+  {
+    "clue": "long ears",
+    "answer": "rabbit"
+  },
+  {
+    "clue": "long green stems",
+    "answer": "garlic sprout"
+  },
+  {
+    "clue": "long horn",
+    "answer": "longicorn"
+  },
+  {
+    "clue": "long jump",
+    "answer": "toad"
+  },
+  {
+    "clue": "long legs",
+    "answer": "flamingo"
+  },
+  {
+    "clue": "long neck",
+    "answer": "giraffe"
+  },
+  {
+    "clue": "long strips",
+    "answer": "cucumber, bow and arrow"
+  },
+  {
+    "clue": "long tail",
+    "answer": "peacock, lizard, mouse"
+  },
+  {
+    "clue": "long teeth",
+    "answer": "walrus"
+  },
+  {
+    "clue": "long-legged birds",
+    "answer": "flamingo"
+  },
+  {
+    "clue": "longevity",
+    "answer": "turtle/sea turtle, ginkgo"
+  },
+  {
+    "clue": "longjump",
+    "answer": "toad"
+  },
+  {
+    "clue": "loosen the soil",
+    "answer": "earthworm, rake"
+  },
+  {
+    "clue": "lotus",
+    "answer": "roots, lotus root"
+  },
+  {
+    "clue": "love",
+    "answer": "rose"
+  },
+  {
+    "clue": "loyalty",
+    "answer": "dog"
+  },
+  {
+    "clue": "lurk",
+    "answer": "crocodile"
+  },
+  {
+    "clue": "lush",
+    "answer": "banyan tree"
+  },
+  {
+    "clue": "mail delivery transfer station",
+    "answer": "post station"
+  },
+  {
+    "clue": "martial arts, boxing",
+    "answer": "tai chi"
+  },
+  {
+    "clue": "mask",
+    "answer": "raccoon"
+  },
+  {
+    "clue": "may flowers",
+    "answer": "peony"
+  },
+  {
+    "clue": "mayflower",
+    "answer": "peony flower"
+  },
+  {
+    "clue": "medicinal",
+    "answer": "licorice, ganoderma lucidum, polygonum multiforum, camphor tree, peony flowers"
+  },
+  {
+    "clue": "medicinal and food",
+    "answer": "wolfberry"
+  },
+  {
+    "clue": "medicinal materials",
+    "answer": "plantain"
+  },
+  {
+    "clue": "medicine and food",
+    "answer": "wolfberry, goji"
+  },
+  {
+    "clue": "medicine material",
+    "answer": "plantain"
+  },
+  {
+    "clue": "medium-sized",
+    "answer": "samoyed"
+  },
+  {
+    "clue": "melee",
+    "answer": "dagger"
+  },
+  {
+    "clue": "meow",
+    "answer": "cat"
+  },
+  {
+    "clue": "messenger",
+    "answer": "pigeon"
+  },
+  {
+    "clue": "metal",
+    "answer": "scissors, nail, fishhook, armor"
+  },
+  {
+    "clue": "mid-autumn festival",
+    "answer": "moon cake"
+  },
+  {
+    "clue": "migration",
+    "answer": "salmon, reindeer"
+  },
+  {
+    "clue": "milky way",
+    "answer": "weaver girl, cowherd"
+  },
+  {
+    "clue": "molt",
+    "answer": "snake"
+  },
+  {
+    "clue": "moon-viewing food",
+    "answer": "moon cake"
+  },
+  {
+    "clue": "mountainous areas",
+    "answer": "donkey"
+  },
+  {
+    "clue": "mouse catching",
+    "answer": "cat"
+  },
+  {
+    "clue": "mud",
+    "answer": "toad"
+  },
+  {
+    "clue": "mud hole",
+    "answer": "eel"
+  },
+  {
+    "clue": "multi-legged",
+    "answer": "centipede"
+  },
+  {
+    "clue": "multicolor",
+    "answer": "impatiens, perennial flower, rosa"
+  },
+  {
+    "clue": "multiplayer",
+    "answer": "hide and seek, football"
+  },
+  {
+    "clue": "mythical animal",
+    "answer": "phoenix"
+  },
+  {
+    "clue": "mythical animals",
+    "answer": "phoenix"
+  },
+  {
+    "clue": "neckwear",
+    "answer": "necklace"
+  },
+  {
+    "clue": "neighing",
+    "answer": "horse"
+  },
+  {
+    "clue": "nest in water",
+    "answer": "otter"
+  },
+  {
+    "clue": "net",
+    "answer": "fishing nets"
+  },
+  {
+    "clue": "netherlands",
+    "answer": "tulip"
+  },
+  {
+    "clue": "night",
+    "answer": "mosquito, mouse, raccoon"
+  },
+  {
+    "clue": "night sky",
+    "answer": "fireworks"
+  },
+  {
+    "clue": "night walk",
+    "answer": "owl"
+  },
+  {
+    "clue": "nourish",
+    "answer": "mushroom"
+  },
+  {
+    "clue": "nourishing",
+    "answer": "dendrobium, wolfberry, ginseng"
+  },
+  {
+    "clue": "nucleolus",
+    "answer": "apricot"
+  },
+  {
+    "clue": "nut",
+    "answer": "peanut"
+  },
+  {
+    "clue": "nutrition",
+    "answer": "spinach, oat, menthol, oat meal"
+  },
+  {
+    "clue": "ocean",
+    "answer": "dolphin, tuna, whale, sea turtles, manatee, pearl"
+  },
+  {
+    "clue": "oil",
+    "answer": "olives"
+  },
+  {
+    "clue": "oil fragrance",
+    "answer": "olives"
+  },
+  {
+    "clue": "on the ground",
+    "answer": "ant"
+  },
+  {
+    "clue": "orange-red",
+    "answer": "campsis"
+  },
+  {
+    "clue": "orangutans",
+    "answer": "chimpanzees"
+  },
+  {
+    "clue": "ornamental",
+    "answer": "begonia"
+  },
+  {
+    "clue": "paddy",
+    "answer": "frog"
+  },
+  {
+    "clue": "paddy fields",
+    "answer": "rice"
+  },
+  {
+    "clue": "palmate",
+    "answer": "maple"
+  },
+  {
+    "clue": "palmate leaves",
+    "answer": "chinese parasol"
+  },
+  {
+    "clue": "paper",
+    "answer": "books"
+  },
+  {
+    "clue": "parenting",
+    "answer": "seahorse"
+  },
+  {
+    "clue": "park",
+    "answer": "swing"
+  },
+  {
+    "clue": "pasture",
+    "answer": "sheep, ox"
+  },
+  {
+    "clue": "patio",
+    "answer": "chicken"
+  },
+  {
+    "clue": "peace",
+    "answer": "pigeon"
+  },
+  {
+    "clue": "peace, blessing",
+    "answer": "amulet"
+  },
+  {
+    "clue": "peak",
+    "answer": "eagle"
+  },
+  {
+    "clue": "pentagon",
+    "answer": "starfish"
+  },
+  {
+    "clue": "peony, buttlerfly, daffodils",
+    "answer": "dendrobium, ginseng"
+  },
+  {
+    "clue": "pepper",
+    "answer": "chili"
+  },
+  {
+    "clue": "phoenix",
+    "answer": "chinese parasol"
+  },
+  {
+    "clue": "physical",
+    "answer": "dagger"
+  },
+  {
+    "clue": "picnic",
+    "answer": "compass"
+  },
+  {
+    "clue": "pimple",
+    "answer": "toad"
+  },
+  {
+    "clue": "pink",
+    "answer": "apricot blossoms"
+  },
+  {
+    "clue": "pink flower",
+    "answer": "peach/peach blossom, begonia"
+  },
+  {
+    "clue": "plant-based",
+    "answer": "tea"
+  },
+  {
+    "clue": "planting",
+    "answer": "garlic sprouts, tobacco"
+  },
+  {
+    "clue": "plateau",
+    "answer": "yak"
+  },
+  {
+    "clue": "plateau hunter",
+    "answer": "snow leopard"
+  },
+  {
+    "clue": "playing in the water",
+    "answer": "duck"
+  },
+  {
+    "clue": "pod",
+    "answer": "lentils"
+  },
+  {
+    "clue": "pointed",
+    "answer": "nail"
+  },
+  {
+    "clue": "pointer",
+    "answer": "compass"
+  },
+  {
+    "clue": "poisonous",
+    "answer": "oleander"
+  },
+  {
+    "clue": "pole weapon",
+    "answer": "spear"
+  },
+  {
+    "clue": "pond",
+    "answer": "duck, tadpole, bullfrog"
+  },
+  {
+    "clue": "position",
+    "answer": "compass"
+  },
+  {
+    "clue": "potato",
+    "answer": "sweet potato"
+  },
+  {
+    "clue": "potted plant",
+    "answer": "coriander"
+  },
+  {
+    "clue": "poultry",
+    "answer": "rooster"
+  },
+  {
+    "clue": "pouring wine",
+    "answer": "flagon"
+  },
+  {
+    "clue": "pray for blessings",
+    "answer": "amulet"
+  },
+  {
+    "clue": "precious",
+    "answer": "ganoderma lucidum, reishi"
+  },
+  {
+    "clue": "primates",
+    "answer": "golden monkey"
+  },
+  {
+    "clue": "proboscis",
+    "answer": "elephant"
+  },
+  {
+    "clue": "protection",
+    "answer": "helmet, armor"
+  },
+  {
+    "clue": "purple",
+    "answer": "patchouli, eggplant"
+  },
+  {
+    "clue": "purple fruit",
+    "answer": "plum tree"
+  },
+  {
+    "clue": "purple skin",
+    "answer": "onion"
+  },
+  {
+    "clue": "quack",
+    "answer": "frog, duck"
+  },
+  {
+    "clue": "rabbit",
+    "answer": "carrot"
+  },
+  {
+    "clue": "rain",
+    "answer": "hardy banana"
+  },
+  {
+    "clue": "reading",
+    "answer": "books"
+  },
+  {
+    "clue": "red",
+    "answer": "chili"
+  },
+  {
+    "clue": "red all over",
+    "answer": "flamingo"
+  },
+  {
+    "clue": "red and white",
+    "answer": "oleander"
+  },
+  {
+    "clue": "red decoration",
+    "answer": "chinese knot"
+  },
+  {
+    "clue": "red feather",
+    "answer": "crested ibis"
+  },
+  {
+    "clue": "red fruit",
+    "answer": "cherry, wolfberry, tomato"
+  },
+  {
+    "clue": "red leaves",
+    "answer": "maple"
+  },
+  {
+    "clue": "red pattern",
+    "answer": "seal"
+  },
+  {
+    "clue": "red rope knot",
+    "answer": "chinese knot"
+  },
+  {
+    "clue": "red-crowned poultry",
+    "answer": "rooster"
+  },
+  {
+    "clue": "refreshing",
+    "answer": "menthol, cucumber"
+  },
+  {
+    "clue": "regeneration",
+    "answer": "starfish"
+  },
+  {
+    "clue": "reins, running",
+    "answer": "horse riding"
+  },
+  {
+    "clue": "relieve heat",
+    "answer": "patchouli"
+  },
+  {
+    "clue": "rhizome",
+    "answer": "polygonum multiflorum"
+  },
+  {
+    "clue": "rice",
+    "answer": "buffalo, Rice Jar"
+  },
+  {
+    "clue": "rice storage",
+    "answer": "rice jar"
+  },
+  {
+    "clue": "rich",
+    "answer": "jackfruit"
+  },
+  {
+    "clue": "ring",
+    "answer": "bracelet"
+  },
+  {
+    "clue": "river",
+    "answer": "hippo, fishing, beaver"
+  },
+  {
+    "clue": "rivers",
+    "answer": "catfish"
+  },
+  {
+    "clue": "roadside",
+    "answer": "plantain"
+  },
+  {
+    "clue": "rock wall",
+    "answer": "dendrobrium"
+  },
+  {
+    "clue": "rod-shaped",
+    "answer": "cucumber"
+  },
+  {
+    "clue": "rod, bait",
+    "answer": "fishing"
+  },
+  {
+    "clue": "rodents",
+    "answer": "guinea pig"
+  },
+  {
+    "clue": "roll",
+    "answer": "sea lions"
+  },
+  {
+    "clue": "root feeding",
+    "answer": "porcupine"
+  },
+  {
+    "clue": "roots",
+    "answer": "licorice"
+  },
+  {
+    "clue": "rosy",
+    "answer": "apple"
+  },
+  {
+    "clue": "rubber band toys",
+    "answer": "slingshot"
+  },
+  {
+    "clue": "rubber bands",
+    "answer": "slingshot"
+  },
+  {
+    "clue": "rubbing",
+    "answer": "seal"
+  },
+  {
+    "clue": "rubbish",
+    "answer": "fly"
+  },
+  {
+    "clue": "rugged",
+    "answer": "mule"
+  },
+  {
+    "clue": "rumination",
+    "answer": "ox"
+  },
+  {
+    "clue": "run",
+    "answer": "zebra, ostrich, horse riding"
+  },
+  {
+    "clue": "run fast",
+    "answer": "antelope"
+  },
+  {
+    "clue": "run quickly",
+    "answer": "centipede"
+  },
+  {
+    "clue": "safety",
+    "answer": "amulet, locks"
+  },
+  {
+    "clue": "saltwater",
+    "answer": "pacific saury"
+  },
+  {
+    "clue": "salty",
+    "answer": "salt shaker"
+  },
+  {
+    "clue": "sand",
+    "answer": "hourglass"
+  },
+  {
+    "clue": "sauce-flavored",
+    "answer": "soy sauce"
+  },
+  {
+    "clue": "scabbard",
+    "answer": "sword"
+  },
+  {
+    "clue": "scaleless",
+    "answer": "eel"
+  },
+  {
+    "clue": "seabed",
+    "answer": "flounder"
+  },
+  {
+    "clue": "search",
+    "answer": "raccoon"
+  },
+  {
+    "clue": "seaside",
+    "answer": "cormorant"
+  },
+  {
+    "clue": "seasoning",
+    "answer": "garlic scape, coriander, salt shaker"
+  },
+  {
+    "clue": "seaweed",
+    "answer": "seahorse"
+  },
+  {
+    "clue": "seed",
+    "answer": "watermelon seeds"
+  },
+  {
+    "clue": "seeds",
+    "answer": "watermelon seeds"
+  },
+  {
+    "clue": "self-defense",
+    "answer": "skunk"
+  },
+  {
+    "clue": "serving wine",
+    "answer": "flagon"
+  },
+  {
+    "clue": "shade-tolerant",
+    "answer": "evergreen"
+  },
+  {
+    "clue": "shallow sea",
+    "answer": "manatee"
+  },
+  {
+    "clue": "sharp eyes",
+    "answer": "eagle"
+  },
+  {
+    "clue": "sharp teeth",
+    "answer": "piranhas"
+  },
+  {
+    "clue": "shell",
+    "answer": "pearl, peanut"
+  },
+  {
+    "clue": "shooting toys",
+    "answer": "slingshot"
+  },
+  {
+    "clue": "shooting weapons",
+    "answer": "bow and arrow"
+  },
+  {
+    "clue": "short",
+    "answer": "zinnia"
+  },
+  {
+    "clue": "short weapon",
+    "answer": "dagger"
+  },
+  {
+    "clue": "shrub",
+    "answer": "oleander, skunk"
+  },
+  {
+    "clue": "shrubs",
+    "answer": "evergreen, oleander"
+  },
+  {
+    "clue": "shut",
+    "answer": "locks"
+  },
+  {
+    "clue": "side-lying",
+    "answer": "flounder"
+  },
+  {
+    "clue": "silk pull",
+    "answer": "fishing rod"
+  },
+  {
+    "clue": "silver",
+    "answer": "pacific saury"
+  },
+  {
+    "clue": "singing in the woods",
+    "answer": "oriole"
+  },
+  {
+    "clue": "single tree",
+    "answer": "banyan tree"
+  },
+  {
+    "clue": "sleep",
+    "answer": "bed"
+  },
+  {
+    "clue": "slender",
+    "answer": "mosquito, cormorants, aloe vera"
+  },
+  {
+    "clue": "slender fish",
+    "answer": "pacific saury"
+  },
+  {
+    "clue": "slide",
+    "answer": "electric eel"
+  },
+  {
+    "clue": "slippery",
+    "answer": "eel"
+  },
+  {
+    "clue": "slow",
+    "answer": "sloth/sloths"
+  },
+  {
+    "clue": "small",
+    "answer": "blueberry, plum tree"
+  },
+  {
+    "clue": "small grains",
+    "answer": "green beans, mung beans"
+  },
+  {
+    "clue": "small particles",
+    "answer": "wheat"
+  },
+  {
+    "clue": "smiley face",
+    "answer": "sunflower"
+  },
+  {
+    "clue": "snake",
+    "answer": "whip"
+  },
+  {
+    "clue": "snow",
+    "answer": "lynx, samoyed"
+  },
+  {
+    "clue": "snow mountain",
+    "answer": "snow leopard"
+  },
+  {
+    "clue": "snowfield",
+    "answer": "reindeer"
+  },
+  {
+    "clue": "soar",
+    "answer": "eagle"
+  },
+  {
+    "clue": "social",
+    "answer": "hyena, capybara, elephant"
+  },
+  {
+    "clue": "soft",
+    "answer": "loquat"
+  },
+  {
+    "clue": "soft and sticky",
+    "answer": "eggplant"
+  },
+  {
+    "clue": "soft food",
+    "answer": "marshmallow"
+  },
+  {
+    "clue": "soft strength",
+    "answer": "whip"
+  },
+  {
+    "clue": "soft strip",
+    "answer": "willow, meadow"
+  },
+  {
+    "clue": "soil",
+    "answer": "carrot, sweet potato"
+  },
+  {
+    "clue": "solid",
+    "answer": "chopping board"
+  },
+  {
+    "clue": "south america",
+    "answer": "alpaca"
+  },
+  {
+    "clue": "spawning",
+    "answer": "salmon"
+  },
+  {
+    "clue": "speaking",
+    "answer": "parrot"
+  },
+  {
+    "clue": "spherical",
+    "answer": "fig, cauliflower"
+  },
+  {
+    "clue": "spices",
+    "answer": "rosemary, cinnamon"
+  },
+  {
+    "clue": "spicy",
+    "answer": "onion, chili"
+  },
+  {
+    "clue": "spikes",
+    "answer": "chinese rose, hedgehog"
+  },
+  {
+    "clue": "spiritual roots",
+    "answer": "ginseng"
+  },
+  {
+    "clue": "spot",
+    "answer": "deer, sika deer, tilapia"
+  },
+  {
+    "clue": "spotted",
+    "answer": "tilapia"
+  },
+  {
+    "clue": "spreading tails",
+    "answer": "peacock"
+  },
+  {
+    "clue": "spring",
+    "answer": "amaryllis, willow, peach blossom, begonia, tulip"
+  },
+  {
+    "clue": "square",
+    "answer": "box"
+  },
+  {
+    "clue": "starch",
+    "answer": "potato"
+  },
+  {
+    "clue": "stealing",
+    "answer": "mouse"
+  },
+  {
+    "clue": "steamed food",
+    "answer": "taro"
+  },
+  {
+    "clue": "steel",
+    "answer": "helmet"
+  },
+  {
+    "clue": "stench",
+    "answer": "skunk"
+  },
+  {
+    "clue": "stinger",
+    "answer": "pufferfish"
+  },
+  {
+    "clue": "stone",
+    "answer": "lizard"
+  },
+  {
+    "clue": "storage",
+    "answer": "box, water tank"
+  },
+  {
+    "clue": "straight",
+    "answer": "fishing rod, fishing pole"
+  },
+  {
+    "clue": "stream",
+    "answer": "otter"
+  },
+  {
+    "clue": "stripe",
+    "answer": "zebra"
+  },
+  {
+    "clue": "summer",
+    "answer": "eggplant, zinnias, hydrangea"
+  },
+  {
+    "clue": "summer night",
+    "answer": "firefly"
+  },
+  {
+    "clue": "summer-relief fruits",
+    "answer": "watermelon"
+  },
+  {
+    "clue": "sunbathing",
+    "answer": "seal"
+  },
+  {
+    "clue": "supply",
+    "answer": "post station"
+  },
+  {
+    "clue": "surface",
+    "answer": "desk"
+  },
+  {
+    "clue": "surface mesh texture",
+    "answer": "cantaloupe"
+  },
+  {
+    "clue": "sushi",
+    "answer": "tuna"
+  },
+  {
+    "clue": "suspension",
+    "answer": "lantern, wind chimes"
+  },
+  {
+    "clue": "swamp",
+    "answer": "crocodile, snake"
+  },
+  {
+    "clue": "sweet",
+    "answer": "sugar bowl, peach"
+  },
+  {
+    "clue": "sweet and sour",
+    "answer": "plum tree, tangerine"
+  },
+  {
+    "clue": "sweet and sour food",
+    "answer": "candied haws"
+  },
+  {
+    "clue": "sweet container",
+    "answer": "sugar bowl"
+  },
+  {
+    "clue": "sweet foods",
+    "answer": "marshmallow"
+  },
+  {
+    "clue": "sweet fruit",
+    "answer": "cantaloupe, watermelon"
+  },
+  {
+    "clue": "swim",
+    "answer": "frog, dolphin"
+  },
+  {
+    "clue": "swimming with wings",
+    "answer": "penguin"
+  },
+  {
+    "clue": "sword leaf",
+    "answer": "tequila"
+  },
+  {
+    "clue": "symbiosis",
+    "answer": "clownfish"
+  },
+  {
+    "clue": "tableware",
+    "answer": "dishes"
+  },
+  {
+    "clue": "tai chi",
+    "answer": "yin ang yang"
+  },
+  {
+    "clue": "tail",
+    "answer": "tadpole"
+  },
+  {
+    "clue": "tail docking",
+    "answer": "gecko"
+  },
+  {
+    "clue": "tailhook",
+    "answer": "scorpion"
+  },
+  {
+    "clue": "tall",
+    "answer": "chinese parasol"
+  },
+  {
+    "clue": "tall and straight",
+    "answer": "pine"
+  },
+  {
+    "clue": "taoism",
+    "answer": "yin and yang"
+  },
+  {
+    "clue": "tea fragrance",
+    "answer": "jasmine"
+  },
+  {
+    "clue": "tenacity",
+    "answer": "populus euphratica, elm"
+  },
+  {
+    "clue": "thick velvet",
+    "answer": "yak"
+  },
+  {
+    "clue": "thorn bush",
+    "answer": "rose"
+  },
+  {
+    "clue": "thousands of miles",
+    "answer": "great wall"
+  },
+  {
+    "clue": "time",
+    "answer": "hourglass"
+  },
+  {
+    "clue": "timer",
+    "answer": "hourglass"
+  },
+  {
+    "clue": "tool",
+    "answer": "sedan chair, rake"
+  },
+  {
+    "clue": "tower",
+    "answer": "cypress"
+  },
+  {
+    "clue": "traditional chinese medicine",
+    "answer": "licorice"
+  },
+  {
+    "clue": "traditional martial arts",
+    "answer": "tai chi"
+  },
+  {
+    "clue": "transfer station",
+    "answer": "post station"
+  },
+  {
+    "clue": "transport",
+    "answer": "mule, donkey"
+  },
+  {
+    "clue": "trees",
+    "answer": "longicorn/longhorned beetle, bonsai"
+  },
+  {
+    "clue": "treetops",
+    "answer": "sloths"
+  },
+  {
+    "clue": "tropical",
+    "answer": "parrot, jackfruit, piranhas"
+  },
+  {
+    "clue": "tropical fruits",
+    "answer": "durian"
+  },
+  {
+    "clue": "trumpet",
+    "answer": "morning glory"
+  },
+  {
+    "clue": "tubers",
+    "answer": "taro"
+  },
+  {
+    "clue": "turn head",
+    "answer": "owl"
+  },
+  {
+    "clue": "tweet",
+    "answer": "cricket, crow, azalea"
+  },
+  {
+    "clue": "two-handed weapons",
+    "answer": "bow and arrow"
+  },
+  {
+    "clue": "umbrella",
+    "answer": "mushroom"
+  },
+  {
+    "clue": "umbrella-shaped",
+    "answer": "reishi/ganoderma lucidum"
+  },
+  {
+    "clue": "underground",
+    "answer": "peanut, earthworm, mole, potato"
+  },
+  {
+    "clue": "upper limb exercise",
+    "answer": "archery"
+  },
+  {
+    "clue": "upright",
+    "answer": "lucky bamboo, boxwood"
+  },
+  {
+    "clue": "upright swimming",
+    "answer": "seahorse"
+  },
+  {
+    "clue": "valley",
+    "answer": "vulture"
+  },
+  {
+    "clue": "variant",
+    "answer": "tadpole"
+  },
+  {
+    "clue": "variants",
+    "answer": "tadpole"
+  },
+  {
+    "clue": "vegetable",
+    "answer": "spinach, tomato, lentils"
+  },
+  {
+    "clue": "vegetable fields",
+    "answer": "celery"
+  },
+  {
+    "clue": "vegetable garden",
+    "answer": "garlic scape, lettuce"
+  },
+  {
+    "clue": "vegetables",
+    "answer": "lentils"
+  },
+  {
+    "clue": "velvety soft",
+    "answer": "alpaca"
+  },
+  {
+    "clue": "vine",
+    "answer": "wisteria"
+  },
+  {
+    "clue": "vivid red",
+    "answer": "amaryllis"
+  },
+  {
+    "clue": "wading",
+    "answer": "crested ibis"
+  },
+  {
+    "clue": "waist",
+    "answer": "belt"
+  },
+  {
+    "clue": "wall",
+    "answer": "gecko"
+  },
+  {
+    "clue": "war spear",
+    "answer": "spear"
+  },
+  {
+    "clue": "warm",
+    "answer": "campsis, cinnamon"
+  },
+  {
+    "clue": "watch",
+    "answer": "peony flowers, bonsai"
+  },
+  {
+    "clue": "water",
+    "answer": "dragonfly, hardy banana"
+  },
+  {
+    "clue": "water spray",
+    "answer": "whale"
+  },
+  {
+    "clue": "waters",
+    "answer": "capybara"
+  },
+  {
+    "clue": "waterside",
+    "answer": "egret"
+  },
+  {
+    "clue": "weapon",
+    "answer": "spear, sword"
+  },
+  {
+    "clue": "wear",
+    "answer": "necklace"
+  },
+  {
+    "clue": "web",
+    "answer": "fishing nets"
+  },
+  {
+    "clue": "web gathering",
+    "answer": "fish basket"
+  },
+  {
+    "clue": "webbed feet",
+    "answer": "platypus"
+  },
+  {
+    "clue": "weight-bearing",
+    "answer": "turtle"
+  },
+  {
+    "clue": "wetland",
+    "answer": "crested ibis"
+  },
+  {
+    "clue": "wetlands",
+    "answer": "crested ibis"
+  },
+  {
+    "clue": "whip shadow",
+    "answer": "whip"
+  },
+  {
+    "clue": "whiskers",
+    "answer": "catfish"
+  },
+  {
+    "clue": "white",
+    "answer": "calla lily, jasmine, rice"
+  },
+  {
+    "clue": "white bird",
+    "answer": "egret"
+  },
+  {
+    "clue": "white feather",
+    "answer": "egret"
+  },
+  {
+    "clue": "white flower",
+    "answer": "pear tree, cauliflower"
+  },
+  {
+    "clue": "white flowers",
+    "answer": "apricot, pear tree, cauliflower"
+  },
+  {
+    "clue": "white gang qingye",
+    "answer": "chinese cabbage"
+  },
+  {
+    "clue": "white hair",
+    "answer": "samoyed"
+  },
+  {
+    "clue": "white meat",
+    "answer": "cod"
+  },
+  {
+    "clue": "white skin",
+    "answer": "poplar"
+  },
+  {
+    "clue": "whorled",
+    "answer": "plantain"
+  },
+  {
+    "clue": "wilderness",
+    "answer": "hyena"
+  },
+  {
+    "clue": "wind",
+    "answer": "wind chimes"
+  },
+  {
+    "clue": "wind and sand",
+    "answer": "populus euphratica"
+  },
+  {
+    "clue": "wine aroma",
+    "answer": "tequila"
+  },
+  {
+    "clue": "winter flowers",
+    "answer": "plum blossom"
+  },
+  {
+    "clue": "wooden",
+    "answer": "box, comb, desk, bed"
+  },
+  {
+    "clue": "wool",
+    "answer": "sheep"
+  },
+  {
+    "clue": "word",
+    "answer": "books"
+  },
+  {
+    "clue": "wormhole",
+    "answer": "longicorn"
+  },
+  {
+    "clue": "wrestling",
+    "answer": "sumo"
+  },
+  {
+    "clue": "wrist ornament",
+    "answer": "bracelet"
+  },
+  {
+    "clue": "write",
+    "answer": "desk"
+  },
+  {
+    "clue": "yellow",
+    "answer": "potato, sweet potato, loquat"
+  },
+  {
+    "clue": "yellow flower",
+    "answer": "chrysanthemum, sunflower"
+  },
+  {
+    "clue": "yellow fruit",
+    "answer": "apricot"
+  },
+  {
+    "clue": "yellow grains",
+    "answer": "corn"
+  },
+  {
+    "clue": "yellow silky petals",
+    "answer": "chrysanthemum"
+  },
+  {
+    "clue": "yellow-green",
+    "answer": "lemon, oriole"
+  }
+]

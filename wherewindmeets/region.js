@@ -41,7 +41,7 @@ zoom_5: [
   { "name": "Suixiang", "lat": 102.03556094524335, "lng": 196.38766062491666, "size": 26, "map_type": "Bujian Mountain" },
   { "name": "Tianxing", "lat": 91.8496558876488,   "lng": 197.92790860819716, "size": 26, "map_type": "Bujian Mountain" },
   { "name": "Fukasawa", "lat": 110.99789399003295,  "lng": 197.58816012975927, "size": 26, "map_type": "Bujian Mountain" },
-  { "name": "Hutuo", "lat": 34.207554,  "lng": 18.271504, "size": 24, "map_type": "Bujian Mountain" }
+  { "name": "Hutuo", "lat": 34.207554,  "lng": 18.271504, "size": 24, "map_type": "Bujian Mountain", "preset_map": "hutuo" }
 ],
 
 // Zoom level 6: Subareas
@@ -834,26 +834,41 @@ let labelLayers = {
 };
 
 let activeLayer = null;
-  // ==========================================
-  // PRIVATE METHODS
-  // ==========================================
+
+
+
+
+// ==========================================
+// PRIVATE METHODS
+// ==========================================
+const SEPARATE_MAP_PRESETS = ['hutuo', 'royal_palace', 'dreamspace'];
 
 function buildLayerForZoom(zoomKey, labels) {
   const layerGroup = L.layerGroup();
-
   const currentMap =
     typeof getCurrentMapPreset === 'function'
       ? (getCurrentMapPreset() || 'main').toLowerCase()
       : 'main';
 
   labels.forEach(labelConfig => {
-
     const rawType = (labelConfig.map_type || '').trim().toLowerCase();
     const labelMap = rawType === '' ? 'main' : rawType;
 
-    const shouldShow =
-      currentMap === 'main' ||
-      labelMap === currentMap;
+    // ✅ TAMBAH: cek preset_map eksplisit (override map_type untuk filtering)
+    const presetMap = (labelConfig.preset_map || '').trim().toLowerCase();
+    const effectiveMap = presetMap !== '' ? presetMap : labelMap;
+
+    const isSeparateLabel = SEPARATE_MAP_PRESETS.includes(effectiveMap);
+    const isOnSeparateMap = SEPARATE_MAP_PRESETS.includes(currentMap);
+
+    let shouldShow;
+    if (isSeparateLabel) {
+      shouldShow = effectiveMap === currentMap;
+    } else if (isOnSeparateMap) {
+      shouldShow = effectiveMap === currentMap;
+    } else {
+      shouldShow = true;
+    }
 
     if (!shouldShow) return;
 
@@ -926,7 +941,6 @@ function addLabels(labels) {
 
   if (!isVisible) return;
 
-  // cek map aktif
   const currentMap =
     typeof getCurrentMapPreset === 'function'
       ? (getCurrentMapPreset() || 'main').toLowerCase()
@@ -937,14 +951,21 @@ function addLabels(labels) {
     const rawType =
       (labelConfig.map_type || '').trim().toLowerCase();
 
-    // label tanpa map_type → milik main
     const labelMap =
       rawType === '' ? 'main' : rawType;
 
-    // filter universal
-    const shouldShow =
-      currentMap === 'main' ||
-      labelMap === currentMap;
+    // Ganti bagian shouldShow lama dengan ini:
+    const isSeparateLabel = SEPARATE_MAP_PRESETS.includes(labelMap);
+    const isOnSeparateMap = SEPARATE_MAP_PRESETS.includes(currentMap);
+
+    let shouldShow;
+    if (isSeparateLabel) {
+      shouldShow = labelMap === currentMap;
+    } else if (isOnSeparateMap) {
+      shouldShow = labelMap === currentMap;
+    } else {
+      shouldShow = true;
+    }
 
     if (!shouldShow) return;
 
@@ -1141,10 +1162,14 @@ return {
     _getLabelConfig: function(zoomKey) {
       return LABEL_CONFIG[zoomKey] || [];
     },
-    _forceRefresh: function() {        // ← TAMBAHKAN INI
+    _forceRefresh: function() {
       if (!map) return;
-      currentZoom = -1;               // Reset agar updateLabels tidak skip
+      currentZoom = -1;
       updateLabels(map.getZoom());
+    },
+    // ✅ TAMBAHKAN INI
+    _clearLayerCache: function() {
+      labelLayers = { zoom_3_4: null, zoom_5: null, zoom_6: null };
     }
   };
 

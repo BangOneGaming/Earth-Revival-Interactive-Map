@@ -12,25 +12,30 @@ const TILE_VERSION = "20251121";
 const MAP_PRESETS = {
   main: {
     center: [128, 180],
-    tiles: "https://tiles.bgonegaming.win/wherewindmeet/tiles/{z}_{x}_{y}.webp"
+    tiles: "https://tiles.bgonegaming.win/wherewindmeet/tiles/{z}_{x}_{y}.webp",
+    tileBounds: { minX: 0, maxX: 255, minY: 0, maxY: 255 }
   },
 
   hutuo: {
-    center: [32, 32],
-    tiles: "https://tiles.bgonegaming.win/wherewindmeet/tiles/hutuo/{z}_{x}_{y}.webp"
+    center: [34, 18],
+    tiles: "https://tiles.bgonegaming.win/wherewindmeet/tiles/hutuo/{z}_{x}_{y}.webp",
+    tileBounds: { minX: 0, maxX: 63, minY: 0, maxY: 63 }
   },
 
   royal_palace: {
     center: [30, 30],
-    tiles: "https://tiles.bgonegaming.win/wherewindmeet/tiles/royal_palace/{z}_{x}_{y}.webp"
+    tiles: "https://tiles.bgonegaming.win/wherewindmeet/tiles/royal_palace/{z}_{x}_{y}.webp",
+    tileBounds: { minX: 0, maxX: 63, minY: 0, maxY: 63 }
   },
 
-  // 🔥 NEW MAP
   dreamspace: {
-    center: [36, 18], // sesuaikan jika ukuran berbeda
-    tiles: "https://tiles.bgonegaming.win/wherewindmeet/tiles/dreamscape/{z}_{x}_{y}.webp"
+    center: [36, 18],
+    tiles: "https://tiles.bgonegaming.win/wherewindmeet/tiles/dreamscape/{z}_{x}_{y}.webp",
+    tileBounds: { minX: 0, maxX: 63, minY: 0, maxY: 63 }
   }
 };
+
+const FALLBACK_TILE = "https://tiles.bgonegaming.win/wherewindmeet/tiles/7_127_126.webp";
 
 const MAP_ZOOM = {
   initial: 5,
@@ -102,20 +107,15 @@ function getTileOptions(maxNativeZoom) {
     minZoom: MAP_ZOOM.min,
     maxZoom: MAP_ZOOM.max,
     maxNativeZoom: maxNativeZoom,
-
-    // 🔥 PERFORMANCE BOOST
     updateWhenIdle: true,
     updateWhenZooming: false,
     keepBuffer: 2,
     reuseTiles: true,
-
     noWrap: true,
     crossOrigin: true,
-    errorTileUrl:
-      "https://tiles.bgonegaming.win/wherewindmeet/tiles/7_127_126.webp"
+    errorTileUrl: FALLBACK_TILE
   };
 }
-
 // ============================================
 // APPLY MAP PRESET (RAW SWITCH)
 // ============================================
@@ -131,37 +131,43 @@ function _applyMapPreset(type, animate = true) {
     map.removeLayer(currentTileLayer);
   }
 
-  // SPECIAL MAPS (ZOOM CLAMP)
-  if (type === "hutuo" || type === "royal_palace" || type === "dreamspace") {
+  const forcedMaxZoom =
+    type === "hutuo"        ? 6 :
+    type === "dreamspace"   ? 6 :
+    type === "royal_palace" ? 7 : 7;
 
-    let forcedMaxZoom = 7;
+  const bounds = preset.tileBounds;
 
-    if (type === "hutuo") forcedMaxZoom = 6;
-    if (type === "royal_palace") forcedMaxZoom = 7;
-    if (type === "dreamspace") forcedMaxZoom = 6;
+  currentTileLayer = L.tileLayer(
+    preset.tiles + `?v=${TILE_VERSION}`,
+    getTileOptions(forcedMaxZoom)
+  );
 
-    currentTileLayer = L.tileLayer(
-      preset.tiles + `?v=${TILE_VERSION}`,
-      getTileOptions(forcedMaxZoom)
-    );
+  // ✅ Override getTileUrl — tile di luar bounds → fallback langsung
+  currentTileLayer.getTileUrl = function(coords) {
+    const z = Math.min(coords.z, forcedMaxZoom);
 
-    currentTileLayer.getTileUrl = function(coords) {
-      const forcedZoom = Math.min(coords.z, forcedMaxZoom);
-      return L.Util.template(this._url, {
-        x: coords.x,
-        y: coords.y,
-        z: forcedZoom
-      });
-    };
+    // Hitung tile range untuk zoom ini berdasarkan bounds di zoom forcedMaxZoom
+    // Scale factor: setiap zoom turun 1, range dibagi 2
+    const scale = Math.pow(2, forcedMaxZoom - z);
+    const minTX = Math.floor(bounds.minX / scale);
+    const maxTX = Math.floor(bounds.maxX / scale);
+    const minTY = Math.floor(bounds.minY / scale);
+    const maxTY = Math.floor(bounds.maxY / scale);
 
-  } else {
+    if (
+      coords.x < minTX || coords.x > maxTX ||
+      coords.y < minTY || coords.y > maxTY
+    ) {
+      return FALLBACK_TILE;
+    }
 
-    currentTileLayer = L.tileLayer(
-      preset.tiles + `?v=${TILE_VERSION}`,
-      getTileOptions(7)
-    );
-
-  }
+    return L.Util.template(this._url, {
+      x: coords.x,
+      y: coords.y,
+      z: z
+    });
+  };
 
   currentTileLayer.addTo(map);
 
@@ -174,8 +180,10 @@ function _applyMapPreset(type, animate = true) {
   );
 
   // REFRESH UI
-  if (typeof RegionLabelManager !== "undefined")
+  if (typeof RegionLabelManager !== "undefined") {
+    RegionLabelManager._clearLayerCache();
     RegionLabelManager._forceRefresh();
+  }
 
   if (typeof MarkerManager !== "undefined" &&
       MarkerManager.forceRefreshMarkers)

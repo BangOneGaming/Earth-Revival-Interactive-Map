@@ -1,0 +1,212 @@
+/* ============================================
+   RIDDLE CLUE SEARCH (Category 34)
+   Menggunakan struktur .knowledge-part-navigation
+   yang sama dengan category 13 & 14
+   ============================================ */
+
+/* Header icon (kaca pembesar di sebelah "Search Clue") */
+.rs-header-icon {
+  width: 12px;
+  height: 12px;
+  color: #DAA520;
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+}
+
+/* Input search — gantikan .part-nav-buttons */
+.rs-input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.rs-icon {
+  position: absolute;
+  left: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  color: rgba(218,165,32,0.5);
+  pointer-events: none;
+}
+
+.rs-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(218,165,32,0.4);
+  border-radius: 8px;
+  padding: 6px 10px 6px 28px;
+  color: #FFD700;
+  font-size: 12px;
+  font-weight: bold;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.rs-input:focus {
+  border-color: rgba(218,165,32,0.8);
+  box-shadow: 0 0 10px rgba(218,165,32,0.35);
+}
+.rs-input::placeholder {
+  color: rgba(218,165,32,0.3);
+  font-weight: normal;
+}
+
+/* Suggestions dropdown */
+.rs-suggestions {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #1a1200;
+  border: 1px solid rgba(218,165,32,0.35);
+  border-radius: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  z-index: 9999;
+  max-height: 160px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(218,165,32,0.2) transparent;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+}
+.rs-suggestions.open { display: block; }
+.rs-suggestions::-webkit-scrollbar { width: 3px; }
+.rs-suggestions::-webkit-scrollbar-thumb {
+  background: rgba(218,165,32,0.25);
+  border-radius: 2px;
+}
+
+.rs-sug-item {
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #FFD700;
+  cursor: pointer;
+  transition: background 0.15s;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+}
+.rs-sug-item:hover {
+  background: rgba(218,165,32,0.15);
+}
+.rs-sug-item mark {
+  background: rgba(218,165,32,0.35);
+  color: #FFF8DC;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+.rs-sug-empty {
+  padding: 7px 12px;
+  font-size: 11px;
+  color: rgba(218,165,32,0.35);
+  font-style: italic;
+  list-style: none;
+}
+
+/* Answer box — muncul di bawah search */
+.rs-answer-box {
+  margin-top: 8px;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: linear-gradient(135deg, rgba(218,165,32,0.15), rgba(184,134,11,0.15));
+  border: 1px solid rgba(218,165,32,0.5);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.rs-answer-box.visible { display: flex; }
+
+.rs-answer-label {
+  font-size: 10px;
+  color: rgba(218,165,32,0.6);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+}
+
+.rs-answer-text {
+  font-size: 13px;
+  font-weight: bold;
+  color: #FFF8DC;
+  flex: 1;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+}
+
+/* Copy button — mirip gaya popup lain */
+.rs-copy-btn {
+  background: linear-gradient(135deg, rgba(218,165,32,0.2), rgba(184,134,11,0.2));
+  border: 1px solid rgba(218,165,32,0.5);
+  border-radius: 6px;
+  cursor: pointer;
+  color: #FFD700;
+  padding: 4px 6px;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.rs-copy-btn svg { width: 12px; height: 12px; }
+.rs-copy-btn:hover {
+  background: linear-gradient(135deg, rgba(218,165,32,0.35), rgba(184,134,11,0.35));
+  box-shadow: 0 0 10px rgba(218,165,32,0.4);
+  transform: translateY(-1px);
+}
+.rs-copy-btn.copied { color: #7ed96a; border-color: rgba(126,217,106,0.5); }
+
+/* ── Hide desc section for category 34 ── */
+.marker-popup[data-marker-key] .marker-popup-desc:has(~ .knowledge-part-navigation .rs-input-wrap) {
+  display: none;
+}
+/* Fallback: hide via category class jika ada */
+.popup-category-34 .marker-popup-desc {
+  display: none;
+}
+
+/* ── Mobile ≤480px ── */
+@media (max-width: 480px) {
+  .rs-input {
+    font-size: 6px;
+    padding: 3px 8px 3px 16px;
+    border-radius: 5px;
+    height: auto;
+    line-height: 1.4;
+  }
+  .rs-icon {
+    width: 8px;
+    height: 8px;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .rs-answer-box {
+    margin-top: 4px;
+    padding: 3px 6px;
+    border-radius: 5px;
+    gap: 4px;
+  }
+  .rs-answer-label { font-size: 6px; }
+  .rs-answer-text  { font-size: 6px; }
+  .rs-copy-btn {
+    padding: 1px 3px;
+    border-radius: 3px;
+  }
+  .rs-copy-btn svg {
+    width: 7px;
+    height: 7px;
+  }
+  .rs-sug-item  { font-size: 6px; padding: 4px 7px; }
+  .rs-sug-empty { font-size: 6px; padding: 4px 7px; }
+  .rs-header-icon {
+    width: 6.5px;
+    height: 6.5px;
+  }
+}

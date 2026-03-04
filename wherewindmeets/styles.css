@@ -95,6 +95,7 @@ body.app-ready .leaderboard-toggle{
 /* === Popup Styles === */
 .leaflet-popup-content {
   margin: 0;
+  width: auto !important;
 }
 
 /* Container utama Leaflet popup */
@@ -226,11 +227,11 @@ body.app-ready .leaderboard-toggle{
   justify-content: center;
   gap: 8px;
 
-  padding: 10px 24px;
+  padding: 8px 24px;
   width: 100%;
 
-  border: 2px solid rgba(218, 165, 32, 0.8);
-  border-radius: 10px;
+  border: 1px solid rgba(218, 165, 32, 0.6);
+  border-radius: 20px;
 
   background: linear-gradient(
     135deg,
@@ -656,11 +657,11 @@ body.app-ready .leaderboard-toggle{
   padding: 10px 15px;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   gap: 12px;
   background: rgba(0, 0, 0, 0.15);
   border-bottom: 1px solid rgba(218, 165, 32, 0.2);
-  flex-wrap: nowrap;               /* <- wajib */
+  flex-wrap: nowrap;
 }
 
 /* Visited Checkbox */
@@ -672,6 +673,8 @@ body.app-ready .leaderboard-toggle{
   transition: all 0.3s ease;
   padding: 4px 8px;
   border-radius: 6px;
+  flex-shrink: 1;
+  min-width: 0;
 }
 
 .marker-popup-visited:hover {
@@ -702,6 +705,9 @@ body.app-ready .leaderboard-toggle{
   border-radius: 20px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
+  margin-left: auto;
 }
 
 .marker-popup-ysid:hover {
@@ -801,10 +807,13 @@ body.app-ready .leaderboard-toggle{
   gap: 8px;
   padding: 10px 24px;
   width: 100%;
-  max-width: 200px;
   border: 2px solid rgba(218, 165, 32, 0.8);
   border-radius: 10px;
-  background: linear-gradient(135deg, rgba(218, 165, 32, 0.3), rgba(184, 134, 11, 0.3));
+  background: linear-gradient(
+    135deg,
+    rgba(218, 165, 32, 0.3),
+    rgba(184, 134, 11, 0.3)
+  );
   color: #FFD700;
   font-weight: bold;
   font-size: 14px;
@@ -1028,13 +1037,16 @@ body.app-ready .leaderboard-toggle{
   }
   
   .marker-popup-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    flex-wrap: nowrap;
   }
   
   .marker-popup-ysid {
-    align-self: flex-end;
+    flex-shrink: 0;
+    margin-left: auto;
   }
 
 .marker-popup-link-btn {
@@ -1302,7 +1314,7 @@ body.app-ready .leaderboard-toggle{
   .marker-popup {
     max-width: 100%;
     width: auto;
-    min-width: unset;
+    min-width: 200px;
   }
 
   /* ===============================
@@ -1515,6 +1527,8 @@ body.app-ready .leaderboard-toggle{
     display: none;
   }
 
+@media (max-width: 480px) {
+
 /* ===============================
    FOOTER SECTION (FORCE ROW)
    =============================== */
@@ -1613,11 +1627,15 @@ body.app-ready .leaderboard-toggle{
 }
 
   .marker-popup-comments-btn {
-    min-width: 120px;
+    width: 100%;
+    max-width: 100%;
     justify-content: center;
-    padding: 8px 12px;
+    padding: 6px 10px;
+    border: 1px solid rgba(218, 165, 32, 0.8);
+    border-radius: 10px;
+    font-size: 6px;
   }
- .marker-popup-comments-btn svg {
+  .marker-popup-comments-btn svg {
     width: 8px;
     height: 8px;
     flex-shrink: 0;
@@ -1679,7 +1697,9 @@ body.app-ready .leaderboard-toggle{
     padding: 6px 10px;
   }
 
-}
+} /* end mobile popup styles */
+
+} /* end @media 480px */
 
 
 /* Responsive Design */
@@ -1954,7 +1974,7 @@ body.app-ready .leaderboard-toggle{
   content-visibility: hidden;
   contain-intrinsic-size: 1px 1px;
 }
-
+}
 /* ============================================================
    PiP MODE — Popup lebih kecil (aktif saat ?pip=1)
    Class .pip-mode ditambahkan ke body oleh main.js

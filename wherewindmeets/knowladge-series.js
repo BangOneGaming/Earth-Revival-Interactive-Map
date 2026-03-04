@@ -153,18 +153,24 @@ const KnowledgePartNavigation = {
   },
 
   createPartNavigationHTML(markerData) {
-    const categoryId = markerData.category_id;
+  const categoryId = markerData.category_id;
 
-    if (categoryId === "13") {
-      return this._createCategory13HTML(markerData);
-    }
+  if (categoryId === "13") {
+    return this._createCategory13HTML(markerData);
+  }
 
-    if (categoryId === "14") {
-      return this._createCategory14HTML(markerData);
-    }
+  if (categoryId === "14") {
+    return this._createCategory14HTML(markerData);
+  }
 
-    return '';
-  },
+  if (categoryId === "34") {
+    return typeof RiddleSearch !== 'undefined'
+      ? RiddleSearch.createSearchHTML(markerData)
+      : '';
+  }
+
+  return '';
+},
 
   _createCategory13HTML(markerData) {
     const series = this.findSeriesMarkers(markerData);

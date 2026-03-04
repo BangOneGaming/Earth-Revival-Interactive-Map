@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 16px;
+  padding: 6px 20px;
   background: linear-gradient(135deg, rgba(218, 165, 32, 0.25), rgba(184, 134, 11, 0.25));
   border: 1px solid rgba(218, 165, 32, 0.6);
   border-radius: 20px;

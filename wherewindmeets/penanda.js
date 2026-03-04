@@ -1046,7 +1046,7 @@ createAndAddMarker(markerData, lat, lng, markerKey) {
   
   const popupContent = this.createPopupContent(markerData);
   const leafletMarker = L.marker([lat, lng], { icon: finalIcon })
-    .bindPopup(popupContent);
+    .bindPopup(popupContent, { maxWidth: 300, minWidth: 280 });
   leafletMarker.on('popupopen', () => {
   console.log("📍 Active Marker:", markerKey);
 });
