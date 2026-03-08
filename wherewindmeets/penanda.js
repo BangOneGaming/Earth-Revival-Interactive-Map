@@ -277,23 +277,30 @@ this.map.on('popupopen', (e) => {
   
   const markerKey = popupDiv.dataset.markerKey;
   
-  // ✅ HANYA setup paste listener untuk desktop
+  // ✅ Update badge count — selalu lewat preloadAllImages() agar tunggu cache siap
+  if (typeof MarkerImageHandler !== 'undefined') {
+  MarkerImageHandler.preloadAllImages().then(() => {
+    // Tunggu sampai isLoaded benar-benar true
+    const tryUpdate = () => {
+      if (MarkerImageHandler.isLoaded) {
+        MarkerImageHandler.updateToggleBadge(markerKey);
+      } else {
+        setTimeout(tryUpdate, 100);
+      }
+    };
+    tryUpdate();
+  });
+}
+
   const imageContainer = content.querySelector('.marker-image-container');
   if (imageContainer && typeof MarkerImageHandler !== 'undefined') {
-    // Jangan load images di sini!
-    // Biarkan toggleMarkerImage() yang handle load
-    
-    // Hanya attach paste listener untuk desktop non-touch
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    const isTouch = ('ontouchstart' in window) || 
-                    (navigator.maxTouchPoints > 0);
+    const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     
     if (!isMobile && !isTouch) {
-      // MarkerImageHandler sudah handle ini di internal event listener
-      // Kita tidak perlu panggil apa-apa
+      // paste listener handled internally
     }
   }
-  
 });
 
   },
@@ -513,6 +520,10 @@ createPopupContent(markerData, editState = {}) {
     check: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
     link: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`,
     comment: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>`,
+    play: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="12" cy="12" r="10"></circle>
+<polygon points="10 8 16 12 10 16 10 8"></polygon>
+</svg>`,
     alert: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
     email: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>`,
     image: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>`,
@@ -838,41 +849,40 @@ return `
 
     </div>
 
-    <!-- Comments + Link Section -->
-    <div class="marker-popup-comments-section">
-
-      <!-- Videos Hint -->
-      ${hasValidLink ? `
-        <a href="${markerData.links_info}"
-           target="_blank"
-           class="marker-popup-link-btn"
-           onclick="event.stopPropagation()">
-          ${SVG_ICONS.link}
-          <span>Videos Hint</span>
-        </a>
-      ` : ''}
-
-      <!-- Comments -->
-      <button class="marker-popup-comments-btn"
-              onclick="event.stopPropagation(); openCommentsModal('${markerKey}')">
-        ${SVG_ICONS.comment}
-        <span>Comments</span>
-      </button>
-
+<!-- Link Section (ruang sendiri) -->
+${hasValidLink ? `
+  <div class="marker-popup-link-section">
+    <div class="marker-popup-link-info">
+      <a href="${markerData.links_info}"
+         target="_blank"
+         class="marker-popup-link-btn"
+         onclick="event.stopPropagation()">
+        ${SVG_ICONS.play}
+        <span>Videos Hint</span>
+      </a>
     </div>
+  </div>
+` : ''}
+
+<!-- Comments Section -->
+<div class="marker-popup-comments-section">
+  <button class="marker-popup-comments-btn"
+          onclick="event.stopPropagation(); openCommentsModal('${markerKey}')">
+    ${SVG_ICONS.comment}
+    <span>Comments</span>
+  </button>
+</div>
 <!-- 🖼 IMAGE TOGGLE — SECTION SENDIRI (BUKAN COMMENTS) -->
 <div class="marker-popup-image-toggle-section">
-  <button
-    class="marker-popup-image-toggle"
+  <button class="marker-popup-image-toggle"
     data-marker="${markerKey}"
     data-state="hidden"
-    onclick="event.stopPropagation(); toggleMarkerImage('${markerKey}')"
-  >
-    <span class="marker-image-toggle-icon">
-      ${SVG_ICONS.eye}
-    </span>
-
+    onclick="event.stopPropagation(); toggleMarkerImage('${markerKey}')">
+    <span class="marker-image-toggle-icon">${SVG_ICONS.eye}</span>
     <span class="toggle-text">Show Image</span>
+    ${MarkerImageHandler.hasImages(markerKey) 
+      ? `<span class="image-count-badge">[${MarkerImageHandler.getImages(markerKey).length}]</span>` 
+      : ''}
   </button>
 </div>
     <!-- Report Section -->

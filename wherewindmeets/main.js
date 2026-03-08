@@ -40,7 +40,7 @@
   // DEFERRED CSS
   // ============================================
   function loadDeferredCSS() {
-    const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.1.8';
+    const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.2.0';
     
     const cssFiles = [
       'marker-image-handler.css',
@@ -370,13 +370,20 @@ function showAllUIElements() {
       updateLoadingText('Initializing underground system...');
       
       if (await waitForUndergroundManager()) {
-        try {
-          await UndergroundManager.init(window.map);
-          console.log('✅ UndergroundManager initialized');
-        } catch (error) {
-          console.warn('⚠️ UndergroundManager init failed:', error);
-        }
-      }
+  try {
+    await UndergroundManager.init(window.map);
+    console.log('✅ UndergroundManager initialized');
+
+    // ← TAMBAH INI
+    if (window.TimeUndergroundMarker) {
+      TimeUndergroundMarker.init(window.map);
+      console.log('✅ TimeUndergroundMarker initialized');
+    }
+
+  } catch (error) {
+    console.warn('⚠️ UndergroundManager init failed:', error);
+  }
+}
 
 // ============================================
       // STEP 8: Initialize Region Manager

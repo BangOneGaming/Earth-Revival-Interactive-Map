@@ -188,6 +188,11 @@ function _applyMapPreset(type, animate = true) {
   if (typeof MarkerManager !== "undefined" &&
       MarkerManager.forceRefreshMarkers)
     MarkerManager.forceRefreshMarkers();
+
+  // ★ Clock marker — hanya tampil di preset "main"
+  if (typeof TimeUndergroundMarker !== "undefined") {
+    TimeUndergroundMarker.onMapPresetChange(type);
+  }
 }
 
 // ============================================

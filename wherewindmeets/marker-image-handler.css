@@ -184,7 +184,12 @@
   justify-content: center;
   font-family: inherit;
 }
-
+.image-count-badge {
+  color: rgba(243, 213, 155, 0.75);
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 4px;
+}
 .marker-image-btn.upload-btn {
   background: transparent;
   color: #f3d59b;
@@ -212,6 +217,20 @@
   border-color: #fff;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+}
+
+.marker-image-btn.delete-btn {
+  background: transparent;
+  color: #ef5350;
+  border: 2px solid #ef5350;
+  box-shadow: none;
+}
+
+.marker-image-btn.delete-btn:hover {
+  background: linear-gradient(135deg, #ef5350, #c62828);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 83, 80, 0.5);
 }
 
 /* ==========================================
@@ -558,7 +577,9 @@
     min-width: 120px;
     gap: 6px;
   }
-
+.image-count-badge {
+  font-size: 8px;
+}
   .marker-image-nav {
     width: 32px;
     height: 32px;

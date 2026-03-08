@@ -1,5 +1,10 @@
 /**
- * Marker Image Handler Module v5.5.1 (Fixed)
+ * Marker Image Handler Module v5.6.0
+ * 
+ * FIX v5.6.0:
+ * - Cache key diupdate ke v02082026 → semua user otomatis fresh cache
+ * - Image count badge langsung terhitung tanpa perlu manual clearCache()
+ * - Old cache (wwm_marker_images) otomatis di-invalidate saat init
  * 
  * FIX v5.5.1:
  * - Gambar HANYA di-load saat toggle "Show Image" diklik
@@ -12,7 +17,7 @@
  * - Edit and annotate images before uploading
  * - Preview and confirm before final upload
  * 
- * @version 5.5.1
+ * @version 5.6.0
  */
 
 const MarkerImageHandler = (function() {
@@ -32,8 +37,8 @@ const MarkerImageHandler = (function() {
     maxFileSize: 15 * 1024 * 1024, // 15MB
     webpQuality: 0.85,
     maxDimension: 1920,
-    cacheKey: 'wwm_marker_images',
-    cacheVersionKey: 'wwm_marker_images_version',
+    cacheKey: 'wwm_marker_images_v02082026',
+    cacheVersionKey: 'wwm_marker_images_version_v02082026',
     uploadEnabled: true,
     uploadResumeDate: 'January 1st',
     enableImageEditor: true,
@@ -358,6 +363,13 @@ const MarkerImageHandler = (function() {
     const profile = typeof getUserProfile === 'function' ? getUserProfile() : null;
     const uploaderName = profile?.inGameName || 'Unknown';
 
+    // Parse email dari JWT token
+    let uploaderEmail = '';
+    try {
+      const payload = parseJwt(token);
+      uploaderEmail = payload?.email || '';
+    } catch (e) {}
+
     const response = await fetch(CONFIG.apiEndpoint, {
       method: 'POST',
       headers: {
@@ -375,7 +387,7 @@ const MarkerImageHandler = (function() {
     if (!imageCache[markerKey]) {
       imageCache[markerKey] = [];
     }
-    imageCache[markerKey].push({ url: imageUrl, uploadedBy: uploaderName });
+    imageCache[markerKey].push({ url: imageUrl, uploadedBy: uploaderName, uploadedByEmail: uploaderEmail });
     
     saveToLocalStorage();
     setLastUpdated(Date.now());
@@ -562,6 +574,7 @@ const MarkerImageHandler = (function() {
         container.dataset.uiLoaded = 'false';
       }
       loadImages(markerKey);
+      updateToggleBadge(markerKey);
 
       showNotification(
         `✅ Upload success! (${formatBytes(compressed.compressedSize)})`,
@@ -682,7 +695,27 @@ const MarkerImageHandler = (function() {
       </div>
     `;
   }
+  
+function updateToggleBadge(markerKey) {
+  const btn = document.querySelector(
+    `.marker-popup-image-toggle[data-marker="${markerKey}"]`
+  );
+  if (!btn) return;
 
+  let badge = btn.querySelector('.image-count-badge');
+  const count = getImages(markerKey).length;
+
+  if (count > 0) {
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'image-count-badge';
+      btn.appendChild(badge);
+    }
+    badge.textContent = `[${count}]`;
+  } else {
+    if (badge) badge.remove();
+  }
+}
   async function loadImages(markerKey) {
     const container = document.querySelector(
       `.marker-image-container[data-marker-key="${markerKey}"]`
@@ -731,7 +764,8 @@ const MarkerImageHandler = (function() {
         if (data?.success && data.totalImages > 0) {
           images = data.imageDetails.map(img => ({
             url: img.url,
-            uploadedBy: img.uploadedBy
+            uploadedBy: img.uploadedBy,
+            uploadedByEmail: img.uploadedByEmail || ''
           }));
 
           imageCache[markerKey] = images;
@@ -806,6 +840,7 @@ if (images.length > 0) {
                 onclick="MarkerImageHandler.openFullView('${markerKey}')">
           🔍 Full View
         </button>
+        ${buildDeleteBtn(markerKey, images[0].url, images[0].uploadedByEmail)}
       `;
 
       if (images.length > 1) {
@@ -885,14 +920,113 @@ if (images.length > 0) {
       uploaderEl.textContent = `📷 ${images[currentIndex].uploadedBy}`;
     }
 
+    // Update delete button visibility sesuai owner gambar aktif
+    const overlay = container.querySelector('.marker-image-overlay');
+    if (overlay) {
+      const existingDelete = overlay.querySelector('.delete-btn');
+      if (existingDelete) existingDelete.remove();
+      const deleteBtnHTML = buildDeleteBtn(markerKey, images[currentIndex].url, images[currentIndex].uploadedByEmail);
+      if (deleteBtnHTML) {
+        overlay.insertAdjacentHTML('beforeend', deleteBtnHTML);
+      }
+    }
+
     container.querySelectorAll('.indicator').forEach((ind, i) => {
       ind.classList.toggle('active', i === currentIndex);
     });
   }
 
   // ==========================================
-  // FILE UPLOAD
+  // DELETE IMAGE
   // ==========================================
+
+  async function deleteImage(markerKey, imageUrl) {
+    const token = typeof getUserToken === 'function' ? getUserToken() : null;
+    if (!token) {
+      showNotification('❌ Please login to delete', 'error');
+      return;
+    }
+
+    if (!confirm('Delete this image?')) return;
+
+    const container = document.querySelector(
+      `.marker-image-container[data-marker-key="${markerKey}"]`
+    );
+
+    try {
+      if (container) container.classList.add('uploading');
+
+      const response = await fetch(CONFIG.apiEndpoint, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ markerKey, imageUrl })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Delete failed');
+      }
+
+      // Update local cache
+      if (imageCache[markerKey]) {
+        imageCache[markerKey] = imageCache[markerKey].filter(img => img.url !== imageUrl);
+        if (imageCache[markerKey].length === 0) {
+          delete imageCache[markerKey];
+        }
+      }
+      saveToLocalStorage();
+      setLastUpdated(Date.now());
+
+      // Reload UI
+      if (container) container.dataset.uiLoaded = 'false';
+      loadImages(markerKey);
+      updateToggleBadge(markerKey);
+
+      showNotification('🗑️ Image deleted', 'success');
+
+    } catch (err) {
+      showNotification(`❌ ${err.message}`, 'error');
+    } finally {
+      if (container) container.classList.remove('uploading');
+    }
+  }
+
+
+
+  const ADMIN_EMAILS = [
+    'square.spon@gmail.com',
+    'bangone569@gmail.com'
+  ];
+
+  function isAdmin(email) {
+    return email && ADMIN_EMAILS.includes(email);
+  }
+
+  function getCurrentUserEmail() {
+    try {
+      const token = typeof getUserToken === 'function' ? getUserToken() : null;
+      if (!token) return null;
+      const payload = parseJwt(token);
+      return payload?.email || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function buildDeleteBtn(markerKey, imageUrl, uploadedByEmail) {
+    const currentEmail = getCurrentUserEmail();
+    if (!currentEmail) return '';
+    if (currentEmail !== uploadedByEmail && !isAdmin(currentEmail)) return '';
+    const safeUrl = imageUrl.replace(/'/g, "\\'");
+    return `
+      <button class="marker-image-btn delete-btn"
+              onclick="MarkerImageHandler.deleteImage('${markerKey}', '${safeUrl}')">
+        🗑️ Delete
+      </button>`;
+  }
 
   function safeUploadClick(markerKey, event) {
     if (!CONFIG.enableTouchProtection) {
@@ -1050,7 +1184,7 @@ if (images.length > 0) {
   
   function debugCache() {
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('📦 IMAGE CACHE DEBUG v5.5.1');
+    console.log('📦 IMAGE CACHE DEBUG v5.6.0');
     console.log('isLoaded:', isLoaded);
     console.log('Upload enabled:', CONFIG.uploadEnabled);
     console.log('Editor enabled:', CONFIG.enableImageEditor);
@@ -1087,7 +1221,19 @@ if (images.length > 0) {
   // ==========================================
 
   async function init() {
-    console.log('🚀 MarkerImageHandler v5.5.1 initializing...');
+    console.log('🚀 MarkerImageHandler v5.6.0 initializing...');
+
+    // ✅ AUTO-CLEANUP: Hapus cache versi lama agar semua user dapat data fresh
+    const OLD_CACHE_KEYS = [
+      'wwm_marker_images',
+      'wwm_marker_images_version',
+    ];
+    OLD_CACHE_KEYS.forEach(key => {
+      if (localStorage.getItem(key) !== null) {
+        localStorage.removeItem(key);
+        console.log(`🗑️ Old cache key removed: ${key}`);
+      }
+    });
     
     if (!CONFIG.uploadEnabled) {
       console.warn(`⚠️ Upload temporarily disabled until ${CONFIG.uploadResumeDate}`);
@@ -1107,6 +1253,10 @@ if (images.length > 0) {
 
     await preloadAllImages();
 
+// ✅ Setelah cache siap, tandai bahwa init sudah selesai
+// popupopen akan pakai ini sebagai signal
+console.log('✅ Cache ready, total markers:', Object.keys(imageCache).length);
+    
     try {
       // ✅ POPUP OPEN - HANYA SETUP PASTE LISTENER, TIDAK LOAD IMAGES
       MarkerManager.map.on('popupopen', function (e) {
@@ -1140,38 +1290,41 @@ if (images.length > 0) {
       console.warn('⚠️ Map not ready yet, popup listener skipped.');
     }
 
-    console.log('✅ MarkerImageHandler v5.5.1 ready');
+    console.log('✅ MarkerImageHandler v5.6.0 ready');
   }
 
   // ==========================================
   // PUBLIC API
   // ==========================================
 
-  return {
-    init,
-    createImageContainerHTML,
-    loadImages,
-    getImages,
-    hasImages,
-    triggerUpload,
-    safeUploadClick,
-    handleFileSelect,
-    handlePointerStart,
-    nextImage,
-    prevImage,
-    openFullView,
-    closeFullView,
-    fullViewNav,
-    debugCache,
-    clearCache,
-    refreshCache,
-    preloadAllImages,
-    get imageCache() { return imageCache; },
-    CONFIG
-  };
+return {
+  init,
+  createImageContainerHTML,
+  loadImages,
+  getImages,
+  hasImages,
+  triggerUpload,
+  safeUploadClick,
+  handleFileSelect,
+  handlePointerStart,
+  nextImage,
+  prevImage,
+  openFullView,
+  closeFullView,
+  fullViewNav,
+  deleteImage,
+  debugCache,
+  clearCache,
+  refreshCache,
+  preloadAllImages,
+  updateToggleBadge,
+  get isLoaded() { return isLoaded; },
+  get imageCache() { return imageCache; },
+  CONFIG
+};
 
 })();
 
 // Global expose
 window.MarkerImageHandler = MarkerImageHandler;
-console.log('✅ MarkerImageHandler module loaded v5.5.1');
+console.log('✅ MarkerImageHandler module loaded v5.6.0');

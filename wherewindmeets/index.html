@@ -68,10 +68,10 @@
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <link rel="stylesheet" href="styles.css?v=6.0.0">
+  <link rel="stylesheet" href="styles.css?v=6.0.2">
 <link href="https://fonts.googleapis.com/css2?family=Lato:wght@700&display=swap" rel="stylesheet">
   <script>
-    const CSS_VERSION = "6.0.6";
+    const CSS_VERSION = "6.0.7";
   </script>
 <style id="ui-visibility-control">
   /* ✨ DISABLE SCROLL SAAT BELUM SIAP */
@@ -371,7 +371,7 @@
 
 <!-- Patch Notes Popup -->
 <div class="patch-overlay" id="patchOverlay" data-google-adsense-nooverlay="true">
-  <div class="patch-popup">
+  <div class="patch-popup" data-no-ad="true">
 
     <!-- Close Button -->
     <button class="patch-close" onclick="closePatchPopup()">&times;</button>
@@ -381,13 +381,87 @@
       <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/BangOne.webp"
            alt="Update" class="patch-image">
       <h2 class="patch-title">Interactive Map Update</h2>
-      <p class="patch-subtitle">New Regions, Fly-to Navigation & Region Filter Improvements</p>
+      <p class="patch-subtitle">Full Hexi Map &nbsp;·&nbsp; Time Travel &nbsp;·&nbsp; Floating Window &nbsp;·&nbsp; Unified Search</p>
     </div>
 
     <!-- Content -->
     <div class="patch-content">
-      <h3>What's New in This Version</h3>
+      <h3>What's New</h3>
 
+      <ul class="patch-list">
+
+        <!-- Full Hexi Map -->
+        <li>
+          <strong>
+            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/outlander.webp" class="patch-icon" alt="Hexi">
+            Full Hexi Map Marker Update
+          </strong>
+          <p class="patch-description">
+            Hexi region markers are now 100% complete. All locations across
+            Yumen Pass, Liangzhou, and Qinchuan are fully mapped and available.
+          </p>
+        </li>
+
+        <!-- Unified Search -->
+        <li>
+          <strong>
+            <svg class="patch-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" width="20" height="20">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            Unified Search &amp; Filter
+          </strong>
+          <p class="patch-description">
+            Four filters are now consolidated into a single button for a tidier UI:
+          </p>
+          <ul class="patch-sublist">
+            <li>
+              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/lightanddarkstory.webp" class="patch-icon-inline" alt="">
+              <strong>Dark Surge</strong>
+            </li>
+            <li>
+              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/knoweverything.webp" class="patch-icon-inline" alt="">
+              <strong>Wandering Tales</strong>
+            </li>
+            <li>
+              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/tehnik.webp" class="patch-icon-inline" alt="">
+              <strong>Mystic Skill</strong>
+            </li>
+            <li>
+              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/innerway.webp" class="patch-icon-inline" alt="">
+              <strong>Innerway</strong>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Time Travel -->
+        <li>
+          <strong>
+            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/outlander.webp" class="patch-icon" alt="Time Travel">
+            Time Travel — Liangzhou
+          </strong>
+          <p class="patch-description">
+            Liangzhou now features <strong>Time Travel</strong> — switch between different 
+            time periods to reveal how marker positions change across the map.
+          </p>
+        </li>
+
+        <!-- Floating Window -->
+        <li>
+          <strong>
+            <svg class="patch-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" width="20" height="20">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
+            </svg>
+            Floating Window
+          </strong>
+          <p class="patch-description">
+            A draggable floating window has been added — keep marker details 
+            visible while freely exploring the map. Especially useful on PC.
+          </p>
+        </li>
+
+      </ul>
+
+      <h3>Previous Improvements</h3>
       <ul class="patch-list">
 
         <!-- New Regions -->
@@ -400,19 +474,15 @@
           <ul class="patch-sublist">
             <li>
               <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon-inline" alt="">
-              <strong>Hexi</strong> — A vast region with sub-areas including
-              Yumen Pass, Liangzhou, and Qinchuan.
+              <strong>Hexi</strong> — Yumen Pass, Liangzhou, and Qinchuan.
             </li>
             <li>
               <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon-inline" alt="">
-              <strong>Hutuo</strong> — Part of Bujian Mountain that spans its own
-              dedicated map. Includes sub-areas: Yunqiu, Luancheng,
-              Hutuo South Bank, and Fenglong Mountain.
+              <strong>Hutuo</strong> — Yunqiu, Luancheng, Hutuo South Bank, and Fenglong Mountain.
             </li>
             <li>
               <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon-inline" alt="">
-              <strong>Royal Palace</strong> — A new sub-region coming to the map.
-              Stay tuned for further updates.
+              <strong>Royal Palace</strong> — Coming soon. Stay tuned.
             </li>
           </ul>
         </li>
@@ -424,10 +494,8 @@
             Fly-to Navigation <span class="patch-badge patch-badge--beta">Beta</span>
           </strong>
           <p class="patch-description">
-            Selecting a sub-region or sub-area from the Region list will now 
-            automatically fly the map camera to that location. Regions that 
-            belong to a separate map (such as Hutuo) will also automatically 
-            switch to the correct map before flying.
+            Selecting a sub-region now automatically flies the camera to that location —
+            and switches maps if needed (e.g. Hutuo).
           </p>
         </li>
 
@@ -438,10 +506,8 @@
             Region Marker Filtering <span class="patch-badge patch-badge--beta">Beta</span>
           </strong>
           <p class="patch-description">
-            Selecting a sub-region or sub-area now filters markers to show only 
-            those belonging to that area. Major regions (top-level) do not filter 
-            markers — they only expand the list for easier navigation.
-            We will continue to improve this feature based on your feedback.
+            Selecting a sub-area filters markers to show only that area's locations. 
+            Top-level regions expand the list without filtering.
           </p>
         </li>
 
@@ -452,24 +518,16 @@
             Cleaner Region List
           </strong>
           <p class="patch-description">
-            The region panel has been reorganized into a clear three-level hierarchy:
+            Reorganized into a clear three-level hierarchy:
           </p>
           <ul class="patch-sublist">
             <li><strong>Level 1</strong> — Major regions (Qinghe, Kaifeng, Hexi, Bujian Mountain)</li>
             <li><strong>Level 2</strong> — Sub-regions (e.g. Verdant Wilds, Kaifeng City, Hutuo)</li>
             <li><strong>Level 3</strong> — Sub-areas (e.g. Bamboo Abode, Jinming Pool)</li>
           </ul>
-          <p class="patch-description">
-            Tap a group to expand it. The list is now easier to read and navigate 
-            on both desktop and mobile.
-          </p>
         </li>
 
-      </ul>
-
-      <h3>Previous Improvements</h3>
-      <ul class="patch-list">
-
+        <!-- Chest -->
         <li>
           <strong>Chest Icon Differentiation</strong>
           <div class="patch-feature-icons">
@@ -483,26 +541,28 @@
             </div>
           </div>
           <p class="patch-description">
-            Puzzle chests (hidden from in-game minimap) now use a distinct icon 
-            to help you identify collectibles that require exploration.
+            Puzzle chests now use a distinct icon to differentiate collectibles 
+            hidden from the in-game minimap.
           </p>
         </li>
 
+        <!-- Image Loading -->
         <li>
           <strong>
             <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/petiharta.webp" class="patch-icon" alt="">
             Optimized Image Loading
           </strong>
           <p class="patch-description">
-            Images in marker popups load only when you click "Show Image", 
-            improving performance especially on mobile.
+            Marker images load only when "Show Image" is clicked — improving 
+            performance especially on mobile.
           </p>
         </li>
 
+        <!-- Camp & NPC -->
         <li>
           <strong>
             <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/camp.webp" class="patch-icon" alt="Camp">
-            Camp &
+            Camp &amp;
             <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/NPC.webp" class="patch-icon" alt="NPC">
             NPC Markers
           </strong>
@@ -511,16 +571,18 @@
           </p>
         </li>
 
+        <!-- Wandering Tales -->
         <li>
           <strong>
             <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/knoweverything.webp" class="patch-icon" alt="Wandering Tales">
             Wandering Tales Navigation
           </strong>
           <p class="patch-description">
-            Improved title translations and part navigation buttons for related quest items.
+            Improved title translations and part navigation for related quest items.
           </p>
         </li>
 
+        <!-- General -->
         <li>
           <strong>
             <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/petiharta.webp" class="patch-icon" alt="">
@@ -537,13 +599,10 @@
 
     <!-- Footer -->
     <div class="patch-footer">
-      <p><strong>Thank you for your support</strong></p>
       <p>
-        Thank you to everyone who has donated and supported this project.
-        Your contributions help improve the <strong>Where Winds Meet Interactive Map</strong> 
-        for the entire community.
+        <strong>Thank you for your support</strong><br>
+        Your contributions help improve the Where Winds Meet Interactive Map for the entire community.
       </p>
-
       <div class="patch-contact">
         <a href="https://discord.gg/Mt65qFprs" target="_blank" class="patch-link">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -867,7 +926,7 @@ btnClose.addEventListener("click", function(e) {
     "marker-image-handler.js",
     "ikon.js",
     
-
+    "time.js",
     "booklist.js",
     "knowladgelist.js",
     "mystic-skill-panel.js",

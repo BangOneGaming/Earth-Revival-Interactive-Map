@@ -2,7 +2,7 @@
  * Underground Floor Manager - Clean Version
  * Always starts at surface, no floor state persistence
  */
-
+const MAX_SEEABLE_FLOOR = 4;
 const UndergroundManager = {
   map: null,
   activeFloor: 'surface',
@@ -559,7 +559,7 @@ const UndergroundManager = {
       // See All mode: show underground markers with badge
       if (this.seeAllMode) {
         const markerLevel = parseInt(markerFloor);
-        return !isNaN(markerLevel) && markerLevel > 0;
+return !isNaN(markerLevel) && markerLevel > 0 && markerLevel <= MAX_SEEABLE_FLOOR;
       }
       
       return false;
@@ -576,7 +576,7 @@ const UndergroundManager = {
       const markerLevel = parseInt(markerFloor);
       
       // Show if marker is in deeper level (higher number)
-      return !isNaN(markerLevel) && markerLevel > currentLevel;
+      return !isNaN(markerLevel) && markerLevel > currentLevel && markerLevel <= MAX_SEEABLE_FLOOR;
     }
 
     return false;

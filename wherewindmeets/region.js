@@ -34,7 +34,7 @@ zoom_5: [
   { "name": "Jadewood Court",    "lat": 161.8376638217751,  "lng": 161.29809069633484, "size": 26, "map_type": "Kaifeng" },
   { "name": "Roaring Sands",     "lat": 141.4049587992937,  "lng": 155.73852682113647, "size": 26, "map_type": "Kaifeng" },
 
-  { "name": "Yumen Pass", "lat": 34.19193026737213,  "lng": 27.556250003245143, "size": 26, "map_type": "Hexi" },
+  { "name": "Jade Gate Pass", "lat": 34.19193026737213,  "lng": 27.556250003245143, "size": 26, "map_type": "Hexi" },
   { "name": "Liangzhou",  "lat": 46.23956782958546,  "lng": 51.31959538855816,  "size": 26, "map_type": "Hexi" },
   { "name": "Qinchuan",   "lat": 76.38501880776012,  "lng": 77.3876244232804,   "size": 26, "map_type": "Hexi" },
 
@@ -259,6 +259,22 @@ zoom_6: [
     "cn_name": "荒蚀林",
     "lat": 132.281249,
     "lng": 179.062494,
+    "size": 24,
+    "sub_regions": "Moonveil Mountain"
+  },
+  {
+    "name": "Riverside Station",
+    "cn_name": "临江驿",
+    "lat": 132.85784215340152,
+    "lng": 172.30704444473466,
+    "size": 24,
+    "sub_regions": "Moonveil Mountain"
+  },
+  {
+    "name": "Riverside Terrace",
+    "cn_name": "",
+    "lat": 132.85784215340152,
+    "lng": 172.30704444473466,
     "size": 24,
     "sub_regions": "Moonveil Mountain"
   },
@@ -749,8 +765,8 @@ zoom_6: [
   {
     "name": "Yuchi",
     "cn_name": "玉池",
-    "lat": 46.23956782958546,
-    "lng": 51.31959538855816,
+    "lat": 42.32891412804306,
+    "lng": 53.13760431723976,
     "size": 24,
     "sub_regions": "Liangzhou"
   },

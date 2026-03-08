@@ -656,12 +656,18 @@ body.app-ready .leaderboard-toggle{
 .marker-popup-footer {
   padding: 10px 15px;
   display: flex;
+  flex-direction: row;  /* ⬅️ column: visited+ysid di atas, link di bawah */
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid rgba(218, 165, 32, 0.2);
+}
+
+/* Baris atas: visited + ysid */
+.footer-top-row {
+  display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  background: rgba(0, 0, 0, 0.15);
-  border-bottom: 1px solid rgba(218, 165, 32, 0.2);
-  flex-wrap: nowrap;
 }
 
 /* Visited Checkbox */
@@ -725,65 +731,83 @@ body.app-ready .leaderboard-toggle{
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
   letter-spacing: 0.5px;
 }
+
 .footer-right-group {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-shrink: 0;      /* <- mencegah wrap */
+  flex-shrink: 0;
 }
 
 /* ============================
-   LINK INFO (Golden Style)
+   LINK SECTION — Ruang sendiri, mirip image-toggle-section
 ============================ */
+.marker-popup-link-section {
+  padding: 12px 15px;
+  background: rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .marker-popup-link-info {
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
-/* Tombol Link */
 .marker-popup-link-btn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  justify-content: center;
+  gap: 8px;
 
-  background: linear-gradient(
-    135deg,
-    rgba(218, 165, 32, 0.15),
-    rgba(184, 134, 11, 0.15)
-  );
-  border: 1px solid rgba(218, 165, 32, 0.5);
+  padding: 8px 24px;
+  width: 100%;
 
+  border: 1px solid rgba(255, 230, 168, 0.6);
   border-radius: 20px;
-  color: #FFD700;
 
-  font-size: 10px;
+  background: linear-gradient(135deg, #f3d59b, #d4a74a);
+
+  color: #3d2800 !important;
   font-weight: bold;
-  font-family: 'Lato', sans-serif;
+  font-size: 14px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
   text-decoration: none;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-  letter-spacing: 0.3px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
 
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.3s ease;
 }
 
-/* Hover effect selaras dengan YS_ID */
 .marker-popup-link-btn:hover {
   background: linear-gradient(
     135deg,
-    rgba(218, 165, 32, 0.25),
-    rgba(184, 134, 11, 0.25)
+    rgba(255, 230, 168, 0.35),
+    rgba(255, 210, 120, 0.35)
   );
-  border-color: rgba(218, 165, 32, 0.7);
-  color: #FFF8DC;
-
-  box-shadow: 0 0 12px rgba(218, 165, 32, 0.4);
-  transform: translateY(-1px);
+  border-color: rgba(255, 230, 168, 0.9);
+  box-shadow: 0 0 15px rgba(255, 230, 168, 0.5);
+  transform: translateY(-2px);
+  color: #FFF8E7;
 }
+
+.marker-popup-link-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.marker-popup-link-btn svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  flex-shrink: 0;
+}
+
 /* ============================================================
    COMMENTS SECTION (VERTIKAL)
 ============================================================ */
@@ -1049,15 +1073,20 @@ body.app-ready .leaderboard-toggle{
     margin-left: auto;
   }
 
-.marker-popup-link-btn {
-  padding: 4px 30px;
-  border-radius: 10px;
-  gap: 4px;
+  .marker-popup-link-section {
+    padding: 6px 10px;
+  }
 
-  font-size: 6px;        /* ⬅️ SAMA DENGAN COMMENT */
-  line-height: 1;
-  letter-spacing: 0.2px;
-}
+  .marker-popup-link-btn {
+    padding: 4px 12px;
+    border-radius: 20px;
+    gap: 4px;
+    font-size: 6px;
+    line-height: 1;
+    border: 1px solid rgba(255, 230, 168, 0.6);
+    color: #FFE6A8;
+  }
+
   .marker-popup-link-btn svg {
     width: 7px;
     height: 7px;
@@ -1530,15 +1559,21 @@ body.app-ready .leaderboard-toggle{
 @media (max-width: 480px) {
 
 /* ===============================
-   FOOTER SECTION (FORCE ROW)
+   FOOTER SECTION (COLUMN: atas visited+ysid, bawah link)
    =============================== */
 .marker-popup-footer {
   display: flex !important;
-  flex-direction: row !important;   /* ⬅️ INI KUNCINYA */
+  flex-direction: row !important;
+  padding: 6px 10px;
+  gap: 6px;
+}
+
+/* Baris atas */
+.footer-top-row {
+  display: flex !important;
+  flex-direction: row !important;
   align-items: center;
   justify-content: space-between;
-
-  padding: 6px 10px;
   gap: 6px;
   flex-wrap: nowrap;
 }
@@ -1566,8 +1601,8 @@ body.app-ready .leaderboard-toggle{
 }
 
 .marker-popup-visited-label {
-  display: inline-flex ;
-  flex-direction: row ;
+  display: inline-flex;
+  flex-direction: row;
   align-items: center;
   gap: 3px;
 
@@ -1591,11 +1626,10 @@ body.app-ready .leaderboard-toggle{
    RIGHT GROUP YSID
    =============================== */
 .footer-right-group {
-  display: flex ;
-  flex-direction: row ;   /* ⬅️ PAKSA KE SAMPING */
+  display: flex;
+  flex-direction: row;
   align-items: center;
   gap: 6px;
-
   flex: 0 0 auto;
   white-space: nowrap;
 }
@@ -1608,6 +1642,36 @@ body.app-ready .leaderboard-toggle{
   font-size: 6px;
 }
 
+/* ===============================
+   LINK BTN — baris sendiri, full width
+   =============================== */
+.marker-popup-link-section {
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.marker-popup-link-info {
+  width: 100%;
+}
+
+.marker-popup-link-btn {
+  padding: 6px 10px;
+  font-size: 6px;
+  border-radius: 20px;
+  gap: 4px;
+  width: 100%;
+  border: 1px solid rgba(255, 230, 168, 0.6);
+  color: #FFE6A8;
+}
+
+.marker-popup-link-btn svg {
+  width: 8px;
+  height: 8px;
+}
+
+.marker-popup-link-btn span {
+  font-size: 6px;
+}
 
 /* ===============================
    SMALL LABEL
@@ -1615,15 +1679,16 @@ body.app-ready .leaderboard-toggle{
 .marker-popup-full-label {
   font-size: 4px;
 }
+
 /* ===============================
    COMMENTS + LINK (VERTIKAL)
    =============================== */
 .marker-popup-comments-section {
   padding: 6px 10px;
   display: flex;
-  flex-direction: column;   /* ⬅️ KUNCI UTAMA */
-  gap: 6px;                 /* jarak atas–bawah */
-  align-items: center;      /* tengah horizontal */
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
 }
 
   .marker-popup-comments-btn {
@@ -1667,7 +1732,7 @@ body.app-ready .leaderboard-toggle{
   .marker-popup-image-toggle .toggle-text {
     font-size: 6px;
   }
-  
+
   /* ===============================
      REPORT SECTION
      =============================== */

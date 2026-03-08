@@ -1,7 +1,7 @@
     // Show popup after map loads
     function showPatchPopup() {
   const overlay = document.getElementById('patchOverlay');
-  const hasSeenPatch = localStorage.getItem('seenPatchV8');
+  const hasSeenPatch = localStorage.getItem('seenPatchV10');
   
   if (!hasSeenPatch) {
     overlay.classList.add('active');
@@ -13,7 +13,7 @@
 function closePatchPopup() {
   const overlay = document.getElementById('patchOverlay');
   overlay.classList.remove('active');
-  localStorage.setItem('seenPatchV8', 'true');
+  localStorage.setItem('seenPatchV10', 'true');
   
   // ← Start tip guide setelah patch note ditutup
   if (window.TipGuide) TipGuide.start();

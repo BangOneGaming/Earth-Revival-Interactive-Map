@@ -3,11 +3,6 @@
  * Centralized icon management system for all categories
  */
 
-/**
- * Icon definitions for different marker types
- * Centralized icon management system for all categories
- */
-
 // Base URL for icons
 const ICON_BASE_URL = "https://tiles.bgonegaming.win/wherewindmeet/Simbol/";
 
@@ -124,8 +119,6 @@ const ICON_CONFIG = {
     "41": "Board",
     "42": "Ride And Archer Challenge"
   },
-
-  // Custom sizes per category
   specialSizes: {
     "1": {
       size: isMobile ? [44, 44] : [64, 64],
@@ -133,13 +126,11 @@ const ICON_CONFIG = {
       popupAnchor: isMobile ? [0, -44] : [0, -64]
     }
   },
-
-  // Default sizes
   defaultSize: DEFAULT_SIZE,
   defaultAnchor: DEFAULT_ANCHOR,
   defaultPopupAnchor: DEFAULT_POPUP_ANCHOR
 };
-// Storage for initialized Leaflet icons
+
 const ICONS = {};
 const FAILED_ICONS = new Set();
 
@@ -147,371 +138,345 @@ function getIconUrl(categoryId) {
   const overlay = ICON_CONFIG.overlays[String(categoryId)];
   return overlay ? ICON_BASE_URL + overlay : ICON_CONFIG.baseIcon;
 }
-
 function getCategoryName(categoryId) {
   return ICON_CONFIG.names[String(categoryId)] || `Category ${categoryId}`;
 }
-
 function getOverlayUrl(categoryId) {
   const overlay = ICON_CONFIG.overlays[String(categoryId)];
   return overlay ? ICON_BASE_URL + overlay : ICON_CONFIG.baseIcon;
 }
-
 function isCommonChest(markerName) {
   if (!markerName) return false;
   const name = markerName.trim();
-  
-  // ✅ Nama-nama ini dianggap COMMON (pakai petiharta.webp)
   const commonChests = [
     "Chest Collection - Rocket (Burn Vines, Explosive Barrel, Sunrise-Sunset Flowers)",
     "Chest Collection - Star-Grabbing Moon (Snakes Gathered, Guarded by Humans)",
-    "Treasure Collection", // Nama polos tanpa tambahan
-    "Treasure Chest Gathering",
-    "Treasure Chest Collection",
-    "Chest Collection", // Nama polos tanpa tambahan
-    "Treasure Chest" // ✅ TAMBAHAN: nama polos "Treasure Chest"
+    "Treasure Collection","Treasure Chest Gathering","Treasure Chest Collection",
+    "Chest Collection","Treasure Chest"
   ];
-  
-  // Jika ada di daftar common
-  if (commonChests.includes(name)) {
-    return true;
-  }
-  
-  const nameLower = name.toLowerCase();
-  
-  // ✅ Deteksi jika mengandung "common chest"
-  return nameLower.includes("common chest");
+  if (commonChests.includes(name)) return true;
+  return name.toLowerCase().includes("common chest");
 }
-
 function getChestOverlayByName(markerName) {
-  // ✅ Jika common chest → petiharta.webp (icon biasa)
-  if (isCommonChest(markerName)) {
-    return `${ICON_BASE_URL}petiharta.webp`;
-  }
-  
-  // ✅ Selain itu (chest puzzle/special) → puzzle_chest.webp
+  if (isCommonChest(markerName)) return `${ICON_BASE_URL}petiharta.webp`;
   return `${ICON_BASE_URL}puzzle_chest.png`;
 }
-
 function getAllCategories() {
   return Object.keys(ICON_CONFIG.overlays).map(id => ({
-    id: id,
-    name: getCategoryName(id),
-    iconUrl: getIconUrl(id),
-    overlayUrl: getOverlayUrl(id)
+    id, name: getCategoryName(id), iconUrl: getIconUrl(id), overlayUrl: getOverlayUrl(id)
   }));
 }
-
 function testIconUrl(url, categoryId) {
   const img = new Image();
-  img.onload = function() {};
-  img.onerror = function() {
-    FAILED_ICONS.add(categoryId);
-  };
+  img.onerror = () => FAILED_ICONS.add(categoryId);
   img.src = url;
 }
-
 function createCompositeLeafletIconWithMarkerName(categoryId, markerName) {
-  // 🔒 JANGAN sentuh size / anchor / popupAnchor
   const baseUrl = ICON_CONFIG.baseIcon;
-
   const special = ICON_CONFIG.specialSizes[categoryId];
   const size = special?.size || ICON_CONFIG.defaultSize;
   const anchor = special?.anchor || ICON_CONFIG.defaultAnchor;
   const popupAnchor = special?.popupAnchor || ICON_CONFIG.defaultPopupAnchor;
-
-  // 🔐 KHUSUS CHEST (category 2)
   if (String(categoryId) === "2") {
     const overlayUrl = getChestOverlayByName(markerName);
-
-    // ⚠️ HTML SAMA PERSIS DENGAN SISTEM LAMA
     return L.divIcon({
-      html: `
-        <div style="position:relative;width:${size[0]}px;height:${size[1]}px;">
-          <img src="${baseUrl}" 
-               style="
-                 position:absolute;
-                 top:-10%; left:-10%;
-                 width:120%; height:120%;
-                 z-index:1;
-               ">
-          <img src="${overlayUrl}" 
-               style="
-                 position:absolute;
-                 top:10%; left:20%;
-                 width:60%; height:60%;
-                 z-index:2;
-               ">
-        </div>
-      `,
-      iconSize: size,
-      iconAnchor: anchor,
-      popupAnchor: popupAnchor,
-      className: "no-default-icon-bg"
+      html: `<div style="position:relative;width:${size[0]}px;height:${size[1]}px;">
+        <img src="${baseUrl}" style="position:absolute;top:-10%;left:-10%;width:120%;height:120%;z-index:1;">
+        <img src="${overlayUrl}" style="position:absolute;top:10%;left:20%;width:60%;height:60%;z-index:2;">
+      </div>`,
+      iconSize: size, iconAnchor: anchor, popupAnchor, className: "no-default-icon-bg"
     });
   }
-
-  // ⛔ kategori lain BIARKAN sistem lama
   return getIconByCategory(categoryId);
 }
-
 function createCompositeLeafletIcon(categoryId) {
   const overlayUrl = getIconUrl(categoryId);
   const baseUrl = ICON_CONFIG.baseIcon;
-
   const special = ICON_CONFIG.specialSizes[categoryId];
   const size = special?.size || ICON_CONFIG.defaultSize;
   const anchor = special?.anchor || ICON_CONFIG.defaultAnchor;
   const popupAnchor = special?.popupAnchor || ICON_CONFIG.defaultPopupAnchor;
-
-  // === KHUSUS KATEGORI 1 → TANPA BACKGROUND ===
   if (String(categoryId) === "1") {
     return L.divIcon({
-      html: `
-        <div style="position:relative;width:${size[0]}px;height:${size[1]}px;">
-          <img src="${overlayUrl}" style="width:100%;height:100%;z-index:2;">
-        </div>
-      `,
-      iconSize: size,
-      iconAnchor: anchor,
-      popupAnchor: popupAnchor,
-      className: "no-default-icon-bg"
+      html: `<div style="position:relative;width:${size[0]}px;height:${size[1]}px;">
+        <img src="${overlayUrl}" style="width:100%;height:100%;z-index:2;">
+      </div>`,
+      iconSize: size, iconAnchor: anchor, popupAnchor, className: "no-default-icon-bg"
     });
   }
-
-  // === KATEGORI LAIN → BACKGROUND + OVERLAY ===
-return L.divIcon({
-  html: `
-    <div style="position:relative;width:${size[0]}px;height:${size[1]}px;">
-      <!-- Background lebih besar (120%) -->
-      <img src="${baseUrl}" 
-           style="
-             position:absolute;
-             top:-10%; left:-10%;
-             width:120%; height:120%;
-             z-index:1;
-           ">
-
-      <!-- Overlay lebih kecil (60%) -->
-      <img src="${overlayUrl}" 
-           style="
-             position:absolute;
-             top:10%; left:20%;
-             width:60%; height:60%;
-             z-index:2;
-           ">
-    </div>
-  `,
-  iconSize: size,
-  iconAnchor: anchor,
-  popupAnchor: popupAnchor,
-  className: "no-default-icon-bg"
-});
+  return L.divIcon({
+    html: `<div style="position:relative;width:${size[0]}px;height:${size[1]}px;">
+      <img src="${baseUrl}" style="position:absolute;top:-10%;left:-10%;width:120%;height:120%;z-index:1;">
+      <img src="${overlayUrl}" style="position:absolute;top:10%;left:20%;width:60%;height:60%;z-index:2;">
+    </div>`,
+    iconSize: size, iconAnchor: anchor, popupAnchor, className: "no-default-icon-bg"
+  });
 }
 function initializeIcons() {
-  try {
-    if (typeof L === 'undefined') {
-      throw new Error("Leaflet (L) is not loaded yet!");
-    }
-
-    ICONS.default = L.icon({
-      iconUrl: ICON_CONFIG.baseIcon,
-      iconSize: ICON_CONFIG.defaultSize,
-      iconAnchor: ICON_CONFIG.defaultAnchor,
-      popupAnchor: ICON_CONFIG.defaultPopupAnchor
-    });
-
-Object.keys(ICON_CONFIG.overlays).forEach(categoryId => {
-  const iconUrl = getIconUrl(categoryId);
-  const special = ICON_CONFIG.specialSizes[categoryId];
-
-  ICONS[categoryId] = createCompositeLeafletIcon(categoryId);
-
-  testIconUrl(iconUrl, categoryId);
-});
-  } catch (error) {
-    throw error;
-  }
+  if (typeof L === 'undefined') throw new Error("Leaflet (L) is not loaded yet!");
+  ICONS.default = L.icon({
+    iconUrl: ICON_CONFIG.baseIcon,
+    iconSize: ICON_CONFIG.defaultSize,
+    iconAnchor: ICON_CONFIG.defaultAnchor,
+    popupAnchor: ICON_CONFIG.defaultPopupAnchor
+  });
+  Object.keys(ICON_CONFIG.overlays).forEach(categoryId => {
+    ICONS[categoryId] = createCompositeLeafletIcon(categoryId);
+    testIconUrl(getIconUrl(categoryId), categoryId);
+  });
 }
-
 function getIconByCategory(categoryId) {
   const id = String(categoryId);
   if (ICONS[id]) return ICONS[id];
   return ICONS.default || new L.Icon.Default();
 }
-
 function getIconByCategoryWithMarkerName(categoryId, markerName) {
-  // HANYA chest yang dicek
-  if (String(categoryId) === "2") {
-    return createCompositeLeafletIconWithMarkerName(categoryId, markerName);
-  }
-
+  if (String(categoryId) === "2") return createCompositeLeafletIconWithMarkerName(categoryId, markerName);
   return getIconByCategory(categoryId);
 }
-
 function createIconHTML(categoryId, options = {}) {
-  const width = options.width || 32;
-  const height = options.height || 32;
+  const width = options.width || 32, height = options.height || 32;
   const className = options.className || 'icon-image';
-  const iconUrl = getIconUrl(categoryId);
-  const categoryName = getCategoryName(categoryId);
-  return `<img src="${iconUrl}" alt="${categoryName}" class="${className}" width="${width}" height="${height}">`;
+  return `<img src="${getIconUrl(categoryId)}" alt="${getCategoryName(categoryId)}" class="${className}" width="${width}" height="${height}">`;
 }
-
 function createCompositeIconHTML(categoryId) {
-  const overlayUrl = getOverlayUrl(categoryId);
-  const categoryName = getCategoryName(categoryId);
-
-  return `
-    <div class="composite-icon" style="position:relative;width:32px;height:32px;">
-      <img src="${ICON_CONFIG.baseIcon}" style="position:absolute;top:0;left:0;width:100%;height:100%;" alt="base">
-      <img src="${overlayUrl}" style="position:absolute;top:0;left:0;width:100%;height:100%;" alt="${categoryName}">
-    </div>
-  `;
+  return `<div class="composite-icon" style="position:relative;width:32px;height:32px;">
+    <img src="${ICON_CONFIG.baseIcon}" style="position:absolute;top:0;left:0;width:100%;height:100%;" alt="base">
+    <img src="${getOverlayUrl(categoryId)}" style="position:absolute;top:0;left:0;width:100%;height:100%;" alt="${getCategoryName(categoryId)}">
+  </div>`;
 }
-
-
-/**
- * Get icon URL dengan support untuk special_icon
- */
 function getIconUrlWithSpecial(categoryId, specialIcon) {
   if (specialIcon && specialIcon.trim() !== '') {
-
-    // KHUSUS category 37 = Inner Ways
-    if (String(categoryId) === "37") {
-      return `${ICON_BASE_URL}innerway/${specialIcon}.webp`;
-    }
-
-    // Selain Inner Ways tetap normal
+    if (String(categoryId) === "37") return `${ICON_BASE_URL}innerway/${specialIcon}.webp`;
     return `${ICON_BASE_URL}${specialIcon}.webp`;
   }
-  
   const overlay = ICON_CONFIG.overlays[String(categoryId)];
   return overlay ? ICON_BASE_URL + overlay : ICON_CONFIG.baseIcon;
 }
-
-/**
- * Create composite icon dengan support special_icon
- */
-/**
- * Create composite icon dengan support special_icon
- * ✨ FIXED: Special icon TANPA background (langsung icon saja)
- */
-/**
- * Create composite icon dengan support special_icon
- * ✨ FIXED: Special icon TANPA background (langsung icon saja)
- * ✨ FIXED: Aspect ratio dijaga dengan object-fit: contain
- */
 function createCompositeLeafletIconWithSpecial(categoryId, specialIcon) {
   const overlayUrl = getIconUrlWithSpecial(categoryId, specialIcon);
   const baseUrl = ICON_CONFIG.baseIcon;
-
   const special = ICON_CONFIG.specialSizes[categoryId];
   const size = special?.size || ICON_CONFIG.defaultSize;
   const anchor = special?.anchor || ICON_CONFIG.defaultAnchor;
   const popupAnchor = special?.popupAnchor || ICON_CONFIG.defaultPopupAnchor;
-
-  // ✨ JIKA ADA SPECIAL ICON → TANPA BACKGROUND (seperti category 1)
   if (specialIcon && specialIcon.trim() !== '') {
     return L.divIcon({
-      html: `
-        <div style="position:relative;width:${size[0]}px;height:${size[1]}px;">
-          <img src="${overlayUrl}" 
-               style="width:100%;height:100%;object-fit:contain;z-index:2;">
-        </div>
-      `,
-      iconSize: size,
-      iconAnchor: anchor,
-      popupAnchor: popupAnchor,
-      className: "no-default-icon-bg"
+      html: `<div style="position:relative;width:${size[0]}px;height:${size[1]}px;">
+        <img src="${overlayUrl}" style="width:100%;height:100%;object-fit:contain;z-index:2;">
+      </div>`,
+      iconSize: size, iconAnchor: anchor, popupAnchor, className: "no-default-icon-bg"
     });
   }
-
-  // Category 1 (Teleport) juga tanpa background
   if (String(categoryId) === "1") {
     return L.divIcon({
-      html: `
-        <div style="position:relative;width:${size[0]}px;height:${size[1]}px;">
-          <img src="${overlayUrl}" 
-               style="width:100%;height:100%;object-fit:contain;z-index:2;">
-        </div>
-      `,
-      iconSize: size,
-      iconAnchor: anchor,
-      popupAnchor: popupAnchor,
-      className: "no-default-icon-bg"
+      html: `<div style="position:relative;width:${size[0]}px;height:${size[1]}px;">
+        <img src="${overlayUrl}" style="width:100%;height:100%;object-fit:contain;z-index:2;">
+      </div>`,
+      iconSize: size, iconAnchor: anchor, popupAnchor, className: "no-default-icon-bg"
     });
   }
-
-  // Kategori biasa → Background + Overlay
   return L.divIcon({
-    html: `
-      <div style="position:relative;width:${size[0]}px;height:${size[1]}px;">
-        <img src="${baseUrl}" 
-             style="position:absolute;top:-10%;left:-10%;width:120%;height:120%;z-index:1;">
-        <img src="${overlayUrl}" 
-             style="position:absolute;top:10%;left:20%;width:60%;height:60%;z-index:2;">
-      </div>
-    `,
-    iconSize: size,
-    iconAnchor: anchor,
-    popupAnchor: popupAnchor,
-    className: "no-default-icon-bg"
+    html: `<div style="position:relative;width:${size[0]}px;height:${size[1]}px;">
+      <img src="${baseUrl}" style="position:absolute;top:-10%;left:-10%;width:120%;height:120%;z-index:1;">
+      <img src="${overlayUrl}" style="position:absolute;top:10%;left:20%;width:60%;height:60%;z-index:2;">
+    </div>`,
+    iconSize: size, iconAnchor: anchor, popupAnchor, className: "no-default-icon-bg"
   });
 }
-
-/**
- * Get icon by category dengan support special_icon
- */
 function getIconByCategoryWithSpecial(categoryId, specialIcon) {
-  if (specialIcon && specialIcon.trim() !== '') {
-    return createCompositeLeafletIconWithSpecial(categoryId, specialIcon);
-  }
-  
+  if (specialIcon && specialIcon.trim() !== '') return createCompositeLeafletIconWithSpecial(categoryId, specialIcon);
   const id = String(categoryId);
   if (ICONS[id]) return ICONS[id];
   return ICONS.default || new L.Icon.Default();
 }
 
-
-// Di bagian akhir icon-manager.js, sebelum window.IconManager = {...}
-
-// ============================================
+// ============================================================
 // VISIBILITY CONTROL
-// ============================================
+// ============================================================
 let iconsVisible = false;
-
 function hideAllIcons() {
   const style = document.createElement('style');
   style.id = 'icon-visibility-control';
-  style.textContent = `
-    .leaflet-marker-icon {
-      opacity: 0 !important;
-      visibility: hidden !important;
-      transition: none !important;
-    }
-  `;
+  style.textContent = `.leaflet-marker-icon { opacity:0 !important; visibility:hidden !important; transition:none !important; }`;
   document.head.appendChild(style);
   iconsVisible = false;
 }
-
 function showAllIcons() {
   const style = document.getElementById('icon-visibility-control');
-  if (style) {
-    style.remove();
-  }
+  if (style) style.remove();
   iconsVisible = true;
 }
-
-// Sembunyikan icon saat pertama kali load
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', hideAllIcons);
 } else {
   hideAllIcons();
 }
 
-// Update window.IconManager untuk include fungsi baru
+// ============================================================
+// ★ NEON WALL CLOCK — SVG Icon
+// ============================================================
+
+/**
+ * Build raw SVG string untuk jam dinding neon.
+ * Putih neon + glow emas kuning. Jarum bisa dirotate via JS.
+ * @param {number} size — ukuran render px (viewBox tetap 100×100)
+ */
+function buildWallClockSVG(size = 64) {
+  const uid = `wc${size}`;
+  return `
+<svg width="${size}" height="${size}" viewBox="0 0 100 100"
+     xmlns="http://www.w3.org/2000/svg"
+     style="overflow:visible;display:block;">
+  <defs>
+    <filter id="nO_${uid}" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4"  result="b1"/>
+      <feGaussianBlur stdDeviation="9"  result="b2"/>
+      <feMerge>
+        <feMergeNode in="b2"/>
+        <feMergeNode in="b1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="nI_${uid}" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="2.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="nT_${uid}" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="1.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- BG hitam -->
+  <circle cx="50" cy="50" r="43" fill="#050505"/>
+
+  <!-- Glow emas luar -->
+  <circle cx="50" cy="50" r="44"
+    fill="none" stroke="#d4a800" stroke-width="5"
+    filter="url(#nO_${uid})" opacity="0.55"/>
+
+  <!-- Ring putih utama -->
+  <circle cx="50" cy="50" r="44"
+    fill="none" stroke="#ffffff" stroke-width="2"
+    filter="url(#nI_${uid})"/>
+
+  <!-- Ring dalam accent tipis -->
+  <circle cx="50" cy="50" r="37"
+    fill="none" stroke="#fff8cc" stroke-width="0.6" opacity="0.25"/>
+
+  <!-- Tick cardinal — putih -->
+  <line x1="50" y1="9"  x2="50" y2="17" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" filter="url(#nT_${uid})"/>
+  <line x1="91" y1="50" x2="83" y2="50" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" filter="url(#nT_${uid})"/>
+  <line x1="50" y1="91" x2="50" y2="83" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" filter="url(#nT_${uid})"/>
+  <line x1="9"  y1="50" x2="17" y2="50" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" filter="url(#nT_${uid})"/>
+
+  <!-- Tick minor — emas -->
+  <g stroke="#d4a800" stroke-width="1.2" stroke-linecap="round" opacity="0.55">
+    <line x1="72.5" y1="12.3" x2="69.3" y2="17.8"/>
+    <line x1="87.7" y1="27.5" x2="82.2" y2="30.7"/>
+    <line x1="87.7" y1="72.5" x2="82.2" y2="69.3"/>
+    <line x1="72.5" y1="87.7" x2="69.3" y2="82.2"/>
+    <line x1="27.5" y1="87.7" x2="30.7" y2="82.2"/>
+    <line x1="12.3" y1="72.5" x2="17.8" y2="69.3"/>
+    <line x1="12.3" y1="27.5" x2="17.8" y2="30.7"/>
+    <line x1="27.5" y1="12.3" x2="30.7" y2="17.8"/>
+  </g>
+
+  <!-- Jarum JAM — class wc-hour, pivot (50,50) -->
+  <line class="wc-hour"
+    x1="50" y1="50" x2="50" y2="29"
+    stroke="#ffffff" stroke-width="4" stroke-linecap="round"
+    filter="url(#nI_${uid})"/>
+
+  <!-- Jarum MENIT — class wc-min -->
+  <line class="wc-min"
+    x1="50" y1="50" x2="50" y2="14"
+    stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"
+    filter="url(#nT_${uid})"/>
+
+  <!-- Jarum DETIK — class wc-sec, emas -->
+  <line class="wc-sec"
+    x1="50" y1="50" x2="50" y2="11"
+    stroke="#d4a800" stroke-width="1.3" stroke-linecap="round"/>
+  <line class="wc-sec-tail"
+    x1="50" y1="50" x2="50" y2="61"
+    stroke="#d4a800" stroke-width="1.3" stroke-linecap="round"/>
+
+  <!-- Center cap -->
+  <circle cx="50" cy="50" r="4"   fill="#ffffff" filter="url(#nI_${uid})"/>
+  <circle cx="50" cy="50" r="1.8" fill="#050505"/>
+</svg>`;
+}
+
+/**
+ * Buat Leaflet divIcon jam dinding neon.
+ * Gunakan sebagai icon marker biasa.
+ */
+function createWallClockIcon() {
+  const size = isMobile ? 48 : 64;
+  const half = size / 2;
+  return L.divIcon({
+    html: `<div class="wc-icon" style="
+              position:relative;
+              width:${size}px;
+              height:${size}px;
+              filter:drop-shadow(0 0 8px #d4a80088);
+            ">${buildWallClockSVG(size)}</div>`,
+    iconSize:    [size, size],
+    iconAnchor:  [half, half],
+    popupAnchor: [0, -half],
+    className:   "no-default-icon-bg"
+  });
+}
+
+/**
+ * Mulai animasi jarum semua jam dinding yang ada di DOM.
+ * Panggil SETELAH marker ditambahkan ke peta.
+ * Aman dipanggil berkali-kali — animasi hanya berjalan satu instance.
+ */
+let _wcAnimRunning = false;
+function startWallClockAnimation() {
+  if (_wcAnimRunning) return;
+  _wcAnimRunning = true;
+
+  function rotateLine(el, deg) {
+    el.setAttribute('transform', `rotate(${deg}, 50, 50)`);
+  }
+
+  function tick() {
+    const now = new Date();
+    const h  = now.getHours() % 12;
+    const m  = now.getMinutes();
+    const s  = now.getSeconds();
+    const ms = now.getMilliseconds();
+
+    const secDeg  = (s + ms / 1000) * 6;
+    const minDeg  = (m + s  / 60)   * 6;
+    const hourDeg = (h + m  / 60)   * 30;
+
+    document.querySelectorAll('.wc-icon').forEach(wrapper => {
+      const h = wrapper.querySelector('.wc-hour');
+      const m = wrapper.querySelector('.wc-min');
+      const s = wrapper.querySelector('.wc-sec');
+      const t = wrapper.querySelector('.wc-sec-tail');
+      if (h) rotateLine(h, hourDeg);
+      if (m) rotateLine(m, minDeg);
+      if (s) rotateLine(s, secDeg);
+      if (t) rotateLine(t, secDeg);
+    });
+
+    requestAnimationFrame(tick);
+  }
+
+  tick();
+}
+
+// ============================================================
+// EXPORTS
+// ============================================================
 window.IconManager = {
+  // — existing —
   getIconUrl,
   getCategoryName,
   getOverlayUrl,
@@ -523,11 +488,15 @@ window.IconManager = {
   getIconUrlWithSpecial,
   getIconByCategoryWithSpecial,
   createCompositeLeafletIconWithSpecial,
-  hideAllIcons,      // ✨ TAMBAHAN
-  showAllIcons,      // ✨ TAMBAHAN
+  hideAllIcons,
+  showAllIcons,
   ICON_CONFIG,
   ICONS,
-  FAILED_ICONS
+  FAILED_ICONS,
+  // — ★ NEW: wall clock —
+  buildWallClockSVG,
+  createWallClockIcon,
+  startWallClockAnimation,
 };
-// Make initializeIcons globally available
+
 window.initializeIcons = initializeIcons;
