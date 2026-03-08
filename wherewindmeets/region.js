@@ -723,7 +723,7 @@ zoom_6: [
     "sub_regions": "Qinchuan"
   },
   {
-    "name": "Mijindu",
+    "name": "Lost Crossing",
     "cn_name": "迷津渡",
     "lat": 28.411461751689593,
     "lng": 27.00979439153439,
@@ -731,7 +731,7 @@ zoom_6: [
     "sub_regions": "Jade Gate Pass"
   },
   {
-    "name": "jinshachuan",
+    "name": "Golden Sand River",
     "cn_name": "金沙川",
     "lat": 36.78444664691357,
     "lng": 22.11654574109347,
@@ -739,7 +739,7 @@ zoom_6: [
     "sub_regions": "Jade Gate Pass"
   },
   {
-    "name": "Ma Miitu",
+    "name": "Straying Steed Sand",
     "cn_name": "马迷途",
     "lat": 35.83257033791887,
     "lng": 33.10039456790123,
@@ -747,7 +747,7 @@ zoom_6: [
     "sub_regions": "Jade Gate Pass"
   },
   {
-    "name": "aysu",
+    "name": "Ayisu",
     "cn_name": "阿依苏",
     "lat": 47.32836784479717,
     "lng": 24.016079935097,
