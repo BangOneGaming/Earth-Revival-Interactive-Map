@@ -728,7 +728,7 @@ zoom_6: [
     "lat": 28.411461751689593,
     "lng": 27.00979439153439,
     "size": 24,
-    "sub_regions": "Yumen Pass"
+    "sub_regions": "Jade Gate Pass"
   },
   {
     "name": "jinshachuan",
@@ -736,7 +736,7 @@ zoom_6: [
     "lat": 36.78444664691357,
     "lng": 22.11654574109347,
     "size": 24,
-    "sub_regions": "Yumen Pass"
+    "sub_regions": "Jade Gate Pass"
   },
   {
     "name": "Ma Miitu",
@@ -744,7 +744,7 @@ zoom_6: [
     "lat": 35.83257033791887,
     "lng": 33.10039456790123,
     "size": 24,
-    "sub_regions": "Yumen Pass"
+    "sub_regions": "Jade Gate Pass"
   },
   {
     "name": "aysu",
@@ -752,7 +752,7 @@ zoom_6: [
     "lat": 47.32836784479717,
     "lng": 24.016079935097,
     "size": 24,
-    "sub_regions": "Yumen Pass"
+    "sub_regions": "Jade Gate Pass"
   },
   {
     "name": "Yinma Pass",
