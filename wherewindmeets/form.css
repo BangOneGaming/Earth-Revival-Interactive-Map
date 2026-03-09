@@ -1,153 +1,50 @@
 /**
- * Marker Add Module Styles
- * Tema emas kecoklatan konsisten dengan desain existing
+ * Marker Add Module Styles — REDESIGNED
+ * Mengikuti estetika Wuxia Scroll / Ancient Parchment dari patch-notes.css
  */
- 
-/* Base Hint Style */
-.addmarker-hint {
-  position: fixed;
-  background: linear-gradient(135deg, #ffe6a8, #ffd88a);
-  color: #6a4100;
-  padding: 12px 18px;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 600;
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.3),
-    0 0 0 2px rgba(212, 175, 55, 0.3);
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
-  z-index: 2000;
-}
-/* ==========================================
-   PC VERSION (Default) - BAWAH TOMBOL
-   ========================================== */
-.addmarker-hint {
-  /* Akan di-set via JS, ini fallback */
-  left: 50%;
-  top: 70px;
-  transform: translateX(-50%);
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+
+/* =========================================
+   CSS VARIABLES (selaras dengan patch-notes)
+   ========================================= */
+
+:root {
+  --ink-dark:      #0b0f1a;
+  --ink-deep:      #121827;
+  --ink-mid:       #1c2638;
+  --ink-light:     #263347;
+  --gold-bright:   #f0c060;
+  --gold-mid:      #c8962a;
+  --gold-dim:      #7a5a18;
+  --gold-glow:     rgba(240, 192, 96, 0.18);
+  --jade:          #5cb8a0;
+  --jade-dim:      rgba(92, 184, 160, 0.15);
+  --text-bright:   #f5ead0;
+  --text-mid:      #c8b89a;
+  --text-dim:      #7a6a54;
+  --red-accent:    #c0443a;
+  --border-gold:   rgba(200, 150, 42, 0.35);
+  --border-subtle: rgba(200, 150, 42, 0.12);
 }
 
-/* Panah ke ATAS (menunjuk ke tombol) */
-.addmarker-hint::before {
-  content: "";
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  
-  border-width: 0 10px 10px 10px;
-  border-style: solid;
-  border-color: transparent transparent #ffe6a8 transparent;
-  
-  filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.1));
-}
+/* =========================================
+   ADD MARKER BUTTON
+   ========================================= */
 
-/* ==========================================
-   ADD MARKER HINT - PC & MOBILE VERSIONS
-   ========================================== */
-
-/* Base Hint Style */
-.addmarker-hint {
-  position: fixed;
-  background: linear-gradient(135deg, #ffe6a8, #ffd88a);
-  color: #6a4100;
-  padding: 12px 18px;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 600;
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.3),
-    0 0 0 2px rgba(212, 175, 55, 0.3);
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
-  z-index: 2000;
-}
-
-/* ==========================================
-   PC VERSION (Default) - BAWAH TOMBOL
-   ========================================== */
-.addmarker-hint {
-  /* Akan di-set via JS, ini fallback */
-  left: 50%;
-  top: 70px;
-  transform: translateX(-50%);
-}
-
-/* Panah ke ATAS (menunjuk ke tombol) */
-.addmarker-hint::before {
-  content: "";
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  
-  border-width: 0 10px 10px 10px;
-  border-style: solid;
-  border-color: transparent transparent #ffe6a8 transparent;
-  
-  filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.1));
-}
-
-/* Animated Arrow Icon (pointing down initially for PC) */
-.addmarker-hint::after {
-  content: "";
-  position: absolute;
-  right: -35px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 20px;
-  animation: bounceDown 1.5s ease-in-out infinite;
-}
-
-@keyframes bounceDown {
-  0%, 100% {
-    transform: translateY(-50%) translateY(0);
-  }
-  50% {
-    transform: translateY(-50%) translateY(5px);
-  }
-}
-
-/* Tampilkan */
-.addmarker-hint.show {
-  opacity: 1;
-}
-/* ==========================================
-   ADD MARKER BUTTON (Default Icon Style)
-   ========================================== */
 #addMarkerBtn {
   width: 50px;
   height: 50px;
   padding: 0;
-  
-  background: rgba(0, 0, 0, 0);
-  border: 2px solid #f4e5c0;
-  border-radius: 10px;
-  
+  background: transparent;
+  border: 1px solid var(--border-gold);
+  border-radius: 3px;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4), 0 0 0 1px rgba(240,192,96,0.06);
   transition: all 0.3s ease;
-  
   display: inline-flex;
   align-items: center;
   justify-content: center;
-}
-
-/* When in profile container, remove fixed positioning */
-.profile-stats-section ~ div #addMarkerBtn {
-  position: relative;
-  top: auto;
-  right: auto;
-}
-
-/* When NOT in profile (fallback to body), use fixed position */
-body > #addMarkerBtn {
   position: fixed;
   top: 10px;
   right: 30%;
@@ -157,38 +54,78 @@ body > #addMarkerBtn {
 #addMarkerBtn img {
   width: 28px;
   height: 28px;
-  filter: brightness(1.2);
+  filter: brightness(1.2) sepia(0.3);
 }
 
 #addMarkerBtn:hover {
-        background: linear-gradient(135deg, #f3d59b, #d4a74a);
-      transform: scale(1.05);
-      box-shadow: 0 6px 16px rgba(212, 167, 74, 0.6);
+  background: var(--gold-glow);
+  border-color: var(--gold-bright);
+  box-shadow: 0 4px 20px rgba(240,192,96,0.2);
+  transform: translateY(-1px);
 }
 
 #addMarkerBtn.active {
-  animation: pulse 2s ease-in-out infinite;
+  background: var(--gold-glow);
+  border-color: var(--gold-mid);
+  animation: btnPulse 2.5s ease-in-out infinite;
 }
 
-@keyframes pulse {
-  0%, 100% {
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0);
-  }
-  50% {
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0);
-  }
+@keyframes btnPulse {
+  0%, 100% { box-shadow: 0 2px 12px rgba(0,0,0,0.4), 0 0 0 1px rgba(240,192,96,0.06); }
+  50%       { box-shadow: 0 4px 20px rgba(240,192,96,0.25), 0 0 0 3px rgba(240,192,96,0.12); }
 }
 
 #addMarkerBtn:active {
-  transform: translateY(0) scale(0.95);
+  transform: scale(0.95);
 }
-/* ================================
-   📱 MOBILE VERSION (max 600px)
-   Add button pindah ke kiri 10px & top 30%
-   ================================ */
-@media (max-width: 600px) {
 
-  /* Posisi tombol */
+/* When in profile container */
+.profile-stats-section ~ div #addMarkerBtn {
+  position: relative;
+  top: auto; right: auto;
+}
+
+/* =========================================
+   HINT TOOLTIP
+   ========================================= */
+
+.addmarker-hint {
+  position: fixed;
+  background: var(--ink-deep);
+  border: 1px solid var(--border-gold);
+  color: var(--text-mid);
+  padding: 10px 16px;
+  border-radius: 3px;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 20px rgba(240,192,96,0.06);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  z-index: 2000;
+  left: 50%;
+  top: 70px;
+  transform: translateX(-50%);
+}
+
+.addmarker-hint::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 0 6px 6px 6px;
+  border-style: solid;
+  border-color: transparent transparent var(--gold-mid) transparent;
+}
+
+.addmarker-hint.show { opacity: 1; }
+
+@media (max-width: 600px) {
   body > #addMarkerBtn {
     position: fixed !important;
     left: 30px;
@@ -198,15 +135,13 @@ body > #addMarkerBtn {
   }
 
   .addmarker-hint {
-    /* Posisi akan di-set via JS */
-    padding: 10px 16px;
-    font-size: 14px;
+    padding: 8px 14px;
+    font-size: 10px;
     left: auto;
     top: auto;
     transform: none;
   }
 
-  /* Panah ke KIRI (menunjuk ke tombol) */
   .addmarker-hint::before {
     content: "";
     position: absolute;
@@ -215,68 +150,48 @@ body > #addMarkerBtn {
     left: auto;
     bottom: auto;
     transform: translateY(-50%);
-    
-    border-width: 8px 10px 8px 0;
+    border-width: 5px 6px 5px 0;
     border-style: solid;
-    border-color: transparent #ffe6a8 transparent transparent;
-    
-    filter: drop-shadow(-2px 0 2px rgba(0, 0, 0, 0.1));
-  }
-
-  /* Animated Arrow pointing LEFT for mobile */
-  .addmarker-hint::after {
-    content: "";
-    position: absolute;
-    left: -30px;
-    top: 50%;
-    right: auto;
-    transform: translateY(-50%);
-    font-size: 18px;
-    animation: bounceLeft 1.5s ease-in-out infinite;
-  }
-
-  @keyframes bounceLeft {
-    0%, 100% {
-      transform: translateY(-50%) translateX(0);
-    }
-    50% {
-      transform: translateY(-50%) translateX(-5px);
-    }
+    border-color: transparent var(--gold-mid) transparent transparent;
   }
 }
-/* ==========================================
-   MARKER POPUP CONTROLS (Nempel ke Marker)
-   ========================================== */
+
+/* =========================================
+   MARKER POPUP (Leaflet popup)
+   ========================================= */
+
 .leaflet-popup-content-wrapper {
-  background: rgba(26, 24, 20, 0.95);
+  background: var(--ink-deep);
   backdrop-filter: blur(10px);
-  border: 2px solid #d4af37;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-gold);
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 0 1px rgba(240,192,96,0.06);
 }
 
 .leaflet-popup-tip {
-  background: rgba(26, 24, 20, 0.95);
-  border: 2px solid #d4af37;
+  background: var(--ink-deep);
+  border: 1px solid var(--border-gold);
   border-top: none;
   border-right: none;
 }
 
 .marker-popup-controls {
-  padding: 8px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  min-width: 150px;
+  gap: 10px;
+  min-width: 180px;
 }
 
 .marker-popup-info {
   text-align: center;
-  color: #f4e5c0;
-  font-size: 12px;
-  margin-bottom: 4px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  color: var(--text-mid);
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .marker-popup-buttons {
@@ -286,246 +201,370 @@ body > #addMarkerBtn {
 
 .marker-popup-buttons button {
   flex: 1;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 6px;
-  font-size: 13px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-gold);
+  border-radius: 2px;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
   font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .marker-popup-confirm {
-  background: linear-gradient(135deg, #d4af37 0%, #aa8c2c 100%);
-  color: #1a1814;
-  border: 1px solid #f4e5c0;
+  background: var(--gold-glow);
+  color: var(--gold-bright);
+  border-color: var(--gold-mid) !important;
 }
 
 .marker-popup-confirm:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.5);
-  background: linear-gradient(135deg, #f4e5c0 0%, #d4af37 100%);
+  background: rgba(240,192,96,0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(240,192,96,0.15);
 }
 
 .marker-popup-cancel {
-  background: linear-gradient(135deg, #6d4c41 0%, #5d4037 100%);
-  color: #f4e5c0;
-  border: 1px solid #8d6e63;
+  background: transparent;
+  color: var(--text-dim);
+  border-color: var(--border-subtle) !important;
 }
 
 .marker-popup-cancel:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(93, 64, 55, 0.5);
-  background: linear-gradient(135deg, #8d6e63 0%, #6d4c41 100%);
+  background: rgba(192, 68, 58, 0.1);
+  border-color: rgba(192, 68, 58, 0.4) !important;
+  color: #e06060;
+  transform: translateY(-1px);
 }
 
-.marker-popup-buttons button:active {
-  transform: translateY(0);
-}
+/* =========================================
+   MARKER FORM OVERLAY
+   ========================================= */
 
-/* ==========================================
-   MARKER FORM MODAL
-   ========================================== */
 .marker-form-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(5px);
+  inset: 0;
+  background: rgba(4, 6, 12, 0.88);
+  backdrop-filter: blur(6px);
   z-index: 2000;
-  
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  animation: fadeIn 0.3s ease;
+  animation: overlayFadeIn 0.3s ease;
 }
 
-@keyframes fadeIn {
+@keyframes overlayFadeIn {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
+
+/* =========================================
+   MARKER FORM CONTAINER
+   ========================================= */
 
 .marker-form-container {
-  background: linear-gradient(145deg, #1a1814 0%, #2d2820 100%);
-  border: 2px solid #d4af37;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
-              0 0 0 1px rgba(212, 175, 55, 0.2);
-  
-  width: 90%;
-  max-width: 500px;
-  max-height: 80vh;
+  position: relative;
+  background: var(--ink-deep);
+  border: 1px solid var(--border-gold);
+  border-radius: 4px;
+  width: 92%;
+  max-width: 540px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  
-  animation: slideUp 0.3s ease;
+  animation: formUnfurl 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  box-shadow:
+    0 0 0 1px rgba(240,192,96,0.08),
+    0 0 40px rgba(0,0,0,0.7),
+    0 0 80px rgba(240,192,96,0.05),
+    inset 0 0 60px rgba(0,0,0,0.3);
 }
 
-@keyframes slideUp {
+/* Corner ornaments — sama persis dengan patch-notes */
+.marker-form-container::before,
+.marker-form-container::after {
+  content: '';
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-color: var(--gold-mid);
+  border-style: solid;
+  z-index: 2;
+  pointer-events: none;
+}
+.marker-form-container::before {
+  top: 8px; left: 8px;
+  border-width: 1.5px 0 0 1.5px;
+}
+.marker-form-container::after {
+  bottom: 8px; right: 8px;
+  border-width: 0 1.5px 1.5px 0;
+}
+
+@keyframes formUnfurl {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    clip-path: inset(50% 0 50% 0);
+    transform: translateY(-8px);
   }
   to {
     opacity: 1;
+    clip-path: inset(0% 0 0% 0);
     transform: translateY(0);
   }
 }
 
-/* Form Header */
+/* =========================================
+   FORM HEADER
+   ========================================= */
+
 .marker-form-header {
-  background: linear-gradient(135deg, #d4af37 0%, #aa8c2c 100%);
-  color: #1a1814;
-  padding: 20px 24px;
-  border-bottom: 1px solid #f4e5c0;
-  
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  position: relative;
+  text-align: center;
+  padding: 28px 24px 22px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* Gold bottom line */
+.marker-form-header::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--gold-dim) 20%,
+    var(--gold-mid) 50%,
+    var(--gold-dim) 80%,
+    transparent 100%
+  );
+}
+
+/* Radial glow */
+.marker-form-header::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  height: 140px;
+  background: radial-gradient(ellipse at center top, rgba(240,192,96,0.08) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .marker-form-header h2 {
-  margin: 0;
+  font-family: 'Cinzel', serif;
   font-size: 20px;
   font-weight: 700;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  color: var(--gold-bright);
+  margin: 0 0 6px 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 0 30px rgba(240,192,96,0.3);
 }
 
+.marker-form-subtitle {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  color: var(--text-dim);
+  font-size: 13px;
+  margin: 0;
+  letter-spacing: 0.3px;
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================================
+   CLOSE BUTTON
+   ========================================= */
+
 .marker-form-close {
-  background: rgba(26, 24, 20, 0.3);
-  border: 1px solid rgba(26, 24, 20, 0.5);
-  color: #1a1814;
-  font-size: 24px;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: transparent;
+  border: 1px solid var(--border-gold);
+  color: var(--text-mid);
+  font-size: 18px;
   width: 32px;
   height: 32px;
-  border-radius: 50%;
+  border-radius: 2px;
   cursor: pointer;
-  
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  transition: all 0.2s ease;
-  font-weight: bold;
+  transition: all 0.25s ease;
+  z-index: 10;
+  font-family: 'Cinzel', serif;
 }
 
 .marker-form-close:hover {
-  background: rgba(26, 24, 20, 0.5);
+  background: var(--gold-glow);
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
   transform: rotate(90deg);
 }
 
-/* Form Body */
+/* =========================================
+   FORM BODY
+   ========================================= */
+
 .marker-form-body {
-  padding: 24px;
-  max-height: calc(80vh - 180px);
+  padding: 24px 28px 20px;
+  max-height: calc(88vh - 200px);
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-dim) transparent;
+  flex: 1;
 }
 
-.marker-form-body::-webkit-scrollbar {
-  width: 8px;
+.marker-form-body::-webkit-scrollbar { width: 4px; }
+.marker-form-body::-webkit-scrollbar-track { background: transparent; }
+.marker-form-body::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+.marker-form-body::-webkit-scrollbar-thumb:hover { background: var(--gold-mid); }
+
+/* Section divider — mengikuti gaya h3 di patch-notes */
+.form-section-label {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold-mid);
+  margin: 24px 0 14px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.marker-form-body::-webkit-scrollbar-track {
-  background: rgba(212, 175, 55, 0.1);
-  border-radius: 4px;
+.form-section-label:first-child { margin-top: 0; }
+
+.form-section-label::before,
+.form-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border-gold), transparent);
+}
+.form-section-label::after {
+  background: linear-gradient(90deg, transparent, var(--border-gold));
 }
 
-.marker-form-body::-webkit-scrollbar-thumb {
-  background: rgba(212, 175, 55, 0.4);
-  border-radius: 4px;
-}
+/* =========================================
+   FORM GROUPS
+   ========================================= */
 
-.marker-form-body::-webkit-scrollbar-thumb:hover {
-  background: rgba(212, 175, 55, 0.6);
-}
-
-/* Form Groups */
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 8px;
-  
-  font-size: 14px;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
   font-weight: 600;
-  color: #f4e5c0;
+  color: var(--text-mid);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1.5px;
 }
 
 .form-group label .required {
-  color: #ff6b6b;
+  color: var(--red-accent);
   margin-left: 4px;
 }
 
 .form-group label .optional {
-  color: #8d6e63;
+  font-family: 'Crimson Pro', serif;
+  color: var(--text-dim);
   font-weight: 400;
-  font-size: 11px;
-  margin-left: 4px;
+  font-size: 12px;
+  margin-left: 6px;
   text-transform: none;
+  font-style: italic;
+  letter-spacing: 0;
 }
 
+/* Input fields */
 .form-group input,
 .form-group select,
 .form-group textarea {
   width: 100%;
-  padding: 12px 16px;
-  
-  background: rgba(212, 175, 55, 0.1);
-  border: 2px solid rgba(212, 175, 55, 0.3);
-  border-radius: 8px;
-  
-  color: #f4e5c0;
-  font-size: 14px;
-  font-family: inherit;
-  
+  padding: 11px 14px;
+  background: rgba(240,192,96,0.04);
+  border: 1px solid var(--border-gold);
+  border-radius: 2px;
+  color: var(--text-bright);
+  font-family: 'Crimson Pro', serif;
+  font-size: 15px;
   transition: all 0.2s ease;
   box-sizing: border-box;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: var(--text-dim);
+  font-style: italic;
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #d4af37;
-  background: rgba(212, 175, 55, 0.15);
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+  border-color: var(--gold-mid);
+  background: rgba(240,192,96,0.07);
+  box-shadow: 0 0 0 3px rgba(240,192,96,0.06);
 }
 
 .form-group textarea {
   resize: vertical;
   min-height: 80px;
-  max-height: 200px;
+  max-height: 180px;
+  line-height: 1.65;
 }
 
 .form-group input[readonly] {
-  background: rgba(141, 110, 99, 0.2);
-  color: #8d6e63;
+  background: rgba(255,255,255,0.02);
+  color: var(--text-dim);
   cursor: not-allowed;
-  border-color: rgba(141, 110, 99, 0.3);
+  border-color: var(--border-subtle);
 }
 
 .form-group select {
   cursor: pointer;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23f4e5c0' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%23c8b89a' d='M5 7L1 3h8z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
-  padding-right: 36px;
+  background-color: rgba(240,192,96,0.04);
+  padding-right: 34px;
 }
 
 .form-group select option {
-  background: #1a1814;
-  color: #f4e5c0;
+  background: var(--ink-deep);
+  color: var(--text-bright);
 }
 
-/* Custom Category Select with Icons */
+/* Hint text under field */
+.form-hint {
+  display: block;
+  margin-top: 6px;
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  font-size: 12.5px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+/* =========================================
+   CATEGORY SELECT — CUSTOM DROPDOWN
+   ========================================= */
+
 .category-select-wrapper {
   position: relative;
   z-index: 1;
@@ -533,54 +572,52 @@ body > #addMarkerBtn {
 
 .category-select-display {
   width: 100%;
-  padding: 12px 16px;
-  padding-right: 40px;
-  
-  background: rgba(212, 175, 55, 0.1);
-  border: 2px solid rgba(212, 175, 55, 0.3);
-  border-radius: 8px;
-  
-  color: #f4e5c0;
-  font-size: 14px;
-  
+  padding: 11px 14px;
+  padding-right: 38px;
+  background: rgba(240,192,96,0.04);
+  border: 1px solid var(--border-gold);
+  border-radius: 2px;
+  color: var(--text-bright);
+  font-family: 'Crimson Pro', serif;
+  font-size: 15px;
   cursor: pointer;
   transition: all 0.2s ease;
-  
   display: flex;
   align-items: center;
   gap: 10px;
-  
   user-select: none;
   position: relative;
   z-index: 1;
 }
 
 .category-select-display:hover {
-  border-color: #d4af37;
-  background: rgba(212, 175, 55, 0.15);
+  border-color: var(--gold-mid);
+  background: rgba(240,192,96,0.07);
 }
 
 .category-select-display.active {
-  border-color: #d4af37;
-  background: rgba(212, 175, 55, 0.15);
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+  border-color: var(--gold-mid);
+  background: rgba(240,192,96,0.07);
+  box-shadow: 0 0 0 3px rgba(240,192,96,0.06);
   z-index: 10001;
 }
 
 .category-select-display .icon {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   object-fit: contain;
   flex-shrink: 0;
 }
 
 .category-select-display .text {
   flex: 1;
-  color: #8d6e63;
+  color: var(--text-dim);
+  font-style: italic;
 }
 
 .category-select-display.has-value .text {
-  color: #f4e5c0;
+  color: var(--text-bright);
+  font-style: normal;
 }
 
 .category-select-display .arrow {
@@ -588,13 +625,11 @@ body > #addMarkerBtn {
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  
   width: 0;
   height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 6px solid #f4e5c0;
-  
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid var(--text-mid);
   transition: transform 0.2s ease;
   pointer-events: none;
 }
@@ -603,28 +638,30 @@ body > #addMarkerBtn {
   transform: translateY(-50%) rotate(180deg);
 }
 
+/* Dropdown panel */
 .category-dropdown {
   position: absolute;
   top: calc(100% + 4px);
-  left: 0;
-  right: 0;
+  left: 0; right: 0;
   z-index: 10000;
-  
-  background: rgba(26, 24, 20, 0.98);
-  border: 2px solid #d4af37;
-  border-radius: 8px;
-  
-  max-height: 300px;
+  background: var(--ink-deep);
+  border: 1px solid var(--border-gold);
+  border-radius: 3px;
+  max-height: 280px;
   overflow-y: auto;
-  
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6), 0 0 0 1px rgba(240,192,96,0.06);
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-10px);
+  transform: translateY(-8px);
   transition: all 0.2s ease;
   pointer-events: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-dim) transparent;
 }
+
+.category-dropdown::-webkit-scrollbar { width: 4px; }
+.category-dropdown::-webkit-scrollbar-track { background: transparent; }
+.category-dropdown::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
 
 .category-dropdown.active {
   opacity: 1;
@@ -633,134 +670,168 @@ body > #addMarkerBtn {
   pointer-events: auto;
 }
 
-.category-dropdown::-webkit-scrollbar {
-  width: 8px;
-}
-
-.category-dropdown::-webkit-scrollbar-track {
-  background: rgba(212, 175, 55, 0.1);
-  border-radius: 4px;
-}
-
-.category-dropdown::-webkit-scrollbar-thumb {
-  background: rgba(212, 175, 55, 0.4);
-  border-radius: 4px;
-}
-
-.category-dropdown::-webkit-scrollbar-thumb:hover {
-  background: rgba(212, 175, 55, 0.6);
-}
-
 .category-option {
-  padding: 12px 16px;
-  
+  padding: 10px 14px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  
+  gap: 10px;
   cursor: pointer;
-  transition: all 0.15s ease;
-  
-  border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+  transition: background 0.15s ease;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-.category-option:last-child {
-  border-bottom: none;
-}
+.category-option:last-child { border-bottom: none; }
 
 .category-option:hover {
-  background: rgba(212, 175, 55, 0.2);
+  background: rgba(240,192,96,0.08);
 }
 
 .category-option.selected {
-  background: rgba(212, 175, 55, 0.3);
-  border-left: 3px solid #d4af37;
-  padding-left: 13px;
+  background: var(--gold-glow);
+  border-left: 2px solid var(--gold-mid);
+  padding-left: 12px;
 }
 
 .category-option .icon {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   object-fit: contain;
   flex-shrink: 0;
 }
 
 .category-option .name {
   flex: 1;
-  color: #f4e5c0;
+  color: var(--text-bright);
+  font-family: 'Crimson Pro', serif;
   font-size: 14px;
   font-weight: 500;
 }
 
 .category-option .id {
-  color: #8d6e63;
-  font-size: 12px;
+  color: var(--text-dim);
+  font-size: 11px;
   font-family: 'Courier New', monospace;
 }
 
-/* Form Footer */
+/* =========================================
+   FLOOR SELECT WRAPPER
+   ========================================= */
+
+.floor-select-wrapper select {
+  width: 100%;
+  padding: 11px 34px 11px 14px;
+  background: rgba(240,192,96,0.04);
+  border: 1px solid var(--border-gold);
+  border-radius: 2px;
+  color: var(--text-bright);
+  font-family: 'Crimson Pro', serif;
+  font-size: 15px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%23c8b89a' d='M5 7L1 3h8z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-color: rgba(240,192,96,0.04);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.floor-select-wrapper select:focus {
+  outline: none;
+  border-color: var(--gold-mid);
+  background-color: rgba(240,192,96,0.07);
+  box-shadow: 0 0 0 3px rgba(240,192,96,0.06);
+}
+
+.floor-select-wrapper select option {
+  background: var(--ink-deep);
+  color: var(--text-bright);
+}
+
+/* =========================================
+   FORM FOOTER
+   ========================================= */
+
 .marker-form-footer {
-  padding: 20px 24px;
-  background: rgba(26, 24, 20, 0.5);
-  border-top: 1px solid rgba(212, 175, 55, 0.3);
-  
+  padding: 18px 28px 20px;
+  border-top: 1px solid var(--border-gold);
+  flex-shrink: 0;
+  background: linear-gradient(180deg, transparent, rgba(0,0,0,0.3));
+  position: relative;
   display: flex;
-  gap: 12px;
+  gap: 10px;
   justify-content: flex-end;
 }
 
+/* Gold line — identik dengan patch-footer */
+.marker-form-footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--gold-dim) 25%,
+    var(--gold-mid) 50%,
+    var(--gold-dim) 75%,
+    transparent 100%
+  );
+}
+
 .marker-form-footer button {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 10px 22px;
+  border-radius: 2px;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
 
-.marker-form-footer .btn-cancel {
-  background: linear-gradient(135deg, #6d4c41 0%, #5d4037 100%);
-  color: #f4e5c0;
-  border: 2px solid #8d6e63;
+.btn-cancel {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border-subtle);
 }
 
-.marker-form-footer .btn-cancel:hover {
-  background: linear-gradient(135deg, #8d6e63 0%, #6d4c41 100%);
+.btn-cancel:hover {
+  background: rgba(192,68,58,0.08);
+  border-color: rgba(192,68,58,0.4);
+  color: #e06060;
+  transform: translateY(-1px);
+}
+
+.btn-submit {
+  background: var(--gold-glow);
+  color: var(--gold-bright);
+  border: 1px solid var(--gold-mid);
+  box-shadow: 0 2px 10px rgba(240,192,96,0.1);
+}
+
+.btn-submit:hover {
+  background: rgba(240,192,96,0.25);
+  border-color: var(--gold-bright);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(93, 64, 55, 0.4);
+  box-shadow: 0 6px 20px rgba(240,192,96,0.18);
 }
 
-.marker-form-footer .btn-submit {
-  background: linear-gradient(135deg, #d4af37 0%, #aa8c2c 100%);
-  color: #1a1814;
-  border: 2px solid #f4e5c0;
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
-}
-
-.marker-form-footer .btn-submit:hover {
-  background: linear-gradient(135deg, #f4e5c0 0%, #d4af37 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(212, 175, 55, 0.5);
-}
-
-.marker-form-footer .btn-submit:active,
-.marker-form-footer .btn-cancel:active {
+.btn-submit:active,
+.btn-cancel:active {
   transform: translateY(0);
 }
 
-.marker-form-footer .btn-submit:disabled {
-  background: #8d6e63;
-  border-color: #6d4c41;
-  color: #5d4037;
+.btn-submit:disabled {
+  background: transparent;
+  border-color: var(--border-subtle);
+  color: var(--text-dim);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
 
-/* Loading State */
+/* Loading state */
 .form-loading {
   display: flex;
   align-items: center;
@@ -769,78 +840,23 @@ body > #addMarkerBtn {
 
 .form-loading::before {
   content: '';
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(26, 24, 20, 0.3);
-  border-top-color: #1a1814;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid rgba(240,192,96,0.2);
+  border-top-color: var(--gold-bright);
   border-radius: 50%;
-  animation: spin 0.6s linear infinite;
+  animation: spin 0.7s linear infinite;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-/* ==========================================
-   RESPONSIVE
-   ========================================== */
-@media (max-width: 768px) {
-  #addMarkerBtn {
-    top: 60px;
-    right: 10px;
-    width: 44px;
-    height: 44px;
-  }
-  
-  #addMarkerBtn img {
-    width: 24px;
-    height: 24px;
-  }
-  
-  .marker-form-container {
-    width: 95%;
-    max-height: 90vh;
-  }
-  
-  .marker-form-header {
-    padding: 16px 20px;
-  }
-  
-  .marker-form-header h2 {
-    font-size: 18px;
-  }
-  
-  .marker-form-body {
-    padding: 20px;
-  }
-  
-  .marker-form-footer {
-    padding: 16px 20px;
-    flex-direction: column;
-  }
-  
-  .marker-form-footer button {
-    width: 100%;
-  }
-  
-  .marker-popup-controls {
-    min-width: 120px;
-  }
-  
-  .marker-popup-buttons button {
-    font-size: 12px;
-    padding: 6px 10px;
-  }
-}
-
-
+/* =========================================
+   SUCCESS POPUP
+   ========================================= */
 
 .marker-success-popup {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   z-index: 99999;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -854,12 +870,9 @@ body > #addMarkerBtn {
 
 .success-popup-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(5px);
+  inset: 0;
+  background: rgba(4, 6, 12, 0.88);
+  backdrop-filter: blur(6px);
 }
 
 .success-popup-container {
@@ -872,92 +885,406 @@ body > #addMarkerBtn {
 }
 
 .success-popup-content {
-  background: white;
-  border-radius: 20px;
+  position: relative;
+  background: var(--ink-deep);
+  border: 1px solid var(--border-gold);
+  border-radius: 4px;
   padding: 40px 30px;
   text-align: center;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  animation: successBounce 0.5s ease;
+  box-shadow: 0 0 0 1px rgba(240,192,96,0.08), 0 20px 60px rgba(0,0,0,0.7);
+  animation: successUnfurl 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  overflow: hidden;
 }
 
-@keyframes successBounce {
-  0% {
-    transform: scale(0.3);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+/* Koin ornament */
+.success-popup-content::before,
+.success-popup-content::after {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-color: var(--gold-mid);
+  border-style: solid;
+  z-index: 2;
+  pointer-events: none;
+}
+.success-popup-content::before { top: 8px; left: 8px; border-width: 1.5px 0 0 1.5px; }
+.success-popup-content::after  { bottom: 8px; right: 8px; border-width: 0 1.5px 1.5px 0; }
+
+/* Glow radial */
+.success-popup-content::before {
+  display: none; /* override for pseudo, use separate element if needed */
+}
+
+@keyframes successUnfurl {
+  from { opacity: 0; clip-path: inset(50% 0 50% 0); transform: translateY(-8px); }
+  to   { opacity: 1; clip-path: inset(0% 0 0% 0);   transform: translateY(0); }
 }
 
 .success-image {
-  width: 150px;
-  height: 150px;
+  width: 130px;
+  height: 130px;
   object-fit: contain;
-  margin-bottom: 20px;
-  animation: successRotate 0.6s ease;
+  margin-bottom: 18px;
+  filter: drop-shadow(0 4px 16px rgba(240,192,96,0.25));
+  animation: floatGlowSuccess 4s ease-in-out infinite;
 }
 
-@keyframes successRotate {
-  0% {
-    transform: rotate(-180deg) scale(0);
-  }
-  100% {
-    transform: rotate(0deg) scale(1);
-  }
+@keyframes floatGlowSuccess {
+  0%, 100% { transform: translateY(0);   filter: drop-shadow(0 4px 16px rgba(240,192,96,0.25)); }
+  50%       { transform: translateY(-4px); filter: drop-shadow(0 8px 24px rgba(240,192,96,0.4)); }
 }
 
 .success-message {
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
-  margin: 20px 0;
-  line-height: 1.6;
+  font-family: 'Crimson Pro', serif;
+  font-size: 17px;
+  color: var(--text-mid);
+  margin: 14px 0 20px 0;
+  line-height: 1.65;
 }
 
 .success-close-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 12px 40px;
-  border-radius: 25px;
-  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 28px;
+  background: var(--gold-glow);
+  border: 1px solid var(--gold-mid);
+  border-radius: 2px;
+  color: var(--gold-bright);
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
   font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 10px;
+  transition: all 0.25s ease;
+  margin-top: 4px;
 }
 
 .success-close-btn:hover {
+  background: rgba(240,192,96,0.25);
+  border-color: var(--gold-bright);
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 20px rgba(240,192,96,0.15);
 }
 
-.success-close-btn:active {
+.success-close-btn:active { transform: translateY(0); }
+
+/* =========================================
+   REGION SELECT — CUSTOM DROPDOWN WITH SEARCH
+   ========================================= */
+
+.region-select-wrapper { position: relative; z-index: 2; }
+
+.region-select-display {
+  width: 100%;
+  padding: 11px 14px;
+  padding-right: 38px;
+  background: rgba(240,192,96,0.04);
+  border: 1px solid var(--border-gold);
+  border-radius: 2px;
+  color: var(--text-bright);
+  font-family: 'Crimson Pro', serif;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  user-select: none;
+  position: relative;
+}
+
+.region-select-display:hover {
+  border-color: var(--gold-mid);
+  background: rgba(240,192,96,0.07);
+}
+
+.region-select-display.active {
+  border-color: var(--gold-mid);
+  background: rgba(240,192,96,0.07);
+  box-shadow: 0 0 0 3px rgba(240,192,96,0.06);
+  z-index: 10001;
+}
+
+.region-select-display .icon {
+  width: 18px; height: 18px;
+  object-fit: contain; flex-shrink: 0;
+  opacity: 0.75;
+}
+
+.region-select-display .text { flex: 1; color: var(--text-dim); font-style: italic; }
+.region-select-display.has-value .text { color: var(--text-bright); font-style: normal; }
+
+.region-select-display .arrow {
+  position: absolute;
+  right: 12px; top: 50%;
+  transform: translateY(-50%);
+  width: 0; height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid var(--text-mid);
+  transition: transform 0.2s ease;
+  pointer-events: none;
+}
+.region-select-display.active .arrow { transform: translateY(-50%) rotate(180deg); }
+
+.region-dropdown {
+  position: absolute;
+  top: calc(100% + 4px); left: 0; right: 0;
+  z-index: 10000;
+  background: var(--ink-deep);
+  border: 1px solid var(--border-gold);
+  border-radius: 3px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.7), 0 0 0 1px rgba(240,192,96,0.06);
+  opacity: 0; visibility: hidden;
+  transform: translateY(-8px);
+  transition: all 0.2s ease;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.region-dropdown.active {
+  opacity: 1; visibility: visible;
   transform: translateY(0);
+  pointer-events: auto;
 }
 
-/* Mobile responsive */
+/* Search bar */
+.region-search-wrap {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  position: relative;
+}
+
+.region-search-wrap::before {
+  content: '⌕';
+  position: absolute;
+  left: 22px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dim);
+  font-size: 16px;
+  pointer-events: none;
+  line-height: 1;
+}
+
+.region-search-input {
+  width: 100%;
+  padding: 8px 10px 8px 30px;
+  background: rgba(240,192,96,0.06);
+  border: 1px solid var(--border-subtle);
+  border-radius: 2px;
+  color: var(--text-bright);
+  font-family: 'Crimson Pro', serif;
+  font-size: 14px;
+  font-style: italic;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.region-search-input::placeholder { color: var(--text-dim); }
+.region-search-input:focus {
+  outline: none;
+  border-color: var(--gold-mid);
+  background: rgba(240,192,96,0.09);
+}
+
+.region-list {
+  max-height: 220px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-dim) transparent;
+}
+.region-list::-webkit-scrollbar { width: 4px; }
+.region-list::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+.region-empty {
+  padding: 16px 14px;
+  text-align: center;
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  color: var(--text-dim);
+  font-size: 13.5px;
+  display: none;
+}
+.region-empty.show { display: block; }
+
+.region-option {
+  padding: 10px 14px;
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.region-option:last-child { border-bottom: none; }
+.region-option:hover { background: rgba(240,192,96,0.08); }
+.region-option.selected { background: var(--gold-glow); border-left: 2px solid var(--gold-mid); padding-left: 12px; }
+
+/* Jade tint for "All Regions" */
+.region-option.all-regions { background: rgba(92,184,160,0.06); border-bottom: 1px solid rgba(92,184,160,0.15); }
+.region-option.all-regions:hover { background: rgba(92,184,160,0.12); }
+.region-option.all-regions.selected { background: rgba(92,184,160,0.15); border-left-color: var(--jade); }
+.region-option.all-regions .region-name { color: var(--jade); }
+
+.region-option img { width: 18px; height: 18px; object-fit: contain; flex-shrink: 0; opacity: 0.8; }
+.region-option .region-name { flex: 1; color: var(--text-bright); font-family: 'Crimson Pro', serif; font-size: 14.5px; }
+
+/* Highlight search match */
+.region-option .region-name mark {
+  background: rgba(240,192,96,0.25);
+  color: var(--gold-bright);
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+/* =========================================
+   JS SNIPPET — REGION SELECT INTEGRATION
+   (tambahkan ke marker-add.js, di dalam MarkerAddSystem)
+   =========================================
+
+  Tambahkan di bagian private variables:
+
+  let selectedRegion = null;
+
+  Tambahkan fungsi baru:
+
+  function createRegionSelect(defaultValue = '') {
+    return `
+      <div class="region-select-wrapper">
+        <input type="hidden" name="loc_type" id="regionIdInput" required>
+        <div class="region-select-display" id="regionSelectDisplay">
+          <img class="icon" src="${ICON_BASE_URL}region.webp" alt="" style="display:none;">
+          <span class="text">— Select a region —</span>
+          <span class="arrow"></span>
+        </div>
+        <div class="region-dropdown" id="regionDropdown">
+          <div class="region-search-wrap">
+            <input type="text" class="region-search-input" id="regionSearchInput"
+              placeholder="Search region…" autocomplete="off">
+          </div>
+          <div class="region-list" id="regionList"></div>
+          <div class="region-empty" id="regionEmpty">No region found.</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function initRegionSelect() {
+    const display   = document.getElementById('regionSelectDisplay');
+    const dropdown  = document.getElementById('regionDropdown');
+    const input     = document.getElementById('regionIdInput');
+    const list      = document.getElementById('regionList');
+    const search    = document.getElementById('regionSearchInput');
+    const empty     = document.getElementById('regionEmpty');
+
+    // Extract regions from MarkerManager
+    const regionsSet = new Set();
+    if (typeof MarkerManager !== 'undefined' && MarkerManager.getAllMarkers) {
+      MarkerManager.getAllMarkers().forEach(m => {
+        if (m.loc_type && m.loc_type.trim()) regionsSet.add(m.loc_type.trim());
+      });
+    }
+
+    const regions = [
+      { id: 'all', name: 'All Regions' },
+      ...[...regionsSet].sort().map(r => ({ id: r, name: r }))
+    ];
+
+    function render(q = '') {
+      list.innerHTML = '';
+      let count = 0;
+      regions.forEach(region => {
+        if (q && !region.name.toLowerCase().includes(q.toLowerCase())) return;
+        count++;
+        const div = document.createElement('div');
+        div.className = 'region-option' + (region.id === 'all' ? ' all-regions' : '');
+        div.dataset.id = region.id;
+        let name = region.name;
+        if (q) {
+          const i = name.toLowerCase().indexOf(q.toLowerCase());
+          if (i !== -1) name = name.slice(0, i) + '<mark>' + name.slice(i, i+q.length) + '</mark>' + name.slice(i+q.length);
+        }
+        div.innerHTML = `<img src="${ICON_BASE_URL}region.webp" alt=""><span class="region-name">${name}</span>`;
+        div.addEventListener('click', () => {
+          input.value = region.id === 'all' ? '' : region.id;
+          display.querySelector('.text').textContent = region.name;
+          display.classList.add('has-value');
+          list.querySelectorAll('.region-option').forEach(o => o.classList.toggle('selected', o.dataset.id === region.id));
+          display.classList.remove('active');
+          dropdown.classList.remove('active');
+          search.value = '';
+        });
+        list.appendChild(div);
+      });
+      empty.classList.toggle('show', count === 0);
+    }
+
+    display.addEventListener('click', e => {
+      e.stopPropagation();
+      display.classList.toggle('active');
+      dropdown.classList.toggle('active');
+      if (dropdown.classList.contains('active')) { render(); search.focus(); }
+    });
+
+    search.addEventListener('input', () => render(search.value));
+    dropdown.addEventListener('click', e => e.stopPropagation());
+    document.addEventListener('click', () => {
+      display.classList.remove('active');
+      dropdown.classList.remove('active');
+    });
+
+    render();
+  }
+
+  Panggil initRegionSelect() di dalam createMarkerForm(), bersama initCategorySelect() dan initFloorSelect().
+
+  Di createMarkerForm(), tambahkan field ini di bagian Location section:
+
+  <div class="form-group">
+    <label>Region <span class="required">*</span></label>
+    ${createRegionSelect(savedFormData?.loc_type || '')}
+    <small class="form-hint">Region sourced from existing marker data (loc_type).</small>
+  </div>
+
+  Di handleFormSubmit(), field sudah otomatis terbaca via:
+  loc_type: formData.get('loc_type') || "",
+   ========================================= */
+
+@media (max-width: 768px) {
+  #addMarkerBtn {
+    top: 60px;
+    right: 10px;
+    width: 44px;
+    height: 44px;
+  }
+
+  #addMarkerBtn img { width: 24px; height: 24px; }
+
+  .marker-form-container { width: 96%; max-height: 90vh; }
+
+  .marker-form-header { padding: 22px 18px 18px; }
+  .marker-form-header h2 { font-size: 16px; letter-spacing: 1.5px; }
+  .marker-form-subtitle { font-size: 12px; }
+
+  .marker-form-body { padding: 18px 18px 16px; }
+
+  .marker-form-footer {
+    padding: 14px 18px 16px;
+    flex-direction: column;
+  }
+
+  .marker-form-footer button { width: 100%; text-align: center; justify-content: center; }
+
+  .marker-popup-controls { min-width: 140px; }
+  .marker-popup-buttons button { font-size: 9px; padding: 6px 8px; }
+}
+
 @media (max-width: 480px) {
-  .success-popup-container {
-    width: 95%;
-  }
-  
-  .success-popup-content {
-    padding: 30px 20px;
-  }
-  
-  .success-image {
-    width: 120px;
-    height: 120px;
-  }
-  
-  .success-message {
-    font-size: 16px;
-  }
-}
+  .marker-form-header h2 { font-size: 14px; letter-spacing: 1px; }
+  .marker-form-body { padding: 14px 14px 12px; }
 
+  .success-popup-content { padding: 28px 18px; }
+  .success-image { width: 100px; height: 100px; }
+  .success-message { font-size: 15px; }
+}

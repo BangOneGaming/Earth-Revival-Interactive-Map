@@ -1,62 +1,69 @@
 /* ======================================================
-   KNOWLEDGE PANEL — 100% sama dengan BOOK PANEL
+   KNOWLEDGE PANEL — Wuxia Scroll / Ancient Parchment
+   Selaras dengan patch-notes.css & marker-add-redesign.css
    ====================================================== */
 
-/* Toggle button */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+
+/* ======================================================
+   TOGGLE BUTTON
+   ====================================================== */
+
 #knowledgeToggleBtn {
   position: fixed;
-      top: 10px;
-      left: 37%;
+  top: 10px;
+  left: 37%;
   width: 50px;
   height: 50px;
-  background: rgba(0, 0, 0, 0);
-  border: 2px solid #f4e5c0;
-  border-radius: 8px;
+  background: transparent;
+  border: 1px solid rgba(200, 150, 42, 0.35);
+  border-radius: 3px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(139, 105, 20, 0.4);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4), 0 0 0 1px rgba(240,192,96,0.06);
   transition: all 0.3s ease;
   z-index: 600;
   padding: 0;
 }
-/* Icon tombol toggle */
+
 #knowledgeToggleBtn .knowledge-toggle-icon {
   width: 28px;
   height: 28px;
   object-fit: contain;
   display: block;
+  filter: brightness(1.1);
 }
 
-/* Icon di title panel */
-.knowledge-title-icon {
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
-  vertical-align: middle;
-  margin-right: 6px;
-}
 #knowledgeToggleBtn:hover {
-  background: linear-gradient(135deg, #DAA520 0%, #FFD700 100%);
-  box-shadow: 0 6px 16px rgba(218, 165, 32, 0.6);
+  background: rgba(240, 192, 96, 0.18);
+  border-color: #f0c060;
+  box-shadow: 0 4px 20px rgba(240,192,96,0.2);
+  transform: translateY(-1px);
 }
 
 #knowledgeToggleBtn:active {
   transform: scale(0.95);
 }
 
-/* Panel */
+/* ======================================================
+   PANEL
+   ====================================================== */
+
 #knowledgePanel {
   position: fixed;
   top: 0;
-  left: -350px;
+  left: -370px;
   width: 350px;
   height: 100%;
-  background: linear-gradient(180deg, #2C1810 0%, #1A0F08 100%);
-  border-right: 3px solid #DAA520;
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.6);
-  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #121827;
+  border-right: 1px solid rgba(200, 150, 42, 0.35);
+  box-shadow:
+    4px 0 40px rgba(0,0,0,0.7),
+    0 0 0 1px rgba(240,192,96,0.06),
+    inset -1px 0 0 rgba(240,192,96,0.04);
+  transition: left 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   z-index: 9999;
   overflow: hidden;
   display: flex;
@@ -67,174 +74,463 @@
   left: 0;
 }
 
-/* Header */
+/* ======================================================
+   HEADER
+   ====================================================== */
+
 .knowledge-panel-header {
-  background: linear-gradient(135deg, #8B6914 0%, #6B5310 100%);
-  padding: 20px;
-  border-bottom: 2px solid #DAA520;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   position: relative;
+  text-align: center;
+  padding: 28px 20px 22px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #121827;
+}
+
+/* Gold bottom divider */
+.knowledge-panel-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    #7a5a18 20%,
+    #c8962a 50%,
+    #7a5a18 80%,
+    transparent 100%
+  );
+}
+
+/* Radial glow */
+.knowledge-panel-header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  height: 140px;
+  background: radial-gradient(ellipse at center top, rgba(240,192,96,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.knowledge-title-icon {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 12px;
+  filter: drop-shadow(0 4px 12px rgba(240,192,96,0.25));
+  animation: floatGlow 4s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes floatGlow {
+  0%, 100% { transform: translateY(0);    filter: drop-shadow(0 4px 12px rgba(240,192,96,0.25)); }
+  50%       { transform: translateY(-3px); filter: drop-shadow(0 8px 20px rgba(240,192,96,0.4)); }
 }
 
 .knowledge-panel-title {
-  margin: 0;
-  font-size: 22px;
-  font-weight: bold;
-  color: #FFD700;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  margin: 0 0 6px 0;
+  font-family: 'Cinzel', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: #f0c060;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 0 30px rgba(240,192,96,0.3);
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.knowledge-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 2px;
+  letter-spacing: 1px;
+  background: rgba(240, 192, 96, 0.18);
+  border: 1px solid rgba(200, 150, 42, 0.35);
+  color: #f0c060;
+  min-width: 24px;
 }
 
 .knowledge-panel-subtitle {
-  margin: 8px 0 0 0;
+  margin: 0;
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  color: #7a6a54;
   font-size: 13px;
-  color: #FFF8DC;
-  opacity: 0.85;
+  letter-spacing: 0.3px;
+  position: relative;
+  z-index: 1;
 }
 
-/* Close button */
+/* ======================================================
+   CLOSE BUTTON
+   ====================================================== */
+
 .knowledge-close-btn {
   position: absolute;
-  top: 18px;
-  right: 18px;
+  top: 14px;
+  right: 14px;
+  background: transparent;
+  border: 1px solid rgba(200, 150, 42, 0.35);
+  color: #c8b89a;
+  font-size: 18px;
   width: 32px;
   height: 32px;
-  background: rgba(139, 69, 19, 0.3);
-  border: 1px solid #DAA520;
-  border-radius: 6px;
+  border-radius: 2px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #FFD700;
-  font-size: 20px;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
+  z-index: 10;
+  font-family: 'Cinzel', serif;
+  line-height: 1;
 }
 
 .knowledge-close-btn:hover {
-  background: rgba(218, 165, 32, 0.4);
+  background: rgba(240, 192, 96, 0.18);
+  border-color: #f0c060;
+  color: #f0c060;
   transform: rotate(90deg);
 }
 
-/* Search */
+/* ======================================================
+   SEARCH
+   ====================================================== */
+
 .knowledge-search-container {
-  padding: 15px 20px;
-  background: rgba(139, 105, 20, 0.15);
-  border-bottom: 1px solid rgba(218, 165, 32, 0.3);
+  padding: 14px 16px;
+  background: rgba(240, 192, 96, 0.03);
+  border-bottom: 1px solid rgba(200, 150, 42, 0.12);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.knowledge-search-container::before {
+  content: '⌕';
+  position: absolute;
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7a6a54;
+  font-size: 16px;
+  pointer-events: none;
+  line-height: 1;
 }
 
 #knowledgeSearchInput {
   width: 100%;
-  padding: 10px 12px;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid #8B6914;
-  border-radius: 6px;
-  color: #FFF8DC;
+  padding: 9px 12px 9px 30px;
+  background: rgba(240, 192, 96, 0.05);
+  border: 1px solid rgba(200, 150, 42, 0.35);
+  border-radius: 2px;
+  color: #f5ead0;
+  font-family: 'Crimson Pro', serif;
   font-size: 14px;
+  font-style: italic;
   outline: none;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+#knowledgeSearchInput::placeholder {
+  color: #7a6a54;
 }
 
 #knowledgeSearchInput:focus {
-  border-color: #DAA520;
-  background: rgba(0, 0, 0, 0.5);
+  border-color: #c8962a;
+  background: rgba(240, 192, 96, 0.08);
+  box-shadow: 0 0 0 3px rgba(240,192,96,0.06);
 }
 
-/* List */
+/* ======================================================
+   LIST CONTAINER
+   ====================================================== */
+
 .knowledge-list-container {
   flex: 1;
   overflow-y: auto;
-  padding: 10px;
+  padding: 14px 12px;
+  scrollbar-width: thin;
+  scrollbar-color: #7a5a18 transparent;
 }
 
 .knowledge-list-container::-webkit-scrollbar {
-  width: 8px;
+  width: 4px;
 }
 
 .knowledge-list-container::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 4px;
+  background: transparent;
 }
 
 .knowledge-list-container::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #8B6914 0%, #DAA520 100%);
-  border-radius: 4px;
+  background: #7a5a18;
+  border-radius: 2px;
 }
 
-/* Item */
-.knowledge-item {
-  background: linear-gradient(135deg, rgba(139, 105, 20, 0.2), rgba(107, 83, 16, 0.2));
-  border: 1px solid rgba(218, 165, 32, 0.3);
-  border-radius: 8px;
-  padding: 14px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+.knowledge-list-container::-webkit-scrollbar-thumb:hover {
+  background: #c8962a;
 }
 
-.knowledge-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,215,0,0.1), transparent);
-  transition: left 0.5s ease;
-}
-
-.knowledge-item:hover::before {
-  left: 100%;
-}
-
-.knowledge-item:hover {
-  background: linear-gradient(135deg, rgba(139,105,20,0.35), rgba(107,83,16,0.35));
-  border-color: #DAA520;
-  box-shadow: 0 4px 12px rgba(218, 165, 32, 0.3);
-  transform: translateX(4px);
-}
-
-.knowledge-item-name {
-  font-size: 16px;
+/* Section divider — sama dengan patch-notes h3 */
+.knowledge-section-label {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
   font-weight: 600;
-  color: #FFD700;
-  margin: 0;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #c8962a;
+  margin: 18px 4px 10px;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-/* Empty */
-.knowledge-empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: rgba(255, 248, 220, 0.5);
+.knowledge-section-label::before,
+.knowledge-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+}
+.knowledge-section-label::before {
+  background: linear-gradient(90deg, rgba(200,150,42,0.35), transparent);
+}
+.knowledge-section-label::after {
+  background: linear-gradient(90deg, transparent, rgba(200,150,42,0.35));
 }
 
-/* Loading */
+/* ======================================================
+   ITEM
+   ====================================================== */
+
+.knowledge-item {
+  position: relative;
+  padding: 12px 14px;
+  margin-bottom: 6px;
+  border: 1px solid rgba(200, 150, 42, 0.12);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  background: transparent;
+}
+
+/* Gold left accent on hover */
+.knowledge-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, #f0c060, transparent);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.knowledge-item:hover::before {
+  opacity: 1;
+}
+
+/* Shimmer sweep */
+.knowledge-item::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; right: auto; bottom: 0;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, rgba(240,192,96,0.06), transparent);
+  transition: left 0.5s ease;
+}
+
+.knowledge-item:hover::after {
+  left: 100%;
+}
+
+.knowledge-item:hover {
+  background: rgba(240, 192, 96, 0.06);
+  border-color: rgba(200, 150, 42, 0.35);
+  transform: translateX(3px);
+}
+
+.knowledge-item-name {
+  font-family: 'Crimson Pro', serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #f5ead0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  line-height: 1.4;
+}
+
+.knowledge-item-icon-img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+/* Arrow indicator */
+.knowledge-item-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7a6a54;
+  font-size: 12px;
+  font-family: 'Cinzel', serif;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.knowledge-item:hover .knowledge-item-icon {
+  color: #f0c060;
+  transform: translateY(-50%) translateX(2px);
+}
+
+/* ======================================================
+   EMPTY STATE
+   ====================================================== */
+
+.knowledge-empty-state {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.knowledge-empty-state-icon {
+  font-size: 36px;
+  margin-bottom: 14px;
+  opacity: 0.4;
+}
+
+.knowledge-empty-state-text {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  color: #7a6a54;
+  font-size: 14px;
+  margin-bottom: 18px;
+  line-height: 1.6;
+}
+
+.knowledge-retry-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  background: transparent;
+  border: 1px solid rgba(200, 150, 42, 0.35);
+  border-radius: 2px;
+  color: #c8b89a;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.knowledge-retry-btn:hover {
+  background: rgba(240, 192, 96, 0.18);
+  border-color: #f0c060;
+  color: #f0c060;
+  transform: translateY(-1px);
+}
+
+/* ======================================================
+   LOADING
+   ====================================================== */
+
 .knowledge-loading {
   text-align: center;
-  padding: 40px 20px;
-  color: #DAA520;
+  padding: 50px 20px;
 }
-/* Icon gambar dalam list Knowledge */
-.knowledge-item-icon-img {
-  width: 24px;        /* ukuran icon */
-  height: 24px;
-  object-fit: contain;
-  margin-right: 8px;  /* jarak dari teks */
-  flex-shrink: 0;     /* biar tidak melar */
+
+.knowledge-loading p {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  color: #7a6a54;
+  font-size: 13.5px;
+  margin: 14px 0 0;
 }
-/* === MOBILE RESPONSIVE === */
+
+.knowledge-loading-spinner {
+  width: 28px;
+  height: 28px;
+  border: 2px solid rgba(200, 150, 42, 0.15);
+  border-top-color: #c8962a;
+  border-radius: 50%;
+  animation: knowledgeSpin 0.7s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes knowledgeSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* ======================================================
+   FOOTER BRAND (opsional, selaras patch-notes)
+   ====================================================== */
+
+.knowledge-panel-brand {
+  padding: 10px 16px 12px;
+  border-top: 1px solid rgba(200, 150, 42, 0.12);
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #7a5a18;
+  flex-shrink: 0;
+}
+
+/* ======================================================
+   MOBILE
+   ====================================================== */
+
 @media (max-width: 768px) {
-#knowledgeToggleBtn {
-        top: 31vh;
-        left: 10px;
-          width: 45px;
-  height: 45px;
+  #knowledgeToggleBtn {
+    top: 31vh;
+    left: 10px;
+    width: 45px;
+    height: 45px;
+  }
+
+  #knowledgePanel {
+    width: 300px;
+    left: -320px;
+  }
+
+  .knowledge-panel-title {
+    font-size: 14px;
+    letter-spacing: 1.5px;
+  }
+
+  .knowledge-panel-header {
+    padding: 22px 16px 18px;
+  }
+
+  .knowledge-title-icon {
+    width: 36px;
+    height: 36px;
+  }
 }
+
+@media (max-width: 480px) {
+  #knowledgePanel {
+    width: 85vw;
+    left: -90vw;
+  }
 }

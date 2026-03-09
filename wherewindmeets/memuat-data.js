@@ -7,7 +7,7 @@
 const API_BASE_URL = 'https://autumn-dream-8c07.square-spon.workers.dev';
 
 // 🔐 DATA VERSION (ubah ini kalau ada update data)
-const DATA_VERSION = '1.1.25';
+const DATA_VERSION = '1.1.27';
 
 // API endpoints configuration
 const DATA_ENDPOINTS = {

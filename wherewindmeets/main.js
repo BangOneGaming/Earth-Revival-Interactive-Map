@@ -40,7 +40,7 @@
   // DEFERRED CSS
   // ============================================
   function loadDeferredCSS() {
-    const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.2.0';
+    const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.2.1';
     
     const cssFiles = [
       'marker-image-handler.css',
