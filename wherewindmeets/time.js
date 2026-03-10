@@ -1,13 +1,18 @@
 /**
  * time-underground-marker.js
- * 
+ *
  * Jam dinding neon sebagai marker di peta.
  * Klik → masuk ke underground "8" (Time Underground).
- * 
+ *
  * Hanya muncul saat map preset = "main".
  * Tidak terpengaruh filter kategori / floor filter biasa.
- * Jarum bergerak real-time mengikuti waktu lokal.
- * 
+ *
+ * LOGIKA ANIMASI:
+ *  - Tidak aktif  → fill PENUH, jarum DIAM
+ *  - Ditekan masuk → fill berkurang (penuh→kosong), jarum BERPUTAR TERBALIK
+ *  - Aktif         → fill KOSONG, jarum DIAM
+ *  - Ditekan keluar→ fill bertambah (kosong→penuh), jarum BERPUTAR NORMAL
+ *
  * CARA PAKAI:
  *   Panggil TimeUndergroundMarker.init(map) setelah map siap.
  *   Panggil TimeUndergroundMarker.onMapPresetChange(preset) setiap kali preset berubah.
@@ -20,121 +25,187 @@ const TimeUndergroundMarker = (() => {
   const FLOOR_ID   = '8';
   const FLOOR_NAME = 'Time';
 
-  // Ukuran icon: desktop / mobile lebih kecil
   const SIZE_DESKTOP = 52;
-  const SIZE_MOBILE  = 32;   // ← lebih kecil untuk mobile
+  const SIZE_MOBILE  = 32;
+
+  // Durasi animasi fill (ms)
+  const ANIM_DURATION = 1800;
 
   // ─── STATE ─────────────────────────────────────────────────
-  let _map       = null;
-  let _marker    = null;
-  let _animFrame = null;
-  let _visible   = false;
-  let _active    = false;   // toggle state: true = floor 8 aktif
+  let _map        = null;
+  let _marker     = null;
+  let _animFrame  = null;
+  let _visible    = false;
+  let _active     = false;
+  let _animating  = false;
+
+  // Progress fill: 1.0 = penuh, 0.0 = kosong
+  let _fillProgress = 1.0;
 
   // ─── SVG BUILDER ───────────────────────────────────────────
   /**
-   * Buat raw SVG jam dinding neon.
-   * Putih neon + glow emas kuning. viewBox 100×100.
-   * Jarum pakai class wc-hour / wc-min / wc-sec / wc-sec-tail
-   * supaya bisa dirotate via JS.
+   * Jam neon dengan:
+   *  - Lingkaran utama + glow emas
+   *  - Lingkaran kecil dalam
+   *  - 12 garis jam sama rata (lingkaran besar & kecil)
+   *  - 4 ornamen diamond berputar pelan di luar ring
+   *  - Jarum runcing (polygon) panjang sampai ke arc
+   *  - Loading arc setengah atas di luar lingkaran
+   *
+   * viewBox 0 0 100 100, center = 50,50
+   * Arc luar: r=48, panjang ≈ 151
    */
-  function _buildSVG(size, active = false) {
-    const uid = `tum${size}`;
-    const ringColor   = active ? '#ffe600' : '#ffffff';  // kuning kalau aktif
-    const ringOpacity = active ? '0.85'    : '0.55';
-    const strokeW     = active ? '3'       : '2';
+  function _buildSVG(size, active = false, fillProgress = 1.0) {
+    const uid = `tum${size}${Date.now()}`;
+
+    const ARC_LEN    = 176; // π × 56 ≈ 175.9
+    const dashOffset = ARC_LEN * (1 - fillProgress);
+
+    const ringOpacity = active ? '0.85' : '0.55';
+    const strokeW     = active ? '3'    : '2';
+    const ornamentDur = active ? '6s'   : '12s';
+
     return `
 <svg width="${size}" height="${size}" viewBox="0 0 100 100"
      xmlns="http://www.w3.org/2000/svg"
      style="overflow:visible;display:block;">
   <defs>
-    <filter id="nO_${uid}" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="4"  result="b1"/>
-      <feGaussianBlur stdDeviation="9"  result="b2"/>
+    <!-- Glow kuat — ring utama -->
+    <filter id="nO_${uid}" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="3"  result="b1"/>
+      <feGaussianBlur stdDeviation="7"  result="b2"/>
+      <feGaussianBlur stdDeviation="13" result="b3"/>
+      <feMerge>
+        <feMergeNode in="b3"/>
+        <feMergeNode in="b2"/>
+        <feMergeNode in="b1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Glow medium — center cap -->
+    <filter id="nI_${uid}" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="2" result="b1"/>
+      <feGaussianBlur stdDeviation="5" result="b2"/>
       <feMerge>
         <feMergeNode in="b2"/>
         <feMergeNode in="b1"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
-    <filter id="nI_${uid}" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur stdDeviation="2.5" result="b"/>
-      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    <!-- Glow arc fill -->
+    <filter id="nArc_${uid}" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="2.5" result="b1"/>
+      <feGaussianBlur stdDeviation="6"   result="b2"/>
+      <feMerge>
+        <feMergeNode in="b2"/>
+        <feMergeNode in="b1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
     </filter>
-    <filter id="nT_${uid}" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="1.5" result="b"/>
-      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    <!-- Glow jarum -->
+    <filter id="nH_${uid}" x="-100%" y="-20%" width="300%" height="140%">
+      <feGaussianBlur stdDeviation="2"  result="b1"/>
+      <feGaussianBlur stdDeviation="5"  result="b2"/>
+      <feMerge>
+        <feMergeNode in="b2"/>
+        <feMergeNode in="b1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
     </filter>
   </defs>
 
-  <!-- BG hitam -->
-  <circle cx="50" cy="50" r="43" fill="#050505"/>
-
-  <!-- Glow emas luar -->
+  <!-- Ring utama — stroke tebal, opacity penuh, glow kuat -->
   <circle cx="50" cy="50" r="44"
-    fill="none" stroke="#d4a800" stroke-width="5"
-    filter="url(#nO_${uid})" opacity="${ringOpacity}"/>
+    fill="none" stroke="#ffffff" stroke-width="${strokeW}"
+    opacity="${ringOpacity}"
+    filter="url(#nO_${uid})"/>
 
-  <!-- Ring utama — putih/kuning tergantung state -->
-  <circle cx="50" cy="50" r="44"
-    fill="none" stroke="${ringColor}" stroke-width="${strokeW}"
-    filter="url(#nI_${uid})"/>
-
-  <!-- Ring dalam tipis accent -->
-  <circle cx="50" cy="50" r="37"
-    fill="none" stroke="#fff8cc" stroke-width="0.6" opacity="0.25"/>
-
-  <!-- Tick cardinal — putih -->
-  <line x1="50" y1="9"  x2="50" y2="17" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" filter="url(#nT_${uid})"/>
-  <line x1="91" y1="50" x2="83" y2="50" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" filter="url(#nT_${uid})"/>
-  <line x1="50" y1="91" x2="50" y2="83" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" filter="url(#nT_${uid})"/>
-  <line x1="9"  y1="50" x2="17" y2="50" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" filter="url(#nT_${uid})"/>
-
-  <!-- Tick minor — emas -->
-  <g stroke="#d4a800" stroke-width="1.2" stroke-linecap="round" opacity="0.55">
-    <line x1="72.5" y1="12.3" x2="69.3" y2="17.8"/>
-    <line x1="87.7" y1="27.5" x2="82.2" y2="30.7"/>
-    <line x1="87.7" y1="72.5" x2="82.2" y2="69.3"/>
-    <line x1="72.5" y1="87.7" x2="69.3" y2="82.2"/>
-    <line x1="27.5" y1="87.7" x2="30.7" y2="82.2"/>
-    <line x1="12.3" y1="72.5" x2="17.8" y2="69.3"/>
-    <line x1="12.3" y1="27.5" x2="17.8" y2="30.7"/>
-    <line x1="27.5" y1="12.3" x2="30.7" y2="17.8"/>
+  <!-- ── 12 garis jam BESAR — lebih tebal & jelas ── -->
+  <g stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" opacity="0.85">
+    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(0,   50,50)"/>
+    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(30,  50,50)"/>
+    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(60,  50,50)"/>
+    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(90,  50,50)"/>
+    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(120, 50,50)"/>
+    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(150, 50,50)"/>
+    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(180, 50,50)"/>
+    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(210, 50,50)"/>
+    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(240, 50,50)"/>
+    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(270, 50,50)"/>
+    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(300, 50,50)"/>
+    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(330, 50,50)"/>
   </g>
 
-  <!-- Jarum JAM -->
-  <line class="wc-hour"
-    x1="50" y1="50" x2="50" y2="29"
-    stroke="#ffffff" stroke-width="4" stroke-linecap="round"
-    filter="url(#nI_${uid})"/>
+  <!-- Lingkaran kecil dalam (r=28) — lebih tebal -->
+  <circle cx="50" cy="50" r="28"
+    fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
 
-  <!-- Jarum MENIT -->
-  <line class="wc-min"
-    x1="50" y1="50" x2="50" y2="14"
-    stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"
-    filter="url(#nT_${uid})"/>
+  <!-- ── 12 garis jam KECIL — lebih tebal & jelas ── -->
+  <g stroke="#ffffff" stroke-width="1" stroke-linecap="round" opacity="0.5">
+    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(0,   50,50)"/>
+    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(30,  50,50)"/>
+    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(60,  50,50)"/>
+    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(90,  50,50)"/>
+    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(120, 50,50)"/>
+    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(150, 50,50)"/>
+    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(180, 50,50)"/>
+    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(210, 50,50)"/>
+    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(240, 50,50)"/>
+    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(270, 50,50)"/>
+    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(300, 50,50)"/>
+    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(330, 50,50)"/>
+  </g>
 
-  <!-- Jarum DETIK — emas -->
-  <line class="wc-sec"
-    x1="50" y1="50" x2="50" y2="11"
-    stroke="#d4a800" stroke-width="1.3" stroke-linecap="round"/>
-  <line class="wc-sec-tail"
-    x1="50" y1="50" x2="50" y2="61"
-    stroke="#d4a800" stroke-width="1.3" stroke-linecap="round"/>
+  <!-- ── Ornamen 4 diamond berputar — lebih besar & jelas ── -->
+  <g opacity="0.85" filter="url(#nI_${uid})">
+    <animateTransform
+      attributeName="transform" attributeType="XML"
+      type="rotate" from="0 50 50" to="360 50 50"
+      dur="${ornamentDur}" repeatCount="indefinite"/>
+    <polygon points="50,1   52,5.5  50,10  48,5.5"  fill="#ffffff"/>
+    <polygon points="99,50  103,52  99,54  95,52"   fill="#ffffff"/>
+    <polygon points="50,90  52,94.5 50,99  48,94.5" fill="#ffffff"/>
+    <polygon points="1,50   5,52    1,54   -3,52"   fill="#ffffff"/>
+  </g>
 
-  <!-- Center cap -->
-  <circle cx="50" cy="50" r="4"   fill="#ffffff" filter="url(#nI_${uid})"/>
-  <circle cx="50" cy="50" r="1.8" fill="#050505"/>
+  <!-- ── Jarum runcing — lebih tebal, glow kuat ── -->
+  <g class="wc-hour" filter="url(#nH_${uid})">
+    <polygon points="50,5 48,50 52,50"  fill="#ffffff" opacity="1"/>
+    <polygon points="50,63 49,50 51,50" fill="#ffffff" opacity="0.6"/>
+  </g>
+
+  <!-- Center cap — lebih besar & bercahaya -->
+  <circle cx="50" cy="50" r="4.5" fill="#ffffff" filter="url(#nI_${uid})"/>
+  <circle cx="50" cy="50" r="2.5" fill="#ffffff"/>
+
+  <!-- ── LOADING ARC di LUAR (r=56) ── -->
+  <!-- Track — cukup terlihat saat kosong -->
+  <path d="M -6,50 A 56,56 0 0,1 106,50"
+    fill="none"
+    stroke="rgba(255,255,255,0.4)"
+    stroke-width="3.5"
+    stroke-linecap="round"/>
+
+  <!-- Fill — neon glow -->
+  <path class="wc-arc-fill"
+    d="M -6,50 A 56,56 0 0,1 106,50"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="3.5"
+    stroke-linecap="round"
+    stroke-dasharray="${ARC_LEN}"
+    stroke-dashoffset="${dashOffset}"
+    filter="url(#nArc_${uid})"/>
+
 </svg>`;
   }
 
   // ─── ICON BUILDER ──────────────────────────────────────────
-  function _buildIcon(active = false) {
+  function _buildIcon(active = false, fillProgress = 1.0) {
     const isMob = window.matchMedia('(max-width:768px)').matches;
     const size  = isMob ? SIZE_MOBILE : SIZE_DESKTOP;
     const half  = size / 2;
 
-    // Active state: glow lebih terang + ring emas solid
     const glowStyle = active
       ? 'drop-shadow(0 0 14px #d4a800ee) drop-shadow(0 0 6px #ffffffaa)'
       : 'drop-shadow(0 0 8px #d4a80077)';
@@ -147,7 +218,7 @@ const TimeUndergroundMarker = (() => {
                 cursor:pointer;
                 filter:${glowStyle};
                 transition:filter .25s ease, transform .25s ease;
-              ">${_buildSVG(size, active)}</div>`,
+              ">${_buildSVG(size, active, fillProgress)}</div>`,
       iconSize:    [size, size],
       iconAnchor:  [half, half],
       popupAnchor: [0, -(half + 8)],
@@ -155,57 +226,79 @@ const TimeUndergroundMarker = (() => {
     });
   }
 
-  // Refresh icon visual saja tanpa rebuild marker
   function _refreshIcon() {
     if (!_marker) return;
-    _marker.setIcon(_buildIcon(_active));
+    _marker.setIcon(_buildIcon(_active, _fillProgress));
     requestAnimationFrame(() => {
       const el = _marker.getElement();
       if (el) _attachHover(el);
     });
   }
 
-  // ─── HAND ANIMATION ────────────────────────────────────────
+  // ─── HAND ROTATION ─────────────────────────────────────────
   function _rotateLine(el, deg) {
     el.setAttribute('transform', `rotate(${deg}, 50, 50)`);
   }
 
-  function _startAnimation() {
-    if (_animFrame) return; // sudah jalan
+  function _setHandAngle(deg) {
+    document.querySelectorAll('.tum-clock-wrap').forEach(wrap => {
+      const hEl = wrap.querySelector('.wc-hour');
+      if (hEl) _rotateLine(hEl, deg);
+    });
+  }
 
-    function tick() {
-      const now = new Date();
-      const h   = now.getHours() % 12;
-      const m   = now.getMinutes();
-      const s   = now.getSeconds();
-      const ms  = now.getMilliseconds();
+  // ─── FILL + HAND TRANSITION ANIMATION ──────────────────────
+  // Posisi jarum akumulatif — tidak reset, lanjut dari posisi terakhir
+  let _currentHandDeg = 0;
 
-      const secDeg  = (s + ms / 1000) * 6;
-      const minDeg  = (m + s  / 60)   * 6;
-      const hourDeg = (h + m  / 60)   * 30;
+  function _animateTransition(entering, onDone) {
+    if (_animFrame) cancelAnimationFrame(_animFrame);
 
-      document.querySelectorAll('.tum-clock-wrap').forEach(wrap => {
-        const hEl = wrap.querySelector('.wc-hour');
-        const mEl = wrap.querySelector('.wc-min');
-        const sEl = wrap.querySelector('.wc-sec');
-        const tEl = wrap.querySelector('.wc-sec-tail');
-        if (hEl) _rotateLine(hEl, hourDeg);
-        if (mEl) _rotateLine(mEl, minDeg);
-        if (sEl) _rotateLine(sEl, secDeg);
-        if (tEl) _rotateLine(tEl, secDeg);
+    _animating = true;
+
+    const startProgress = _fillProgress;
+    const endProgress   = entering ? 0.0 : 1.0;
+    const startTime     = performance.now();
+
+    // Arah: masuk = terbalik (CCW = negatif), keluar = normal (CW = positif)
+    const direction = entering ? -1 : 1;
+
+    // Minimum 1 putaran penuh + random 0–2 putaran extra
+    const extraRounds = Math.floor(Math.random() * 3);
+    const totalDeg    = direction * (360 + extraRounds * 360);
+    const startDeg    = _currentHandDeg;
+
+    function easeInOut(t) {
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    }
+
+    function tick(now) {
+      const elapsed = now - startTime;
+      const rawT    = Math.min(elapsed / ANIM_DURATION, 1);
+      const t       = easeInOut(rawT);
+
+      // Update fill arc
+      _fillProgress = startProgress + (endProgress - startProgress) * t;
+      document.querySelectorAll('.wc-arc-fill').forEach(arc => {
+        arc.setAttribute('stroke-dashoffset', 176 * (1 - _fillProgress));
       });
 
-      _animFrame = requestAnimationFrame(tick);
+      // Jarum berputar terus dari posisi terakhir
+      _currentHandDeg = startDeg + totalDeg * t;
+      _setHandAngle(_currentHandDeg);
+
+      if (rawT < 1) {
+        _animFrame = requestAnimationFrame(tick);
+      } else {
+        _fillProgress   = endProgress;
+        _currentHandDeg = startDeg + totalDeg;
+        _animating      = false;
+        _animFrame      = null;
+        if (onDone) onDone();
+      }
     }
 
     _animFrame = requestAnimationFrame(tick);
-  }
-
-  function _stopAnimation() {
-    if (_animFrame) {
-      cancelAnimationFrame(_animFrame);
-      _animFrame = null;
-    }
   }
 
   // ─── HOVER EFFECT ──────────────────────────────────────────
@@ -239,42 +332,44 @@ const TimeUndergroundMarker = (() => {
 
   // ─── TOGGLE TIME UNDERGROUND ───────────────────────────────
   function _toggleTimeUnderground() {
+    if (_animating) return;
+
     if (typeof UndergroundManager === 'undefined') {
       console.warn('[TUM] UndergroundManager not found');
       return;
     }
 
     if (_active) {
-      // ── OFF: kembali ke surface ──────────────────────────
       _active = false;
-      UndergroundManager.setActiveFloor('surface', true);
       _refreshIcon();
-      _pulseMarker(false);
-      _showNotif(false);
+
+      _animateTransition(false, () => {
+        UndergroundManager.setActiveFloor('surface', true);
+        _pulseMarker(false);
+        _showNotif(false);
+      });
+
     } else {
-      // ── ON: masuk floor 8 ────────────────────────────────
       _active = true;
       _ensureTimeFloor();
-      UndergroundManager.setActiveFloor(FLOOR_ID, true);
       _refreshIcon();
-      _pulseMarker(true);
-      _showNotif(true);
+
+      _animateTransition(true, () => {
+        UndergroundManager.setActiveFloor(FLOOR_ID, true);
+        _pulseMarker(true);
+        _showNotif(true);
+      });
     }
   }
 
-  /**
-   * Pastikan floor '8' terdaftar di UndergroundManager.floors.
-   * Jika belum ada, inject secara runtime — aman karena tidak
-   * merusak floor lain yang sudah ada.
-   */
   function _ensureTimeFloor() {
     const existing = UndergroundManager.floors.find(f => f.id === FLOOR_ID);
-    if (existing) return; // sudah ada
+    if (existing) return;
 
     UndergroundManager.floors.push({
       id:          FLOOR_ID,
       name:        FLOOR_NAME,
-      icon:        `${ICON_BASE_URL}layericon.png`, // fallback icon
+      icon:        `${ICON_BASE_URL}layericon.png`,
       description: 'Time Realm',
       filterValue: FLOOR_ID,
       brightness:  0.5,
@@ -315,7 +410,6 @@ const TimeUndergroundMarker = (() => {
       ? `<span style="font-size:18px;margin-right:8px;">⏰</span><span>Entering <strong>Time Realm</strong>…</span>`
       : `<span style="font-size:18px;margin-right:8px;">🌍</span><span>Back to <strong>Surface</strong></span>`;
 
-    // Style inline supaya tidak bergantung CSS file lain
     Object.assign(notif.style, {
       position:     'fixed',
       bottom:       '90px',
@@ -340,7 +434,6 @@ const TimeUndergroundMarker = (() => {
 
     document.body.appendChild(notif);
 
-    // Trigger transition
     requestAnimationFrame(() => {
       notif.style.opacity   = '1';
       notif.style.transform = 'translateX(-50%) translateY(0)';
@@ -357,42 +450,45 @@ const TimeUndergroundMarker = (() => {
   function _show() {
     if (_visible || !_map) return;
 
+    _fillProgress = _active ? 0.0 : 1.0;
+
     _marker = L.marker([COORD.lat, COORD.lng], {
-      icon:         _buildIcon(_active),
+      icon:         _buildIcon(_active, _fillProgress),
       interactive:  true,
       zIndexOffset: 9000,
       pane:         'markerPane'
     });
 
-    // Tooltip
     _marker.bindTooltip(_buildTooltip());
-
-    // Klik → toggle Time Underground
     _marker.on('click', () => _toggleTimeUnderground());
-
-    // Tambahkan ke map
     _marker.addTo(_map);
 
-    // Attach hover effect setelah DOM siap
     requestAnimationFrame(() => {
       const el = _marker.getElement();
       if (el) _attachHover(el);
     });
 
     _visible = true;
-    _startAnimation();
   }
 
   function _hide() {
     if (!_visible || !_marker) return;
+
+    if (_animFrame) {
+      cancelAnimationFrame(_animFrame);
+      _animFrame = null;
+      _animating = false;
+    }
+
     if (_map && _map.hasLayer(_marker)) {
       _map.removeLayer(_marker);
     }
     _marker  = null;
     _visible = false;
-    // Reset active state saat marker disembunyikan (pindah preset)
+
     if (_active) {
-      _active = false;
+      _active       = false;
+      _fillProgress = 1.0;
       if (typeof UndergroundManager !== 'undefined') {
         UndergroundManager.setActiveFloor('surface', false);
       }
@@ -402,14 +498,9 @@ const TimeUndergroundMarker = (() => {
   // ─── PUBLIC API ────────────────────────────────────────────
   return {
 
-    /**
-     * Init — panggil setelah map & IconManager siap.
-     * @param {L.Map} mapInstance
-     */
     init(mapInstance) {
       _map = mapInstance;
 
-      // Tampilkan hanya jika preset = main
       const preset = (typeof getCurrentMapPreset === 'function')
         ? getCurrentMapPreset()
         : 'main';
@@ -417,10 +508,6 @@ const TimeUndergroundMarker = (() => {
       if (preset === 'main') _show();
     },
 
-    /**
-     * Panggil setiap kali switchMapPreset() dipanggil.
-     * @param {string} preset — 'main' | 'hutuo' | 'royal_palace' | 'dreamspace'
-     */
     onMapPresetChange(preset) {
       if (preset === 'main') {
         _show();
@@ -429,19 +516,13 @@ const TimeUndergroundMarker = (() => {
       }
     },
 
-    /** Paksa tampilkan (debug) */
     show: _show,
-
-    /** Paksa sembunyikan (debug) */
     hide: _hide,
 
-    /** Cek apakah marker sedang visible */
-    get isVisible() { return _visible; },
+    get isVisible()   { return _visible; },
+    get isActive()    { return _active; },
+    get isAnimating() { return _animating; },
 
-    /** Cek apakah floor 8 sedang aktif */
-    get isActive() { return _active; },
-
-    /** Floor ID yang dipakai */
     FLOOR_ID,
     FLOOR_NAME,
   };
@@ -452,15 +533,13 @@ const TimeUndergroundMarker = (() => {
 window.TimeUndergroundMarker = TimeUndergroundMarker;
 
 
-// ─── CSS TOOLTIP ───────────────────────────────────────────────
-// Inject style sekali saja supaya tooltip terlihat bagus
+// ─── CSS ───────────────────────────────────────────────────────
 (function injectTUMStyles() {
   if (document.getElementById('tum-styles')) return;
 
   const style = document.createElement('style');
   style.id = 'tum-styles';
   style.textContent = `
-    /* Tooltip jam */
     .tum-tooltip {
       background: linear-gradient(135deg, #1a1200ee, #2e1f00ee) !important;
       border: 1px solid #d4a800 !important;
@@ -471,8 +550,6 @@ window.TimeUndergroundMarker = TimeUndergroundMarker;
     .tum-tooltip::before {
       border-top-color: #d4a800 !important;
     }
-
-    /* Pastikan marker jam tidak kena hide dari filter system */
     .tum-marker-icon {
       opacity: 1 !important;
       visibility: visible !important;
