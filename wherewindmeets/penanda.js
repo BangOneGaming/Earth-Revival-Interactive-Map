@@ -84,6 +84,7 @@ const MarkerManager = {
    */
   init(map) {
     this.map = map;
+    if (typeof MarkerLinker !== 'undefined') MarkerLinker.init(); // ← tambah ini
     this.initializeFilters();
     this.setupFilterUI();
     this.setupEventListeners();
@@ -482,9 +483,12 @@ createPopupContent(markerData, editState = {}) {
   const markerKey = markerData._key;
   const locType = markerData.loc_type?.trim() || 'Not Selected';
   // Convert newlines to <br> for HTML display
-  const formattedDesc = description !== 'No description available' 
-    ? description.replace(/\n/g, '<br>') 
-    : description;
+  const rawDesc = description !== 'No description available'
+  ? description.replace(/\n/g, '<br>')
+  : description;
+const formattedDesc = typeof MarkerLinker !== 'undefined'
+  ? MarkerLinker.parseDescription(rawDesc)
+  : rawDesc;
 
   // Check visited status from localStorage
   if (!_visitedCache) {
