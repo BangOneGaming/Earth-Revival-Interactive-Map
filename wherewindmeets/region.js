@@ -739,7 +739,7 @@ zoom_6: [
     "sub_regions": "Jade Gate Pass"
   },
   {
-    "name": "Straying Steed Sands",
+    "name": "Straying Steed Sand",
     "cn_name": "马迷途",
     "lat": 35.83257033791887,
     "lng": 33.10039456790123,
