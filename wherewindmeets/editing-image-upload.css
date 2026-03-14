@@ -340,7 +340,12 @@
     }
 
     /* ── Text editing states ── */
-    .editor-text-annotation:focus { outline: none; cursor: text; }
+    .editor-text-annotation:focus { outline: none; }
+    .editor-text-annotation {
+      cursor: move;
+      user-select: none;
+      -webkit-user-select: none;
+    }
     .editor-text-annotation[contenteditable="true"] {
       cursor: text;
       user-select: text;
