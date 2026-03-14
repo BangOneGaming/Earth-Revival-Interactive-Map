@@ -352,10 +352,15 @@ currentEditor.canvasScale = {
   // Click anywhere inside wrapper while element selected -> drag that element
   function handleWrapperMouseDown(e) {
     if (!selectedElement) return;
+    // Let resize handles and the canvas element itself handle their own events
     if (e.target.classList.contains('editor-resize-handle')) return;
+    if (e.target.classList.contains('editor-circle-handle')) return;
+    if (e.target === currentEditor.canvas) return;
+    // If click is already inside the selected element, let the element's own listener handle it
     if (selectedElement.element.contains(e.target) || e.target === selectedElement.element) return;
-    if (currentEditor.currentTool !== 'none') return;
+    // Drag from outside the element — works regardless of active tool
     e.preventDefault();
+    e.stopPropagation();
     const coords = getCanvasCoordinates(e.clientX, e.clientY);
     startAnnotationDrag(coords.x, coords.y, selectedElement);
   }
