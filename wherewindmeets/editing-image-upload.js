@@ -332,11 +332,18 @@ currentEditor.canvasScale = {
     document.addEventListener('mousemove', handleGlobalMouseMove);
     document.addEventListener('mouseup', handleGlobalMouseUp);
 
-    // Wrapper mousedown: drag selected element from anywhere inside wrapper
+    // Attach to both the canvas-wrapper AND the annotations layer
+    // so drag works when clicking anywhere in the editor area
     const wrapper = canvas.closest('.image-editor-canvas-wrapper');
     if (wrapper) {
       wrapper.addEventListener('mousedown', handleWrapperMouseDown);
       currentEditor._wrapper = wrapper;
+    }
+    // Also attach to annotations layer (sits on top of canvas)
+    const annLayer = currentEditor.annotationsLayer;
+    if (annLayer) {
+      annLayer.addEventListener('mousedown', handleWrapperMouseDown);
+      currentEditor._annLayerListener = true;
     }
   }
 
@@ -347,20 +354,27 @@ currentEditor.canvasScale = {
     if (currentEditor._wrapper) {
       currentEditor._wrapper.removeEventListener('mousedown', handleWrapperMouseDown);
     }
+    if (currentEditor._annLayerListener && currentEditor.annotationsLayer) {
+      currentEditor.annotationsLayer.removeEventListener('mousedown', handleWrapperMouseDown);
+    }
   }
 
-  // Click anywhere inside wrapper while element selected -> drag that element
+  // Mousedown anywhere in the editor area while element selected = drag it
+  // This fires from the annotations layer and canvas wrapper
   function handleWrapperMouseDown(e) {
     if (!selectedElement) return;
-    // Let resize handles and the canvas element itself handle their own events
+    // Skip: resize/corner handles (they have their own listeners)
     if (e.target.classList.contains('editor-resize-handle')) return;
     if (e.target.classList.contains('editor-circle-handle')) return;
-    if (e.target === currentEditor.canvas) return;
-    // If click is already inside the selected element, let the element's own listener handle it
-    if (selectedElement.element.contains(e.target) || e.target === selectedElement.element) return;
-    // Drag from outside the element — works regardless of active tool
+    // Skip: text element when it's in edit mode
+    if (selectedElement.type === 'text' && selectedElement.textEl) {
+      if (selectedElement.textEl.contentEditable === 'true') return;
+    }
+    // If click is already directly on inner interactive element, its listener fires first — skip
+    if (e.target === selectedElement.circle) return;
+    if (e.target === selectedElement.textEl) return;
+    // Everything else (empty canvas area, annotation layer, wrapper background) = drag
     e.preventDefault();
-    e.stopPropagation();
     const coords = getCanvasCoordinates(e.clientX, e.clientY);
     startAnnotationDrag(coords.x, coords.y, selectedElement);
   }
@@ -698,8 +712,9 @@ function addText() {
 
     const el = document.createElement('div');
     el.className = 'editor-text-annotation';
-    // Mobile: start non-editable to prevent keyboard on drag; enable on double-tap
-    el.contentEditable = isMobile ? 'false' : 'true';
+    // Always start non-editable — desktop enables on double-click, mobile on double-tap
+    // This prevents text cursor showing on desktop and keyboard on mobile during drag
+    el.contentEditable = 'false';
     el.dataset.placeholder = 'Enter text...';
     el.textContent = 'Enter text...';
     el.style.pointerEvents = 'auto';
@@ -746,7 +761,6 @@ function addText() {
     }
 
     el.addEventListener('focus', () => {
-      // Only allow focus when contentEditable is truly enabled
       if (el.contentEditable !== 'true') { el.blur(); return; }
       if (ann.isPlaceholder) {
         el.textContent = '';
@@ -763,8 +777,9 @@ function addText() {
         ann.isPlaceholder = true;
         applyPlaceholderStyle(true);
       }
-      // Lock editing again on mobile after done
-      if (isMobile) el.contentEditable = 'false';
+      // Lock editing after done (all platforms)
+      el.contentEditable = 'false';
+      el.style.cursor = '';
       updateTextPosition(ann);
       saveState();
     });
@@ -781,21 +796,26 @@ function addText() {
     });
     // ────────────────────────────────────────────────────────
 
-    // Desktop click: first click = select+drag, second click = edit cursor inside text
+    // Desktop: single click = select + drag, double-click = edit
     let lastTap = 0;
     el.addEventListener('mousedown', (e) => {
       e.stopPropagation();
-      if (selectedElement === ann) {
-        // Already selected: allow browser to position cursor for editing
-        // Don't start drag so user can click inside text normally
-        return;
-      }
-      // First click: select and drag
+      // Always select
       selectElement(ann);
-      if (currentEditor.currentTool === 'none') {
+      // Only start drag if not editing
+      if (el.contentEditable !== 'true') {
         const coords = getCanvasCoordinates(e.clientX, e.clientY);
         startAnnotationDrag(coords.x, coords.y, ann);
       }
+    });
+
+    el.addEventListener('dblclick', (e) => {
+      e.stopPropagation();
+      selectElement(ann);
+      el.contentEditable = 'true';
+      el.style.cursor = 'text';
+      el.focus();
+      // Place cursor at click position (browser handles this naturally after focus)
     });
 
     // Touch: single tap = select+drag, double-tap = enter edit mode (keyboard)
@@ -1100,11 +1120,17 @@ return x >= annotation.x &&
     deselectAll();
     selectedElement = annotation;
     annotation.element.classList.add('selected');
-    // Wrapper pointer-events auto so resize handle is clickable/touchable
     annotation.element.style.pointerEvents = 'auto';
     if (annotation.resizeHandle) annotation.resizeHandle.style.display = 'block';
     if (annotation.type === 'circle') updateCirclePosition(annotation);
     if (annotation.type === 'text') updateTextPosition(annotation);
+    // Show move cursor on canvas area to hint draggability
+    if (currentEditor && currentEditor.canvas) {
+      currentEditor.canvas.style.cursor = 'move';
+    }
+    if (currentEditor && currentEditor.annotationsLayer) {
+      currentEditor.annotationsLayer.style.cursor = 'move';
+    }
   }
 
   function deselectAll() {
@@ -1116,7 +1142,8 @@ return x >= annotation.x &&
       if (selectedElement.type === 'text' && selectedElement.textEl) {
         const tel = selectedElement.textEl;
         if (document.activeElement === tel) tel.blur();
-        if (isMobile) tel.contentEditable = 'false';
+        tel.contentEditable = 'false';
+        tel.style.cursor = '';
         // Restore placeholder if empty
         const val = tel.textContent.trim();
         if (!val || val === '') {
@@ -1126,6 +1153,14 @@ return x >= annotation.x &&
         }
       }
       selectedElement = null;
+      // Restore canvas cursor to tool default
+      if (currentEditor && currentEditor.canvas) {
+        const cursors = { none:'default', brush:'crosshair', text:'text', circle:'crosshair' };
+        currentEditor.canvas.style.cursor = cursors[currentEditor.currentTool] || 'default';
+      }
+      if (currentEditor && currentEditor.annotationsLayer) {
+        currentEditor.annotationsLayer.style.cursor = '';
+      }
     }
   }
 
@@ -1148,7 +1183,8 @@ function dragAnnotation(x, y) {
       if (selectedElement && selectedElement.type === 'text' && selectedElement.textEl) {
         const tel = selectedElement.textEl;
         if (document.activeElement === tel) tel.blur();
-        if (isMobile) tel.contentEditable = 'false';
+        tel.contentEditable = 'false';
+        tel.style.cursor = '';
       }
       saveState();
     }
