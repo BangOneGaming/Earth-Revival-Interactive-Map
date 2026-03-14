@@ -1,19 +1,20 @@
-    /* Image Editor Styles */
+/* =========================================
+       IMAGE EDITOR — Wuxia / Ancient Parchment
+       Matches patch-notes aesthetic
+       ========================================= */
+
     .image-editor-modal {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       z-index: 10000;
       display: flex;
       align-items: center;
       justify-content: center;
       opacity: 0;
       visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
     }
-
     .image-editor-modal.active {
       opacity: 1;
       visibility: visible;
@@ -21,104 +22,176 @@
 
     .image-editor-backdrop {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(4px);
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(4, 6, 12, 0.88);
+      backdrop-filter: blur(6px);
     }
 
+    /* ── Container ── */
     .image-editor-container {
       position: relative;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-      border-radius: 16px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      background: #121827;
+      border: 1px solid rgba(200, 150, 42, 0.35);
+      border-radius: 4px;
       width: 90vw;
       max-width: 1200px;
       max-height: 90vh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      transform: scale(0.9);
-      transition: transform 0.3s ease;
+      transform: scale(0.92);
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow:
+        0 0 0 1px rgba(240, 192, 96, 0.06),
+        0 0 60px rgba(0, 0, 0, 0.7),
+        0 0 100px rgba(240, 192, 96, 0.05),
+        inset 0 0 60px rgba(0, 0, 0, 0.35);
     }
-
     .image-editor-modal.active .image-editor-container {
       transform: scale(1);
     }
 
+    /* Corner ornaments */
+    .image-editor-container::before,
+    .image-editor-container::after {
+      content: '';
+      position: absolute;
+      width: 24px; height: 24px;
+      border-color: rgba(200, 150, 42, 0.6);
+      border-style: solid;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .image-editor-container::before {
+      top: 8px; left: 8px;
+      border-width: 1.5px 0 0 1.5px;
+    }
+    .image-editor-container::after {
+      bottom: 8px; right: 8px;
+      border-width: 0 1.5px 1.5px 0;
+    }
+
+    /* ── Header ── */
     .image-editor-header {
-      padding: 20px 24px;
-      background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
-      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+      padding: 16px 20px;
+      background: linear-gradient(180deg, rgba(240,192,96,0.06) 0%, transparent 100%);
+      border-bottom: 1px solid rgba(200, 150, 42, 0.15);
       display: flex;
       align-items: center;
       justify-content: space-between;
+      position: relative;
+      flex-shrink: 0;
     }
-
+    .image-editor-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(122, 90, 24, 0.6) 20%,
+        rgba(200, 150, 42, 0.8) 50%,
+        rgba(122, 90, 24, 0.6) 80%,
+        transparent 100%
+      );
+    }
     .image-editor-header h3 {
       margin: 0;
-      font-size: 20px;
-      font-weight: 700;
-      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: #f0c060;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      text-shadow: 0 0 20px rgba(240, 192, 96, 0.3);
     }
 
     .editor-close-btn {
-      background: rgba(255, 59, 48, 0.2);
-      border: 1px solid rgba(255, 59, 48, 0.3);
-      color: #FF3B30;
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      font-size: 20px;
+      background: transparent;
+      border: 1px solid rgba(200, 150, 42, 0.35);
+      color: #c8b89a;
+      width: 32px; height: 32px;
+      border-radius: 2px;
+      font-size: 17px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .editor-close-btn:hover {
+      background: rgba(240, 192, 96, 0.1);
+      border-color: #f0c060;
+      color: #f0c060;
+      transform: rotate(90deg);
     }
 
+    /* ── Toolbar ── */
     .image-editor-toolbar {
-      padding: 16px;
-      background: rgba(15, 52, 96, 0.5);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 10px 14px;
+      background: rgba(11, 15, 26, 0.5);
+      border-bottom: 1px solid rgba(200, 150, 42, 0.12);
       display: flex;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: wrap;
+      align-items: center;
+      flex-shrink: 0;
     }
 
     .tool-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #fff;
-      padding: 10px 16px;
-      border-radius: 8px;
+      background: transparent;
+      border: 1px solid rgba(200, 150, 42, 0.25);
+      color: #c8b89a;
+      padding: 7px 13px;
+      border-radius: 2px;
       cursor: pointer;
       transition: all 0.2s ease;
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 14px;
+      gap: 7px;
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
-
+    .tool-btn:hover {
+      background: rgba(240, 192, 96, 0.08);
+      border-color: rgba(200, 150, 42, 0.55);
+      color: #f0c060;
+    }
     .tool-btn.active {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: rgba(240, 192, 96, 0.12);
+      border-color: rgba(200, 150, 42, 0.7);
+      color: #f0c060;
+      box-shadow: inset 0 0 12px rgba(240, 192, 96, 0.07);
     }
-
     .tool-btn.danger {
-      background: rgba(255, 59, 48, 0.1);
-      color: #FF3B30;
+      border-color: rgba(192, 68, 58, 0.35);
+      color: rgba(192, 68, 58, 0.8);
+    }
+    .tool-btn.danger:hover {
+      background: rgba(192, 68, 58, 0.1);
+      border-color: rgba(192, 68, 58, 0.65);
+      color: #c0443a;
     }
 
     .toolbar-divider {
-      width: 1px;
-      height: 32px;
-      background: rgba(255, 255, 255, 0.2);
+      width: 1px; height: 26px;
+      background: rgba(200, 150, 42, 0.2);
+      margin: 0 2px;
     }
 
+    /* ── Canvas area ── */
     .image-editor-canvas-wrapper {
       flex: 1;
       position: relative;
       overflow: auto;
-      background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 100%);
+      background:
+        radial-gradient(ellipse at center, rgba(240,192,96,0.03) 0%, transparent 65%),
+        #0b0f1a;
       padding: 20px;
       display: flex;
       align-items: center;
@@ -129,95 +202,220 @@
       display: block;
       max-width: 100%;
       max-height: 100%;
-      border-radius: 8px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      border-radius: 3px;
+      box-shadow:
+        0 0 0 1px rgba(200, 150, 42, 0.2),
+        0 12px 48px rgba(0, 0, 0, 0.6);
     }
 
+    /* ── Annotations layer ── */
     .editor-annotations {
-  position: absolute;
-  top: 0;       /* ✅ Remove offset */
-  left: 0;      /* ✅ Remove offset */
-  width: 100%;  /* ✅ Match canvas wrapper */
-  height: 100%; /* ✅ Match canvas wrapper */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-    .editor-text-annotation {
       position: absolute;
-      pointer-events: all;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+
+    /* ── Text annotation ── */
+    .editor-text-annotation {
+      display: inline-block;
+      pointer-events: auto;
       cursor: move;
-      padding: 4px 8px;
-      border-radius: 4px;
+      padding: 0;
+      border-radius: 2px;
       font-weight: bold;
+      outline: none;
+      white-space: nowrap;
+      width: auto;
+      max-width: none;
+    }
+
+    .editor-text-wrapper {
+      position: absolute;
+      pointer-events: none;
+      width: max-content;
+      max-width: none;
+    }
+
+    /* Selection — gold dashed border */
+    .editor-text-wrapper.selected {
+      outline: 1.5px dashed rgba(200, 150, 42, 0.75);
+      outline-offset: 5px;
+      border-radius: 2px;
+    }
+    .editor-text-wrapper.selected .editor-text-annotation {
       outline: none;
     }
 
+    /* ── Circle annotation ── */
     .editor-circle-wrapper {
       position: absolute;
       pointer-events: all;
     }
-
     .editor-circle-annotation {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       border-style: solid;
       border-radius: 50%;
       cursor: move;
     }
-
     .editor-circle-wrapper.selected .editor-circle-annotation {
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.8);
+      box-shadow: 0 0 0 2px rgba(200, 150, 42, 0.85);
     }
 
-    .circle-handle {
+    /* ── Resize handle — gold ── */
+    .editor-resize-handle {
       position: absolute;
-      width: 32px;
-      height: 32px;
-      background: white;
-      border: 3px solid #FF3B30;
-      border-radius: 50%;
-      cursor: pointer;
+      bottom: -7px; right: -7px;
+      width: 12px; height: 12px;
+      background: #c8962a;
+      border: 2px solid #f0c060;
+      border-radius: 2px;
+      cursor: se-resize;
       z-index: 15;
+      pointer-events: auto;
+      display: none;
+    }
+    .editor-circle-wrapper.selected .editor-resize-handle,
+    .editor-text-wrapper.selected .editor-resize-handle {
+      display: block;
     }
 
-    .circle-handle.handle-move {
-      width: 40px;
-      height: 40px;
-      background: #2196F3;
-      color: white;
-      font-size: 24px;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
+    /* ── Footer ── */
     .image-editor-footer {
-      padding: 20px 24px;
-      background: rgba(15, 52, 96, 0.5);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 14px 20px;
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,0.3));
+      border-top: 1px solid rgba(200, 150, 42, 0.15);
       display: flex;
-      gap: 12px;
+      gap: 10px;
       justify-content: flex-end;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .image-editor-footer::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(122, 90, 24, 0.5) 25%,
+        rgba(200, 150, 42, 0.7) 50%,
+        rgba(122, 90, 24, 0.5) 75%,
+        transparent 100%
+      );
     }
 
     .editor-btn {
-      padding: 12px 32px;
-      border-radius: 8px;
-      font-size: 15px;
+      padding: 9px 26px;
+      border-radius: 2px;
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
       font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
       cursor: pointer;
-      border: none;
+      border: 1px solid transparent;
+      transition: all 0.25s ease;
     }
-
     .cancel-btn {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
+      background: transparent;
+      border-color: rgba(200, 150, 42, 0.28);
+      color: #7a6a54;
+    }
+    .cancel-btn:hover {
+      border-color: rgba(200, 150, 42, 0.5);
+      color: #c8b89a;
+    }
+    .confirm-btn {
+      background: rgba(92, 184, 160, 0.1);
+      border-color: rgba(92, 184, 160, 0.4);
+      color: #5cb8a0;
+    }
+    .confirm-btn:hover {
+      background: rgba(92, 184, 160, 0.18);
+      border-color: rgba(92, 184, 160, 0.7);
+      color: #7ecfbb;
+      box-shadow: 0 0 16px rgba(92, 184, 160, 0.12);
+      transform: translateY(-1px);
     }
 
-    .confirm-btn {
-      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-      color: #fff;
+    /* ── Text editing states ── */
+    .editor-text-annotation:focus { outline: none; cursor: text; }
+    .editor-text-annotation[contenteditable="true"] {
+      cursor: text;
+      user-select: text;
+      -webkit-user-select: text;
     }
+    .editor-text-annotation[contenteditable="false"] {
+      cursor: move;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .image-editor-container { width: 96%; max-height: 88vh; }
+      .image-editor-header { padding: 12px 16px; }
+      .image-editor-header h3 { font-size: 11px; letter-spacing: 2px; }
+      .image-editor-toolbar { padding: 8px 10px; gap: 5px; }
+      .tool-btn { padding: 6px 10px; font-size: 10px; letter-spacing: 0.8px; }
+      .tool-label { display: none; }
+      .image-editor-footer { padding: 10px 14px; }
+      .editor-btn { padding: 8px 18px; font-size: 10px; }
+    }
+    @media (max-width: 480px) {
+      .image-editor-container { width: 99%; max-height: 92vh; }
+      .image-editor-header h3 { font-size: 10px; letter-spacing: 1.5px; }
+      .tool-btn { padding: 6px 8px; }
+      .image-editor-canvas-wrapper { padding: 10px; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      .image-editor-container { max-height: 96vh; }
+      .image-editor-header { padding: 8px 14px; }
+      .image-editor-toolbar { padding: 6px 10px; }
+      .image-editor-canvas-wrapper { padding: 8px; }
+      .image-editor-footer { padding: 8px 14px; }
+    }
+
+    /* ── Confirm button loading state ── */
+    .editor-btn-spinner {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border: 1.5px solid rgba(92, 184, 160, 0.3);
+      border-top-color: #5cb8a0;
+      border-radius: 50%;
+      animation: editorSpin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 4px;
+    }
+
+    @keyframes editorSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    .confirm-btn:disabled {
+      pointer-events: none;
+    }
+
+    /* ── SVG toolbar icons ── */
+    .tool-icon {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      display: block;
+    }
+
+    /* ── 4-corner circle handles ── */
+    .editor-circle-handle {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: #c8962a;
+      border: 2px solid #f0c060;
+      border-radius: 2px;
+      z-index: 15;
+      pointer-events: auto;
+      display: none;
+    }
+    .editor-circle-wrapper.selected .editor-circle-handle { display: block; }
