@@ -18,15 +18,27 @@ const ImageEditor = (function() {
   let selectedElement = null;
   let dragOffset = { x: 0, y: 0 };
   let isResizing = false;
-  let resizeHandle = null;
   let isDragging = false;
   let dragStartPos = { x: 0, y: 0 };
   let hasMoved = false;
-  
+
+  // Global active drag (fires even when cursor leaves element)
+  let activeDragAnnotation = null;
+  let activeResizeAnnotation = null;
+  let activeResizeHandle = null;   // 'nw'|'ne'|'sw'|'se' for circle, null for text
+  let resizeStartClientX = 0;
+  let resizeStartClientY = 0;
+  let resizeStartValue = 0;  // fontSize for text
+  let resizeStartRx = 0;
+  let resizeStartRy = 0;
+  let resizeStartX = 0;
+  let resizeStartY = 0;
+
   // Pinch gesture tracking
   let isPinching = false;
   let initialPinchDistance = 0;
   let initialRadius = 0;
+  let initialFontSize = 0;
   let pinchIndicator = null;
   
   // Device detection
@@ -43,12 +55,13 @@ const ImageEditor = (function() {
     textColor: '#ffffff',
     textSize: 20,
     circleColor: '#FF3B30',
-    circleRadius: 50,
+    circleRadius: 50,   // initial half-size
     circleStrokeWidth: 3,
-    minCircleRadius: 20,
-    maxCircleRadius: 200,
-    handleSize: 32,
-    moveHandleSize: 40,
+    minCircleRadius: 15,
+    maxCircleRadius: 400,
+    minFontSize: 8,
+    maxFontSize: 120,
+    resizeHandleSize: 14,
     touchSlopDistance: 4
   };
 
@@ -60,7 +73,7 @@ const ImageEditor = (function() {
     const modal = document.createElement('div');
     modal.className = 'image-editor-modal';
     modal.innerHTML = `
-      <div class="image-editor-backdrop"></div>
+      <div class="image-editor-backdrop" onclick="ImageEditor.cancel()"></div>
       <div class="image-editor-container">
         <div class="image-editor-header">
           <h3>✏️ Edit Image Before Upload</h3>
@@ -69,37 +82,37 @@ const ImageEditor = (function() {
 
         <div class="image-editor-toolbar">
           <button class="tool-btn" data-tool="none" title="Select/Move">
-            <span class="tool-icon">👆</span>
+            <svg class="tool-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v9.5l2.5-2.5 1.5 3.5 1.5-.6-1.5-3.4H11L4 2z"/></svg>
             <span class="tool-label">Select</span>
           </button>
           <button class="tool-btn active" data-tool="brush" title="Draw">
-            <span class="tool-icon">🖌️</span>
+            <svg class="tool-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 13c1-1 2.5-1 3.5 0s2.5 1 3-.5L12 4l-2-2-4.5 4.5C4 7.5 3 8 2 9s-1 3 0 4z"/><path d="M10 4l2 2"/></svg>
             <span class="tool-label">Brush</span>
           </button>
           <button class="tool-btn" data-tool="text" title="Add Text">
-            <span class="tool-icon">📝</span>
+            <svg class="tool-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h10M8 4v9M6 13h4"/></svg>
             <span class="tool-label">Text</span>
           </button>
           <button class="tool-btn" data-tool="circle" title="Add Circle">
-            <span class="tool-icon">⭕</span>
+            <svg class="tool-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="8" cy="8" rx="5.5" ry="5.5"/></svg>
             <span class="tool-label">Circle</span>
           </button>
-          
+
           <div class="toolbar-divider"></div>
-          
+
           <button class="tool-btn" onclick="ImageEditor.undo()" title="Undo (Ctrl+Z)">
-            <span class="tool-icon">↶</span>
+            <svg class="tool-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7H10a3 3 0 0 1 0 6H8"/><path d="M3 7l3-3M3 7l3 3"/></svg>
             <span class="tool-label">Undo</span>
           </button>
           <button class="tool-btn" onclick="ImageEditor.redo()" title="Redo (Ctrl+Y)">
-            <span class="tool-icon">↷</span>
+            <svg class="tool-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 7H6a3 3 0 0 0 0 6h2"/><path d="M13 7l-3-3M13 7l-3 3"/></svg>
             <span class="tool-label">Redo</span>
           </button>
-          
+
           <div class="toolbar-divider"></div>
-          
+
           <button class="tool-btn danger" onclick="ImageEditor.deleteSelected()" title="Delete Selected">
-            <span class="tool-icon">❌</span>
+            <svg class="tool-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h10M6 4V3h4v1M5 4l.5 9h5L11 4"/><path d="M7 7v4M9 7v4"/></svg>
             <span class="tool-label">Delete</span>
           </button>
         </div>
@@ -130,6 +143,7 @@ const ImageEditor = (function() {
       canvas: modal.querySelector('.image-editor-canvas'),
       ctx: null,
       annotationsLayer: modal.querySelector('.editor-annotations'),
+      confirmBtn: modal.querySelector('.confirm-btn'),
       originalImage: null,
       currentTool: 'brush',
       annotations: [],
@@ -201,7 +215,6 @@ currentEditor.canvasScale = {
   y: height / img.naturalHeight
 };
 
-console.log(`🖼️ Canvas size: ${width.toFixed(0)}x${height.toFixed(0)} (original: ${img.naturalWidth}x${img.naturalHeight})`);
     // 🛡️ ANDROID SAFE DRAW
     ctx.save();
     ctx.globalCompositeOperation = 'source-over';
@@ -214,14 +227,6 @@ console.log(`🖼️ Canvas size: ${width.toFixed(0)}x${height.toFixed(0)} (orig
     
     // 🖼️ Log canvas dimensions AFTER canvas is attached to DOM
     const rect = canvas.getBoundingClientRect();
-    console.log('🖼️ Canvas dimensions:', {
-      canvasWidth: canvas.width,
-      canvasHeight: canvas.height,
-      screenWidth: rect.width,
-      screenHeight: rect.height,
-      scaleX: canvas.width / rect.width,
-      scaleY: canvas.height / rect.height
-    });
     
     saveState();
   };
@@ -319,13 +324,40 @@ console.log(`🖼️ Canvas size: ${width.toFixed(0)}x${height.toFixed(0)} (orig
     const { canvas } = currentEditor;
 
     canvas.addEventListener('mousedown', handleMouseDown);
-    canvas.addEventListener('mousemove', handleMouseMove);
-    canvas.addEventListener('mouseup', handleMouseUp);
-    canvas.addEventListener('mouseleave', handleMouseUp);
-
     canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
     canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
     canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+
+    // Global: drag/resize continue even when cursor leaves element
+    document.addEventListener('mousemove', handleGlobalMouseMove);
+    document.addEventListener('mouseup', handleGlobalMouseUp);
+
+    // Wrapper mousedown: drag selected element from anywhere inside wrapper
+    const wrapper = canvas.closest('.image-editor-canvas-wrapper');
+    if (wrapper) {
+      wrapper.addEventListener('mousedown', handleWrapperMouseDown);
+      currentEditor._wrapper = wrapper;
+    }
+  }
+
+  function detachCanvasEvents() {
+    if (!currentEditor) return;
+    document.removeEventListener('mousemove', handleGlobalMouseMove);
+    document.removeEventListener('mouseup', handleGlobalMouseUp);
+    if (currentEditor._wrapper) {
+      currentEditor._wrapper.removeEventListener('mousedown', handleWrapperMouseDown);
+    }
+  }
+
+  // Click anywhere inside wrapper while element selected -> drag that element
+  function handleWrapperMouseDown(e) {
+    if (!selectedElement) return;
+    if (e.target.classList.contains('editor-resize-handle')) return;
+    if (selectedElement.element.contains(e.target) || e.target === selectedElement.element) return;
+    if (currentEditor.currentTool !== 'none') return;
+    e.preventDefault();
+    const coords = getCanvasCoordinates(e.clientX, e.clientY);
+    startAnnotationDrag(coords.x, coords.y, selectedElement);
   }
 
   // 👆 VISUAL: Touch ripple effect
@@ -408,7 +440,7 @@ function getCanvasCoordinates(clientX, clientY) {
 
 function handleMouseDown(e) {
   const coords = getCanvasCoordinates(e.clientX, e.clientY);
-  
+
   switch (currentEditor.currentTool) {
     case 'brush':
       startDrawing(coords.x, coords.y);
@@ -419,62 +451,97 @@ function handleMouseDown(e) {
   }
 }
 
-function handleMouseMove(e) {
+function handleGlobalMouseMove(e) {
   if (!currentEditor) return;
-  
-  const coords = getCanvasCoordinates(e.clientX, e.clientY);
 
-  if (currentEditor.currentTool === 'brush' && isDrawing) {
-    draw(coords.x, coords.y);
-  } else if (isResizing && selectedElement) {
-    resizeCircle(coords.x, coords.y);
-  } else if (isDragging && selectedElement) {
+  // Active resize
+  if (activeResizeAnnotation) {
+    const ann = activeResizeAnnotation;
+    const dx = e.clientX - resizeStartClientX;
+    const dy = e.clientY - resizeStartClientY;
+
+    if (ann.type === 'circle') {
+      const canvasEl = currentEditor.canvas;
+      const rect = canvasEl.getBoundingClientRect();
+      const scaleX = canvasEl.width / rect.width;
+      const scaleY = canvasEl.height / rect.height;
+      // SE handle: drag right/down expands, drag left/up shrinks
+      const cdx = dx * scaleX;
+      const cdy = dy * scaleY;
+      ann.rx = Math.max(CONFIG.minCircleRadius, Math.min(CONFIG.maxCircleRadius, resizeStartRx + cdx / 2));
+      ann.ry = Math.max(CONFIG.minCircleRadius, Math.min(CONFIG.maxCircleRadius, resizeStartRy + cdy / 2));
+      ann.radius = Math.max(ann.rx, ann.ry);
+      updateCirclePosition(ann);
+
+    } else if (ann.type === 'text') {
+      const delta = dx;
+      const newSize = Math.max(CONFIG.minFontSize, Math.min(CONFIG.maxFontSize, Math.round(resizeStartValue + delta * 0.3)));
+      ann.size = newSize;
+      updateTextPosition(ann);
+    }
+    return;
+  }
+
+  // Active drag
+  if (activeDragAnnotation) {
+    const coords = getCanvasCoordinates(e.clientX, e.clientY);
     if (!hasMoved) {
       const dx = coords.x - dragStartPos.x;
       const dy = coords.y - dragStartPos.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      
-      if (distance > CONFIG.touchSlopDistance) {
-        hasMoved = true;
-      }
+      if (Math.sqrt(dx*dx + dy*dy) > CONFIG.touchSlopDistance) hasMoved = true;
     }
-    
     if (hasMoved) {
       dragAnnotation(coords.x, coords.y);
     }
+    return;
+  }
+
+  // Brush drawing
+  if (currentEditor.currentTool === 'brush' && isDrawing) {
+    const coords = getCanvasCoordinates(e.clientX, e.clientY);
+    draw(coords.x, coords.y);
   }
 }
 
+function handleGlobalMouseUp() {
+  if (activeResizeAnnotation) {
+    saveState();
+    activeResizeAnnotation = null;
+    activeResizeHandle = null;
+  }
+  if (activeDragAnnotation) {
+    stopDragging();
+    activeDragAnnotation = null;
+  }
+  if (isDrawing) stopDrawing();
+  isDragging = false;
+  hasMoved = false;
+}
+
   function handleMouseUp() {
-    if (isDrawing) {
-      stopDrawing();
-    }
-    if (isDragging) {
-      stopDragging();
-    }
-    if (isResizing) {
-      stopResizing();
-    }
-    
-    isDragging = false;
-    hasMoved = false;
+    // kept for compatibility — actual cleanup in handleGlobalMouseUp
   }
 
   function handleTouchStart(e) {
     e.preventDefault();
     
-    // 🤏 PINCH GESTURE: 2 fingers = resize
-    if (e.touches.length === 2 && selectedElement && selectedElement.type === 'circle') {
+    // 🤏 PINCH GESTURE: 2 fingers = resize (circle & text)
+    if (e.touches.length === 2 && selectedElement) {
       const touch1 = e.touches[0];
       const touch2 = e.touches[1];
       const dx = touch2.clientX - touch1.clientX;
       const dy = touch2.clientY - touch1.clientY;
       initialPinchDistance = Math.sqrt(dx * dx + dy * dy);
-      initialRadius = selectedElement.radius;
+      if (selectedElement.type === 'circle') {
+        initialRadius = selectedElement.radius;
+        // store initial rx/ry for proportional pinch
+        selectedElement._pinchRx = selectedElement.rx || selectedElement.radius;
+        selectedElement._pinchRy = selectedElement.ry || selectedElement.radius;
+      } else if (selectedElement.type === 'text') {
+        initialFontSize = selectedElement.size;
+      }
       isPinching = true;
-      
       showPinchIndicator();
-      console.log(`🤏 Pinch started | distance: ${initialPinchDistance.toFixed(0)}px`);
       return;
     }
     
@@ -484,11 +551,10 @@ const coords = getCanvasCoordinates(touch.clientX, touch.clientY);
 
 createTouchRipple(touch.clientX - currentEditor.canvas.getBoundingClientRect().left, 
                   touch.clientY - currentEditor.canvas.getBoundingClientRect().top);
-console.log(`👆 Touch: (${coords.x.toFixed(0)}, ${coords.y.toFixed(0)})`);
 
 // If object is selected, touch anywhere = move
 if (selectedElement && currentEditor.currentTool === 'none') {
-  startDragging(coords.x, coords.y, selectedElement);
+  startAnnotationDrag(coords.x, coords.y, selectedElement);
   return;
 }
 
@@ -498,7 +564,7 @@ for (let i = currentEditor.annotations.length - 1; i >= 0; i--) {
   const ann = currentEditor.annotations[i];
   if (isPointInAnnotation(coords.x, coords.y, ann)) {
     selectElement(ann);
-    startDragging(coords.x, coords.y, ann);
+    startAnnotationDrag(coords.x, coords.y, ann);
     touched = true;
     break;
   }
@@ -513,23 +579,30 @@ if (!touched && currentEditor.currentTool === 'brush') {
     e.preventDefault();
     if (!currentEditor) return;
 
-    // 🤏 PINCH RESIZE
-    if (e.touches.length === 2 && isPinching && selectedElement && selectedElement.type === 'circle') {
+    // 🤏 PINCH RESIZE (circle & text)
+    if (e.touches.length === 2 && isPinching && selectedElement) {
       const touch1 = e.touches[0];
       const touch2 = e.touches[1];
       const dx = touch2.clientX - touch1.clientX;
       const dy = touch2.clientY - touch1.clientY;
       const currentDistance = Math.sqrt(dx * dx + dy * dy);
-      
       const scale = currentDistance / initialPinchDistance;
-      const newRadius = Math.max(
-        CONFIG.minCircleRadius,
-        Math.min(CONFIG.maxCircleRadius, initialRadius * scale)
-      );
-      
-      selectedElement.radius = newRadius;
-      updateCirclePosition(selectedElement);
-      updatePinchIndicator(newRadius);
+
+      if (selectedElement.type === 'circle') {
+        // Pinch = locked ratio: scale both rx and ry proportionally
+        const newRx = Math.max(CONFIG.minCircleRadius, Math.min(CONFIG.maxCircleRadius, (selectedElement._pinchRx || initialRadius) * scale));
+        const newRy = Math.max(CONFIG.minCircleRadius, Math.min(CONFIG.maxCircleRadius, (selectedElement._pinchRy || initialRadius) * scale));
+        selectedElement.rx = newRx;
+        selectedElement.ry = newRy;
+        selectedElement.radius = Math.max(newRx, newRy);
+        updateCirclePosition(selectedElement);
+        updatePinchIndicator(Math.round((newRx + newRy) / 2));
+      } else if (selectedElement.type === 'text') {
+        const newSize = Math.max(CONFIG.minFontSize, Math.min(CONFIG.maxFontSize, Math.round(initialFontSize * scale)));
+        selectedElement.size = newSize;
+        updateTextPosition(selectedElement);
+        updatePinchIndicator(newSize);
+      }
       return;
     }
 
@@ -539,20 +612,13 @@ const coords = getCanvasCoordinates(touch.clientX, touch.clientY);
 
 if (currentEditor.currentTool === 'brush' && isDrawing) {
   draw(coords.x, coords.y);
-} else if (isDragging && selectedElement) {
+} else if (activeDragAnnotation) {
   if (!hasMoved) {
     const dx = coords.x - dragStartPos.x;
     const dy = coords.y - dragStartPos.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    
-    if (distance > CONFIG.touchSlopDistance) {
-      hasMoved = true;
-    }
+    if (Math.sqrt(dx*dx + dy*dy) > CONFIG.touchSlopDistance) hasMoved = true;
   }
-  
-  if (hasMoved) {
-    dragAnnotation(coords.x, coords.y);
-  }
+  if (hasMoved) dragAnnotation(coords.x, coords.y);
 }
 }  
 
@@ -563,10 +629,15 @@ if (currentEditor.currentTool === 'brush' && isDrawing) {
       isPinching = false;
       hidePinchIndicator();
       saveState();
-      console.log(`🤏 Pinch ended | final radius: ${selectedElement?.radius.toFixed(0)}px`);
     }
-    
-    handleMouseUp();
+
+    if (activeDragAnnotation) {
+      stopDragging();
+      activeDragAnnotation = null;
+    }
+    if (isDrawing) stopDrawing();
+    isDragging = false;
+    hasMoved = false;
   }
 
   // ==========================================
@@ -616,61 +687,170 @@ if (currentEditor.currentTool === 'brush' && isDrawing) {
   // ==========================================
 
 function addText() {
-    const text = prompt('Enter text:');
-    if (!text) return;
-
     const { canvas } = currentEditor;
-    // 🎯 CANVAS COORDINATES (not screen coordinates)
     const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2 + CONFIG.textSize * 0.3; // Menyimpan posisi BASELINE
+    const centerY = canvas.height / 2;
 
-    const annotation = document.createElement('div');
-    annotation.className = 'editor-text-annotation';
-    annotation.contentEditable = 'true';
-    annotation.textContent = text;
-    annotation.style.pointerEvents = 'none';
-    annotation.style.textAlign = 'center';
-    annotation.style.transform = 'translateX(-50%)';
-    
-    annotation.style.color = '#ffffff';
-    // Font size will be set by updateTextPosition()
-    annotation.style.textShadow = `
-      -1px -1px 0 #000,
-       1px -1px 0 #000,
-      -1px  1px 0 #000,
-       1px  1px 0 #000
-    `;
+    const el = document.createElement('div');
+    el.className = 'editor-text-annotation';
+    // Mobile: start non-editable to prevent keyboard on drag; enable on double-tap
+    el.contentEditable = isMobile ? 'false' : 'true';
+    el.dataset.placeholder = 'Enter text...';
+    el.textContent = 'Enter text...';
+    el.style.pointerEvents = 'auto';
+    el.style.textAlign = 'center';
+    el.style.color = CONFIG.textColor;
+    el.style.whiteSpace = 'nowrap';
+    el.style.wordBreak = 'normal';
+    el.style.lineHeight = '1.4';
+    el.style.padding = '0'; // no padding — keeps visual position = wrapper position
+    el.style.opacity = '0.5'; // dimmed while placeholder
+    el.style.textShadow = `-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000`;
 
-    const annotationData = {
+    // Resize handle (desktop only — mobile uses pinch)
+    let resizeHandle = null;
+    if (!isMobile) {
+      resizeHandle = document.createElement('div');
+      resizeHandle.className = 'editor-resize-handle';
+      resizeHandle.style.cssText = `display:none;position:absolute;bottom:-7px;right:-7px;width:${CONFIG.resizeHandleSize}px;height:${CONFIG.resizeHandleSize}px;background:#378ADD;border:2px solid #fff;border-radius:3px;cursor:se-resize;z-index:15;pointer-events:auto;`;
+    }
+
+    // Wrap text + handle in a container
+    const wrapper = document.createElement('div');
+    wrapper.className = 'editor-text-wrapper';
+    wrapper.style.cssText = 'position:absolute;pointer-events:none;';
+    wrapper.appendChild(el);
+    if (resizeHandle) wrapper.appendChild(resizeHandle);
+
+    const ann = {
       type: 'text',
-      element: annotation,
-      x: centerX,  // ✅ Store CANVAS coordinates
+      element: wrapper,
+      textEl: el,
+      resizeHandle: resizeHandle,
+      x: centerX,
       y: centerY,
-      text,
+      text: 'Enter text...',
       color: CONFIG.textColor,
-      size: CONFIG.textSize
+      size: CONFIG.textSize,
+      isPlaceholder: true
     };
-    
-    // 🔄 Update visual position
-    updateTextPosition(annotationData);
 
-    currentEditor.annotations.push(annotationData);
-    currentEditor.annotationsLayer.appendChild(annotation);
+    // ── Placeholder logic ──────────────────────────────────
+    function applyPlaceholderStyle(active) {
+      el.style.opacity = active ? '0.5' : '1';
+    }
 
-    annotation.addEventListener('mousedown', (e) => {
-  e.stopPropagation();
-  if (currentEditor.currentTool === 'none') {
-    selectElement(annotationData);
-    const coords = getCanvasCoordinates(e.clientX, e.clientY);
-    startDragging(coords.x, coords.y, annotationData);  // ✅ Hanya ini saja
-  }
-});
+    el.addEventListener('focus', () => {
+      // Only allow focus when contentEditable is truly enabled
+      if (el.contentEditable !== 'true') { el.blur(); return; }
+      if (ann.isPlaceholder) {
+        el.textContent = '';
+        ann.isPlaceholder = false;
+        applyPlaceholderStyle(false);
+      }
+      activeDragAnnotation = null;
+    });
 
+    el.addEventListener('blur', () => {
+      const val = el.textContent.trim();
+      if (!val) {
+        el.textContent = 'Enter text...';
+        ann.isPlaceholder = true;
+        applyPlaceholderStyle(true);
+      }
+      // Lock editing again on mobile after done
+      if (isMobile) el.contentEditable = 'false';
+      updateTextPosition(ann);
+      saveState();
+    });
+
+    el.addEventListener('input', () => {
+      ann.isPlaceholder = false;
+      applyPlaceholderStyle(false);
+      updateTextPosition(ann);
+    });
+
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { el.blur(); }
+      // Allow Enter for newline — do not prevent
+    });
+    // ────────────────────────────────────────────────────────
+
+    // Desktop click: first click = select+drag, second click = edit cursor inside text
+    let lastTap = 0;
+    el.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+      if (selectedElement === ann) {
+        // Already selected: allow browser to position cursor for editing
+        // Don't start drag so user can click inside text normally
+        return;
+      }
+      // First click: select and drag
+      selectElement(ann);
+      if (currentEditor.currentTool === 'none') {
+        const coords = getCanvasCoordinates(e.clientX, e.clientY);
+        startAnnotationDrag(coords.x, coords.y, ann);
+      }
+    });
+
+    // Touch: single tap = select+drag, double-tap = enter edit mode (keyboard)
+    el.addEventListener('touchstart', (e) => {
+      e.preventDefault(); // ALWAYS prevent default — blocks unwanted focus/keyboard
+      e.stopPropagation();
+      const now = Date.now();
+      const isDoubleTap = (now - lastTap) < 300;
+      lastTap = now;
+
+      if (isDoubleTap && selectedElement === ann) {
+        // Double-tap: unlock editing + open keyboard
+        el.contentEditable = 'true';
+        el.focus();
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        const sel = window.getSelection();
+        if (sel) { sel.removeAllRanges(); sel.addRange(range); }
+        return;
+      }
+
+      // Single tap: ensure editing locked, then select+drag
+      if (isMobile) el.contentEditable = 'false';
+      selectElement(ann);
+      if (currentEditor.currentTool === 'none') {
+        const touch = e.touches[0];
+        const coords = getCanvasCoordinates(touch.clientX, touch.clientY);
+        startAnnotationDrag(coords.x, coords.y, ann);
+      }
+    }, { passive: false });
+
+    // Resize handle (desktop only)
+    if (resizeHandle) {
+      resizeHandle.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        selectElement(ann);
+        activeResizeAnnotation = ann;
+        resizeStartClientX = e.clientX;
+        resizeStartValue = ann.size;
+      });
+    }
+
+    updateTextPosition(ann);
+    currentEditor.annotations.push(ann);
+    currentEditor.annotationsLayer.appendChild(wrapper);
+
+    // Auto-focus for immediate typing on desktop
     setTimeout(() => {
-      selectElement(annotationData);
-    }, 10);
-
-    saveState();
+      selectElement(ann);
+      if (!isMobile) {
+        el.focus();
+        // Select placeholder text so first keystroke replaces it
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const sel = window.getSelection();
+        if (sel) { sel.removeAllRanges(); sel.addRange(range); }
+      }
+    }, 30);
   }
 
   // ==========================================
@@ -684,207 +864,188 @@ function addText() {
 
     const wrapper = document.createElement('div');
     wrapper.className = 'editor-circle-wrapper';
+    wrapper.style.position = 'absolute';
     wrapper.style.pointerEvents = 'none';
-    
+
     const circle = document.createElement('div');
     circle.className = 'editor-circle-annotation';
-    circle.style.pointerEvents = 'none';
-    
+    circle.style.pointerEvents = 'auto';
     wrapper.appendChild(circle);
-    
-    let moveHandle = null;
-    let handles = [];
-    
-    // 🖥️ DESKTOP ONLY: Add handles
-    if (!isMobile) {
-      moveHandle = document.createElement('div');
-      moveHandle.className = 'circle-handle handle-move';
-      moveHandle.innerHTML = '✥';
-      moveHandle.style.width = CONFIG.moveHandleSize + 'px';
-      moveHandle.style.height = CONFIG.moveHandleSize + 'px';
-      moveHandle.style.fontSize = '24px';
-      moveHandle.style.lineHeight = CONFIG.moveHandleSize + 'px';
-      moveHandle.style.pointerEvents = 'auto';
-      
-      handles = ['nw', 'ne', 'sw', 'se'].map(pos => {
-        const handle = document.createElement('div');
-        handle.className = `circle-handle handle-${pos}`;
-        handle.dataset.position = pos;
-        handle.style.width = CONFIG.handleSize + 'px';
-        handle.style.height = CONFIG.handleSize + 'px';
-        handle.style.pointerEvents = 'auto';
-        return handle;
-      });
 
-      wrapper.appendChild(moveHandle);
-      handles.forEach(h => wrapper.appendChild(h));
+    // Single SE handle (desktop only)
+    let handles = {};
+    if (!isMobile) {
+      const h = document.createElement('div');
+      h.className = 'editor-circle-handle editor-circle-handle-se';
+      h.dataset.pos = 'se';
+      h.style.cssText = `display:none;position:absolute;bottom:-7px;right:-7px;width:${CONFIG.resizeHandleSize}px;height:${CONFIG.resizeHandleSize}px;background:#c8962a;border:2px solid #f0c060;border-radius:2px;z-index:15;pointer-events:auto;cursor:se-resize;`;
+      wrapper.appendChild(h);
+      handles['se'] = h;
     }
 
-    const annotationData = {
+    const ann = {
       type: 'circle',
       element: wrapper,
       circle: circle,
-      moveHandle: moveHandle,
       handles: handles,
+      resizeHandle: null,  // compat
+      moveHandle: null,
       x: centerX,
       y: centerY,
-      radius: CONFIG.circleRadius,
+      rx: CONFIG.circleRadius,  // independent x-radius
+      ry: CONFIG.circleRadius,  // independent y-radius
+      radius: CONFIG.circleRadius, // kept for pinch compat
       color: CONFIG.circleColor,
       strokeWidth: CONFIG.circleStrokeWidth
     };
 
-    updateCirclePosition(annotationData);
-    currentEditor.annotations.push(annotationData);
+    updateCirclePosition(ann);
+    currentEditor.annotations.push(ann);
     currentEditor.annotationsLayer.appendChild(wrapper);
 
-    // 🖥️ DESKTOP: Handle events
-if (moveHandle) {
-  moveHandle.addEventListener('mousedown', (e) => {
-    e.stopPropagation();
-    selectElement(annotationData);
-    const coords = getCanvasCoordinates(e.clientX, e.clientY);
-    startDragging(coords.x, coords.y, annotationData);
-  });
-}
-
+    // Click on circle = select + drag
     circle.addEventListener('mousedown', (e) => {
-  e.stopPropagation();
-  if (currentEditor.currentTool === 'none') {
-    selectElement(annotationData);
-    const coords = getCanvasCoordinates(e.clientX, e.clientY);
-    console.log(`🖱️ Circle mousedown at canvas: (${coords.x.toFixed(0)}, ${coords.y.toFixed(0)})`);
-    startDragging(coords.x, coords.y, annotationData);
-  }
-});
-circle.addEventListener('touchstart', (e) => {
-      e.preventDefault();
       e.stopPropagation();
+      selectElement(ann);
       if (currentEditor.currentTool === 'none') {
-        selectElement(annotationData);
-        const touch = e.touches[0];
-        const rect = currentEditor.canvas.getBoundingClientRect();
-        const scaleX = currentEditor.canvas.width / rect.width;
-        const scaleY = currentEditor.canvas.height / rect.height;
-        const x = (touch.clientX - rect.left) * scaleX;
-        const y = (touch.clientY - rect.top) * scaleY;
-        console.log(`👆 Circle touchstart at canvas: (${x.toFixed(0)}, ${y.toFixed(0)})`);
-        startDragging(x, y, annotationData);
+        const coords = getCanvasCoordinates(e.clientX, e.clientY);
+        startAnnotationDrag(coords.x, coords.y, ann);
       }
     });
-    // 🖥️ DESKTOP: Resize handles
+
+    // Touch on circle
+    circle.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      selectElement(ann);
+      if (currentEditor.currentTool === 'none') {
+        const touch = e.touches[0];
+        const coords = getCanvasCoordinates(touch.clientX, touch.clientY);
+        startAnnotationDrag(coords.x, coords.y, ann);
+      }
+    }, { passive: false });
+
+    // 4-corner resize (desktop only)
     if (!isMobile) {
-      handles.forEach(handle => {
-        handle.addEventListener('mousedown', (e) => {
+      Object.entries(handles).forEach(([pos, h]) => {
+        h.addEventListener('mousedown', (e) => {
           e.stopPropagation();
-          selectElement(annotationData);
-          startResizing(e, annotationData, handle.dataset.position);
+          e.preventDefault();
+          selectElement(ann);
+          activeResizeAnnotation = ann;
+          activeResizeHandle = pos;
+          resizeStartClientX = e.clientX;
+          resizeStartClientY = e.clientY;
+          resizeStartRx = ann.rx;
+          resizeStartRy = ann.ry;
+          resizeStartX = ann.x;
+          resizeStartY = ann.y;
         });
       });
     }
 
-    setTimeout(() => {
-      selectElement(annotationData);
-    }, 10);
-
+    setTimeout(() => selectElement(ann), 10);
     saveState();
   }
 
 function updateCirclePosition(annotation) {
-    const { x, y, radius, color, strokeWidth } = annotation;
-    const { element, circle } = annotation;
-    
-    const rect = currentEditor.canvas.getBoundingClientRect();
+    const { x, y, color, strokeWidth } = annotation;
+    const rx = annotation.rx || annotation.radius || CONFIG.circleRadius;
+    const ry = annotation.ry || annotation.radius || CONFIG.circleRadius;
+    const { element, circle, handles } = annotation;
+
+    const canvasEl = currentEditor.canvas;
+    const rect = canvasEl.getBoundingClientRect();
     const wrapperRect = currentEditor.annotationsLayer.getBoundingClientRect();
-    
-    const scaleX = rect.width / currentEditor.canvas.width;
-    const scaleY = rect.height / currentEditor.canvas.height;
-    
-    // ✅ Calculate offset dari wrapper ke canvas
+
+    const scaleX = rect.width / canvasEl.width;
+    const scaleY = rect.height / canvasEl.height;
+
     const offsetX = rect.left - wrapperRect.left;
     const offsetY = rect.top - wrapperRect.top;
-    
+
     const screenX = x * scaleX + offsetX;
     const screenY = y * scaleY + offsetY;
-    const screenRadius = radius * scaleX;
-    
-    element.style.left = (screenX - screenRadius) + 'px';
-    element.style.top = (screenY - screenRadius) + 'px';
-    element.style.width = (screenRadius * 2) + 'px';
-    element.style.height = (screenRadius * 2) + 'px';
-    
+    const screenRx = rx * scaleX;
+    const screenRy = ry * scaleY;
+
+    element.style.left   = (screenX - screenRx) + 'px';
+    element.style.top    = (screenY - screenRy) + 'px';
+    element.style.width  = (screenRx * 2) + 'px';
+    element.style.height = (screenRy * 2) + 'px';
+
     circle.style.borderColor = color;
-    circle.style.borderWidth = (strokeWidth * scaleX) + 'px';
+    circle.style.borderWidth = (strokeWidth * Math.min(scaleX, scaleY)) + 'px';
+
+    // Show/hide 4 corner handles
+    const show = (annotation === selectedElement);
+    if (handles && typeof handles === 'object') {
+      Object.values(handles).forEach(h => { if (h) h.style.display = show ? 'block' : 'none'; });
+    }
+    // compat: single resizeHandle
+    if (annotation.resizeHandle) annotation.resizeHandle.style.display = show ? 'block' : 'none';
 }
-// 🎯 NEW: Update text visual position from canvas coordinates
+// Update text visual position from canvas coordinates
   function updateTextPosition(annotation) {
-    const { x, y, radius, color, strokeWidth } = annotation;
-    const { element, circle } = annotation;
-    
-    const rect = currentEditor.canvas.getBoundingClientRect();
+    const { x, y, size } = annotation;
+    const { element, textEl, resizeHandle } = annotation;
+
+    const canvasEl = currentEditor.canvas;
+    const rect = canvasEl.getBoundingClientRect();
     const wrapperRect = currentEditor.annotationsLayer.getBoundingClientRect();
-    
-    const scaleX = rect.width / currentEditor.canvas.width;
-    const scaleY = rect.height / currentEditor.canvas.height;
-    
-    // ✅ Calculate offset dari wrapper ke canvas
+
+    const scaleX = rect.width / canvasEl.width;
+    const scaleY = rect.height / canvasEl.height;
+
+    // Offset: canvas top-left relative to annotationsLayer top-left
     const offsetX = rect.left - wrapperRect.left;
     const offsetY = rect.top - wrapperRect.top;
-    
+
+    // Screen position inside annotationsLayer
     const screenX = x * scaleX + offsetX;
     const screenY = y * scaleY + offsetY;
-    const screenRadius = radius * scaleX;
-    
-    element.style.left = (screenX - screenRadius) + 'px';
-    element.style.top = (screenY - screenRadius) + 'px';
-    element.style.width = (screenRadius * 2) + 'px';
-    element.style.height = (screenRadius * 2) + 'px';
-    
-    circle.style.borderColor = color;
-    circle.style.borderWidth = (strokeWidth * scaleX) + 'px';
+    const screenFontSize = Math.max(8, size * Math.min(scaleX, scaleY));
+
+    const displayEl = textEl || element;
+    displayEl.style.fontSize = screenFontSize + 'px';
+    displayEl.style.whiteSpace = 'nowrap';
+    displayEl.style.display = 'inline-block';
+    displayEl.style.width = 'auto';
+    displayEl.style.maxWidth = 'none';
+
+    element.style.position = 'absolute';
+    element.style.width = 'max-content';
+    element.style.maxWidth = 'none';
+    element.style.left = screenX + 'px';
+    element.style.top  = screenY + 'px';
+    element.style.transform = 'translateX(-50%)';
+
+    if (resizeHandle) {
+      resizeHandle.style.display = (annotation === selectedElement) ? 'block' : 'none';
+    }
+
+    // Store canvas-space export coords — derived purely from ann.x/y,
+    // so they're always consistent regardless of scroll or viewport state.
+    // exportX = ann.x (center), exportY = ann.y (top) — already in canvas pixels.
+    annotation.exportX = x;
+    annotation.exportY = y;
 }
   
-  function startResizing(e, annotation, handlePos) {
-    isResizing = true;
-    resizeHandle = handlePos;
-    selectedElement = annotation;
-
-    const handle = annotation.handles.find(h => h.dataset.position === handlePos);
-    if (handle) handle.classList.add('is-active');
-
-    const rect = currentEditor.canvas.getBoundingClientRect();
-    const scaleX = currentEditor.canvas.width / rect.width;
-    const scaleY = currentEditor.canvas.height / rect.height;
-    dragOffset.x = (e.clientX - rect.left) * scaleX;
-    dragOffset.y = (e.clientY - rect.top) * scaleY;
+  function startAnnotationDrag(x, y, annotation) {
+    isDragging = true;
+    hasMoved = false;
+    dragStartPos = { x, y };
+    activeDragAnnotation = annotation;
+    dragOffset.x = x - annotation.x;
+    dragOffset.y = y - annotation.y;
   }
 
   function resizeCircle(mouseX, mouseY) {
-    if (!selectedElement || !isResizing) return;
-
-    const annotation = selectedElement;
-    const { x, y } = annotation;
-    
-    const dx = mouseX - x;
-    const dy = mouseY - y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    
-    const newRadius = Math.max(
-      CONFIG.minCircleRadius,
-      Math.min(CONFIG.maxCircleRadius, distance)
-    );
-    
-    annotation.radius = newRadius;
-    updateCirclePosition(annotation);
+    // Legacy stub — pinch is handled in handleTouchMove directly
   }
 
   function stopResizing() {
-    if (isResizing && selectedElement && selectedElement.handles) {
-      selectedElement.handles.forEach(h => h.classList.remove('is-active'));
-      saveState();
-    }
-
     isResizing = false;
-    resizeHandle = null;
   }
 
   // ==========================================
@@ -894,61 +1055,16 @@ function updateCirclePosition(annotation) {
   function selectAnnotation(x, y) {
     for (let i = currentEditor.annotations.length - 1; i >= 0; i--) {
       const ann = currentEditor.annotations[i];
-      
-      if (ann.type === 'circle' && !isMobile) {
-        const handleClicked = checkHandleClick(x, y, ann);
-        if (handleClicked) {
-          selectElement(ann);
-          return;
-        }
-      }
-      
       if (isPointInAnnotation(x, y, ann)) {
         selectElement(ann);
-        startDragging(x, y, ann);
+        startAnnotationDrag(x, y, ann);
         return;
       }
     }
-    
     deselectAll();
   }
 
-  function checkHandleClick(x, y, annotation) {
-    if (!annotation.handles || !annotation.handles.length) return false;
-    
-    const canvasRect = currentEditor.canvas.getBoundingClientRect();
-    const scaleX = currentEditor.canvas.width / canvasRect.width;
-    const scaleY = currentEditor.canvas.height / canvasRect.height;
-    
-    if (annotation.moveHandle) {
-      const moveRect = annotation.moveHandle.getBoundingClientRect();
-      const mx = (moveRect.left - canvasRect.left + moveRect.width / 2) * scaleX;
-      const my = (moveRect.top - canvasRect.top + moveRect.height / 2) * scaleY;
-      const moveDist = Math.sqrt((x - mx) ** 2 + (y - my) ** 2);
-      const moveRadius = (CONFIG.moveHandleSize / 2 + 8) * scaleX;
-      
-      if (moveDist < moveRadius) {
-        startDragging(x, y, annotation);
-        return true;
-      }
-    }
-    
-    const touchRadius = (CONFIG.handleSize / 2 + 8) * scaleX;
-    
-    for (let handle of annotation.handles) {
-      const rect = handle.getBoundingClientRect();
-      const hx = (rect.left - canvasRect.left + rect.width / 2) * scaleX;
-      const hy = (rect.top - canvasRect.top + rect.height / 2) * scaleY;
-      const dist = Math.sqrt((x - hx) ** 2 + (y - hy) ** 2);
-      
-      if (dist < touchRadius) {
-        startResizing({ clientX: x / scaleX + canvasRect.left, clientY: y / scaleY + canvasRect.top }, annotation, handle.dataset.position);
-        return true;
-      }
-    }
-    
-    return false;
-  }
+  function checkHandleClick() { return false; }
 
   function isPointInAnnotation(x, y, annotation) {
     // 🎯 Check if point (in canvas coordinates) is inside annotation
@@ -979,98 +1095,59 @@ return x >= annotation.x &&
     deselectAll();
     selectedElement = annotation;
     annotation.element.classList.add('selected');
-    
-    if (annotation.type === 'text') {
-      annotation.element.style.pointerEvents = 'auto';
-    }
+    // Wrapper pointer-events auto so resize handle is clickable/touchable
+    annotation.element.style.pointerEvents = 'auto';
+    if (annotation.resizeHandle) annotation.resizeHandle.style.display = 'block';
+    if (annotation.type === 'circle') updateCirclePosition(annotation);
+    if (annotation.type === 'text') updateTextPosition(annotation);
   }
 
   function deselectAll() {
     if (selectedElement) {
       selectedElement.element.classList.remove('selected');
-      
-      if (selectedElement.type === 'text') {
-        selectedElement.element.style.pointerEvents = 'none';
+      selectedElement.element.style.pointerEvents = 'none';
+      if (selectedElement.resizeHandle) selectedElement.resizeHandle.style.display = 'none';
+      // Lock text editing and dismiss keyboard
+      if (selectedElement.type === 'text' && selectedElement.textEl) {
+        const tel = selectedElement.textEl;
+        if (document.activeElement === tel) tel.blur();
+        if (isMobile) tel.contentEditable = 'false';
+        // Restore placeholder if empty
+        const val = tel.textContent.trim();
+        if (!val || val === '') {
+          tel.textContent = 'Enter text...';
+          selectedElement.isPlaceholder = true;
+          tel.style.opacity = '0.5';
+        }
       }
-      
       selectedElement = null;
     }
   }
 
 function startDragging(x, y, annotation) {
-    isDragging = true;
-    hasMoved = false;
-    dragStartPos = { x, y };
-
-    if (annotation.moveHandle) {
-      annotation.moveHandle.classList.add('is-active');
-    }
-
-    // 🎯 Calculate offset from CANVAS coordinates
-    if (annotation.type === 'circle') {
-      // For circles, offset from top-left corner
-      dragOffset.x = x - annotation.x; // Langsung dari center
-      dragOffset.y = y - annotation.y;
-      
-      console.log(`🎯 startDragging CIRCLE:`, {
-        touchAt: { x: x.toFixed(0), y: y.toFixed(0) },
-        circleCenter: { x: annotation.x.toFixed(0), y: annotation.y.toFixed(0) },
-        radius: annotation.radius.toFixed(0),
-        offset: { x: dragOffset.x.toFixed(0), y: dragOffset.y.toFixed(0) }
-      });
-      
-    } else if (annotation.type === 'text') {
-      // For text, offset from anchor point
-      dragOffset.x = x - annotation.x;
-      dragOffset.y = y - annotation.y;
-      
-      console.log(`🎯 startDragging TEXT:`, {
-        touchAt: { x: x.toFixed(0), y: y.toFixed(0) },
-        textPos: { x: annotation.x.toFixed(0), y: annotation.y.toFixed(0) },
-        offset: { x: dragOffset.x.toFixed(0), y: dragOffset.y.toFixed(0) }
-      });
-    }
+    startAnnotationDrag(x, y, annotation);
   }
 
 function dragAnnotation(x, y) {
-    if (!selectedElement) return;
-    
-    // 🎯 Update position in CANVAS coordinates
-    if (selectedElement.type === 'circle') {
-      selectedElement.x = x - dragOffset.x;
-      selectedElement.y = y - dragOffset.y;
-      
-      console.log(`🔄 dragAnnotation CIRCLE:`, {
-        mouseAt: { x: x.toFixed(0), y: y.toFixed(0) },
-        offset: { x: dragOffset.x.toFixed(0), y: dragOffset.y.toFixed(0) },
-        newCenter: { x: selectedElement.x.toFixed(0), y: selectedElement.y.toFixed(0) }  // ✅ Hapus newTopLeft
-      });
-      
-      updateCirclePosition(selectedElement);
-      
-    } else if (selectedElement.type === 'text') {
-      selectedElement.x = x - dragOffset.x;
-      selectedElement.y = y - dragOffset.y;
-      
-      console.log(`🔄 dragAnnotation TEXT:`, {
-        mouseAt: { x: x.toFixed(0), y: y.toFixed(0) },
-        offset: { x: dragOffset.x.toFixed(0), y: dragOffset.y.toFixed(0) },
-        newBaseline: { x: selectedElement.x.toFixed(0), y: selectedElement.y.toFixed(0) }
-      });
-      
-      updateTextPosition(selectedElement);
-    }
+    const ann = activeDragAnnotation || selectedElement;
+    if (!ann) return;
+    ann.x = x - dragOffset.x;
+    ann.y = y - dragOffset.y;
+    if (ann.type === 'circle') updateCirclePosition(ann);
+    else if (ann.type === 'text') updateTextPosition(ann);
   }
 
   function stopDragging() {
-    if (selectedElement?.moveHandle) {
-      selectedElement.moveHandle.classList.remove('is-active');
-    }
-
     if (isDragging && hasMoved && !isResizing && !isDrawing) {
+      // If a text was in edit mode during drag, lock it and dismiss keyboard
+      if (selectedElement && selectedElement.type === 'text' && selectedElement.textEl) {
+        const tel = selectedElement.textEl;
+        if (document.activeElement === tel) tel.blur();
+        if (isMobile) tel.contentEditable = 'false';
+      }
       saveState();
     }
-
+    activeDragAnnotation = null;
     isDragging = false;
     hasMoved = false;
   }
@@ -1088,10 +1165,12 @@ function dragAnnotation(x, y) {
         type: a.type,
         x: a.x,
         y: a.y,
-        text: a.element.textContent || '',
+        text: a.isPlaceholder ? '' : (a.textEl ? a.textEl.textContent.trim() : (a.element.textContent || a.text || '').trim()),
         color: a.color,
         size: a.size,
         radius: a.radius,
+        rx: a.rx,
+        ry: a.ry,
         strokeWidth: a.strokeWidth
       }))
     };
@@ -1170,110 +1249,122 @@ ctx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
 function addTextFromState(data) {
     const el = document.createElement('div');
     el.className = 'editor-text-annotation';
-    el.contentEditable = 'true';
+    el.contentEditable = 'false';
     el.textContent = data.text;
-    el.style.pointerEvents = 'none';
-    
+    el.style.pointerEvents = 'auto';
+    el.style.textAlign = 'center';
+    el.style.whiteSpace = 'nowrap';
+    el.style.wordBreak = 'normal';
+    el.style.lineHeight = '1.4';
     el.style.color = data.color;
-    // Font size will be set by updateTextPosition()
-    el.style.textShadow = `
-      -1px -1px 0 #000,
-       1px -1px 0 #000,
-      -1px  1px 0 #000,
-       1px  1px 0 #000
-    `;
+    el.style.textShadow = `-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000`;
 
-    const ann = { ...data, element: el };
-    
-    // 🔄 Update visual position from canvas coordinates
+    let resizeHandle = null;
+    if (!isMobile) {
+      resizeHandle = document.createElement('div');
+      resizeHandle.className = 'editor-resize-handle';
+      resizeHandle.style.cssText = `display:none;position:absolute;bottom:-7px;right:-7px;width:${CONFIG.resizeHandleSize}px;height:${CONFIG.resizeHandleSize}px;background:#378ADD;border:2px solid #fff;border-radius:3px;cursor:se-resize;z-index:15;pointer-events:auto;`;
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'editor-text-wrapper';
+    wrapper.style.cssText = 'position:absolute;pointer-events:none;';
+    wrapper.appendChild(el);
+    if (resizeHandle) wrapper.appendChild(resizeHandle);
+
+    const ann = { ...data, element: wrapper, textEl: el, resizeHandle };
     updateTextPosition(ann);
-    
     currentEditor.annotations.push(ann);
-    currentEditor.annotationsLayer.appendChild(el);
-el.addEventListener('mousedown', e => {
-  e.stopPropagation();
-  if (currentEditor.currentTool === 'none') {
-    selectElement(ann);
-    const coords = getCanvasCoordinates(e.clientX, e.clientY);
-    startDragging(coords.x, coords.y, ann);  // ✅ Pakai 'ann' bukan 'annotationData'
-  }
-});
+    currentEditor.annotationsLayer.appendChild(wrapper);
+
+    el.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+      selectElement(ann);
+      if (currentEditor.currentTool === 'none') {
+        const coords = getCanvasCoordinates(e.clientX, e.clientY);
+        startAnnotationDrag(coords.x, coords.y, ann);
+      }
+    });
+
+    if (resizeHandle) {
+      resizeHandle.addEventListener('mousedown', (e) => {
+        e.stopPropagation(); e.preventDefault();
+        selectElement(ann);
+        activeResizeAnnotation = ann;
+        resizeStartClientX = e.clientX;
+        resizeStartValue = ann.size;
+      });
+    }
   }
 
   function addCircleFromState(data) {
     const wrapper = document.createElement('div');
     wrapper.className = 'editor-circle-wrapper';
+    wrapper.style.position = 'absolute';
     wrapper.style.pointerEvents = 'none';
-    
+
     const circle = document.createElement('div');
     circle.className = 'editor-circle-annotation';
-    circle.style.pointerEvents = 'none';
-    
+    circle.style.pointerEvents = 'auto';
     wrapper.appendChild(circle);
-    
-    let moveHandle = null;
-    let handles = [];
-    
-    if (!isMobile) {
-      moveHandle = document.createElement('div');
-      moveHandle.className = 'circle-handle handle-move';
-      moveHandle.innerHTML = '✥';
-      moveHandle.style.width = CONFIG.moveHandleSize + 'px';
-      moveHandle.style.height = CONFIG.moveHandleSize + 'px';
-      moveHandle.style.fontSize = '24px';
-      moveHandle.style.lineHeight = CONFIG.moveHandleSize + 'px';
-      moveHandle.style.pointerEvents = 'auto';
-      
-      handles = ['nw', 'ne', 'sw', 'se'].map(pos => {
-        const handle = document.createElement('div');
-        handle.className = `circle-handle handle-${pos}`;
-        handle.dataset.position = pos;
-        handle.style.width = CONFIG.handleSize + 'px';
-        handle.style.height = CONFIG.handleSize + 'px';
-        handle.style.pointerEvents = 'auto';
-        return handle;
-      });
 
-      wrapper.appendChild(moveHandle);
-      handles.forEach(h => wrapper.appendChild(h));
+    let handles = {};
+    if (!isMobile) {
+      const h = document.createElement('div');
+      h.className = 'editor-circle-handle editor-circle-handle-se';
+      h.dataset.pos = 'se';
+      h.style.cssText = `display:none;position:absolute;bottom:-7px;right:-7px;width:${CONFIG.resizeHandleSize}px;height:${CONFIG.resizeHandleSize}px;background:#c8962a;border:2px solid #f0c060;border-radius:2px;z-index:15;pointer-events:auto;cursor:se-resize;`;
+      wrapper.appendChild(h);
+      handles['se'] = h;
     }
 
     const ann = {
       ...data,
       element: wrapper,
-      circle: circle,
-      moveHandle: moveHandle,
-      handles: handles
+      circle,
+      handles,
+      resizeHandle: null,
+      moveHandle: null,
+      rx: data.rx || data.radius || CONFIG.circleRadius,
+      ry: data.ry || data.radius || CONFIG.circleRadius
     };
 
     updateCirclePosition(ann);
     currentEditor.annotations.push(ann);
     currentEditor.annotationsLayer.appendChild(wrapper);
 
-if (moveHandle) {
-  moveHandle.addEventListener('mousedown', (e) => {
-    e.stopPropagation();
-    selectElement(ann);
-    const coords = getCanvasCoordinates(e.clientX, e.clientY);
-    startDragging(coords.x, coords.y, ann);  // ✅ Hanya ini
-  });
-}
+    circle.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+      selectElement(ann);
+      if (currentEditor.currentTool === 'none') {
+        const coords = getCanvasCoordinates(e.clientX, e.clientY);
+        startAnnotationDrag(coords.x, coords.y, ann);
+      }
+    });
 
-circle.addEventListener('mousedown', (e) => {
-  e.stopPropagation();
-  if (currentEditor.currentTool === 'none') {
-    selectElement(ann);
-    const coords = getCanvasCoordinates(e.clientX, e.clientY);
-    startDragging(coords.x, coords.y, ann);  // ✅ Hanya ini
-  }
-});
+    circle.addEventListener('touchstart', (e) => {
+      e.preventDefault(); e.stopPropagation();
+      selectElement(ann);
+      if (currentEditor.currentTool === 'none') {
+        const touch = e.touches[0];
+        const coords = getCanvasCoordinates(touch.clientX, touch.clientY);
+        startAnnotationDrag(coords.x, coords.y, ann);
+      }
+    }, { passive: false });
 
     if (!isMobile) {
-      handles.forEach(handle => {
-        handle.addEventListener('mousedown', e => {
-          e.stopPropagation();
+      Object.entries(handles).forEach(([pos, h]) => {
+        h.addEventListener('mousedown', (e) => {
+          e.stopPropagation(); e.preventDefault();
           selectElement(ann);
-          startResizing(e, ann, handle.dataset.position);
+          activeResizeAnnotation = ann;
+          activeResizeHandle = pos;
+          resizeStartClientX = e.clientX;
+          resizeStartClientY = e.clientY;
+          resizeStartRx = ann.rx;
+          resizeStartRy = ann.ry;
+          resizeStartX = ann.x;
+          resizeStartY = ann.y;
         });
       });
     }
@@ -1305,16 +1396,14 @@ circle.addEventListener('mousedown', (e) => {
 function confirm() {
     const { canvas, ctx, annotations, paths, originalImage } = currentEditor;
 
-    // 🔍 DEBUG: Log annotations before export
-    console.log('🔍 Exporting annotations:', annotations.map(a => ({
-      type: a.type,
-      x: a.x,
-      y: a.y,
-      text: a.type === 'text' ? a.element.textContent : undefined,
-      radius: a.radius,
-      canvasWidth: canvas.width,
-      canvasHeight: canvas.height
-    })));
+    // Show loading state on confirm button
+    const btn = currentEditor.confirmBtn;
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="editor-btn-spinner"></span> Processing...';
+      btn.style.opacity = '0.75';
+      btn.style.cursor = 'not-allowed';
+    }
 
     const finalCanvas = document.createElement('canvas');
     finalCanvas.width = canvas.width;
@@ -1349,40 +1438,53 @@ function confirm() {
     // 🎯 Draw annotations using CANVAS coordinates
     annotations.forEach(ann => {
   if (ann.type === 'text') {
-    // ✅ Text stored as BASELINE position - perfect for fillText!
-    console.log(`📝 Drawing text at BASELINE: (${ann.x.toFixed(0)}, ${ann.y.toFixed(0)})`);
-    
+    const textContent = ann.isPlaceholder ? '' : ((ann.textEl ? ann.textEl.textContent : ann.element.textContent) || ann.text || '').trim();
+    if (!textContent) return;
+
+    // ann.exportX/Y are pure canvas-pixel coords set by updateTextPosition.
+    // ann.x = horizontal center, ann.y = top edge of text — no getBoundingClientRect needed.
+    const exportX = ann.exportX !== undefined ? ann.exportX : ann.x;
+    const exportY = ann.exportY !== undefined ? ann.exportY : ann.y;
+
+    const lines = textContent.split('\n');
+    const lineH = ann.size * 1.4;
     finalCtx.font = `bold ${ann.size}px Arial`;
     finalCtx.lineWidth = Math.max(2, ann.size * 0.15);
     finalCtx.textAlign = 'center';
-    finalCtx.textBaseline = 'alphabetic'; // sudah sesuai dengan sistem baseline kamu
-    // Draw text outline (black)
-    finalCtx.strokeStyle = '#000000';
-    finalCtx.strokeText(ann.element.textContent, ann.x, ann.y);  // ✅ Langsung pakai ann.x, ann.y
-    
-    // Draw text fill (white)
-    finalCtx.fillStyle = '#ffffff';
-    finalCtx.fillText(ann.element.textContent, ann.x, ann.y);  // ✅ Langsung pakai ann.x, ann.y
+    finalCtx.textBaseline = 'top';
+    lines.forEach((line, idx) => {
+      const ly = exportY + idx * lineH;
+      finalCtx.strokeStyle = '#000000';
+      finalCtx.strokeText(line, exportX, ly);
+      finalCtx.fillStyle = '#ffffff';
+      finalCtx.fillText(line, exportX, ly);
+    });
     
   } else if (ann.type === 'circle') {
-    console.log(`⭕ Drawing circle at center: (${ann.x.toFixed(0)}, ${ann.y.toFixed(0)}) radius: ${ann.radius.toFixed(0)}`);
-    
+    const rx = ann.rx || ann.radius || CONFIG.circleRadius;
+    const ry = ann.ry || ann.radius || CONFIG.circleRadius;
     finalCtx.strokeStyle = ann.color;
     finalCtx.lineWidth = ann.strokeWidth;
     finalCtx.beginPath();
-    finalCtx.arc(ann.x, ann.y, ann.radius, 0, Math.PI * 2);
+    finalCtx.ellipse(ann.x, ann.y, rx, ry, 0, 0, Math.PI * 2);
     finalCtx.stroke();
   }
 });
 
-    console.log('✅ Export complete, creating blob...');
 
     finalCanvas.toBlob((blob) => {
-      // ✅ TESTING: Show result image instead of uploading
+      // Restore button in case close() doesn't fire immediately
+      if (currentEditor && currentEditor.confirmBtn) {
+        currentEditor.confirmBtn.disabled = false;
+        currentEditor.confirmBtn.innerHTML = '✅ Confirm & Upload';
+        currentEditor.confirmBtn.style.opacity = '';
+        currentEditor.confirmBtn.style.cursor = '';
+      }
+
       if (MarkerImageHandler.CONFIG.debugMode) {
         showDebugPreview(finalCanvas, annotations);
       }
-      
+
       if (currentEditor.callback) {
         currentEditor.callback({
           status: 'confirm',
@@ -1468,11 +1570,14 @@ function showDebugPreview(canvas, annotations) {
 
 
   function cancel() {
-    if (currentEditor.paths.length > 0 || currentEditor.annotations.length > 0) {
-      if (!confirm('Discard all changes?')) return;
+    // Clear all annotations & paths so nothing leaks to caller
+    if (currentEditor) {
+      currentEditor.annotations.forEach(a => { try { a.element.remove(); } catch(e){} });
+      currentEditor.annotations = [];
+      currentEditor.paths = [];
     }
 
-    if (currentEditor.callback) {
+    if (currentEditor && currentEditor.callback) {
       currentEditor.callback({ status: 'cancel' });
     }
 
@@ -1482,11 +1587,22 @@ function showDebugPreview(canvas, annotations) {
   function close() {
     if (currentEditor && currentEditor.modal) {
       removeKeyboardShortcuts();
+      detachCanvasEvents();
+
+      // Safety: clear all annotation DOM elements before closing
+      if (currentEditor.annotations) {
+        currentEditor.annotations.forEach(a => { try { a.element.remove(); } catch(e){} });
+        currentEditor.annotations = [];
+      }
+      if (currentEditor.paths) currentEditor.paths = [];
+
       currentEditor.modal.classList.remove('active');
       setTimeout(() => {
-        currentEditor.modal.remove();
+        if (currentEditor && currentEditor.modal) currentEditor.modal.remove();
         currentEditor = null;
         selectedElement = null;
+        activeDragAnnotation = null;
+        activeResizeAnnotation = null;
         isDrawing = false;
         isResizing = false;
         isDragging = false;
@@ -1514,6 +1630,3 @@ function showDebugPreview(canvas, annotations) {
 })();
 
 window.ImageEditor = ImageEditor;
-console.log('✅ ImageEditor v3.1 - FIXED Coordinate System');
-console.log('📍 All coordinates now use CANVAS space, not SCREEN space');
-console.log('🎯 Export will match editor preview exactly');
