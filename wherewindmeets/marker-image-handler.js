@@ -43,7 +43,7 @@ const MarkerImageHandler = (function() {
     uploadResumeDate: 'January 1st',
     enableImageEditor: true,
     debugMode: false,
-    uploadToServer: false, 
+    uploadToServer: true, 
     enableTouchProtection: false
   };
 
