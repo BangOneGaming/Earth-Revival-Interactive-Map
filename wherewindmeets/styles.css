@@ -1257,22 +1257,30 @@ body.pip-mode .leaflet-popup-content-wrapper { border-radius: 4px; }
   width: 100vw;
   height: 100vh;
   z-index: 9998;
+  
+  /* Default: Gradient dulu (instant load) */
+  background: linear-gradient(135deg, var(--ink-dark) 0%, var(--ink-deep) 100%);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  
   visibility: hidden;
   opacity: 0;
   contain: paint;
+  transition: background-image 0.5s ease-in-out;
 }
 
-@media (min-width: 769px) {
-  #preloadOverlay {
-    background-image: url('https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg');
-  }
+/* Background image akan di-load via JavaScript setelah page ready */
+/* Ini mencegah blocking LCP */
+#preloadOverlay.bg-loaded {
+  background-image: url('https://tiles.bgonegaming.win/wherewindmeet/overlay/WWM.webp');
+  background-blend-mode: overlay;
 }
-@media (max-width: 768px) {
-  #preloadOverlay {
-    background-image: url('https://cdn1.epicgames.com/spt-assets/a55e4c8b015d445195aab2f028deace6/where-winds-meet-1n85i.jpg');
+
+/* Fallback untuk yang noscript */
+@media (min-width: 769px) {
+  noscript #preloadOverlay {
+    background-image: url('https://tiles.bgonegaming.win/wherewindmeet/overlay/WWM.webp');
   }
 }
 
