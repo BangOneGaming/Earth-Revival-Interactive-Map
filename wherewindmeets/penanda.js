@@ -13,7 +13,7 @@ const MARKER_CONFIG = {
 
 
 const EDIT_PERMISSION = {
-  loc_type: false // 🔒 default TIDAK bisa diedit
+  loc_type: true // 🔒 default TIDAK bisa diedit
 };
 
 // ========================================
@@ -1136,6 +1136,8 @@ createIconWithBadge(baseIcon, markerFloor) {
       <div style="position:relative;width:${iconSize[0]}px;height:${iconSize[1]}px;">
         ${baseHtml}
         <img src="${ICON_BASE_URL}layericon.png"
+          alt=""
+          aria-hidden="true"
           style="
             position:absolute;
             bottom:0;
