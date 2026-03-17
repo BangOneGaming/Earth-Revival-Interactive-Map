@@ -38,11 +38,19 @@
 
   <!-- ✅ THEME COLOR -->
   <meta name="theme-color" content="#5c3e0e" />
-  <!-- ✅ PRECONNECT untuk resource eksternal (CRITICAL untuk LCP) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://unpkg.com">
-  <link rel="dns-prefetch" href="https://ik.imagekit.io">
+<!-- ✅ PRECONNECT - Hanya yang critical -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Downgrade ke dns-prefetch untuk yang tidak urgent -->
+<link rel="dns-prefetch" href="https://unpkg.com">
+<link rel="dns-prefetch" href="https://ik.imagekit.io">
+<link rel="dns-prefetch" href="https://tiles.bgonegaming.win">
+<link 
+rel="preload"
+as="image"
+href="https://tiles.bgonegaming.win/wherewindmeet/tiles/5_22_15.webp?v=20251121"
+fetchpriority="high"
+type="image/webp">
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RNEQ8BY21N"></script>
   <script>
@@ -151,8 +159,8 @@
   <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"></noscript>
   
   <!-- Main CSS - PRELOAD -->
-  <link rel="preload" href="styles.css?v=6.0.10" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="styles.css?v=6.0.10"></noscript>
+  <link rel="preload" href="styles.css?v=6.0.11" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="styles.css?v=6.0.11"></noscript>
   
   <!-- Fonts - PRELOAD dengan display=swap -->
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -868,69 +876,117 @@ btnClose.addEventListener("click", function(e) {
   });  
 </script>
 
-<!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>    
+<!-- Leaflet JS - DEFER untuk non-blocking -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js" defer></script>
 
-<!-- Google Sign-In -->
+<!-- Google Sign-In (biarkan async) -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>  
-<script src="username.js"></script>    
-    
-<!-- Application Scripts -->    
-<script>
-  const v = Date.now();
+<script src="username.js" defer></script>
 
-  const files = [
-  "peta.js",
-    "cookie-consent.js",
-    "memuat-data.js",
-    "feedbackmatker.js",
-    "descmanager.js",
-    "knowladge-series.js",
-    "penanda.js",
-    "marker-link.js",
-    "region-management.js",
-    "zoom_optimizer.js",
-    "leaderboard.js",
-    "editing-image-upload.js",
-    "marker-image-handler.js",
-    "ikon.js",
-    
-    "time.js",
-    "booklist.js",
-    "knowladgelist.js",
-    "mystic-skill-panel.js",
-    "innerway.js",
-    "profile.js",
-    "form.js",
-    "layer.js",
-    "riddle-search.js",
-    "comment.js",
-    "patchnote.js",
-    "setting.js",
-    "donate.js",
-    "region.js",
-    "tales-echoes.js",
-    "map-switcher.js",
-    "MapTransition.js",
-    "pip-map.js",
-    "search-info.js",
-    "tip-guide.js"
-  ];
-  function loadScriptsSequentially(list, index = 0) {
-    if (index >= list.length) {
-      const main = document.createElement("script");
-      main.src = `main.js?v=${v}`;
-      main.defer = true;
-      document.body.appendChild(main);
-      return;
-    }
+<script>
+const v = Date.now();
+
+// ============================================
+// SCRIPT LOADER
+// ============================================
+function loadScripts(list) {
+  return Promise.all(list.map(src => new Promise(res => {
     const s = document.createElement("script");
-    s.src = `${list[index]}?v=${v}`;
-    s.onload = () => loadScriptsSequentially(list, index + 1);
-    s.onerror = () => loadScriptsSequentially(list, index + 1);
+    s.src = `${src}?v=${v}`;
+    s.defer = true;
+    s.onload = res;
+    s.onerror = res;
     document.body.appendChild(s);
+  })));
+}
+
+// ============================================
+// 🧠 PHASE 1 — CRITICAL (WAJIB MAP)
+// ============================================
+const critical = [
+  "peta.js",
+  "penanda.js",
+  "layer.js",
+  "map-switcher.js",
+  "MapTransition.js"
+];
+
+// ============================================
+// ⚙️ PHASE 2 — CORE FEATURES
+// ============================================
+const secondary = [
+  "memuat-data.js",
+  "descmanager.js",
+  "knowladge-series.js",
+  "region-management.js",
+  "zoom_optimizer.js",
+  "marker-link.js",
+  "ikon.js",
+  "search-info.js",
+  "pip-map.js"
+];
+
+// ============================================
+// 🛌 PHASE 3 — NON-CRITICAL / UI / HEAVY
+// ============================================
+const lazy = [
+  "leaderboard.js",
+  "comment.js",
+  "patchnote.js",
+  "donate.js",
+  "profile.js",
+  "setting.js",
+  "tip-guide.js",
+  "cookie-consent.js",
+  "feedbackmatker.js",
+  "editing-image-upload.js",
+  "marker-image-handler.js",
+  "time.js",
+  "booklist.js",
+  "knowladgelist.js",
+  "mystic-skill-panel.js",
+  "innerway.js",
+  "form.js",
+  "riddle-search.js",
+  "region.js",
+  "tales-echoes.js"
+];
+
+// ============================================
+// 🚀 INIT FLOW
+// ============================================
+(async function initApp() {
+
+  // 🔥 1. LOAD CRITICAL
+  await loadScripts(critical);
+  console.log("✅ Critical loaded");
+
+  // ✅ tampilkan UI awal (map sudah bisa muncul)
+  document.body.classList.add("app-ready");
+
+  // 🔥 2. LOAD SECONDARY
+  await loadScripts(secondary);
+  console.log("⚙️ Secondary loaded");
+
+  // 🔥 load main.js setelah core siap
+  const main = document.createElement("script");
+  main.src = `main.js?v=${v}`;
+  main.defer = true;
+  document.body.appendChild(main);
+
+  // 🔥 3. LOAD LAZY (saat idle)
+  const loadLazy = () => {
+    loadScripts(lazy);
+    console.log("🛌 Lazy loaded");
+  };
+
+  if ("requestIdleCallback" in window) {
+    requestIdleCallback(loadLazy);
+  } else {
+    setTimeout(loadLazy, 1500);
   }
-  loadScriptsSequentially(files);
+
+})();
 </script>
 
 <script>
