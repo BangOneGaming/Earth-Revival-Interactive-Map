@@ -1293,7 +1293,7 @@ body.pip-mode .leaflet-popup-content-wrapper { border-radius: 4px; }
   will-change: opacity;
   visibility: visible;
   opacity: 1;
-  contain: paint;
+  contain: strict;
   transition: background-image 0.5s ease-in-out;
 }
 

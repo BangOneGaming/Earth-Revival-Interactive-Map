@@ -170,15 +170,18 @@
   let _loadProgress = 0;
 
   function startLoadingBar() {
-    const bar = document.getElementById('preloadBarFill');
-    const pct = document.getElementById('preloadBarPercent');
-    if (!bar || !pct) return;
+  const bar = document.getElementById('preloadBarFill');
+  const pct = document.getElementById('preloadBarPercent');
+  if (!bar || !pct) return;
 
-    _loadProgress = 0;
-    bar.style.transition = 'width 0.3s ease-out';
-    bar.style.width = '0%';
-    pct.textContent = '0%';
-  }
+  // ✅ Matikan animasi CSS pulse, JS ambil alih kontrol bar
+  bar.classList.add('js-controlled');
+
+  _loadProgress = 0;
+  bar.style.transition = 'width 0.3s ease-out';
+  bar.style.width = '0%';
+  pct.textContent = '0%';
+}
 
   function updateLoadingProgress(percent) {
     const bar = document.getElementById('preloadBarFill');
@@ -244,21 +247,17 @@
   // ============================================
   // SHOW ALL UI ELEMENTS
   // ============================================
-  function showAllUIElements() {
-    console.log('🎨 Showing all UI elements...');
+function showAllUIElements() {
+  console.log('🎨 Showing all UI elements...');
 
+  requestAnimationFrame(() => {
     const styleControl = document.getElementById('ui-visibility-control');
-    if (styleControl) {
-      styleControl.remove();
-    }
+    if (styleControl) styleControl.remove();
 
     const elements = [
-      'leaderboardPanel',
-      'leaderboardToggle',
-      'filterPanel',
-      'filterToggle',
-      'notificationIcon',
-      'topLoginBtn',
+      'leaderboardPanel', 'leaderboardToggle',
+      'filterPanel', 'filterToggle',
+      'notificationIcon', 'topLoginBtn',
       'undergroundContainer'
     ];
 
@@ -267,7 +266,6 @@
       if (el) {
         el.style.opacity = '1';
         el.style.visibility = 'visible';
-
         if (id !== 'undergroundContainer') {
           el.style.pointerEvents = 'auto';
         }
@@ -275,7 +273,8 @@
     });
 
     console.log('✅ All UI elements visible');
-  }
+  });
+}
 
   // ============================================
   // MAIN INIT
@@ -335,7 +334,7 @@
       loadDeferredCSS();
       updateLoadingProgress(70);
 
-      // ============================================
+// ============================================
       // STEP 5: Initialize Core Systems
       // ============================================
       updateLoadingText('Initializing systems...');
@@ -346,11 +345,19 @@
         throw new Error('MarkerManager not found');
       }
 
+      // ✅ RegionLabelManager tidak kritis — jalankan idle
       if (window.RegionLabelManager?.init) {
-        try {
-          RegionLabelManager.init(window.map);
-        } catch (error) {
-          console.warn('⚠️ RegionLabelManager init failed:', error);
+        const initRegionLabel = () => {
+          try {
+            RegionLabelManager.init(window.map);
+          } catch (error) {
+            console.warn('⚠️ RegionLabelManager init failed:', error);
+          }
+        };
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(initRegionLabel);
+        } else {
+          setTimeout(initRegionLabel, 100);
         }
       }
 
@@ -444,45 +451,46 @@
       updateLoadingText('Error loading map');
       alert(`Failed to initialize map:\n${err.message}\n\nPlease refresh the page.`);
 
-    } finally {
+} finally {
 
       // ============================================
       // UI FINALIZATION
       // ============================================
 
-      // Pastikan app-ready ter-set meski error
-      document.body.classList.add('app-ready');
+      // ✅ HAPUS duplikat app-ready — sudah di-set di STEP 9
+      // document.body.classList.add('app-ready'); ← HAPUS
 
-      // Pastikan icons visible meski terjadi error sebelum STEP 9
+      // ✅ Pastikan icons visible meski error sebelum STEP 9
       if (window.IconManager?.showAllIcons) {
         window.IconManager.showAllIcons();
       }
 
-      // Tunggu bar animasi ke 100% selesai lalu tutup overlay
+      // ✅ Pastikan app-ready ter-set meski error — tapi pakai flag
+      if (!document.body.classList.contains('app-ready')) {
+        document.body.classList.add('app-ready');
+      }
+
+// Hide preload overlay
       setTimeout(() => {
         hidePreload();
         waitForProfileReady();
 
+        // ✅ Patch note muncul 3 detik setelah overlay fade out
         setTimeout(() => {
           const patchShown = window.showPatchPopup ? showPatchPopup() : false;
+
           if (!patchShown && window.TipGuide) {
             TipGuide.start();
           }
-        }, 800);
+        }, 3000); // ← naik dari 800ms ke 3000ms
 
-      }, 400); // ← cukup untuk animasi bar 0.3s selesai
+      }, 400);
 
       // Show UI elements
       setTimeout(() => {
         showAllUIElements();
       }, 500);
 
-      // Cookie Consent
-      if (window.WWMCookieConsent) {
-        setTimeout(() => {
-          WWMCookieConsent.initAfterLoad(2000);
-        }, 1000);
-      }
 
       // PiP Map
       if (window.PipMap) {

@@ -1,7 +1,7 @@
     // Show popup after map loads
     function showPatchPopup() {
   const overlay = document.getElementById('patchOverlay');
-  const hasSeenPatch = localStorage.getItem('seenPatchV10');
+  const hasSeenPatch = localStorage.getItem('seenPatchV11');
   
   if (!hasSeenPatch) {
     overlay.classList.add('active');
@@ -13,12 +13,19 @@
 function closePatchPopup() {
   const overlay = document.getElementById('patchOverlay');
   overlay.classList.remove('active');
-  localStorage.setItem('seenPatchV10', 'true');
-  
-  // ← Start tip guide setelah patch note ditutup
-  if (window.TipGuide) TipGuide.start();
-}
+  localStorage.setItem('seenPatchV11', 'true');
 
+  // ← TipGuide setelah patch ditutup
+  if (window.TipGuide) TipGuide.start();
+
+  // ✅ Cookie consent muncul setelah patch note ditutup
+  // Hanya kalau belum pernah accept/decline sebelumnya
+  if (window.WWMCookieConsent && !WWMCookieConsent.hasConsent() && !WWMCookieConsent.hasDeclined()) {
+    setTimeout(() => {
+      WWMCookieConsent.initAfterLoad(0); // 0 = langsung muncul
+    }, 500); // sedikit jeda setelah patch menutup
+  }
+}
     // Close on overlay click
     document.getElementById('patchOverlay').addEventListener('click', function(e) {
       if (e.target === this) {
