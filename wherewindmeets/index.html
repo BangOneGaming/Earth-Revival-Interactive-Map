@@ -44,13 +44,8 @@
 <!-- Downgrade ke dns-prefetch untuk yang tidak urgent -->
 <link rel="dns-prefetch" href="https://unpkg.com">
 <link rel="dns-prefetch" href="https://ik.imagekit.io">
-<link rel="dns-prefetch" href="https://tiles.bgonegaming.win">
-<link 
-rel="preload"
-as="image"
-href="https://tiles.bgonegaming.win/wherewindmeet/tiles/5_22_15.webp?v=20251121"
-fetchpriority="high"
-type="image/webp">
+
+
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RNEQ8BY21N"></script>
   <script>
@@ -475,7 +470,14 @@ type="image/webp">
   <div class="patch-popup" data-no-ad="true">
     <button class="patch-close" onclick="closePatchPopup()">&times;</button>
     <div class="patch-header">
-      <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/BangOne.webp"
+<img 
+  src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/BangOne.webp"
+  alt="Where Winds Meet Map Update"
+  class="patch-image"
+  fetchpriority="high"
+  loading="eager"
+  decoding="async"
+>
            alt="Where Winds Meet Map Update" class="patch-image">
       <h2 class="patch-title">Interactive Map Update</h2>
       <p class="patch-subtitle">Full Hexi Map &nbsp;·&nbsp; Time Travel &nbsp;·&nbsp; Floating Window &nbsp;·&nbsp; Unified Search</p>
@@ -864,7 +866,18 @@ btnClose.addEventListener("click", function(e) {
     }
 });
 </script>
-
+<!-- Eruda Mobile Console -->
+<script>
+(function () {
+  var s = document.createElement('script');
+  s.src = "https://cdn.jsdelivr.net/npm/eruda";
+  s.onload = function () {
+    eruda.init();
+    console.log("%c🛠️ Eruda loaded", "color:#02a0c5;font-weight:bold");
+  };
+  document.body.appendChild(s);
+})();
+</script>
 <!-- Google AdSense Auto Ads -->  
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467"  
      crossorigin="anonymous"></script>  
@@ -906,7 +919,7 @@ function loadScripts(list) {
 const critical = [
   "peta.js",
   "penanda.js",
-  "layer.js",
+  "memuat-data.js",
   "map-switcher.js",
   "MapTransition.js"
 ];
@@ -915,20 +928,19 @@ const critical = [
 // ⚙️ PHASE 2 — CORE FEATURES
 // ============================================
 const secondary = [
-  "memuat-data.js",
   "descmanager.js",
   "knowladge-series.js",
-  "region-management.js",
   "zoom_optimizer.js",
   "marker-link.js",
   "ikon.js",
+  "layer.js",
+  "region.js",            // ← pindah dari lazy ke sini
+  "region-management.js", // ← setelah region.js
+  "marker-image-handler.js",
   "search-info.js",
   "pip-map.js"
 ];
 
-// ============================================
-// 🛌 PHASE 3 — NON-CRITICAL / UI / HEAVY
-// ============================================
 const lazy = [
   "leaderboard.js",
   "comment.js",
@@ -940,7 +952,6 @@ const lazy = [
   "cookie-consent.js",
   "feedbackmatker.js",
   "editing-image-upload.js",
-  "marker-image-handler.js",
   "time.js",
   "booklist.js",
   "knowladgelist.js",
@@ -948,7 +959,7 @@ const lazy = [
   "innerway.js",
   "form.js",
   "riddle-search.js",
-  "region.js",
+  // "region.js" ← hapus dari sini
   "tales-echoes.js"
 ];
 
@@ -968,13 +979,22 @@ const lazy = [
   await loadScripts(secondary);
   console.log("⚙️ Secondary loaded");
 
-  // 🔥 load main.js setelah core siap
-  const main = document.createElement("script");
-  main.src = `main.js?v=${v}`;
-  main.defer = true;
-  document.body.appendChild(main);
+  // ============================================
+  // 🔥 FIX UTAMA: LOAD main.js DENGAN AWAIT
+  // ============================================
+  await new Promise((resolve) => {
+    const main = document.createElement("script");
+    main.src = `main.js?v=${v}`;
+    main.onload = resolve;   // ✅ tunggu benar-benar selesai
+    main.onerror = resolve;  // fallback biar tidak hang
+    document.body.appendChild(main);
+  });
 
-  // 🔥 3. LOAD LAZY (saat idle)
+  console.log("✅ main.js loaded (safe)");
+
+  // ============================================
+  // 🛌 LOAD LAZY (tidak blocking)
+  // ============================================
   const loadLazy = () => {
     loadScripts(lazy);
     console.log("🛌 Lazy loaded");
