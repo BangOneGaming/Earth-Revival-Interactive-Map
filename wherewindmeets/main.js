@@ -79,68 +79,65 @@
     console.log('🎨 Deferred CSS loaded');
   }
 
-  // ============================================
-  // PRELOAD UI
-  // ============================================
-  async function showPreload() {
-    const overlay = document.getElementById('preloadOverlay');
-    if (!overlay) return;
+// ============================================
+// PRELOAD UI (CLS SAFE)
+// ============================================
+async function showPreload() {
+  const overlay = document.getElementById('preloadOverlay');
+  if (!overlay) return;
 
-    const emotions = [
-      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/impressed.webp',
-      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/cry.webp',
-      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/hehe.webp',
-      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/well.webp',
-      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/thinking.webp'
-    ];
+  const emotions = [
+    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/impressed.webp',
+    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/cry.webp',
+    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/hehe.webp',
+    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/well.webp',
+    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/thinking.webp'
+  ];
 
-    await Promise.race([
-      preloadImages(emotions),
-      new Promise(r => setTimeout(r, 1000))
-    ]);
+  // ✅ LANGSUNG JALANKAN ANIMASI (tanpa toggle visibility)
+  startEmotionFlip(emotions);
+  startTextAnimation();
+  startLoadingBar();
 
+  // ✅ preload async tanpa ganggu layout
+  await Promise.race([
+    preloadImages(emotions),
+    new Promise(r => setTimeout(r, 1000))
+  ]);
+}
+
+function hidePreload() {
+  const overlay = document.getElementById('preloadOverlay');
+  if (!overlay) return;
+
+  // ✅ hanya fade (tidak remove DOM)
+  overlay.style.transition = 'opacity 0.3s ease';
+  overlay.style.opacity = '0';
+
+  setTimeout(() => {
+    // ✅ jangan remove → hindari layout shift
+    overlay.style.pointerEvents = 'none';
     overlay.style.visibility = 'hidden';
-    overlay.style.opacity = '0';
 
-    requestAnimationFrame(() => {
-      overlay.style.visibility = 'visible';
-      overlay.style.opacity = '1';
-
-      startEmotionFlip(emotions);
-      startTextAnimation();
-      startLoadingBar();
-    });
-  }
-
-  function hidePreload() {
-    const overlay = document.getElementById('preloadOverlay');
-    if (!overlay) return;
-
-    overlay.style.opacity = '0';
-    overlay.style.transition = 'opacity 0.3s ease';
-    setTimeout(() => {
-      overlay.remove();
-      
-      // ✨ TAMPILKAN ICON SETELAH PRELOAD HILANG
-      if (window.IconManager?.showAllIcons) {
-        setTimeout(() => {
-          window.IconManager.showAllIcons();
-        }, 100);
-      }
-    }, 300);
-  }
+    // ✨ tampilkan icon setelah preload hilang
+    if (window.IconManager?.showAllIcons) {
+      window.IconManager.showAllIcons();
+    }
+  }, 300);
+}
 
   function updateLoadingText(message) {
-    const el = document.getElementById('preloadMessage');
-    if (!el) return;
+  const el = document.getElementById('preloadMessage');
+  if (!el) return;
 
-    el.style.opacity = '0';
-    requestAnimationFrame(() => {
-      el.textContent = message;
-      el.style.transition = 'opacity 0.25s ease';
-      el.style.opacity = '1';
-    });
-  }
+  el.style.opacity = '0';
+
+  requestAnimationFrame(() => {
+    el.textContent = message;
+    el.style.transition = 'opacity 0.25s ease';
+    el.style.opacity = '1';
+  });
+}
 
   // ============================================
   // EMOTION / ANIMATION
