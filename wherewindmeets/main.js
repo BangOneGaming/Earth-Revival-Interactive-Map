@@ -21,7 +21,6 @@
 
       script.onload = () => {
         if (typeof window.initializeIcons === 'function') {
-          // ✨ SEMBUNYIKAN ICON SEGERA SETELAH LOAD
           if (window.IconManager?.hideAllIcons) {
             window.IconManager.hideAllIcons();
           }
@@ -41,7 +40,7 @@
   // ============================================
   function loadDeferredCSS() {
     const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.2.1';
-    
+
     const cssFiles = [
       'marker-image-handler.css',
       'editing-image-upload.css',
@@ -79,65 +78,57 @@
     console.log('🎨 Deferred CSS loaded');
   }
 
-// ============================================
-// PRELOAD UI (CLS SAFE)
-// ============================================
-async function showPreload() {
-  const overlay = document.getElementById('preloadOverlay');
-  if (!overlay) return;
+  // ============================================
+  // PRELOAD UI (CLS SAFE)
+  // ============================================
+  async function showPreload() {
+    const overlay = document.getElementById('preloadOverlay');
+    if (!overlay) return;
 
-  const emotions = [
-    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/impressed.webp',
-    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/cry.webp',
-    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/hehe.webp',
-    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/well.webp',
-    'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/thinking.webp'
-  ];
+    const emotions = [
+      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/impressed.webp',
+      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/cry.webp',
+      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/hehe.webp',
+      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/well.webp',
+      'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/thinking.webp'
+    ];
 
-  // ✅ LANGSUNG JALANKAN ANIMASI (tanpa toggle visibility)
-  startEmotionFlip(emotions);
-  startTextAnimation();
-  startLoadingBar();
+    startEmotionFlip(emotions);
+    startTextAnimation();
+    startLoadingBar();
 
-  // ✅ preload async tanpa ganggu layout
-  await Promise.race([
-    preloadImages(emotions),
-    new Promise(r => setTimeout(r, 1000))
-  ]);
-}
+    await Promise.race([
+      preloadImages(emotions),
+      new Promise(r => setTimeout(r, 1000))
+    ]);
+  }
 
-function hidePreload() {
-  const overlay = document.getElementById('preloadOverlay');
-  if (!overlay) return;
+  function hidePreload() {
+    const overlay = document.getElementById('preloadOverlay');
+    if (!overlay) return;
 
-  // ✅ hanya fade (tidak remove DOM)
-  overlay.style.transition = 'opacity 0.3s ease';
-  overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity 0.3s ease';
+    overlay.style.opacity = '0';
 
-  setTimeout(() => {
-    // ✅ jangan remove → hindari layout shift
-    overlay.style.pointerEvents = 'none';
-    overlay.style.visibility = 'hidden';
-
-    // ✨ tampilkan icon setelah preload hilang
-    if (window.IconManager?.showAllIcons) {
-      window.IconManager.showAllIcons();
-    }
-  }, 300);
-}
+    setTimeout(() => {
+      overlay.style.pointerEvents = 'none';
+      overlay.style.visibility = 'hidden';
+      // ✅ DIHAPUS: showAllIcons() dari sini — sudah dipanggil lebih awal
+    }, 300);
+  }
 
   function updateLoadingText(message) {
-  const el = document.getElementById('preloadMessage');
-  if (!el) return;
+    const el = document.getElementById('preloadMessage');
+    if (!el) return;
 
-  el.style.opacity = '0';
+    el.style.opacity = '0';
 
-  requestAnimationFrame(() => {
-    el.textContent = message;
-    el.style.transition = 'opacity 0.25s ease';
-    el.style.opacity = '1';
-  });
-}
+    requestAnimationFrame(() => {
+      el.textContent = message;
+      el.style.transition = 'opacity 0.25s ease';
+      el.style.opacity = '1';
+    });
+  }
 
   // ============================================
   // EMOTION / ANIMATION
@@ -239,52 +230,60 @@ function hidePreload() {
   }
 
   // ============================================
-  // ✨ SHOW ALL UI ELEMENTS
+  // SHOW ALL UI ELEMENTS
   // ============================================
-function showAllUIElements() {
-  console.log('🎨 Showing all UI elements...');
-  
-  const styleControl = document.getElementById('ui-visibility-control');
-  if (styleControl) {
-    styleControl.remove();
-  }
-  
-  const elements = [
-    'leaderboardPanel',
-    'leaderboardToggle',
-    'filterPanel',
-    'filterToggle',
-    'notificationIcon',
-    'topLoginBtn',
-    'undergroundContainer'
-  ];
-  
-  elements.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.style.opacity = '1';
-      el.style.visibility = 'visible';
-      
-      // ✅ Only set pointer-events for non-container elements
-      if (id !== 'undergroundContainer') {
-        el.style.pointerEvents = 'auto';
-      }
+  function showAllUIElements() {
+    console.log('🎨 Showing all UI elements...');
+
+    const styleControl = document.getElementById('ui-visibility-control');
+    if (styleControl) {
+      styleControl.remove();
     }
-  });
-  
-  console.log('✅ All UI elements visible');
-}
+
+    const elements = [
+      'leaderboardPanel',
+      'leaderboardToggle',
+      'filterPanel',
+      'filterToggle',
+      'notificationIcon',
+      'topLoginBtn',
+      'undergroundContainer'
+    ];
+
+    elements.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.opacity = '1';
+        el.style.visibility = 'visible';
+
+        if (id !== 'undergroundContainer') {
+          el.style.pointerEvents = 'auto';
+        }
+      }
+    });
+
+    console.log('✅ All UI elements visible');
+  }
 
   // ============================================
   // MAIN INIT
   // ============================================
   async function initApp() {
-    // Skip preload jika dibuka dari PiP iframe
+
     const isPip = new URLSearchParams(window.location.search).get('pip') === '1';
     if (isPip) document.body.classList.add('pip-mode');
-    if (!isPip) await showPreload();
 
     try {
+      // ============================================
+      // STEP 0: INIT MAP (LCP PRIORITY)
+      // ============================================
+      const mapReady = await waitForFunction('initializeMap');
+      if (!mapReady) throw new Error('initializeMap not found');
+
+      window.map = initializeMap();
+
+      if (!isPip) await showPreload();
+
       // ============================================
       // STEP 1: Icon Manager
       // ============================================
@@ -293,19 +292,7 @@ function showAllUIElements() {
       window.initializeIcons();
 
       // ============================================
-      // STEP 2: Initialize Map
-      // ============================================
-      updateLoadingText('Initializing map...');
-      
-      const mapReady = await waitForFunction('initializeMap');
-      if (!mapReady) {
-        throw new Error('initializeMap not found');
-      }
-      
-      window.map = initializeMap();
-
-      // ============================================
-      // STEP 3: Load Marker Data
+      // STEP 2: Load Marker Data
       // ============================================
       updateLoadingText('Loading marker data...');
       if (window.DataLoader?.init) {
@@ -313,7 +300,7 @@ function showAllUIElements() {
       }
 
       // ============================================
-      // STEP 4: Load Descriptions
+      // STEP 3: Load Descriptions
       // ============================================
       if (window.DescriptionLoader) {
         updateLoadingText('Loading descriptions...');
@@ -326,24 +313,22 @@ function showAllUIElements() {
       }
 
       // ============================================
-      // STEP 5: Load CSS
+      // STEP 4: Load CSS (deferred)
       // ============================================
       updateLoadingText('Loading styles...');
       loadDeferredCSS();
 
       // ============================================
-      // STEP 6: Initialize Core Systems
+      // STEP 5: Initialize Core Systems
       // ============================================
       updateLoadingText('Initializing systems...');
 
-      // MarkerManager
       if (window.MarkerManager?.init) {
         MarkerManager.init(window.map);
       } else {
         throw new Error('MarkerManager not found');
       }
 
-      // RegionLabelManager
       if (window.RegionLabelManager?.init) {
         try {
           RegionLabelManager.init(window.map);
@@ -352,7 +337,6 @@ function showAllUIElements() {
         }
       }
 
-      // MarkerImageHandler
       if (window.MarkerImageHandler?.init) {
         try {
           MarkerImageHandler.init();
@@ -361,38 +345,47 @@ function showAllUIElements() {
         }
       }
 
-      // ============================================
-      // STEP 7: Initialize Underground System
-      // ============================================
-      updateLoadingText('Initializing underground system...');
-      
-      if (await waitForUndergroundManager()) {
-  try {
-    await UndergroundManager.init(window.map);
-    console.log('✅ UndergroundManager initialized');
+// ============================================
+// STEP 6: Underground System
+// ============================================
+updateLoadingText('Initializing underground system...');
 
-    // ← TAMBAH INI
-    if (window.TimeUndergroundMarker) {
-      TimeUndergroundMarker.init(window.map);
-      console.log('✅ TimeUndergroundMarker initialized');
+// ✅ Guard: tunggu UndergroundManager tersedia
+if (await waitForUndergroundManager()) {
+  try {
+    const UG = window.UndergroundManager;
+
+    if (UG && typeof UG.init === 'function') {
+      await UG.init(window.map);
+      console.log('✅ UndergroundManager initialized');
+
+      if (window.TimeUndergroundMarker?.init) {
+        window.TimeUndergroundMarker.init(window.map);
+        console.log('✅ TimeUndergroundMarker initialized');
+      }
+
+    } else {
+      console.warn('⚠️ UndergroundManager found but invalid');
     }
 
   } catch (error) {
     console.warn('⚠️ UndergroundManager init failed:', error);
   }
+} else {
+  // ✅ Tidak throw error, cukup warn
+  console.warn('⚠️ UndergroundManager not loaded, skipping underground system');
 }
 
-// ============================================
-      // STEP 8: Initialize Region Manager
+      // ============================================
+      // STEP 7: Region System
       // ============================================
       updateLoadingText('Initializing region system...');
-      
+
       if (await waitForRegionManager()) {
         try {
           await RegionManager.init(window.map);
           console.log('✅ RegionManager initialized');
 
-          // MapSwitcher
           if (window.MapSwitcher) {
             MapSwitcher.init(window.map);
             console.log('✅ MapSwitcher initialized');
@@ -404,7 +397,7 @@ function showAllUIElements() {
       }
 
       // ============================================
-      // STEP 9: Dev Tools (Optional)
+      // STEP 8: Dev Tools (Optional)
       // ============================================
       if (typeof createDevToolsPanel === 'function') {
         try {
@@ -415,8 +408,18 @@ function showAllUIElements() {
       }
 
       // ============================================
-      // STEP 10: Wait for loading animation
+      // STEP 9: Tampilkan marker SEBELUM simulateFinalLoading
+      // ✅ FIX UTAMA: showAllIcons dipanggil di sini, bukan di finally
+      // sehingga marker sudah muncul di balik preload overlay
       // ============================================
+      document.body.classList.add('app-ready');
+
+      if (window.IconManager?.showAllIcons) {
+        window.IconManager.showAllIcons();
+        console.log('✅ Icons visible (before final loading wait)');
+      }
+
+      // Preload overlay masih tampil selama simulasi ini
       updateLoadingText('Ready to explore!');
       await simulateFinalLoading();
 
@@ -424,41 +427,49 @@ function showAllUIElements() {
       console.error(err);
       updateLoadingText('Error loading map');
       alert(`Failed to initialize map:\n${err.message}\n\nPlease refresh the page.`);
+
     } finally {
-      // ✨ STEP 1: Add app-ready class
+
+      // ============================================
+      // UI FINALIZATION
+      // ============================================
+
+      // Pastikan app-ready ter-set meski error
       document.body.classList.add('app-ready');
-      
-      // ✨ STEP 2: Hide preload & show icons
-setTimeout(() => {
-  hidePreload();
-  waitForProfileReady();
 
-  // ✨ STEP 3: Show patch notes
-  setTimeout(() => {
-    const patchShown = window.showPatchPopup ? showPatchPopup() : false;
+      // ✅ Pastikan icons visible meski terjadi error sebelum STEP 9
+      if (window.IconManager?.showAllIcons) {
+        window.IconManager.showAllIcons();
+      }
 
-    // Jika patch note tidak tampil → langsung start tip guide
-    if (!patchShown && window.TipGuide) {
-      TipGuide.start();
-    }
-    // Jika patch note tampil → TipGuide.start() dipanggil oleh closePatchPopup()
-  }, 800);
+      // Hide preload overlay
+      setTimeout(() => {
+        hidePreload();
+        waitForProfileReady();
 
-}, 300);
+        setTimeout(() => {
+          const patchShown = window.showPatchPopup ? showPatchPopup() : false;
 
-      // ✨ STEP 4: Show all UI elements
+          if (!patchShown && window.TipGuide) {
+            TipGuide.start();
+          }
+        }, 800);
+
+      }, 300);
+
+      // Show UI elements
       setTimeout(() => {
         showAllUIElements();
       }, 500);
 
-      // ✨ STEP 5: Cookie consent
+      // Cookie Consent
       if (window.WWMCookieConsent) {
         setTimeout(() => {
           WWMCookieConsent.initAfterLoad(2000);
         }, 1000);
       }
 
-      // ✨ STEP 6: PiP Map (desktop only)
+      // PiP Map
       if (window.PipMap) {
         PipMap.init();
       }
