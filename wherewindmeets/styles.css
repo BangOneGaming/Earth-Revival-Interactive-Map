@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+
 
 /* =========================================
    MARKER POPUP — WHERE WINDS MEET
@@ -364,7 +364,7 @@ body.app-ready .leaderboard-toggle {
 }
 
 .marker-popup-header > .marker-popup-section-edit-btn {
-  display: none !important;
+  display: flex !important;
 }
 
 /* =========================================
