@@ -39,89 +39,17 @@
   <!-- ✅ THEME COLOR -->
   <meta name="theme-color" content="#5c3e0e" />
 <!-- ✅ PRECONNECT - Hanya yang critical -->
+<!-- Tambah di <head> bersama preload lainnya -->
+<link rel="preload" 
+      href="https://unpkg.com/leaflet/dist/leaflet.js" 
+      as="script">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Downgrade ke dns-prefetch untuk yang tidak urgent -->
 <link rel="dns-prefetch" href="https://unpkg.com">
 <link rel="dns-prefetch" href="https://ik.imagekit.io">
 
-<!-- Taruh ini di <head>, SEBELUM semua link stylesheet -->
-<style>
-  /* CRITICAL INLINE — render langsung tanpa tunggu styles.css */
-  #preloadOverlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 9998;
-    background: linear-gradient(135deg, #0b0f1a 0%, #121827 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    visibility: visible;
-    opacity: 1;
-  }
-  #preloadContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 28px;
-    padding: 50px 60px;
-    text-align: center;
-  }
-  #preloadEmotionIcon {
-    width: 100px;
-    height: 100px;
-    object-fit: contain;
-  }
-  #preloadMessage {
-    font-size: 17px;
-    color: #c8b89a;
-    letter-spacing: 1.5px;
-    min-height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  #preloadBarContainer {
-    position: relative;
-    width: 280px;
-    height: 6px;
-    background: rgba(200, 150, 42, 0.12);
-    border-radius: 1px;
-    border: 1px solid rgba(200, 150, 42, 0.35);
-    overflow: hidden;
-  }
-  #preloadBarFill {
-    position: absolute;
-    left: 0; top: 0;
-    height: 100%;
-    width: 15%;
-    background: linear-gradient(90deg, #7a5a18, #f0c060);
-    border-radius: 1px;
-    animation: preload-pulse 1.5s ease-in-out infinite;
-  }
-  #preloadBarFill.js-controlled {
-    animation: none;
-  }
-  @keyframes preload-pulse {
-    0%, 100% { width: 15%; opacity: 0.6; }
-    50%       { width: 40%; opacity: 1; }
-  }
-  #preloadBarPercent {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 8px;
-    color: #f0c060;
-    letter-spacing: 2px;
-    z-index: 1;
-  }
-  body {
-    margin: 0;
-    background: #0b0f1a;
-  }
-</style>
+
 
 <!-- Preload preload overlay background -->
 <link rel="preload"
@@ -129,7 +57,24 @@
       as="image"
       fetchpriority="high">
 
+<!-- Taruh SEBELUM <div id="preloadOverlay"> -->
+<script>
+  // ✅ TRUE = tampilkan preload overlay
+  // ✅ FALSE = langsung tampil map tanpa overlay
+  window.USE_PRELOAD = false;
 
+  // ✅ Sembunyikan overlay langsung di DOM, tidak tunggu main.js
+  if (window.USE_PRELOAD === false) {
+    document.addEventListener('DOMContentLoaded', function() {
+      const overlay = document.getElementById('preloadOverlay');
+      if (overlay) overlay.style.display = 'none';
+    });
+
+    // Fallback kalau DOMContentLoaded sudah lewat
+    const overlay = document.getElementById('preloadOverlay');
+    if (overlay) overlay.style.display = 'none';
+  }
+</script>
 
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RNEQ8BY21N"></script>
@@ -239,8 +184,8 @@
   <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"></noscript>
   
   <!-- Main CSS - PRELOAD -->
-  <link rel="preload" href="styles.css?v=6.0.12" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="styles.css?v=6.0.12"></noscript>
+  <link rel="preload" href="styles.css?v=6.0.13" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="styles.css?v=6.0.13"></noscript>
   
   <!-- Fonts - PRELOAD dengan display=swap -->
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -283,8 +228,6 @@
   }
   body.app-ready .leaderboard-panel,
   body.app-ready .leaderboard-toggle,
-  body.app-ready .filter-panel,
-  body.app-ready .filter-toggle,
   body.app-ready #notificationIcon,
   body.app-ready #topLoginBtn {
     opacity: 1 !important;
@@ -292,6 +235,9 @@
     pointer-events: auto !important;
     transition: opacity 0.5s ease, visibility 0.5s ease !important;
   }
+
+  /* ✅ HAPUS filter-panel & filter-toggle dari rule app-ready di atas */
+  /* Biarkan JS yang kontrol via setTimeout di setupFilterUI() */
 </style>
 </head>  
 <body> 
@@ -419,7 +365,15 @@
     </a>
   </p>
 </noscript>
-
+<div id="map">
+  <div id="notificationIcon"></div>
+  <div id="notificationBox" style="display: none;">
+    <h3>Notifications</h3>
+    <div id="notificationContent">
+      <p>No notifications yet.</p>
+    </div>
+  </div>
+</div>
 <!-- Preload Overlay -->
 <div id="preloadOverlay">
   <div id="preloadContainer">
@@ -460,7 +414,7 @@
 </button>
 
 <!-- Filter Panel -->  
-<div class="filter-panel" id="filterPanel">  
+<div class="filter-panel" id="filterPanel" style="opacity: 0; visibility: hidden; pointer-events: none;">  
   <div class="filter-header">  
     <h2 class="filter-title-img"></h2>
   </div>  
@@ -474,17 +428,7 @@
   </div>  
 </div>  
 
-<button class="filter-toggle" id="filterToggle">◀</button>
-
-<div id="map">
-  <div id="notificationIcon"></div>
-  <div id="notificationBox">
-    <h3>Notifications</h3>
-    <div id="notificationContent">
-      <p>No notifications yet.</p>
-    </div>
-  </div>
-</div>
+<button class="filter-toggle" id="filterToggle" style="opacity: 0; visibility: hidden; pointer-events: none;">◀</button>
 
 <button id="topLoginBtn">Login</button>
 
@@ -717,6 +661,7 @@
 </div>
 
 <script>
+
 // ======================================================
 // INJECT CSS VIA JAVASCRIPT
 // ======================================================
@@ -957,6 +902,7 @@ btnClose.addEventListener("click", function(e) {
 });
 </script>
 
+</script>
 <!-- Google AdSense Auto Ads -->  
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467"  
      crossorigin="anonymous"></script>  
@@ -969,7 +915,7 @@ btnClose.addEventListener("click", function(e) {
 </script>
 
 <!-- Leaflet JS - DEFER untuk non-blocking -->
-<script src="https://unpkg.com/leaflet/dist/leaflet.js" defer></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <!-- Google Sign-In (biarkan async) -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>  

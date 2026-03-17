@@ -118,11 +118,8 @@ initializeFilters() {
 
 },
 
-  /**
-   * Setup filter UI with grouping
-   */
-  setupFilterUI() {
-    
+setupFilterUI() {
+
     const container = document.getElementById("filterContent");
     if (!container) {
       console.error("❌ filterContent container not found!");
@@ -131,20 +128,26 @@ initializeFilters() {
 
     container.innerHTML = '';
 
+    // ✅ Sembunyikan panel filter dulu saat pertama load
+    const filterPanel = document.getElementById("filterPanel");
+    const filterToggle = document.getElementById("filterToggle");
+    if (filterPanel) filterPanel.style.visibility = 'hidden';
+    if (filterToggle) filterToggle.style.visibility = 'hidden';
+
     // Loop through each group
     Object.keys(filterGroupConfig).forEach(groupKey => {
       const group = filterGroupConfig[groupKey];
-      
-      // Create group container
-// Create group container
-const groupDiv = document.createElement('div');
-groupDiv.className = 'filter-group';
-groupDiv.dataset.group = groupKey;
 
-// 🔹 Hide discover group
-if (groupKey === "discover") {
-  groupDiv.style.display = "none";
-}
+      // Create group container
+      const groupDiv = document.createElement('div');
+      groupDiv.className = 'filter-group';
+      groupDiv.dataset.group = groupKey;
+
+      // 🔹 Hide discover group
+      if (groupKey === "discover") {
+        groupDiv.style.display = "none";
+      }
+
       // Create group header
       const groupHeader = document.createElement('div');
       groupHeader.className = 'filter-group-header';
@@ -152,13 +155,12 @@ if (groupKey === "discover") {
         <span class="filter-group-title">${group.title}</span>
         <span class="filter-group-toggle">▼</span>
       `;
-      
+
       // Add click listener for toggle
       groupHeader.addEventListener('click', () => {
         groupDiv.classList.toggle('collapsed');
-
       });
-      
+
       // Create items container
       const itemsDiv = document.createElement('div');
       itemsDiv.className = 'filter-group-items';
@@ -168,14 +170,14 @@ if (groupKey === "discover") {
       // Add items for this group
       group.categories.forEach(categoryId => {
         const item = this.filterItems.find(f => String(f.categoryId) === String(categoryId));
-        
+
         if (!item) {
           console.warn(`⚠️ Category ${categoryId} not found in filterItems!`);
           return;
         }
 
         const isActive = this.activeFilters.has(String(categoryId));
-        
+
         const filterItem = document.createElement('div');
         filterItem.className = `filter-item ${isActive ? 'active' : ''}`;
         filterItem.dataset.categoryId = categoryId;
@@ -194,14 +196,17 @@ if (groupKey === "discover") {
         itemsAdded++;
       });
 
-
-
       groupDiv.appendChild(groupHeader);
       groupDiv.appendChild(itemsDiv);
       container.appendChild(groupDiv);
     });
 
-    this.updateStats();
+this.updateStats();
+
+    // ✅ Tampilkan filter panel setelah 3 detik
+    setTimeout(() => {
+      document.body.classList.add('filter-ready');
+    }, 3000);
   },
 
   /**

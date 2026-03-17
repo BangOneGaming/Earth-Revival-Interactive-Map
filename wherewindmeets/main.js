@@ -285,7 +285,7 @@ function showAllUIElements() {
     if (isPip) document.body.classList.add('pip-mode');
 
     try {
-      // ============================================
+     // ============================================
       // STEP 0: INIT MAP (LCP PRIORITY)
       // ============================================
       const mapReady = await waitForFunction('initializeMap');
@@ -294,7 +294,16 @@ function showAllUIElements() {
       window.map = initializeMap();
       updateLoadingProgress(10);
 
-      if (!isPip) await showPreload();
+      // ✅ Tampilkan preload hanya kalau USE_PRELOAD = true
+      if (!isPip && window.USE_PRELOAD !== false) {
+        await showPreload();
+      } else {
+        // Langsung sembunyikan overlay kalau tidak pakai preload
+        const overlay = document.getElementById('preloadOverlay');
+        if (overlay) {
+          overlay.style.display = 'none';
+        }
+      }
 
       // ============================================
       // STEP 1: Icon Manager
@@ -472,17 +481,24 @@ function showAllUIElements() {
 
 // Hide preload overlay
       setTimeout(() => {
-        hidePreload();
+        // ✅ Hanya hide kalau memang preload dipakai
+        if (window.USE_PRELOAD !== false) {
+          hidePreload();
+        }
         waitForProfileReady();
 
-        // ✅ Patch note muncul 3 detik setelah overlay fade out
         setTimeout(() => {
           const patchShown = window.showPatchPopup ? showPatchPopup() : false;
-
           if (!patchShown && window.TipGuide) {
             TipGuide.start();
           }
-        }, 3000); // ← naik dari 800ms ke 3000ms
+
+          if (!patchShown && window.WWMCookieConsent) {
+            if (!WWMCookieConsent.hasConsent() && !WWMCookieConsent.hasDeclined()) {
+              setTimeout(() => WWMCookieConsent.initAfterLoad(0), 1000);
+            }
+          }
+        }, 3000);
 
       }, 400);
 

@@ -46,13 +46,14 @@ body {
 .leaderboard-loading,
 .leaderboard-stats,
 .leaderboard-toggle,
-.filter-toggle {
+.filter-toggle,
+.filter-panel {
   opacity: 0;
   pointer-events: none;
   contain: paint;
-
   will-change: opacity;
 }
+
 .filter-actions,
 #btnSelectAll,
 #btnSelectNone,
@@ -60,18 +61,25 @@ body {
   will-change: opacity;
 }
 
+/* ✅ Leaderboard & elemen lain tampil saat app-ready */
 body.app-ready .filter-actions,
 body.app-ready #btnSelectAll,
 body.app-ready #btnSelectNone,
 body.app-ready #filterStats,
-body.app-ready .filter-toggle,
 body.app-ready .leaderboard-loading,
 body.app-ready .leaderboard-stats,
 body.app-ready .leaderboard-toggle {
-  
   opacity: 1;
   pointer-events: auto;
   transition: opacity 0.3s ease;
+}
+
+/* ✅ Filter panel & toggle tampil HANYA setelah filter-ready */
+body.app-ready.filter-ready .filter-toggle,
+body.app-ready.filter-ready .filter-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.5s ease;
 }
 
 /* =========================================
