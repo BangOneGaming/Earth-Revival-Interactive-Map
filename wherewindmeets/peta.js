@@ -1,6 +1,6 @@
 /**
  * Map initialization module
- * 🔥 Optimized Performance + TRUE LCP Fix Version
+ * 🔥 Optimized Performance + Smooth Fractional Zoom
  */
 
 // ============================================
@@ -44,7 +44,7 @@ const MAP_ZOOM = {
 };
 
 // ============================================
-// 🔥 PRECONNECT (WAJIB, TANPA PRELOAD TILE)
+// PRECONNECT
 // ============================================
 
 (function () {
@@ -64,7 +64,7 @@ let currentTileLayer = null;
 let currentPreset = "main";
 
 // ============================================
-// INIT MAP (🔥 FAST RENDER)
+// INIT MAP
 // ============================================
 
 function initializeMap() {
@@ -96,17 +96,23 @@ function initializeMap() {
     zoomControl: true,
     attributionControl: false,
 
-    // 🔥 PERFORMANCE MODE
+    // ✅ FRACTIONAL ZOOM — kunci smooth zoom
+    zoomSnap: 0.1,    // snap ke 0.1 increments (5.0, 5.1, 5.2, dst)
+    zoomDelta: 0.5,   // setiap klik zoom button bergerak 0.5 level
+    wheelPxPerZoomLevel: 120, // scroll wheel sensitivity (lebih besar = lebih lambat)
+
+    // ✅ PERFORMANCE
     preferCanvas: true,
     inertia: true,
     inertiaDeceleration: 3000,
     inertiaMaxSpeed: 1500,
     updateWhenIdle: true,
 
-    // 🔥 LCP BOOST (WAJIB)
-    zoomAnimation: false,
-    fadeAnimation: false,
-    markerZoomAnimation: false
+    // ✅ SMOOTH ANIMATION
+    zoomAnimation: true,
+    zoomAnimationThreshold: 4,
+    fadeAnimation: true,
+    markerZoomAnimation: true
   });
 
   _applyMapPreset("main", false);
@@ -130,7 +136,8 @@ function getTileOptions(maxNativeZoom) {
     noWrap: true,
     crossOrigin: true,
     errorTileUrl: FALLBACK_TILE,
-    tileSize: 256
+    tileSize: 256,
+    className: 'map-tiles'
   };
 }
 
@@ -162,17 +169,14 @@ function _applyMapPreset(type, animate = true) {
   );
 
   // ============================================
-  // 🔥 TILE PRIORITY (LCP FIX)
+  // TILE PRIORITY
   // ============================================
 
   currentTileLayer.on("tileloadstart", function(e) {
     if (!e.tile) return;
-
     e.tile.setAttribute("loading", "eager");
     e.tile.setAttribute("fetchpriority", "high");
     e.tile.setAttribute("decoding", "async");
-
-    // render optimization
     e.tile.style.contentVisibility = "auto";
   });
 
@@ -220,7 +224,7 @@ function _applyMapPreset(type, animate = true) {
   );
 
   // ============================================
-  // 🔥 FORCE FAST RENDER
+  // FORCE FAST RENDER
   // ============================================
 
   map.whenReady(() => {

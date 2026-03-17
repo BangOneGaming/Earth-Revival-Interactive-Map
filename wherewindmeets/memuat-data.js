@@ -3,13 +3,11 @@
  * Now optimized with batch loading + stale-while-revalidate cache strategy
  */
 
-// Base URL for API
 const API_BASE_URL = 'https://autumn-dream-8c07.square-spon.workers.dev';
 
-// 🔐 DATA VERSION (ubah ini kalau ada update data)
-const DATA_VERSION = '1.1.32';
+// 🔐 DATA VERSION (ubah ini kalau ada update data marker)
+const DATA_VERSION = '1.1.31';
 
-// API endpoints configuration
 const DATA_ENDPOINTS = {
   list: `${API_BASE_URL}/list`,
   batu: `${API_BASE_URL}/batu`,
@@ -56,7 +54,6 @@ const DATA_ENDPOINTS = {
   terbaru: `${API_BASE_URL}/terbaru`
 };
 
-// Mapping endpoint keys to window global variables
 const ENDPOINT_TO_GLOBAL = {
   list: 'chest',
   batu: 'batutele',
@@ -111,7 +108,10 @@ const DataLoader = {
   endpointFingerprint: {},
   dataSource: 'unknown',
   useBatchLoading: true,
-  cacheExpiry: 7 * 24 * 60 * 60 * 1000, // 7 days
+  cacheExpiry: 7 * 24 * 60 * 60 * 1000, // 7 hari
+
+  // ✅ Feedback cache — 1 jam (feedback lebih sering berubah dari marker)
+  feedbackExpiry: 60 * 60 * 1000, // 1 jam
 
   generateFingerprint(data) {
     if (!data || typeof data !== 'object') return 'empty';
@@ -124,7 +124,11 @@ const DataLoader = {
   },
 
   /* =====================================================
-   * INIT — stale-while-revalidate strategy
+   * INIT — cache-first, server hanya saat perlu
+   * Fetch server terjadi HANYA jika:
+   * 1. Tidak ada cache sama sekali (kunjungan pertama)
+   * 2. Cache expired > 7 hari
+   * 3. DATA_VERSION berubah
    * ===================================================== */
   async init() {
     this.showLoadingSpinner(true);
@@ -133,12 +137,12 @@ const DataLoader = {
     try {
       const cached = this.getCachedData();
 
-      /* ===== CACHE HIT → render langsung, refresh background ===== */
+      /* ===== CACHE HIT → pakai cache, tidak fetch server ===== */
       if (cached) {
         this.dataSource = 'cache';
 
         console.log(
-          '%c📦 DATA SOURCE: LOCAL CACHE',
+          '%c📦 DATA SOURCE: LOCAL CACHE (no server fetch)',
           'color:#00c853;font-weight:bold'
         );
 
@@ -149,14 +153,11 @@ const DataLoader = {
           if (globalVar) window[globalVar] = cached[key];
         });
 
-        // ✅ Selesai lebih cepat — marker langsung bisa dirender
         this.isLoading = false;
         this.showLoadingSpinner(false);
 
-        await this.loadFeedback();
-
-        // 🔄 Refresh data di background tanpa blokir UI
-        setTimeout(() => this.backgroundRefresh(), 3000);
+        // ✅ Feedback juga pakai cache — fetch hanya kalau expired
+        await this.loadFeedback(false);
 
         return true;
       }
@@ -165,16 +166,16 @@ const DataLoader = {
       this.dataSource = 'server';
 
       console.log(
-        '%c🌐 DATA SOURCE: SERVER (NO LOCAL CACHE)',
+        '%c🌐 DATA SOURCE: SERVER',
         'color:#ff9100;font-weight:bold'
       );
 
       const staleCache = this.getStaleCache();
 
       if (staleCache) {
-        // ⚡ Ada stale cache (expired/version beda) → pakai sementara
+        // ⚡ Pakai data lama dulu — user tidak nunggu
         console.log(
-          '%c⚡ Pakai stale cache sementara sambil fetch server',
+          '%c⚡ Stale cache → render dulu, fetch server di background',
           'color:#ff9100;font-weight:bold'
         );
 
@@ -184,18 +185,17 @@ const DataLoader = {
           if (globalVar) window[globalVar] = staleCache[key];
         });
 
-        // ✅ UI tidak nunggu — marker langsung muncul dari stale data
         this.isLoading = false;
         this.showLoadingSpinner(false);
 
-        // Fetch server di background lalu replace marker
+        // Fetch server di background lalu replace
         this.loadAllEndpoints().then(async () => {
-          await this.loadFeedback();
+          await this.loadFeedback(true); // force fetch feedback juga
           this.setCachedData(this.loadedData);
           if (typeof MarkerManager !== 'undefined') {
             MarkerManager.forceRefreshMarkers?.();
           }
-          console.log('✅ Stale cache replaced with fresh server data');
+          console.log('✅ Fresh data from server, cache updated');
         }).catch(err => {
           console.warn('⚠️ Background server fetch failed:', err);
         });
@@ -203,10 +203,11 @@ const DataLoader = {
         return true;
       }
 
-      // 🆕 Benar-benar tidak ada cache sama sekali → harus tunggu server
-      // (hanya terjadi di kunjungan pertama)
+      // 🆕 Benar-benar tidak ada cache → tunggu server
+      // Hanya terjadi di kunjungan pertama
+      console.log('%c🆕 First visit → fetch server', 'color:#ff9100');
       await this.loadAllEndpoints();
-      await this.loadFeedback();
+      await this.loadFeedback(true);
 
       this.setCachedData(this.loadedData);
 
@@ -225,28 +226,76 @@ const DataLoader = {
   },
 
   /* =====================================================
-   * FEEDBACK
+   * FEEDBACK — cache 1 jam
+   * forceFetch = true → selalu fetch (saat data marker baru dari server)
+   * forceFetch = false → pakai cache feedback kalau masih < 1 jam
    * ===================================================== */
-  async loadFeedback() {
+  async loadFeedback(forceFetch = false) {
     try {
+      // Cek cache feedback
+      if (!forceFetch) {
+        const cachedFeedback = this.getCachedFeedback();
+        if (cachedFeedback) {
+          console.log('%c💬 Feedback from cache', 'color:#00c853');
+          this.applyFeedback(cachedFeedback);
+          return;
+        }
+      }
+
+      // Fetch dari server
       const res = await fetch(`${API_BASE_URL}/userfeedback`);
       const data = await res.json();
 
-      if (typeof syncFeedbackToMarkers === 'function') {
-        Object.keys(this.loadedData).forEach(key => {
-          const markers = this.loadedData[key];
-          if (markers && typeof markers === 'object') {
-            syncFeedbackToMarkers(markers, data);
-          }
-        });
-      }
+      // Simpan ke cache
+      this.setCachedFeedback(data);
+
+      this.applyFeedback(data);
+      console.log('%c💬 Feedback fetched from server', 'color:#2196f3');
+
     } catch (err) {
       console.warn('⚠️ Feedback load failed:', err);
     }
   },
 
+  applyFeedback(data) {
+    if (typeof syncFeedbackToMarkers !== 'function') return;
+    Object.keys(this.loadedData).forEach(key => {
+      const markers = this.loadedData[key];
+      if (markers && typeof markers === 'object') {
+        syncFeedbackToMarkers(markers, data);
+      }
+    });
+  },
+
+  getCachedFeedback() {
+    try {
+      const raw = localStorage.getItem('feedbackData');
+      if (!raw) return null;
+      const { data, timestamp } = JSON.parse(raw);
+      const age = Date.now() - timestamp;
+      if (age > this.feedbackExpiry) {
+        console.log('⏰ Feedback cache expired (1 jam)');
+        return null;
+      }
+      return data;
+    } catch (err) {
+      return null;
+    }
+  },
+
+  setCachedFeedback(data) {
+    try {
+      localStorage.setItem('feedbackData', JSON.stringify({
+        data,
+        timestamp: Date.now()
+      }));
+    } catch (err) {
+      console.warn('⚠️ Feedback cache write failed:', err);
+    }
+  },
+
   /* =====================================================
-   * CACHE
+   * CACHE MARKER
    * ===================================================== */
   getCachedData() {
     try {
@@ -255,30 +304,24 @@ const DataLoader = {
 
       const { data, timestamp, version } = JSON.parse(raw);
 
-      // 🔥 VERSION BERUBAH → FORCE SERVER
       if (version !== DATA_VERSION) {
         console.log(
-          `%c🔁 Data version changed (${version} → ${DATA_VERSION})`,
+          `%c🔁 Version changed (${version} → ${DATA_VERSION}) → fetch server`,
           'color:#ff5252;font-weight:bold'
         );
-        // Jangan hapus dulu — biarkan getStaleCache() pakai data lama
         return null;
       }
 
       const age = Date.now() - timestamp;
-
-      // ⏰ EXPIRED (1 MINGGU)
       if (age > this.cacheExpiry) {
-        console.log('⏰ Cache expired (weekly)');
-        // Jangan hapus dulu — biarkan getStaleCache() pakai data lama
+        console.log('⏰ Cache expired (7 hari) → fetch server');
         return null;
       }
 
       console.log(
-        '%c✅ Cache valid (weekly + version)',
+        '%c✅ Cache valid — no server fetch needed',
         'color:#4caf50;font-weight:bold'
       );
-
       return data;
 
     } catch (err) {
@@ -287,7 +330,6 @@ const DataLoader = {
     }
   },
 
-  // ⚡ Ambil cache lama meski expired/version beda — untuk render sementara
   getStaleCache() {
     try {
       const raw = localStorage.getItem('markerData');
@@ -301,15 +343,12 @@ const DataLoader = {
 
   setCachedData(data) {
     try {
-      localStorage.setItem(
-        'markerData',
-        JSON.stringify({
-          data,
-          timestamp: Date.now(),
-          version: DATA_VERSION
-        })
-      );
-      console.log('💾 Cached to localStorage (weekly + version)');
+      localStorage.setItem('markerData', JSON.stringify({
+        data,
+        timestamp: Date.now(),
+        version: DATA_VERSION
+      }));
+      console.log('💾 Marker cache saved (7 hari)');
     } catch (err) {
       console.warn('⚠️ Cache write failed:', err);
     }
@@ -317,15 +356,15 @@ const DataLoader = {
 
   clearCache() {
     localStorage.removeItem('markerData');
-    console.log('🗑️ Cache cleared');
+    localStorage.removeItem('feedbackData');
+    console.log('🗑️ All cache cleared');
   },
 
   /* =====================================================
-   * BACKGROUND REFRESH
+   * BACKGROUND REFRESH — hanya dipanggil saat stale cache
    * ===================================================== */
   async backgroundRefresh() {
-    console.log('%c🔄 Background refresh (diff mode)', 'color:#03a9f4');
-
+    console.log('%c🔄 Background refresh', 'color:#03a9f4');
     this.isBackgroundRefresh = true;
 
     const updatedEndpoints = [];
@@ -351,13 +390,13 @@ const DataLoader = {
       if (updatedEndpoints.length > 0) {
         this.setCachedData(this.loadedData);
         MarkerManager?.updateMarkersInView?.(updatedEndpoints);
-        console.log(`🔄 Updated endpoints: ${updatedEndpoints.join(', ')}`);
+        console.log(`🔄 Updated: ${updatedEndpoints.join(', ')}`);
       } else {
         console.log('%c✅ No changes detected', 'color:#4caf50');
       }
 
     } catch (err) {
-      console.warn('⚠️ Background refresh diff failed:', err);
+      console.warn('⚠️ Background refresh failed:', err);
     } finally {
       this.isBackgroundRefresh = false;
     }
@@ -398,14 +437,10 @@ const DataLoader = {
         })
       });
 
-      console.log(
-        '%c📦 BATCH RESPONSE',
-        'color:#673ab7',
-        {
-          status: res.status,
-          cfCache: res.headers.get('cf-cache-status') || 'N/A'
-        }
-      );
+      console.log('%c📦 BATCH RESPONSE', 'color:#673ab7', {
+        status: res.status,
+        cfCache: res.headers.get('cf-cache-status') || 'N/A'
+      });
 
       if (!res.ok) throw new Error(`Batch HTTP ${res.status}`);
 
@@ -444,15 +479,6 @@ const DataLoader = {
   async loadEndpoint(key, url) {
     try {
       const res = await fetch(url);
-
-      console.log(
-        `%c🌐 [${key}] FETCH`,
-        'color:#2196f3',
-        {
-          status: res.status,
-          cfCache: res.headers.get('cf-cache-status') || 'N/A'
-        }
-      );
 
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
@@ -503,7 +529,8 @@ const DataLoader = {
       loadedEndpoints: Object.keys(this.loadedData).length,
       totalEndpoints: Object.keys(DATA_ENDPOINTS).length,
       batchMode: this.useBatchLoading,
-      cacheStatus: this.getCachedData() ? 'HIT' : 'MISS'
+      markerCacheStatus: this.getCachedData() ? 'HIT' : 'MISS',
+      feedbackCacheStatus: this.getCachedFeedback() ? 'HIT' : 'MISS'
     };
   }
 };

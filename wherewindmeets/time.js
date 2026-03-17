@@ -1,21 +1,20 @@
 /**
  * time-underground-marker.js
  *
- * Jam dinding neon sebagai marker di peta.
- * Klik → masuk ke underground "8" (Time Underground).
+ * Marker peta → gambar reverse.webp (no background, bulat)
+ * Klik → overlay jam fullscreen muncul → underground diganti di balik overlay
  *
- * Hanya muncul saat map preset = "main".
- * Tidak terpengaruh filter kategori / floor filter biasa.
+ * MARKER:
+ *  - Segitiga terbalik PUTIH di ATAS gambar, bounce naik-turun
+ *  - Glow putih soft berkedip (filter drop-shadow pada img, bukan div kotak)
+ *  - Ukuran 2x: 104px desktop, 64px mobile
+ *  - Tidak ada tooltip
  *
- * LOGIKA ANIMASI:
- *  - Tidak aktif  → fill PENUH, jarum DIAM
- *  - Ditekan masuk → fill berkurang (penuh→kosong), jarum BERPUTAR TERBALIK
- *  - Aktif         → fill KOSONG, jarum DIAM
- *  - Ditekan keluar→ fill bertambah (kosong→penuh), jarum BERPUTAR NORMAL
- *
- * CARA PAKAI:
- *   Panggil TimeUndergroundMarker.init(map) setelah map siap.
- *   Panggil TimeUndergroundMarker.onMapPresetChange(preset) setiap kali preset berubah.
+ * OVERLAY:
+ *  - Background flicker gelap cepat (efek waktu)
+ *  - Jarum digerakkan JS, berputar terus selama overlay hidup
+ *  - Arc fill: JS RAF dari 0 → penuh (70% durasi), lalu TAHAN PENUH sampai fade-out
+ *  - Underground diganti ~400ms setelah overlay solid (tersembunyi di balik overlay)
  */
 
 const TimeUndergroundMarker = (() => {
@@ -25,535 +24,700 @@ const TimeUndergroundMarker = (() => {
   const FLOOR_ID   = '8';
   const FLOOR_NAME = 'Time';
 
-  const SIZE_DESKTOP = 52;
-  const SIZE_MOBILE  = 32;
+  const ICON_BASE_URL = 'https://tiles.bgonegaming.win/wherewindmeet/Simbol/';
+  const ICON_IMG      = ICON_BASE_URL + 'reverse.webp';
 
-  // Durasi animasi fill (ms)
-  const ANIM_DURATION = 1800;
+  const SIZE_DESKTOP     = 104;
+  const SIZE_MOBILE      = 64;
+  const OVERLAY_DURATION = 3200; // ms total overlay tampil
 
   // ─── STATE ─────────────────────────────────────────────────
-  let _map        = null;
-  let _marker     = null;
-  let _animFrame  = null;
-  let _visible    = false;
-  let _active     = false;
-  let _animating  = false;
+  let _map       = null;
+  let _marker    = null;
+  let _visible   = false;
+  let _active    = false;
+  let _animating = false;
 
-  // Progress fill: 1.0 = penuh, 0.0 = kosong
-  let _fillProgress = 1.0;
+  // ─── STYLES ────────────────────────────────────────────────
+  function _injectStyles() {
+    if (document.getElementById('tum-all-styles')) return;
+    const s = document.createElement('style');
+    s.id = 'tum-all-styles';
+    s.textContent = `
+      @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&display=swap');
 
-  // ─── SVG BUILDER ───────────────────────────────────────────
-  /**
-   * Jam neon dengan:
-   *  - Lingkaran utama + glow emas
-   *  - Lingkaran kecil dalam
-   *  - 12 garis jam sama rata (lingkaran besar & kecil)
-   *  - 4 ornamen diamond berputar pelan di luar ring
-   *  - Jarum runcing (polygon) panjang sampai ke arc
-   *  - Loading arc setengah atas di luar lingkaran
-   *
-   * viewBox 0 0 100 100, center = 50,50
-   * Arc luar: r=48, panjang ≈ 151
-   */
-  function _buildSVG(size, active = false, fillProgress = 1.0) {
-    const uid = `tum${size}${Date.now()}`;
+      /* ── MARKER ─────────────────────────────── */
+      .tum-marker-icon {
+        overflow: visible !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
 
-    const ARC_LEN    = 176; // π × 56 ≈ 175.9
-    const dashOffset = ARC_LEN * (1 - fillProgress);
+      .tum-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+        position: relative;
+      }
 
-    const ringOpacity = active ? '0.85' : '0.55';
-    const strokeW     = active ? '3'    : '2';
-    const ornamentDur = active ? '6s'   : '12s';
+      /* Segitiga terbalik PUTIH di atas gambar */
+      .tum-arrow {
+        width: 0;
+        height: 0;
+        border-left:  9px solid transparent;
+        border-right: 9px solid transparent;
+        border-bottom: 0;
+        border-top: 13px solid rgba(255,255,255,0.9);
+        margin-bottom: 1px;
+        filter: drop-shadow(0 0 4px rgba(255,255,255,0.7));
+        animation: tumBounce 1.5s ease-in-out infinite;
+      }
+      @keyframes tumBounce {
+        0%,100% { transform: translateY(0);    opacity: 0.6; }
+        50%      { transform: translateY(-6px); opacity: 1;   }
+      }
 
+      /* Gambar — glow putih soft berkedip */
+      .tum-img {
+        display: block;
+        pointer-events: none;
+        position: relative;
+        transition: filter .3s ease, transform .3s ease;
+        animation: tumImgGlow 2.2s ease-in-out infinite;
+      }
+      @keyframes tumImgGlow {
+        0%,100% {
+          filter:
+            drop-shadow(0 0  6px rgba(255,255,255,0.20))
+            drop-shadow(0 0 12px rgba(255,255,255,0.10));
+        }
+        50% {
+          filter:
+            drop-shadow(0 0 10px rgba(255,255,255,0.60))
+            drop-shadow(0 0 22px rgba(255,255,255,0.30))
+            drop-shadow(0 0 36px rgba(255,255,255,0.12));
+        }
+      }
+
+      /* ── OVERLAY ─────────────────────────────── */
+      #tum-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 999999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Cinzel', serif;
+        background: #060408;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.22s ease;
+        overflow: hidden;
+      }
+      #tum-overlay.tum-ov-on {
+        opacity: 1;
+        pointer-events: all;
+        animation: tumFlicker 0.2s ease-in-out infinite alternate;
+      }
+      @keyframes tumFlicker {
+        0%   { background: #060408; }
+        35%  { background: #0c0812; }
+        65%  { background: #08050e; }
+        100% { background: #100d18; }
+      }
+
+      #tum-ov-bg {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .tum-ov-p {
+        position: absolute;
+        background: #fff;
+        border-radius: 50%;
+        animation: tumDrift linear infinite;
+        opacity: 0;
+      }
+      @keyframes tumDrift {
+        0%   { opacity: 0;    transform: translateY(0)      scale(1);   }
+        10%  { opacity: 0.55; }
+        90%  { opacity: 0.25; }
+        100% { opacity: 0;    transform: translateY(-120vh) scale(0.5); }
+      }
+
+      #tum-ov-wrap {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .tum-ov-top {
+        color: rgba(255,255,255,0.32);
+        font-size: 10px;
+        letter-spacing: 6px;
+        text-transform: uppercase;
+      }
+
+      #tum-ov-svg-box {
+        position: relative;
+      }
+      #tum-ov-svg-box svg {
+        width: 280px;
+        height: 280px;
+        overflow: visible;
+        display: block;
+      }
+
+      .tum-ov-ring-p {
+        animation: tumRingPulse 3s ease-in-out infinite;
+      }
+      @keyframes tumRingPulse {
+        0%,100% { opacity: 0.13; }
+        50%     { opacity: 0.42; }
+      }
+
+      .tum-ov-arc-track {
+        fill: none;
+        stroke: rgba(255,255,255,0.12);
+        stroke-width: 7;
+        stroke-linecap: round;
+      }
+
+      /*
+       * Arc fill — TIDAK ada animation CSS di sini.
+       * stroke-dashoffset dikendalikan penuh oleh JS RAF.
+       * stroke-dasharray di-set via JS juga agar sesuai panjang path aktual.
+       */
+      .tum-ov-arc-fill {
+        fill: none;
+        stroke: #ffffff;
+        stroke-width: 7;
+        stroke-linecap: round;
+      }
+
+      .tum-ov-hand {
+        transform-origin: 130px 150px;
+      }
+
+      .tum-ov-orn {
+        transform-origin: 130px 150px;
+        animation: tumOrnSpin 14s linear infinite;
+      }
+      @keyframes tumOrnSpin {
+        to { transform: rotate(360deg); }
+      }
+
+      .tum-ov-pct {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -18%);
+        color: rgba(255,255,255,0.55);
+        font-size: 11px;
+        letter-spacing: 2px;
+        pointer-events: none;
+      }
+
+      .tum-ov-bottom {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+      }
+      .tum-ov-title {
+        color: rgba(255,255,255,0.72);
+        font-size: 13px;
+        letter-spacing: 8px;
+        text-transform: uppercase;
+      }
+      .tum-ov-dots {
+        color: rgba(255,255,255,0.18);
+        font-size: 9px;
+        letter-spacing: 4px;
+      }
+    `;
+    document.head.appendChild(s);
+  }
+
+  // ─── OVERLAY HTML ──────────────────────────────────────────
+  function _buildOverlayHTML(entering) {
+    const title = entering ? 'Entering Realm' : 'Returning';
     return `
-<svg width="${size}" height="${size}" viewBox="0 0 100 100"
-     xmlns="http://www.w3.org/2000/svg"
-     style="overflow:visible;display:block;">
-  <defs>
-    <!-- Glow kuat — ring utama -->
-    <filter id="nO_${uid}" x="-60%" y="-60%" width="220%" height="220%">
-      <feGaussianBlur stdDeviation="3"  result="b1"/>
-      <feGaussianBlur stdDeviation="7"  result="b2"/>
-      <feGaussianBlur stdDeviation="13" result="b3"/>
-      <feMerge>
-        <feMergeNode in="b3"/>
-        <feMergeNode in="b2"/>
-        <feMergeNode in="b1"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-    <!-- Glow medium — center cap -->
-    <filter id="nI_${uid}" x="-60%" y="-60%" width="220%" height="220%">
-      <feGaussianBlur stdDeviation="2" result="b1"/>
-      <feGaussianBlur stdDeviation="5" result="b2"/>
-      <feMerge>
-        <feMergeNode in="b2"/>
-        <feMergeNode in="b1"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-    <!-- Glow arc fill -->
-    <filter id="nArc_${uid}" x="-60%" y="-60%" width="220%" height="220%">
-      <feGaussianBlur stdDeviation="2.5" result="b1"/>
-      <feGaussianBlur stdDeviation="6"   result="b2"/>
-      <feMerge>
-        <feMergeNode in="b2"/>
-        <feMergeNode in="b1"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-    <!-- Glow jarum -->
-    <filter id="nH_${uid}" x="-100%" y="-20%" width="300%" height="140%">
-      <feGaussianBlur stdDeviation="2"  result="b1"/>
-      <feGaussianBlur stdDeviation="5"  result="b2"/>
-      <feMerge>
-        <feMergeNode in="b2"/>
-        <feMergeNode in="b1"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
+    <div id="tum-ov-bg"></div>
+    <div id="tum-ov-wrap">
+      <div class="tum-ov-top">Time Realm</div>
+      <div id="tum-ov-svg-box">
+        <svg viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="tumNeon" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="3"  result="b1"/>
+              <feGaussianBlur stdDeviation="8"  result="b2"/>
+              <feGaussianBlur stdDeviation="15" result="b3"/>
+              <feMerge>
+                <feMergeNode in="b3"/>
+                <feMergeNode in="b2"/>
+                <feMergeNode in="b1"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <filter id="tumGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="4" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="tumHandF" x="-80%" y="-15%" width="260%" height="130%">
+              <feGaussianBlur stdDeviation="2.5" result="b1"/>
+              <feGaussianBlur stdDeviation="6"   result="b2"/>
+              <feMerge>
+                <feMergeNode in="b2"/>
+                <feMergeNode in="b1"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <radialGradient id="tumBg" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stop-color="#1a0e1a" stop-opacity="0.75"/>
+              <stop offset="100%" stop-color="#060408" stop-opacity="0.25"/>
+            </radialGradient>
+          </defs>
 
-  <!-- Ring utama — stroke tebal, opacity penuh, glow kuat -->
-  <circle cx="50" cy="50" r="44"
-    fill="none" stroke="#ffffff" stroke-width="${strokeW}"
-    opacity="${ringOpacity}"
-    filter="url(#nO_${uid})"/>
+          <circle cx="130" cy="150" r="79" fill="url(#tumBg)"/>
 
-  <!-- ── 12 garis jam BESAR — lebih tebal & jelas ── -->
-  <g stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" opacity="0.85">
-    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(0,   50,50)"/>
-    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(30,  50,50)"/>
-    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(60,  50,50)"/>
-    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(90,  50,50)"/>
-    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(120, 50,50)"/>
-    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(150, 50,50)"/>
-    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(180, 50,50)"/>
-    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(210, 50,50)"/>
-    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(240, 50,50)"/>
-    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(270, 50,50)"/>
-    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(300, 50,50)"/>
-    <line x1="50" y1="8"  x2="50" y2="15" transform="rotate(330, 50,50)"/>
-  </g>
+          <circle class="tum-ov-ring-p" cx="130" cy="150" r="80"
+            fill="none" stroke="white" stroke-width="16"
+            filter="url(#tumGlow)" opacity="0.15"/>
 
-  <!-- Lingkaran kecil dalam (r=28) — lebih tebal -->
-  <circle cx="50" cy="50" r="28"
-    fill="none" stroke="#ffffff" stroke-width="1" opacity="0.55"/>
+          <circle cx="130" cy="150" r="80"
+            fill="none" stroke="white" stroke-width="1.4"
+            filter="url(#tumGlow)" opacity="0.82"/>
 
-  <!-- ── 12 garis jam KECIL — lebih tebal & jelas ── -->
-  <g stroke="#ffffff" stroke-width="1" stroke-linecap="round" opacity="0.5">
-    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(0,   50,50)"/>
-    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(30,  50,50)"/>
-    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(60,  50,50)"/>
-    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(90,  50,50)"/>
-    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(120, 50,50)"/>
-    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(150, 50,50)"/>
-    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(180, 50,50)"/>
-    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(210, 50,50)"/>
-    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(240, 50,50)"/>
-    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(270, 50,50)"/>
-    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(300, 50,50)"/>
-    <line x1="50" y1="24" x2="50" y2="29" transform="rotate(330, 50,50)"/>
-  </g>
+          <g class="tum-ov-orn">
+            <polygon points="130,57  132,61  130,65  128,61" fill="white" opacity="0.45"/>
+            <polygon points="203,150 207,152 203,154 199,152" fill="white" opacity="0.45"/>
+            <polygon points="130,243 132,247 130,251 128,247" fill="white" opacity="0.45"/>
+            <polygon points="57,150  61,152  57,154  53,152"  fill="white" opacity="0.45"/>
+          </g>
 
-  <!-- ── Ornamen 4 diamond berputar — lebih besar & jelas ── -->
-  <g opacity="0.85" filter="url(#nI_${uid})">
-    <animateTransform
-      attributeName="transform" attributeType="XML"
-      type="rotate" from="0 50 50" to="360 50 50"
-      dur="${ornamentDur}" repeatCount="indefinite"/>
-    <polygon points="50,1   52,5.5  50,10  48,5.5"  fill="#ffffff"/>
-    <polygon points="99,50  103,52  99,54  95,52"   fill="#ffffff"/>
-    <polygon points="50,90  52,94.5 50,99  48,94.5" fill="#ffffff"/>
-    <polygon points="1,50   5,52    1,54   -3,52"   fill="#ffffff"/>
-  </g>
+          <g stroke="white" stroke-width="1" stroke-linecap="round" opacity="0.38">
+            <line x1="130" y1="73" x2="130" y2="80" transform="rotate(0,   130,150)"/>
+            <line x1="130" y1="73" x2="130" y2="80" transform="rotate(30,  130,150)"/>
+            <line x1="130" y1="73" x2="130" y2="80" transform="rotate(60,  130,150)"/>
+            <line x1="130" y1="73" x2="130" y2="80" transform="rotate(90,  130,150)"/>
+            <line x1="130" y1="73" x2="130" y2="80" transform="rotate(120, 130,150)"/>
+            <line x1="130" y1="73" x2="130" y2="80" transform="rotate(150, 130,150)"/>
+            <line x1="130" y1="73" x2="130" y2="80" transform="rotate(180, 130,150)"/>
+            <line x1="130" y1="73" x2="130" y2="80" transform="rotate(210, 130,150)"/>
+            <line x1="130" y1="73" x2="130" y2="80" transform="rotate(240, 130,150)"/>
+            <line x1="130" y1="73" x2="130" y2="80" transform="rotate(270, 130,150)"/>
+            <line x1="130" y1="73" x2="130" y2="80" transform="rotate(300, 130,150)"/>
+            <line x1="130" y1="73" x2="130" y2="80" transform="rotate(330, 130,150)"/>
+          </g>
 
-  <!-- ── Jarum runcing — lebih tebal, glow kuat ── -->
-  <g class="wc-hour" filter="url(#nH_${uid})">
-    <polygon points="50,5 48,50 52,50"  fill="#ffffff" opacity="1"/>
-    <polygon points="50,63 49,50 51,50" fill="#ffffff" opacity="0.6"/>
-  </g>
+          <circle cx="130" cy="150" r="50"
+            fill="none" stroke="white" stroke-width="0.7" opacity="0.25"/>
 
-  <!-- Center cap — lebih besar & bercahaya -->
-  <circle cx="50" cy="50" r="4.5" fill="#ffffff" filter="url(#nI_${uid})"/>
-  <circle cx="50" cy="50" r="2.5" fill="#ffffff"/>
+          <g stroke="white" stroke-width="0.6" stroke-linecap="round" opacity="0.18">
+            <line x1="130" y1="103" x2="130" y2="108" transform="rotate(0,   130,150)"/>
+            <line x1="130" y1="103" x2="130" y2="108" transform="rotate(30,  130,150)"/>
+            <line x1="130" y1="103" x2="130" y2="108" transform="rotate(60,  130,150)"/>
+            <line x1="130" y1="103" x2="130" y2="108" transform="rotate(90,  130,150)"/>
+            <line x1="130" y1="103" x2="130" y2="108" transform="rotate(120, 130,150)"/>
+            <line x1="130" y1="103" x2="130" y2="108" transform="rotate(150, 130,150)"/>
+            <line x1="130" y1="103" x2="130" y2="108" transform="rotate(180, 130,150)"/>
+            <line x1="130" y1="103" x2="130" y2="108" transform="rotate(210, 130,150)"/>
+            <line x1="130" y1="103" x2="130" y2="108" transform="rotate(240, 130,150)"/>
+            <line x1="130" y1="103" x2="130" y2="108" transform="rotate(270, 130,150)"/>
+            <line x1="130" y1="103" x2="130" y2="108" transform="rotate(300, 130,150)"/>
+            <line x1="130" y1="103" x2="130" y2="108" transform="rotate(330, 130,150)"/>
+          </g>
 
-  <!-- ── LOADING ARC di LUAR (r=56) ── -->
-  <!-- Track — cukup terlihat saat kosong -->
-  <path d="M -6,50 A 56,56 0 0,1 106,50"
-    fill="none"
-    stroke="rgba(255,255,255,0.4)"
-    stroke-width="3.5"
-    stroke-linecap="round"/>
+          <g class="tum-ov-hand" filter="url(#tumHandF)">
+            <polygon points="130,24 127.5,150 132.5,150" fill="white" opacity="0.95"/>
+            <polygon points="130,167 128.5,150 131.5,150" fill="white" opacity="0.38"/>
+          </g>
 
-  <!-- Fill — neon glow -->
-  <path class="wc-arc-fill"
-    d="M -6,50 A 56,56 0 0,1 106,50"
-    fill="none"
-    stroke="#ffffff"
-    stroke-width="3.5"
-    stroke-linecap="round"
-    stroke-dasharray="${ARC_LEN}"
-    stroke-dashoffset="${dashOffset}"
-    filter="url(#nArc_${uid})"/>
+          <circle cx="130" cy="150" r="5"   fill="white" filter="url(#tumGlow)"/>
+          <circle cx="130" cy="150" r="3.5" fill="white"/>
+          <circle cx="130" cy="150" r="1.8" fill="#060408"/>
 
-</svg>`;
+          <!-- Arc track -->
+          <path class="tum-ov-arc-track"
+            d="M 20,150 A 110,110 0 0,1 240,150"/>
+
+          <!-- Arc fill — stroke-dasharray & stroke-dashoffset di-set JS -->
+          <path class="tum-ov-arc-fill"
+            id="tum-ov-arc"
+            d="M 20,150 A 110,110 0 0,1 240,150"
+            filter="url(#tumNeon)"/>
+        </svg>
+        <div class="tum-ov-pct" id="tum-ov-pct">0%</div>
+      </div>
+      <div class="tum-ov-bottom">
+        <div class="tum-ov-title" id="tum-ov-title">${title}</div>
+        <div class="tum-ov-dots">∙ ∙ ∙ ∙ ∙ ∙ ∙ ∙ ∙</div>
+      </div>
+    </div>`;
+  }
+
+  // ─── OVERLAY STATE ─────────────────────────────────────────
+  let _overlayEl    = null;
+  let _overlayTimer = null;
+  let _overlayRaf   = null;
+
+  function _killOverlay() {
+    if (_overlayTimer) { clearTimeout(_overlayTimer); _overlayTimer = null; }
+    if (_overlayRaf)   { cancelAnimationFrame(_overlayRaf); _overlayRaf = null; }
+  }
+
+  /**
+   * onMidpoint → dipanggil ~420ms setelah overlay solid (underground ganti di sini)
+   * onDone     → dipanggil setelah fade-out selesai (update ikon & notif)
+   */
+  function _showOverlay(entering, onMidpoint, onDone) {
+    _injectStyles();
+    _killOverlay();
+
+    if (!_overlayEl) {
+      _overlayEl = document.createElement('div');
+      _overlayEl.id = 'tum-overlay';
+      document.body.appendChild(_overlayEl);
+    }
+
+    _overlayEl.classList.remove('tum-ov-on');
+    _overlayEl.innerHTML = _buildOverlayHTML(entering);
+
+    // Spawn partikel
+    const bgEl = _overlayEl.querySelector('#tum-ov-bg');
+    for (let i = 0; i < 40; i++) {
+      const p = document.createElement('div');
+      p.className = 'tum-ov-p';
+      p.style.left   = (Math.random() * 100) + 'vw';
+      p.style.top    = (Math.random() * 100) + 'vh';
+      const sz = (Math.random() * 1.8 + 0.4) + 'px';
+      p.style.width  = sz;
+      p.style.height = sz;
+      p.style.animationDuration = (Math.random() * 10 + 7) + 's';
+      p.style.animationDelay    = (Math.random() * 6) + 's';
+      bgEl.appendChild(p);
+    }
+
+    // Referensi elemen animasi
+    const handEl  = _overlayEl.querySelector('.tum-ov-hand');
+    const arcEl   = _overlayEl.querySelector('#tum-ov-arc');
+    const pctEl   = _overlayEl.querySelector('#tum-ov-pct');
+    const titleEl = _overlayEl.querySelector('#tum-ov-title');
+
+    // ── Ukur panjang path arc secara aktual ──────────────────
+    // Ini penting: getTotalLength() memberi panjang path yang akurat
+    // sehingga dasharray/dashoffset benar di semua browser & ukuran layar.
+    let ARC_LEN = 345; // fallback
+    if (arcEl && arcEl.getTotalLength) {
+      try { ARC_LEN = arcEl.getTotalLength(); } catch(e) {}
+    }
+    // Set dasharray & tentukan titik awal berdasarkan arah:
+    //   entering  → kosong dulu (offset = ARC_LEN), lalu isi ke 0
+    //   exiting   → penuh dulu  (offset = 0),       lalu kosongkan ke ARC_LEN
+    if (arcEl) {
+      arcEl.style.strokeDasharray  = ARC_LEN;
+      arcEl.style.strokeDashoffset = entering ? 0 : ARC_LEN;
+    }
+
+    // Fade in (double rAF agar browser sempat render sebelum transisi)
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      _overlayEl.classList.add('tum-ov-on');
+    }));
+
+    // Midpoint callback — underground ganti di balik overlay
+    setTimeout(() => { if (onMidpoint) onMidpoint(); }, 420);
+
+    // ── Konfigurasi animasi ──────────────────────────────────
+    const labsE = ['Reverse Time', 'Calibrating', 'Synchronizing', 'Time Unlocked'];
+    const labsX = ['Returning',      'Resetting',   'Synchronizing', 'Back to Real Time'];
+    const labels  = entering ? labsE : labsX;
+
+    // Arc penuh di 70% dari total durasi, lalu TAHAN sampai fade-out
+    const fillDur   = OVERLAY_DURATION * 0.70;
+    // Jarum: 1 putaran per 1.5 detik, arah terbalik saat masuk
+    const degPerMs  = (entering ? -1 : 1) * (360 / 1500);
+
+    let startTs  = null;
+    let prevTs   = null;
+    let handDeg  = 0;
+    let arcDone  = false;
+    let lblIdx   = 0;
+
+    function tick(ts) {
+      if (!startTs) { startTs = ts; prevTs = ts; }
+      const elapsed = ts - startTs;
+      const delta   = ts - prevTs;
+      prevTs = ts;
+
+      // ── Jarum: berputar terus selama overlay hidup ─────────
+      handDeg += degPerMs * delta;
+      if (handEl) handEl.style.transform = `rotate(${handDeg}deg)`;
+
+      // ── Arc fill: isi/kosongkan sekali, lalu tahan ────────
+      if (!arcDone) {
+        const t    = Math.min(elapsed / fillDur, 1);
+        // Easing quad in-out untuk gerakan natural
+        const ease = t < 0.5
+          ? 2 * t * t
+          : -1 + (4 - 2 * t) * t;
+        // entering → offset turun dari ARC_LEN ke 0 (makin penuh)
+        // exiting  → offset naik dari 0 ke ARC_LEN (makin kosong)
+        const offset = entering
+          ? ARC_LEN * ease          // naik → makin kosong
+          : ARC_LEN * (1 - ease);   // turun → makin penuh
+        if (arcEl) arcEl.style.strokeDashoffset = offset.toFixed(2);
+        if (t >= 1) {
+          if (arcEl) arcEl.style.strokeDashoffset = entering ? String(ARC_LEN) : '0';
+          arcDone = true;
+        }
+      }
+
+      // ── Counter persen (ikut progres arc, bukan waktu total) ─
+      const pctRaw = Math.min(elapsed / fillDur, 1);
+      if (pctEl) pctEl.textContent = Math.round(pctRaw * 100) + '%';
+
+      // ── Label bergilir sesuai kuartal progres ─────────────
+      const newIdx = Math.min(Math.floor(pctRaw * labels.length), labels.length - 1);
+      if (newIdx !== lblIdx) {
+        lblIdx = newIdx;
+        if (titleEl) titleEl.textContent = labels[lblIdx];
+      }
+
+      _overlayRaf = requestAnimationFrame(tick);
+    }
+
+    _overlayRaf = requestAnimationFrame(tick);
+
+    // ── Fade out → stop RAF → onDone ──────────────────────
+    _overlayTimer = setTimeout(() => {
+      _overlayEl.classList.remove('tum-ov-on');
+      setTimeout(() => {
+        _killOverlay();
+        if (onDone) onDone();
+      }, 240); // tunggu transisi opacity selesai
+    }, OVERLAY_DURATION);
   }
 
   // ─── ICON BUILDER ──────────────────────────────────────────
-  function _buildIcon(active = false, fillProgress = 1.0) {
+  function _buildIcon() {
     const isMob = window.matchMedia('(max-width:768px)').matches;
     const size  = isMob ? SIZE_MOBILE : SIZE_DESKTOP;
     const half  = size / 2;
-
-    const glowStyle = active
-      ? 'drop-shadow(0 0 14px #d4a800ee) drop-shadow(0 0 6px #ffffffaa)'
-      : 'drop-shadow(0 0 8px #d4a80077)';
+    const totalH = size + 20; // segitiga(13) + gap(5) + gambar(size)
 
     return L.divIcon({
-      html: `<div class="tum-clock-wrap ${active ? 'tum-active' : ''}" style="
-                position:relative;
-                width:${size}px;
-                height:${size}px;
-                cursor:pointer;
-                filter:${glowStyle};
-                transition:filter .25s ease, transform .25s ease;
-              ">${_buildSVG(size, active, fillProgress)}</div>`,
-      iconSize:    [size, size],
-      iconAnchor:  [half, half],
-      popupAnchor: [0, -(half + 8)],
-      className:   'no-default-icon-bg tum-marker-icon'
+      html: `
+        <div class="tum-wrap" style="width:${size}px;">
+          <div class="tum-arrow"></div>
+          <img class="tum-img"
+               src="${ICON_IMG}"
+               width="${size}" height="${size}"
+               draggable="false" alt=""/>
+        </div>`,
+      iconSize:   [size, totalH],
+      iconAnchor: [half, 20 + half],
+      className:  'no-default-icon-bg tum-marker-icon'
     });
   }
 
   function _refreshIcon() {
     if (!_marker) return;
-    _marker.setIcon(_buildIcon(_active, _fillProgress));
+    _marker.setIcon(_buildIcon());
     requestAnimationFrame(() => {
       const el = _marker.getElement();
       if (el) _attachHover(el);
     });
   }
 
-  // ─── HAND ROTATION ─────────────────────────────────────────
-  function _rotateLine(el, deg) {
-    el.setAttribute('transform', `rotate(${deg}, 50, 50)`);
-  }
-
-  function _setHandAngle(deg) {
-    document.querySelectorAll('.tum-clock-wrap').forEach(wrap => {
-      const hEl = wrap.querySelector('.wc-hour');
-      if (hEl) _rotateLine(hEl, deg);
-    });
-  }
-
-  // ─── FILL + HAND TRANSITION ANIMATION ──────────────────────
-  // Posisi jarum akumulatif — tidak reset, lanjut dari posisi terakhir
-  let _currentHandDeg = 0;
-
-  function _animateTransition(entering, onDone) {
-    if (_animFrame) cancelAnimationFrame(_animFrame);
-
-    _animating = true;
-
-    const startProgress = _fillProgress;
-    const endProgress   = entering ? 0.0 : 1.0;
-    const startTime     = performance.now();
-
-    // Arah: masuk = terbalik (CCW = negatif), keluar = normal (CW = positif)
-    const direction = entering ? -1 : 1;
-
-    // Minimum 1 putaran penuh + random 0–2 putaran extra
-    const extraRounds = Math.floor(Math.random() * 3);
-    const totalDeg    = direction * (360 + extraRounds * 360);
-    const startDeg    = _currentHandDeg;
-
-    function easeInOut(t) {
-      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-    }
-
-    function tick(now) {
-      const elapsed = now - startTime;
-      const rawT    = Math.min(elapsed / ANIM_DURATION, 1);
-      const t       = easeInOut(rawT);
-
-      // Update fill arc
-      _fillProgress = startProgress + (endProgress - startProgress) * t;
-      document.querySelectorAll('.wc-arc-fill').forEach(arc => {
-        arc.setAttribute('stroke-dashoffset', 176 * (1 - _fillProgress));
-      });
-
-      // Jarum berputar terus dari posisi terakhir
-      _currentHandDeg = startDeg + totalDeg * t;
-      _setHandAngle(_currentHandDeg);
-
-      if (rawT < 1) {
-        _animFrame = requestAnimationFrame(tick);
-      } else {
-        _fillProgress   = endProgress;
-        _currentHandDeg = startDeg + totalDeg;
-        _animating      = false;
-        _animFrame      = null;
-        if (onDone) onDone();
-      }
-    }
-
-    _animFrame = requestAnimationFrame(tick);
-  }
-
-  // ─── HOVER EFFECT ──────────────────────────────────────────
+  // ─── HOVER ─────────────────────────────────────────────────
   function _attachHover(markerEl) {
-    const wrap = markerEl.querySelector('.tum-clock-wrap');
-    if (!wrap) return;
-
+    const img = markerEl.querySelector('.tum-img');
+    if (!img) return;
     markerEl.addEventListener('mouseenter', () => {
-      wrap.style.filter    = 'drop-shadow(0 0 18px #d4a800cc) drop-shadow(0 0 6px #fff8)';
-      wrap.style.transform = 'scale(1.18)';
+      img.style.filter    = 'drop-shadow(0 0 16px rgba(255,255,255,0.8)) drop-shadow(0 0 32px rgba(255,255,255,0.4)) brightness(1.15)';
+      img.style.transform = 'scale(1.08)';
     });
     markerEl.addEventListener('mouseleave', () => {
-      wrap.style.filter    = 'drop-shadow(0 0 10px #d4a80099)';
-      wrap.style.transform = 'scale(1)';
+      img.style.filter    = '';
+      img.style.transform = '';
     });
   }
 
-  function _buildTooltip() {
-    return L.tooltip({
-      permanent:  false,
-      direction:  'top',
-      className:  'tum-tooltip',
-      offset:     [0, -8]
-    }).setContent(`
-      <div style="text-align:center;font-size:12px;letter-spacing:1px;color:#fff;line-height:1.6;">
-        <div style="font-weight:700;color:#d4a800;font-size:13px;">⏰ Time Realm</div>
-        <div style="opacity:.75;font-size:11px;">Tap to enter / exit</div>
-      </div>
-    `);
-  }
-
-  // ─── TOGGLE TIME UNDERGROUND ───────────────────────────────
+  // ─── TOGGLE ────────────────────────────────────────────────
   function _toggleTimeUnderground() {
     if (_animating) return;
-
     if (typeof UndergroundManager === 'undefined') {
       console.warn('[TUM] UndergroundManager not found');
       return;
     }
+    _animating = true;
 
     if (_active) {
-      _active = false;
-      _refreshIcon();
-
-      _animateTransition(false, () => {
-        UndergroundManager.setActiveFloor('surface', true);
-        _pulseMarker(false);
-        _showNotif(false);
-      });
-
+      _showOverlay(
+        false,
+        () => {
+          _active = false;
+          UndergroundManager.setActiveFloor('surface', true);
+        },
+        () => {
+          _animating = false;
+          _refreshIcon();
+          _pulseMarker(false);
+          _showNotif(false);
+        }
+      );
     } else {
-      _active = true;
-      _ensureTimeFloor();
-      _refreshIcon();
-
-      _animateTransition(true, () => {
-        UndergroundManager.setActiveFloor(FLOOR_ID, true);
-        _pulseMarker(true);
-        _showNotif(true);
-      });
+      _showOverlay(
+        true,
+        () => {
+          _active = true;
+          _ensureTimeFloor();
+          UndergroundManager.setActiveFloor(FLOOR_ID, true);
+        },
+        () => {
+          _animating = false;
+          _refreshIcon();
+          _pulseMarker(true);
+          _showNotif(true);
+        }
+      );
     }
   }
 
   function _ensureTimeFloor() {
-    const existing = UndergroundManager.floors.find(f => f.id === FLOOR_ID);
-    if (existing) return;
-
-    UndergroundManager.floors.push({
-      id:          FLOOR_ID,
-      name:        FLOOR_NAME,
-      icon:        `${ICON_BASE_URL}layericon.png`,
-      description: 'Time Realm',
-      filterValue: FLOOR_ID,
-      brightness:  0.5,
-      blur:        1
-    });
+    if (!UndergroundManager.floors.find(f => f.id === FLOOR_ID)) {
+      UndergroundManager.floors.push({
+        id:          FLOOR_ID,
+        name:        FLOOR_NAME,
+        icon:        ICON_BASE_URL + 'layericon.png',
+        description: 'Time Power',
+        filterValue: FLOOR_ID,
+        brightness:  0.5,
+        blur:        1
+      });
+    }
   }
 
-  // ─── PULSE ANIMATION ───────────────────────────────────────
-  function _pulseMarker(entering = true) {
+  // ─── PULSE ─────────────────────────────────────────────────
+  function _pulseMarker(entering) {
     if (!_marker) return;
     const el = _marker.getElement();
     if (!el) return;
-    const wrap = el.querySelector('.tum-clock-wrap');
-    if (!wrap) return;
-
-    wrap.style.transition = 'transform .15s ease, filter .15s ease';
-    wrap.style.transform  = 'scale(1.35)';
-    wrap.style.filter     = entering
-      ? 'drop-shadow(0 0 24px #ffe600) drop-shadow(0 0 10px #fff)'
-      : 'drop-shadow(0 0 16px #888) drop-shadow(0 0 6px #444)';
-
+    const img = el.querySelector('.tum-img');
+    if (!img) return;
+    img.style.transition = 'transform .15s ease';
+    img.style.transform  = 'scale(1.2)';
+    img.style.filter     = entering
+      ? 'drop-shadow(0 0 24px rgba(255,255,255,0.9)) drop-shadow(0 0 48px rgba(255,255,255,0.5))'
+      : 'drop-shadow(0 0 10px rgba(180,180,180,0.5))';
     setTimeout(() => {
-      wrap.style.transform = 'scale(1)';
-      wrap.style.filter    = entering
-        ? 'drop-shadow(0 0 14px #d4a800ee) drop-shadow(0 0 6px #ffffffaa)'
-        : 'drop-shadow(0 0 8px #d4a80077)';
-    }, 300);
+      img.style.transform = '';
+      img.style.filter    = '';
+    }, 380);
   }
 
-  // ─── NOTIFICATION ──────────────────────────────────────────
-  function _showNotif(entering = true) {
+  // ─── NOTIF ─────────────────────────────────────────────────
+  function _showNotif(entering) {
     const old = document.querySelector('.tum-notif');
     if (old) old.remove();
-
-    const notif = document.createElement('div');
-    notif.className = 'tum-notif';
-    notif.innerHTML = entering
-      ? `<span style="font-size:18px;margin-right:8px;">⏰</span><span>Entering <strong>Time Realm</strong>…</span>`
-      : `<span style="font-size:18px;margin-right:8px;">🌍</span><span>Back to <strong>Surface</strong></span>`;
-
-    Object.assign(notif.style, {
+    const n = document.createElement('div');
+    n.className = 'tum-notif';
+    n.innerHTML = entering
+      ? `<span style="font-size:17px;margin-right:7px;">⏰</span><span>Entering <strong>Past Time</strong>…</span>`
+      : `<span style="font-size:17px;margin-right:7px;">🌍</span><span>Back to <strong>Real Time</strong></span>`;
+    Object.assign(n.style, {
       position:     'fixed',
       bottom:       '90px',
       left:         '50%',
-      transform:    'translateX(-50%) translateY(20px)',
-      background:   'linear-gradient(135deg, #1a1200, #3a2800)',
-      border:       '1px solid #d4a800',
-      color:        '#fff8cc',
+      transform:    'translateX(-50%) translateY(18px)',
+      background:   'linear-gradient(135deg,#0e0e14,#1c1a28)',
+      border:       '1px solid rgba(255,255,255,0.25)',
+      color:        '#ffffffcc',
       padding:      '10px 20px',
       borderRadius: '12px',
-      fontSize:     '14px',
+      fontSize:     '13px',
       fontWeight:   '600',
       letterSpacing:'0.5px',
-      boxShadow:    '0 0 20px #d4a80055',
-      zIndex:       '99999',
+      boxShadow:    '0 0 18px rgba(255,255,255,0.1)',
+      zIndex:       '99998',
       display:      'flex',
       alignItems:   'center',
       opacity:      '0',
-      transition:   'opacity .3s ease, transform .3s ease',
+      transition:   'opacity .28s ease, transform .28s ease',
       pointerEvents:'none',
+      fontFamily:   'Cinzel,serif',
     });
-
-    document.body.appendChild(notif);
-
+    document.body.appendChild(n);
     requestAnimationFrame(() => {
-      notif.style.opacity   = '1';
-      notif.style.transform = 'translateX(-50%) translateY(0)';
+      n.style.opacity   = '1';
+      n.style.transform = 'translateX(-50%) translateY(0)';
     });
-
     setTimeout(() => {
-      notif.style.opacity   = '0';
-      notif.style.transform = 'translateX(-50%) translateY(20px)';
-      setTimeout(() => notif.remove(), 350);
+      n.style.opacity   = '0';
+      n.style.transform = 'translateX(-50%) translateY(18px)';
+      setTimeout(() => n.remove(), 300);
     }, 2500);
   }
 
-  // ─── SHOW / HIDE MARKER ────────────────────────────────────
+  // ─── SHOW / HIDE ───────────────────────────────────────────
   function _show() {
     if (_visible || !_map) return;
-
-    _fillProgress = _active ? 0.0 : 1.0;
-
+    _injectStyles();
     _marker = L.marker([COORD.lat, COORD.lng], {
-      icon:         _buildIcon(_active, _fillProgress),
+      icon:         _buildIcon(),
       interactive:  true,
       zIndexOffset: 9000,
       pane:         'markerPane'
     });
-
-    _marker.bindTooltip(_buildTooltip());
-    _marker.on('click', () => _toggleTimeUnderground());
+    _marker.on('click', _toggleTimeUnderground);
     _marker.addTo(_map);
-
     requestAnimationFrame(() => {
       const el = _marker.getElement();
       if (el) _attachHover(el);
     });
-
     _visible = true;
   }
 
   function _hide() {
     if (!_visible || !_marker) return;
-
-    if (_animFrame) {
-      cancelAnimationFrame(_animFrame);
-      _animFrame = null;
-      _animating = false;
-    }
-
-    if (_map && _map.hasLayer(_marker)) {
-      _map.removeLayer(_marker);
-    }
-    _marker  = null;
-    _visible = false;
-
+    _killOverlay();
+    if (_map && _map.hasLayer(_marker)) _map.removeLayer(_marker);
+    _marker    = null;
+    _visible   = false;
+    _animating = false;
     if (_active) {
-      _active       = false;
-      _fillProgress = 1.0;
-      if (typeof UndergroundManager !== 'undefined') {
+      _active = false;
+      if (typeof UndergroundManager !== 'undefined')
         UndergroundManager.setActiveFloor('surface', false);
-      }
     }
   }
 
   // ─── PUBLIC API ────────────────────────────────────────────
   return {
-
     init(mapInstance) {
       _map = mapInstance;
-
-      const preset = (typeof getCurrentMapPreset === 'function')
-        ? getCurrentMapPreset()
-        : 'main';
-
+      const preset = typeof getCurrentMapPreset === 'function'
+        ? getCurrentMapPreset() : 'main';
       if (preset === 'main') _show();
     },
-
     onMapPresetChange(preset) {
-      if (preset === 'main') {
-        _show();
-      } else {
-        _hide();
-      }
+      preset === 'main' ? _show() : _hide();
     },
-
     show: _show,
     hide: _hide,
-
-    get isVisible()   { return _visible; },
-    get isActive()    { return _active; },
+    get isVisible()   { return _visible;   },
+    get isActive()    { return _active;    },
     get isAnimating() { return _animating; },
-
     FLOOR_ID,
     FLOOR_NAME,
   };
 
 })();
 
-// ─── GLOBAL EXPORT ─────────────────────────────────────────────
 window.TimeUndergroundMarker = TimeUndergroundMarker;
-
-
-// ─── CSS ───────────────────────────────────────────────────────
-(function injectTUMStyles() {
-  if (document.getElementById('tum-styles')) return;
-
-  const style = document.createElement('style');
-  style.id = 'tum-styles';
-  style.textContent = `
-    .tum-tooltip {
-      background: linear-gradient(135deg, #1a1200ee, #2e1f00ee) !important;
-      border: 1px solid #d4a800 !important;
-      border-radius: 8px !important;
-      box-shadow: 0 0 14px #d4a80055 !important;
-      padding: 6px 12px !important;
-    }
-    .tum-tooltip::before {
-      border-top-color: #d4a800 !important;
-    }
-    .tum-marker-icon {
-      opacity: 1 !important;
-      visibility: visible !important;
-    }
-  `;
-  document.head.appendChild(style);
-})();

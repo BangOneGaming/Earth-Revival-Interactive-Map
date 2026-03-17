@@ -50,6 +50,8 @@ body {
   opacity: 0;
   pointer-events: none;
   contain: paint;
+
+  will-change: opacity;
 }
 .filter-actions,
 #btnSelectAll,
@@ -73,13 +75,28 @@ body.app-ready .leaderboard-toggle {
 }
 
 /* =========================================
+   SMOOTH ZOOM TILES
+   ========================================= */
+.map-tiles {
+  will-change: transform;
+  image-rendering: auto;
+}
+
+.leaflet-zoom-animated {
+  will-change: transform;
+}
+
+.leaflet-tile-container {
+  will-change: transform;
+}
+
+/* =========================================
    MAP CONTAINER
    ========================================= */
 #map {
   width: 100%;
   height: 100vh;
   background-color: var(--ink-dark);
-  background-image: url("assets/ui/map-placeholder.webp");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -149,6 +166,8 @@ body.app-ready .leaderboard-toggle {
     0 0 80px rgba(240, 192, 96, 0.06),
     inset 0 0 60px rgba(0, 0, 0, 0.4);
   animation: scrollUnfurl 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  min-height: 50px; /* ← cegah reflow saat clip-path animate */
+  contain: layout paint; /* ← isolasi dari layout utama */
 }
 
 @keyframes scrollUnfurl {
@@ -372,7 +391,7 @@ body.app-ready .leaderboard-toggle {
 }
 
 .marker-popup-header > .marker-popup-section-edit-btn {
-  display: flex !important;
+  display: none !important;
 }
 
 /* =========================================

@@ -1,5 +1,5 @@
 /**
- * Underground Floor Manager - Clean Version
+ * Underground Floor Manager - Layer.js
  * Always starts at surface, no floor state persistence
  */
 const MAX_SEEABLE_FLOOR = 4;

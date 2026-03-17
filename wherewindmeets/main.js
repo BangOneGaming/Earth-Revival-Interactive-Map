@@ -6,7 +6,7 @@
   'use strict';
 
   // ============================================
-  // ICON MANAGER LOADER (FIXED)
+  // ICON MANAGER LOADER
   // ============================================
   function loadIconManager() {
     return new Promise((resolve, reject) => {
@@ -79,7 +79,7 @@
   }
 
   // ============================================
-  // PRELOAD UI (CLS SAFE)
+  // PRELOAD UI
   // ============================================
   async function showPreload() {
     const overlay = document.getElementById('preloadOverlay');
@@ -113,7 +113,6 @@
     setTimeout(() => {
       overlay.style.pointerEvents = 'none';
       overlay.style.visibility = 'hidden';
-      // ✅ DIHAPUS: showAllIcons() dari sini — sudah dipanggil lebih awal
     }, 300);
   }
 
@@ -165,22 +164,35 @@
     setTimeout(() => updateLoadingText('You can add new marker in this map'), 2500);
   }
 
+  // ============================================
+  // LOADING BAR — berbasis progress nyata
+  // ============================================
+  let _loadProgress = 0;
+
   function startLoadingBar() {
     const bar = document.getElementById('preloadBarFill');
     const pct = document.getElementById('preloadBarPercent');
     if (!bar || !pct) return;
 
-    let p = 0;
-    const i = setInterval(() => {
-      p += 1;
-      bar.style.width = p + '%';
-      pct.textContent = p + '%';
-      if (p >= 100) clearInterval(i);
-    }, 50);
+    _loadProgress = 0;
+    bar.style.transition = 'width 0.3s ease-out';
+    bar.style.width = '0%';
+    pct.textContent = '0%';
   }
 
-  function simulateFinalLoading() {
-    return new Promise(r => setTimeout(r, 5000));
+  function updateLoadingProgress(percent) {
+    const bar = document.getElementById('preloadBarFill');
+    const pct = document.getElementById('preloadBarPercent');
+    if (!bar || !pct) return;
+
+    // Tidak boleh mundur
+    _loadProgress = Math.max(_loadProgress, Math.min(percent, 100));
+    bar.style.width = _loadProgress + '%';
+    pct.textContent = _loadProgress + '%';
+  }
+
+  function forceCompleteLoadingBar() {
+    updateLoadingProgress(100);
   }
 
   // ============================================
@@ -281,6 +293,7 @@
       if (!mapReady) throw new Error('initializeMap not found');
 
       window.map = initializeMap();
+      updateLoadingProgress(10);
 
       if (!isPip) await showPreload();
 
@@ -290,6 +303,7 @@
       updateLoadingText('Preparing icon system...');
       await loadIconManager();
       window.initializeIcons();
+      updateLoadingProgress(20);
 
       // ============================================
       // STEP 2: Load Marker Data
@@ -298,6 +312,7 @@
       if (window.DataLoader?.init) {
         await DataLoader.init();
       }
+      updateLoadingProgress(50);
 
       // ============================================
       // STEP 3: Load Descriptions
@@ -311,12 +326,14 @@
           console.warn('⚠️ Description loading failed:', error);
         }
       }
+      updateLoadingProgress(62);
 
       // ============================================
       // STEP 4: Load CSS (deferred)
       // ============================================
       updateLoadingText('Loading styles...');
       loadDeferredCSS();
+      updateLoadingProgress(70);
 
       // ============================================
       // STEP 5: Initialize Core Systems
@@ -344,37 +361,37 @@
           console.warn('⚠️ MarkerImageHandler init failed:', error);
         }
       }
+      updateLoadingProgress(80);
 
-// ============================================
-// STEP 6: Underground System
-// ============================================
-updateLoadingText('Initializing underground system...');
+      // ============================================
+      // STEP 6: Underground System
+      // ============================================
+      updateLoadingText('Initializing underground system...');
 
-// ✅ Guard: tunggu UndergroundManager tersedia
-if (await waitForUndergroundManager()) {
-  try {
-    const UG = window.UndergroundManager;
+      if (await waitForUndergroundManager()) {
+        try {
+          const UG = window.UndergroundManager;
 
-    if (UG && typeof UG.init === 'function') {
-      await UG.init(window.map);
-      console.log('✅ UndergroundManager initialized');
+          if (UG && typeof UG.init === 'function') {
+            await UG.init(window.map);
+            console.log('✅ UndergroundManager initialized');
 
-      if (window.TimeUndergroundMarker?.init) {
-        window.TimeUndergroundMarker.init(window.map);
-        console.log('✅ TimeUndergroundMarker initialized');
+            if (window.TimeUndergroundMarker?.init) {
+              window.TimeUndergroundMarker.init(window.map);
+              console.log('✅ TimeUndergroundMarker initialized');
+            }
+
+          } else {
+            console.warn('⚠️ UndergroundManager found but invalid');
+          }
+
+        } catch (error) {
+          console.warn('⚠️ UndergroundManager init failed:', error);
+        }
+      } else {
+        console.warn('⚠️ UndergroundManager not loaded, skipping underground system');
       }
-
-    } else {
-      console.warn('⚠️ UndergroundManager found but invalid');
-    }
-
-  } catch (error) {
-    console.warn('⚠️ UndergroundManager init failed:', error);
-  }
-} else {
-  // ✅ Tidak throw error, cukup warn
-  console.warn('⚠️ UndergroundManager not loaded, skipping underground system');
-}
+      updateLoadingProgress(88);
 
       // ============================================
       // STEP 7: Region System
@@ -395,6 +412,7 @@ if (await waitForUndergroundManager()) {
           console.warn('⚠️ RegionManager init failed:', error);
         }
       }
+      updateLoadingProgress(95);
 
       // ============================================
       // STEP 8: Dev Tools (Optional)
@@ -406,22 +424,20 @@ if (await waitForUndergroundManager()) {
           console.warn('⚠️ Dev tools init failed:', error);
         }
       }
+      updateLoadingProgress(98);
 
       // ============================================
-      // STEP 9: Tampilkan marker SEBELUM simulateFinalLoading
-      // ✅ FIX UTAMA: showAllIcons dipanggil di sini, bukan di finally
-      // sehingga marker sudah muncul di balik preload overlay
+      // STEP 9: Selesai — tampilkan marker & tutup overlay
       // ============================================
       document.body.classList.add('app-ready');
 
       if (window.IconManager?.showAllIcons) {
         window.IconManager.showAllIcons();
-        console.log('✅ Icons visible (before final loading wait)');
+        console.log('✅ Icons visible');
       }
 
-      // Preload overlay masih tampil selama simulasi ini
       updateLoadingText('Ready to explore!');
-      await simulateFinalLoading();
+      forceCompleteLoadingBar(); // → langsung 100%
 
     } catch (err) {
       console.error(err);
@@ -437,25 +453,24 @@ if (await waitForUndergroundManager()) {
       // Pastikan app-ready ter-set meski error
       document.body.classList.add('app-ready');
 
-      // ✅ Pastikan icons visible meski terjadi error sebelum STEP 9
+      // Pastikan icons visible meski terjadi error sebelum STEP 9
       if (window.IconManager?.showAllIcons) {
         window.IconManager.showAllIcons();
       }
 
-      // Hide preload overlay
+      // Tunggu bar animasi ke 100% selesai lalu tutup overlay
       setTimeout(() => {
         hidePreload();
         waitForProfileReady();
 
         setTimeout(() => {
           const patchShown = window.showPatchPopup ? showPatchPopup() : false;
-
           if (!patchShown && window.TipGuide) {
             TipGuide.start();
           }
         }, 800);
 
-      }, 300);
+      }, 400); // ← cukup untuk animasi bar 0.3s selesai
 
       // Show UI elements
       setTimeout(() => {

@@ -13,7 +13,7 @@ const MARKER_CONFIG = {
 
 
 const EDIT_PERMISSION = {
-  loc_type: true // 🔒 default TIDAK bisa diedit
+  loc_type: false // 🔒 default TIDAK bisa diedit
 };
 
 // ========================================
@@ -1306,8 +1306,6 @@ debounce(fn, delay) {
 
 /**
  * Copy text to clipboard
- * @param {string} text - Text to copy
- * @param {string} label - Label for notification
  */
 window.copyToClipboard = function(text, label) {
   navigator.clipboard.writeText(text).then(() => {
@@ -1315,48 +1313,17 @@ window.copyToClipboard = function(text, label) {
     notification.className = 'copy-notification';
     notification.textContent = `${label} coordinate copied: ${text}`;
     document.body.appendChild(notification);
-    
-    setTimeout(() => {
-      notification.classList.add('show');
-    }, 10);
-    
+
+    setTimeout(() => notification.classList.add('show'), 10);
+
     setTimeout(() => {
       notification.classList.remove('show');
-      setTimeout(() => {
-        document.body.removeChild(notification);
-      }, 300);
+      setTimeout(() => document.body.removeChild(notification), 300);
     }, 2000);
   }).catch(err => {
     console.error('Failed to copy:', err);
   });
 };
-
-/**
- * Toggle visited status - SIMPAN LOKAL SAJA (tidak kirim ke server)
- * @param {string} markerKey - Marker key
- */
-window.toggleVisited = function (markerKey) {
-  const visitedMarkers = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');
-  const newStatus = !visitedMarkers[markerKey];
-  
-  // Simpan ke lokal saja
-  visitedMarkers[markerKey] = newStatus;
-  localStorage.setItem('visitedMarkers', JSON.stringify(visitedMarkers));
-  invalidateLocalStorageCache(); // ✅ reset cache
-  
-  // Update opacity marker
-  const marker = MarkerManager.activeMarkers[markerKey];
-  if (marker) marker.setOpacity(newStatus ? 0.5 : 1.0);
-  
-  // Refresh popup
-  const markerData = MarkerManager.getAllMarkers().find(m => m._key === markerKey);
-  if (markerData) marker.getPopup().setContent(MarkerManager.createPopupContent(markerData));
-};
-
-/**
- * Visited Marker Functions - Enhanced with Hidden Marker Support
- * Updated to support both dimmed and hidden visited markers
- */
 
 // ========================================
 // SYNC PROTECTION FLAGS
@@ -1365,45 +1332,78 @@ let isLoadingVisitedMarkers = false;
 let lastSyncTime = 0;
 const SYNC_COOLDOWN = 5000; // 5 detik cooldown
 
+// ========================================
+// CACHE KEYS
+// ========================================
+const VISITED_CACHE_KEY = 'visitedSyncTime';
+const VISITED_SERVER_CACHE_KEY = 'serverVisitedCache';
+const VISITED_SYNC_INTERVAL = 30 * 60 * 1000; // 30 menit
+
+/**
+ * Apply visited/unvisited visibility ke marker di peta
+ * Fungsi terpusat — tidak duplikat di banyak tempat
+ */
+function applyVisitedVisibility(visitedData, isHiddenEnabled) {
+  if (isHiddenEnabled === undefined) {
+    isHiddenEnabled = window.SettingsManager &&
+      window.SettingsManager.isHiddenMarkerEnabled();
+  }
+
+  Object.entries(visitedData).forEach(([key, isVisited]) => {
+    const marker = MarkerManager.activeMarkers[key];
+    if (!marker) return;
+
+    if (isVisited) {
+      if (isHiddenEnabled) {
+        marker.remove();
+      } else {
+        if (!marker._map) marker.addTo(MarkerManager.map);
+        marker.setOpacity(0.5);
+      }
+    } else {
+      if (!marker._map) marker.addTo(MarkerManager.map);
+      marker.setOpacity(1.0);
+    }
+  });
+}
+
 /**
  * Toggle visited status - SAVE LOCAL ONLY
- * @param {string} markerKey - Marker key
+ * Sync ke server terjadi di loadVisitedMarkersFromServer
  */
 window.toggleVisited = function (markerKey) {
   const visitedMarkers = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');
   const newStatus = !visitedMarkers[markerKey];
-  
-  // Save to local
+
+  // Simpan ke local
   visitedMarkers[markerKey] = newStatus;
   localStorage.setItem('visitedMarkers', JSON.stringify(visitedMarkers));
-  invalidateLocalStorageCache(); // ✅ reset cache
-  
-  // Update marker based on hidden setting
+
+  if (typeof invalidateLocalStorageCache === 'function') {
+    invalidateLocalStorageCache();
+  }
+
+  // Update marker visibility
   const marker = MarkerManager.activeMarkers[markerKey];
   if (!marker) return;
-  
-  const isHiddenEnabled = window.SettingsManager && window.SettingsManager.isHiddenMarkerEnabled();
-  
+
+  const isHiddenEnabled = window.SettingsManager &&
+    window.SettingsManager.isHiddenMarkerEnabled();
+
   if (newStatus) {
-    // Marker is now visited
     if (isHiddenEnabled) {
-      // Hide completely
       marker.remove();
       console.log(`🙈 Marker ${markerKey} hidden (visited)`);
     } else {
-      // Dim opacity
       marker.setOpacity(0.5);
       console.log(`🌗 Marker ${markerKey} dimmed (visited)`);
     }
   } else {
-    // Marker is now unvisited
-    if (!marker._map) {
-      marker.addTo(MarkerManager.map);
-    }
+    if (!marker._map) marker.addTo(MarkerManager.map);
     marker.setOpacity(1.0);
     console.log(`✨ Marker ${markerKey} restored (unvisited)`);
   }
-  
+
   // Refresh popup
   const markerData = MarkerManager.getAllMarkers().find(m => m._key === markerKey);
   if (markerData) {
@@ -1412,222 +1412,195 @@ window.toggleVisited = function (markerKey) {
 };
 
 /**
- * Load visited markers - BATCH VERSION with Hidden Marker Support
- * ✅ Send all markers at once in 1 request
- * ✅ Support hidden marker setting
+ * Load visited markers dari server
+ * Cache 30 menit — hanya fetch server kalau:
+ * 1. Belum pernah sync (kunjungan pertama / device baru)
+ * 2. Sudah > 30 menit sejak sync terakhir
+ * 3. Ada perubahan local yang belum di-sync ke server
  */
 async function loadVisitedMarkersFromServer() {
-  // ✅ Protection: Prevent if already syncing
+  // ✅ Cegah double sync
   if (isLoadingVisitedMarkers) {
     console.log("⏭️ Already syncing visited markers, skipping...");
     return;
   }
-  
-  // ✅ Cooldown to prevent spam
+
+  // ✅ Cooldown 5 detik
   const now = Date.now();
   if (now - lastSyncTime < SYNC_COOLDOWN) {
     console.log("⏱️ Sync cooldown active, skipping...");
     return;
   }
-  
+
   const localVisited = JSON.parse(localStorage.getItem('visitedMarkers') || '{}');
-  const isHiddenEnabled = window.SettingsManager && window.SettingsManager.isHiddenMarkerEnabled();
-  
-  // If not logged in, only update from local
+  const isHiddenEnabled = window.SettingsManager &&
+    window.SettingsManager.isHiddenMarkerEnabled();
+
+  // Tidak login → pakai local saja
   if (!isLoggedIn()) {
-    Object.entries(localVisited).forEach(([key, isVisited]) => {
-      const marker = MarkerManager.activeMarkers[key];
-      if (!marker) return;
-      
-      if (isVisited) {
-        if (isHiddenEnabled) {
-          marker.remove();
-        } else {
-          marker.setOpacity(0.5);
-        }
-      } else {
-        if (!marker._map) {
-          marker.addTo(MarkerManager.map);
-        }
-        marker.setOpacity(1.0);
-      }
-    });
+    applyVisitedVisibility(localVisited, isHiddenEnabled);
     return;
   }
-  
+
+  // ✅ Cek cache 30 menit
+  const lastVisitedSync = parseInt(localStorage.getItem(VISITED_CACHE_KEY) || '0');
+  const timeSinceSync = now - lastVisitedSync;
+
+  // Cek apakah ada perubahan local yang belum di-sync
+  const serverVisitedCache = JSON.parse(
+    localStorage.getItem(VISITED_SERVER_CACHE_KEY) || '{}'
+  );
+  const hasLocalChanges = Object.keys(localVisited).some(
+    key => localVisited[key] !== serverVisitedCache[key]
+  );
+
+  if (timeSinceSync < VISITED_SYNC_INTERVAL && !hasLocalChanges) {
+    console.log('⏭️ Visited markers masih fresh (< 30 menit), skip server fetch');
+    applyVisitedVisibility(localVisited, isHiddenEnabled);
+    return;
+  }
+
   // Set flags
   isLoadingVisitedMarkers = true;
   lastSyncTime = now;
-  
+
   try {
     const token = getUserToken();
-    
+
     console.log("📥 Fetching visited markers from server...");
-    
-    const res = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker", {
-      method: "GET",
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    
+
+    const res = await fetch(
+      "https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker",
+      {
+        method: "GET",
+        headers: { "Authorization": `Bearer ${token}` }
+      }
+    );
+
     let data;
     try {
       data = JSON.parse(await res.text());
     } catch (e) {
       console.error("❌ Failed to parse server response");
+      applyVisitedVisibility(localVisited, isHiddenEnabled);
       return;
     }
-    
+
     const serverVisited = data.visitedMarkers || {};
+
+    // Simpan snapshot server untuk perbandingan berikutnya
+    localStorage.setItem(VISITED_SERVER_CACHE_KEY, JSON.stringify(serverVisited));
+
+    // Local menang jika konflik
     const merged = { ...serverVisited, ...localVisited };
-    
     localStorage.setItem("visitedMarkers", JSON.stringify(merged));
-    
-    // ✅ Find differences to sync
-    const keysToSync = Object.keys(localVisited).filter(key => 
-      localVisited[key] !== serverVisited[key]
+
+    // Simpan timestamp sync berhasil
+    localStorage.setItem(VISITED_CACHE_KEY, Date.now().toString());
+
+    // ✅ Cari perbedaan yang perlu di-sync ke server
+    const keysToSync = Object.keys(localVisited).filter(
+      key => localVisited[key] !== serverVisited[key]
     );
-    
-    // ✅ SEND BATCH (not one by one!)
+
     if (keysToSync.length > 0) {
       console.log(`📤 Syncing ${keysToSync.length} markers to server (BATCH)...`);
-      
+
       try {
-        const batchRes = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker/batch", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            markers: keysToSync.map(markerKey => ({
-              markerKey: markerKey,
-              visited: localVisited[markerKey]
-            }))
-          })
-        });
-        
+        const batchRes = await fetch(
+          "https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker/batch",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              markers: keysToSync.map(markerKey => ({
+                markerKey,
+                visited: localVisited[markerKey]
+              }))
+            })
+          }
+        );
+
         if (batchRes.ok) {
           const batchData = await batchRes.json();
           console.log(`✅ Batch sync complete! Updated ${batchData.updated} markers`);
         } else {
           const errorText = await batchRes.text();
           console.error("❌ Batch sync failed:", batchRes.status, errorText);
-          
-          // Fallback: if batch fails, try one by one (backward compatible)
           console.log("⚠️ Falling back to individual requests...");
           await fallbackIndividualSync(keysToSync, localVisited, token);
         }
-        
+
       } catch (err) {
         console.error("❌ Batch request error:", err);
-        
-        // Fallback to individual sync
         console.log("⚠️ Falling back to individual requests...");
         await fallbackIndividualSync(keysToSync, localVisited, token);
       }
-      
+
     } else {
       console.log("✅ No changes to sync");
     }
-    
-    // Update marker visibility based on hidden setting
+
+    // Apply visibility dari data merged
     console.log(`🔄 Applying markers (hidden mode: ${isHiddenEnabled ? 'ON' : 'OFF'})...`);
-    
-    Object.entries(merged).forEach(([key, isVisited]) => {
-      const marker = MarkerManager.activeMarkers[key];
-      if (!marker) return;
-      
-      if (isVisited) {
-        if (isHiddenEnabled) {
-          // Hide completely
-          marker.remove();
-        } else {
-          // Dim opacity
-          if (!marker._map) {
-            marker.addTo(MarkerManager.map);
-          }
-          marker.setOpacity(0.5);
-        }
-      } else {
-        // Unvisited - always visible
-        if (!marker._map) {
-          marker.addTo(MarkerManager.map);
-        }
-        marker.setOpacity(1.0);
-      }
-    });
-    
+    applyVisitedVisibility(merged, isHiddenEnabled);
     console.log(`✅ Applied visibility to ${Object.keys(merged).length} markers`);
-    
+
   } catch (err) {
     console.error("❌ Error syncing visited markers:", err);
-    
-    // Fallback: update from local only
-    Object.entries(localVisited).forEach(([key, isVisited]) => {
-      const marker = MarkerManager.activeMarkers[key];
-      if (!marker) return;
-      
-      if (isVisited) {
-        if (isHiddenEnabled) {
-          marker.remove();
-        } else {
-          marker.setOpacity(0.5);
-        }
-      } else {
-        if (!marker._map) {
-          marker.addTo(MarkerManager.map);
-        }
-        marker.setOpacity(1.0);
-      }
-    });
+    applyVisitedVisibility(localVisited, isHiddenEnabled);
   } finally {
-    // ✅ Reset flag
     isLoadingVisitedMarkers = false;
   }
 }
 
 /**
- * Fallback: Individual sync (backward compatible)
- * Called if batch endpoint fails
+ * Fallback: Individual sync jika batch gagal
  */
 async function fallbackIndividualSync(keysToSync, localVisited, token) {
   let successCount = 0;
   let failCount = 0;
-  
+
   for (let i = 0; i < keysToSync.length; i++) {
     const markerKey = keysToSync[i];
-    
+
     try {
-      const res = await fetch("https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ 
-          markerKey: markerKey, 
-          visited: localVisited[markerKey] 
-        })
-      });
-      
+      const res = await fetch(
+        "https://autumn-dream-8c07.square-spon.workers.dev/visitedmarker",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            markerKey,
+            visited: localVisited[markerKey]
+          })
+        }
+      );
+
       if (res.ok) {
         successCount++;
       } else {
         failCount++;
       }
-      
-      // Delay to avoid rate limit
+
+      // Delay hindari rate limit
       if (i < keysToSync.length - 1) {
         await new Promise(resolve => setTimeout(resolve, 50));
       }
-      
+
     } catch (err) {
       console.error(`Failed to sync marker ${markerKey}:`, err);
       failCount++;
     }
   }
-  
-  console.log(`✅ Fallback sync complete: ${successCount} success, ${failCount} failed`);
+
+  console.log(`✅ Fallback sync: ${successCount} success, ${failCount} failed`);
 }
 
 

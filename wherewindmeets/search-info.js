@@ -106,7 +106,7 @@ const SearchInfoButton = {
           <div class="si-spacer"></div>
         </div>
 
-        <button class="si-arrow si-arrow-right" id="siArrowRight" aria-label="Next">
+        <button class="si-arrow si-arrow-right hidden" id="siArrowRight" aria-label="Next">
           <span>&#8250;</span>
         </button>
 

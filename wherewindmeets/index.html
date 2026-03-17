@@ -45,6 +45,19 @@
 <link rel="dns-prefetch" href="https://unpkg.com">
 <link rel="dns-prefetch" href="https://ik.imagekit.io">
 
+<!-- Preload tile LCP -->
+<link rel="preload" 
+      href="https://tiles.bgonegaming.win/wherewindmeet/tiles/5_5_4.webp" 
+      as="image" 
+      fetchpriority="high">
+
+<!-- Preload preload overlay background -->
+<link rel="preload"
+      href="https://tiles.bgonegaming.win/wherewindmeet/overlay/WWM.webp"
+      as="image"
+      fetchpriority="high">
+
+
 
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RNEQ8BY21N"></script>
@@ -154,14 +167,14 @@
   <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"></noscript>
   
   <!-- Main CSS - PRELOAD -->
-  <link rel="preload" href="styles.css?v=6.0.11" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="styles.css?v=6.0.11"></noscript>
+  <link rel="preload" href="styles.css?v=6.0.12" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="styles.css?v=6.0.12"></noscript>
   
   <!-- Fonts - PRELOAD dengan display=swap -->
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@700&display=swap" rel="stylesheet"></noscript>
   <script>
-    const CSS_VERSION = "6.0.10";
+    const CSS_VERSION = "6.0.12";
   </script>
 
 <style id="ui-visibility-control">
@@ -933,14 +946,12 @@ const secondary = [
   "layer.js",
   "region.js",
   "region-management.js",
+  "editing-image-upload.js",  // ← pindah ke sini, sebelum marker-image-handler
   "marker-image-handler.js",
   "search-info.js",
   "pip-map.js"
 ];
 
-// ============================================
-// 🛌 PHASE 3 — NON-CRITICAL / UI / HEAVY
-// ============================================
 const lazy = [
   "leaderboard.js",
   "comment.js",
@@ -951,7 +962,7 @@ const lazy = [
   "tip-guide.js",
   "cookie-consent.js",
   "feedbackmatker.js",
-  "editing-image-upload.js",
+  // "editing-image-upload.js" ← hapus dari sini
   "time.js",
   "booklist.js",
   "knowladgelist.js",

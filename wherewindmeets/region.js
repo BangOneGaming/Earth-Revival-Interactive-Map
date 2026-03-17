@@ -273,8 +273,8 @@ zoom_6: [
   {
     "name": "Riverside Terrace",
     "cn_name": "",
-    "lat": 132.85784215340152,
-    "lng": 172.30704444473466,
+    "lat": 135.85589036838834,
+    "lng": 176.70106377453223,
     "size": 24,
     "sub_regions": "Moonveil Mountain"
   },
