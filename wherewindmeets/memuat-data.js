@@ -1,13 +1,13 @@
 /**
  * Data loader module for fetching marker data from API endpoints
- * Now optimized with batch loading + support for /terbaru endpoint
+ * Now optimized with batch loading + stale-while-revalidate cache strategy
  */
 
 // Base URL for API
 const API_BASE_URL = 'https://autumn-dream-8c07.square-spon.workers.dev';
 
 // 🔐 DATA VERSION (ubah ini kalau ada update data)
-const DATA_VERSION = '1.1.29';
+const DATA_VERSION = '1.1.32';
 
 // API endpoints configuration
 const DATA_ENDPOINTS = {
@@ -53,7 +53,7 @@ const DATA_ENDPOINTS = {
   anjing: `${API_BASE_URL}/dog`,
   papan: `${API_BASE_URL}/board`,
   kudadanpanah: `${API_BASE_URL}/rideandarcher`,
-  terbaru: `${API_BASE_URL}/terbaru` // ✅ Tambah endpoint baru
+  terbaru: `${API_BASE_URL}/terbaru`
 };
 
 // Mapping endpoint keys to window global variables
@@ -86,10 +86,10 @@ const ENDPOINT_TO_GLOBAL = {
   stronghold: 'benteng',
   boss: 'bos',
   materialart: 'jurus',
-  pemancing: 'pemancing', 
-  mabuk: 'mabuk',  
-  kartu: 'kartu', 
-  panah: 'panah', 
+  pemancing: 'pemancing',
+  mabuk: 'mabuk',
+  kartu: 'kartu',
+  panah: 'panah',
   melodi: 'melodi',
   tebakan: 'tebakan',
   gulat: 'gulat',
@@ -100,7 +100,7 @@ const ENDPOINT_TO_GLOBAL = {
   anjing: 'anjing',
   papan: 'papan',
   kudadanpanah: 'kudadanpanah',
-  terbaru: 'terbaru' // ✅ Tambah mapping global
+  terbaru: 'terbaru'
 };
 
 const DataLoader = {
@@ -109,27 +109,22 @@ const DataLoader = {
   isLoading: false,
   isBackgroundRefresh: false,
   endpointFingerprint: {},
-  dataSource: 'unknown', // cache | server
+  dataSource: 'unknown',
   useBatchLoading: true,
   cacheExpiry: 7 * 24 * 60 * 60 * 1000, // 7 days
 
-generateFingerprint(data) {
-  if (!data || typeof data !== 'object') return 'empty';
-
-  const keys = Object.keys(data);
-  let sum = keys.length;
-
-  // ambil 5 key pertama aja (hemat)
-  for (let i = 0; i < Math.min(5, keys.length); i++) {
-    sum += keys[i].length;
-  }
-
-  return `${keys.length}-${sum}`;
-},
-
+  generateFingerprint(data) {
+    if (!data || typeof data !== 'object') return 'empty';
+    const keys = Object.keys(data);
+    let sum = keys.length;
+    for (let i = 0; i < Math.min(5, keys.length); i++) {
+      sum += keys[i].length;
+    }
+    return `${keys.length}-${sum}`;
+  },
 
   /* =====================================================
-   * INIT
+   * INIT — stale-while-revalidate strategy
    * ===================================================== */
   async init() {
     this.showLoadingSpinner(true);
@@ -138,7 +133,7 @@ generateFingerprint(data) {
     try {
       const cached = this.getCachedData();
 
-      /* ===== CACHE HIT ===== */
+      /* ===== CACHE HIT → render langsung, refresh background ===== */
       if (cached) {
         this.dataSource = 'cache';
 
@@ -154,16 +149,19 @@ generateFingerprint(data) {
           if (globalVar) window[globalVar] = cached[key];
         });
 
+        // ✅ Selesai lebih cepat — marker langsung bisa dirender
         this.isLoading = false;
         this.showLoadingSpinner(false);
 
         await this.loadFeedback();
-        
+
+        // 🔄 Refresh data di background tanpa blokir UI
+        setTimeout(() => this.backgroundRefresh(), 3000);
 
         return true;
       }
 
-      /* ===== CACHE MISS → SERVER ===== */
+      /* ===== CACHE MISS → cek stale cache dulu ===== */
       this.dataSource = 'server';
 
       console.log(
@@ -171,6 +169,42 @@ generateFingerprint(data) {
         'color:#ff9100;font-weight:bold'
       );
 
+      const staleCache = this.getStaleCache();
+
+      if (staleCache) {
+        // ⚡ Ada stale cache (expired/version beda) → pakai sementara
+        console.log(
+          '%c⚡ Pakai stale cache sementara sambil fetch server',
+          'color:#ff9100;font-weight:bold'
+        );
+
+        this.loadedData = staleCache;
+        Object.keys(staleCache).forEach(key => {
+          const globalVar = ENDPOINT_TO_GLOBAL[key];
+          if (globalVar) window[globalVar] = staleCache[key];
+        });
+
+        // ✅ UI tidak nunggu — marker langsung muncul dari stale data
+        this.isLoading = false;
+        this.showLoadingSpinner(false);
+
+        // Fetch server di background lalu replace marker
+        this.loadAllEndpoints().then(async () => {
+          await this.loadFeedback();
+          this.setCachedData(this.loadedData);
+          if (typeof MarkerManager !== 'undefined') {
+            MarkerManager.forceRefreshMarkers?.();
+          }
+          console.log('✅ Stale cache replaced with fresh server data');
+        }).catch(err => {
+          console.warn('⚠️ Background server fetch failed:', err);
+        });
+
+        return true;
+      }
+
+      // 🆕 Benar-benar tidak ada cache sama sekali → harus tunggu server
+      // (hanya terjadi di kunjungan pertama)
       await this.loadAllEndpoints();
       await this.loadFeedback();
 
@@ -198,7 +232,7 @@ generateFingerprint(data) {
       const res = await fetch(`${API_BASE_URL}/userfeedback`);
       const data = await res.json();
 
-      if (typeof syncFeedbackToMarkers === "function") {
+      if (typeof syncFeedbackToMarkers === 'function') {
         Object.keys(this.loadedData).forEach(key => {
           const markers = this.loadedData[key];
           if (markers && typeof markers === 'object') {
@@ -215,59 +249,71 @@ generateFingerprint(data) {
    * CACHE
    * ===================================================== */
   getCachedData() {
-  try {
-    const raw = localStorage.getItem('markerData');
-    if (!raw) return null;
+    try {
+      const raw = localStorage.getItem('markerData');
+      if (!raw) return null;
 
-    const { data, timestamp, version } = JSON.parse(raw);
+      const { data, timestamp, version } = JSON.parse(raw);
 
-    // 🔥 VERSION BERUBAH → FORCE SERVER
-    if (version !== DATA_VERSION) {
+      // 🔥 VERSION BERUBAH → FORCE SERVER
+      if (version !== DATA_VERSION) {
+        console.log(
+          `%c🔁 Data version changed (${version} → ${DATA_VERSION})`,
+          'color:#ff5252;font-weight:bold'
+        );
+        // Jangan hapus dulu — biarkan getStaleCache() pakai data lama
+        return null;
+      }
+
+      const age = Date.now() - timestamp;
+
+      // ⏰ EXPIRED (1 MINGGU)
+      if (age > this.cacheExpiry) {
+        console.log('⏰ Cache expired (weekly)');
+        // Jangan hapus dulu — biarkan getStaleCache() pakai data lama
+        return null;
+      }
+
       console.log(
-        `%c🔁 Data version changed (${version} → ${DATA_VERSION})`,
-        'color:#ff5252;font-weight:bold'
+        '%c✅ Cache valid (weekly + version)',
+        'color:#4caf50;font-weight:bold'
       );
-      localStorage.removeItem('markerData');
+
+      return data;
+
+    } catch (err) {
+      console.warn('⚠️ Cache read error:', err);
       return null;
     }
+  },
 
-    const age = Date.now() - timestamp;
-
-    // ⏰ EXPIRED (1 MINGGU)
-    if (age > this.cacheExpiry) {
-      console.log('⏰ Cache expired (weekly)');
-      localStorage.removeItem('markerData');
+  // ⚡ Ambil cache lama meski expired/version beda — untuk render sementara
+  getStaleCache() {
+    try {
+      const raw = localStorage.getItem('markerData');
+      if (!raw) return null;
+      const { data } = JSON.parse(raw);
+      return data || null;
+    } catch (err) {
       return null;
     }
-
-    console.log(
-      `%c✅ Cache valid (weekly + version)`,
-      'color:#4caf50;font-weight:bold'
-    );
-
-    return data;
-
-  } catch (err) {
-    console.warn('⚠️ Cache read error:', err);
-    return null;
-  }
-},
+  },
 
   setCachedData(data) {
-  try {
-    localStorage.setItem(
-      'markerData',
-      JSON.stringify({
-        data,
-        timestamp: Date.now(),
-        version: DATA_VERSION // 🔐 SIMPAN VERSI
-      })
-    );
-    console.log('💾 Cached to localStorage (weekly + version)');
-  } catch (err) {
-    console.warn('⚠️ Cache write failed:', err);
-  }
-},
+    try {
+      localStorage.setItem(
+        'markerData',
+        JSON.stringify({
+          data,
+          timestamp: Date.now(),
+          version: DATA_VERSION
+        })
+      );
+      console.log('💾 Cached to localStorage (weekly + version)');
+    } catch (err) {
+      console.warn('⚠️ Cache write failed:', err);
+    }
+  },
 
   clearCache() {
     localStorage.removeItem('markerData');
@@ -278,41 +324,44 @@ generateFingerprint(data) {
    * BACKGROUND REFRESH
    * ===================================================== */
   async backgroundRefresh() {
-  console.log('%c🔄 Background refresh (diff mode)', 'color:#03a9f4');
+    console.log('%c🔄 Background refresh (diff mode)', 'color:#03a9f4');
 
-  this.isBackgroundRefresh = true;
+    this.isBackgroundRefresh = true;
 
-  const updatedEndpoints = [];
-  const oldFingerprints = { ...this.endpointFingerprint };
-  const oldData = { ...this.loadedData };
+    const updatedEndpoints = [];
+    const oldFingerprints = { ...this.endpointFingerprint };
+    const oldData = { ...this.loadedData };
 
-  try {
-    await this.loadAllEndpoints();
+    try {
+      await this.loadAllEndpoints();
 
-    Object.keys(this.loadedData).forEach(key => {
-      const oldFP = oldFingerprints[key];
-      const newFP = this.generateFingerprint(this.loadedData[key]);
+      Object.keys(this.loadedData).forEach(key => {
+        const oldFP = oldFingerprints[key];
+        const newFP = this.generateFingerprint(this.loadedData[key]);
 
-      if (oldFP !== newFP) {
-        updatedEndpoints.push(key);
-        this.endpointFingerprint[key] = newFP;
+        if (oldFP !== newFP) {
+          updatedEndpoints.push(key);
+          this.endpointFingerprint[key] = newFP;
+        } else {
+          this.loadedData[key] = oldData[key];
+          this.endpointFingerprint[key] = oldFP;
+        }
+      });
+
+      if (updatedEndpoints.length > 0) {
+        this.setCachedData(this.loadedData);
+        MarkerManager?.updateMarkersInView?.(updatedEndpoints);
+        console.log(`🔄 Updated endpoints: ${updatedEndpoints.join(', ')}`);
       } else {
-        this.loadedData[key] = oldData[key];
-        this.endpointFingerprint[key] = oldFP;
+        console.log('%c✅ No changes detected', 'color:#4caf50');
       }
-    });
 
-    if (updatedEndpoints.length > 0) {
-      this.setCachedData(this.loadedData);
-      MarkerManager?.updateMarkersInView?.(updatedEndpoints);
+    } catch (err) {
+      console.warn('⚠️ Background refresh diff failed:', err);
+    } finally {
+      this.isBackgroundRefresh = false;
     }
-
-  } catch (err) {
-    console.warn('⚠️ Background refresh diff failed:', err);
-  } finally {
-    this.isBackgroundRefresh = false;
-  }
-},
+  },
 
   /* =====================================================
    * LOADERS
@@ -370,14 +419,14 @@ generateFingerprint(data) {
           console.log(`🆕 terbaru approved: ${Object.keys(data).length}`);
         }
 
-this.loadedData[key] = data;
+        this.loadedData[key] = data;
 
-if (!this.isBackgroundRefresh) {
-  this.endpointFingerprint[key] = this.generateFingerprint(data);
-}
+        if (!this.isBackgroundRefresh) {
+          this.endpointFingerprint[key] = this.generateFingerprint(data);
+        }
 
-const globalVar = ENDPOINT_TO_GLOBAL[key];
-if (globalVar) window[globalVar] = data;
+        const globalVar = ENDPOINT_TO_GLOBAL[key];
+        if (globalVar) window[globalVar] = data;
       });
 
     } catch (err) {
@@ -415,12 +464,12 @@ if (globalVar) window[globalVar] = data;
 
       this.loadedData[key] = data;
 
-if (!this.isBackgroundRefresh) {
-  this.endpointFingerprint[key] = this.generateFingerprint(data);
-}
+      if (!this.isBackgroundRefresh) {
+        this.endpointFingerprint[key] = this.generateFingerprint(data);
+      }
 
-const globalVar = ENDPOINT_TO_GLOBAL[key];
-if (globalVar) window[globalVar] = data;
+      const globalVar = ENDPOINT_TO_GLOBAL[key];
+      if (globalVar) window[globalVar] = data;
 
       return data;
 
