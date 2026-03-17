@@ -1,6 +1,6 @@
 /**
  * Map initialization module
- * Optimized Performance + LCP Fix Version
+ * 🔥 Optimized Performance + TRUE LCP Fix Version
  */
 
 // ============================================
@@ -44,27 +44,15 @@ const MAP_ZOOM = {
 };
 
 // ============================================
-// 🔥 LCP OPTIMIZATION (AUTO PRELOAD)
+// 🔥 PRECONNECT (WAJIB, TANPA PRELOAD TILE)
 // ============================================
 
-(function preloadLcpTile() {
-
-  // 🔥 PRECONNECT (cepatkan koneksi)
+(function () {
   const preconnect = document.createElement("link");
   preconnect.rel = "preconnect";
   preconnect.href = "https://tiles.bgonegaming.win";
   preconnect.crossOrigin = "";
   document.head.appendChild(preconnect);
-
-  // 🔥 PRELOAD TILE PERTAMA (sesuaikan dengan viewport kamu)
-  const link = document.createElement("link");
-  link.rel = "preload";
-  link.as = "image";
-  link.href = `https://tiles.bgonegaming.win/wherewindmeet/tiles/5_22_15.webp?v=${TILE_VERSION}`;
-  link.fetchPriority = "high";
-  link.type = "image/webp";
-  document.head.appendChild(link);
-
 })();
 
 // ============================================
@@ -76,7 +64,7 @@ let currentTileLayer = null;
 let currentPreset = "main";
 
 // ============================================
-// INIT MAP
+// INIT MAP (🔥 FAST RENDER)
 // ============================================
 
 function initializeMap() {
@@ -113,7 +101,12 @@ function initializeMap() {
     inertia: true,
     inertiaDeceleration: 3000,
     inertiaMaxSpeed: 1500,
-    updateWhenIdle: true
+    updateWhenIdle: true,
+
+    // 🔥 LCP BOOST (WAJIB)
+    zoomAnimation: false,
+    fadeAnimation: false,
+    markerZoomAnimation: false
   });
 
   _applyMapPreset("main", false);
@@ -169,7 +162,7 @@ function _applyMapPreset(type, animate = true) {
   );
 
   // ============================================
-  // 🔥 PRIORITY FIX (LCP)
+  // 🔥 TILE PRIORITY (LCP FIX)
   // ============================================
 
   currentTileLayer.on("tileloadstart", function(e) {
@@ -179,6 +172,7 @@ function _applyMapPreset(type, animate = true) {
     e.tile.setAttribute("fetchpriority", "high");
     e.tile.setAttribute("decoding", "async");
 
+    // render optimization
     e.tile.style.contentVisibility = "auto";
   });
 
@@ -226,7 +220,7 @@ function _applyMapPreset(type, animate = true) {
   );
 
   // ============================================
-  // 🔥 FORCE RENDER CEPAT (LCP BOOST)
+  // 🔥 FORCE FAST RENDER
   // ============================================
 
   map.whenReady(() => {
