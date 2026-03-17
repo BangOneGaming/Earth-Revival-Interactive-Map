@@ -866,18 +866,7 @@ btnClose.addEventListener("click", function(e) {
     }
 });
 </script>
-<!-- Eruda Mobile Console -->
-<script>
-(function () {
-  var s = document.createElement('script');
-  s.src = "https://cdn.jsdelivr.net/npm/eruda";
-  s.onload = function () {
-    eruda.init();
-    console.log("%c🛠️ Eruda loaded", "color:#02a0c5;font-weight:bold");
-  };
-  document.body.appendChild(s);
-})();
-</script>
+
 <!-- Google AdSense Auto Ads -->  
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467"  
      crossorigin="anonymous"></script>  
@@ -925,6 +914,15 @@ const critical = [
 ];
 
 // ============================================
+// ⚙️ PHASE 1.5 — IKON (WAJIB SEBELUM LAYER)
+// Dipisah karena layer.js bergantung ICON_BASE_URL dari ikon.js
+// Promise.all tidak menjamin urutan eksekusi
+// ============================================
+const preSecondary = [
+  "ikon.js"
+];
+
+// ============================================
 // ⚙️ PHASE 2 — CORE FEATURES
 // ============================================
 const secondary = [
@@ -932,15 +930,17 @@ const secondary = [
   "knowladge-series.js",
   "zoom_optimizer.js",
   "marker-link.js",
-  "ikon.js",
   "layer.js",
-  "region.js",            // ← pindah dari lazy ke sini
-  "region-management.js", // ← setelah region.js
+  "region.js",
+  "region-management.js",
   "marker-image-handler.js",
   "search-info.js",
   "pip-map.js"
 ];
 
+// ============================================
+// 🛌 PHASE 3 — NON-CRITICAL / UI / HEAVY
+// ============================================
 const lazy = [
   "leaderboard.js",
   "comment.js",
@@ -959,7 +959,6 @@ const lazy = [
   "innerway.js",
   "form.js",
   "riddle-search.js",
-  // "region.js" ← hapus dari sini
   "tales-echoes.js"
 ];
 
@@ -975,21 +974,24 @@ const lazy = [
   // ✅ tampilkan UI awal (map sudah bisa muncul)
   document.body.classList.add("app-ready");
 
-  // 🔥 2. LOAD SECONDARY
+  // 🔥 1.5 LOAD IKON DULU (WAJIB SEBELUM LAYER)
+  await loadScripts(preSecondary);
+  console.log("✅ ikon.js loaded");
+
+  // 🔥 2. LOAD SECONDARY (ikon.js sudah pasti tersedia)
   await loadScripts(secondary);
   console.log("⚙️ Secondary loaded");
 
   // ============================================
-  // 🔥 FIX UTAMA: LOAD main.js DENGAN AWAIT
+  // 🔥 LOAD main.js DENGAN AWAIT
   // ============================================
   await new Promise((resolve) => {
     const main = document.createElement("script");
     main.src = `main.js?v=${v}`;
-    main.onload = resolve;   // ✅ tunggu benar-benar selesai
-    main.onerror = resolve;  // fallback biar tidak hang
+    main.onload = resolve;
+    main.onerror = resolve;
     document.body.appendChild(main);
   });
-
   console.log("✅ main.js loaded (safe)");
 
   // ============================================
