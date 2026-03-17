@@ -1,6 +1,6 @@
 /**
  * Map initialization module
- * Optimized Performance Version
+ * Optimized Performance + LCP Fix Version
  */
 
 // ============================================
@@ -42,6 +42,30 @@ const MAP_ZOOM = {
   min: 3,
   max: 8
 };
+
+// ============================================
+// 🔥 LCP OPTIMIZATION (AUTO PRELOAD)
+// ============================================
+
+(function preloadLcpTile() {
+
+  // 🔥 PRECONNECT (cepatkan koneksi)
+  const preconnect = document.createElement("link");
+  preconnect.rel = "preconnect";
+  preconnect.href = "https://tiles.bgonegaming.win";
+  preconnect.crossOrigin = "";
+  document.head.appendChild(preconnect);
+
+  // 🔥 PRELOAD TILE PERTAMA (sesuaikan dengan viewport kamu)
+  const link = document.createElement("link");
+  link.rel = "preload";
+  link.as = "image";
+  link.href = `https://tiles.bgonegaming.win/wherewindmeet/tiles/5_22_15.webp?v=${TILE_VERSION}`;
+  link.fetchPriority = "high";
+  link.type = "image/webp";
+  document.head.appendChild(link);
+
+})();
 
 // ============================================
 // STATE
@@ -92,14 +116,13 @@ function initializeMap() {
     updateWhenIdle: true
   });
 
-  // Default map — NO transition on initial load
   _applyMapPreset("main", false);
 
   return map;
 }
 
 // ============================================
-// TILE OPTIONS (REUSABLE)
+// TILE OPTIONS
 // ============================================
 
 function getTileOptions(maxNativeZoom) {
@@ -113,11 +136,13 @@ function getTileOptions(maxNativeZoom) {
     reuseTiles: true,
     noWrap: true,
     crossOrigin: true,
-    errorTileUrl: FALLBACK_TILE
+    errorTileUrl: FALLBACK_TILE,
+    tileSize: 256
   };
 }
+
 // ============================================
-// APPLY MAP PRESET (RAW SWITCH)
+// APPLY MAP PRESET
 // ============================================
 
 function _applyMapPreset(type, animate = true) {
@@ -143,12 +168,33 @@ function _applyMapPreset(type, animate = true) {
     getTileOptions(forcedMaxZoom)
   );
 
-  // ✅ Override getTileUrl — tile di luar bounds → fallback langsung
+  // ============================================
+  // 🔥 PRIORITY FIX (LCP)
+  // ============================================
+
+  currentTileLayer.on("tileloadstart", function(e) {
+    if (!e.tile) return;
+
+    e.tile.setAttribute("loading", "eager");
+    e.tile.setAttribute("fetchpriority", "high");
+    e.tile.setAttribute("decoding", "async");
+
+    e.tile.style.contentVisibility = "auto";
+  });
+
+  currentTileLayer.on("tileload", function(e) {
+    if (e.tile) {
+      e.tile.style.willChange = "transform";
+    }
+  });
+
+  // ============================================
+  // TILE FILTER (BOUND SAFE)
+  // ============================================
+
   currentTileLayer.getTileUrl = function(coords) {
     const z = Math.min(coords.z, forcedMaxZoom);
 
-    // Hitung tile range untuk zoom ini berdasarkan bounds di zoom forcedMaxZoom
-    // Scale factor: setiap zoom turun 1, range dibagi 2
     const scale = Math.pow(2, forcedMaxZoom - z);
     const minTX = Math.floor(bounds.minX / scale);
     const maxTX = Math.floor(bounds.maxX / scale);
@@ -179,7 +225,20 @@ function _applyMapPreset(type, animate = true) {
       : { animate: false }
   );
 
-  // REFRESH UI
+  // ============================================
+  // 🔥 FORCE RENDER CEPAT (LCP BOOST)
+  // ============================================
+
+  map.whenReady(() => {
+    requestAnimationFrame(() => {
+      map.invalidateSize(true);
+    });
+  });
+
+  // ============================================
+  // REFRESH SYSTEM
+  // ============================================
+
   if (typeof RegionLabelManager !== "undefined") {
     RegionLabelManager._clearLayerCache();
     RegionLabelManager._forceRefresh();
@@ -189,23 +248,20 @@ function _applyMapPreset(type, animate = true) {
       MarkerManager.forceRefreshMarkers)
     MarkerManager.forceRefreshMarkers();
 
-  // ★ Clock marker — hanya tampil di preset "main"
   if (typeof TimeUndergroundMarker !== "undefined") {
     TimeUndergroundMarker.onMapPresetChange(type);
   }
 }
 
 // ============================================
-// PUBLIC SWITCH (WITH TRANSITION)
+// SWITCH MAP
 // ============================================
 
 function switchMapPreset(type, animate = true) {
 
   if (!map || !MAP_PRESETS[type]) return;
-
   if (type === currentPreset) return;
 
-  // With transition if available
   if (typeof MapTransition !== "undefined") {
     MapTransition.play(type, () => {
       _applyMapPreset(type, animate);
@@ -213,7 +269,6 @@ function switchMapPreset(type, animate = true) {
     return;
   }
 
-  // Fallback
   _applyMapPreset(type, animate);
 }
 
