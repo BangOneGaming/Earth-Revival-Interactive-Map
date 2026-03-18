@@ -24,6 +24,21 @@ const ProfileContainer = (function() {
   let isCollapsed = false;
   let showAllCategories = false;
   const MAX_VISIBLE_CATEGORIES = 0;
+
+  // IntersectionObserver untuk lazy-load icon stat — satu instance dipakai ulang
+  const _profileImgObserver = ('IntersectionObserver' in window)
+    ? new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const img = entry.target;
+          if (img.dataset.src) {
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+          }
+          obs.unobserve(img);
+        });
+      }, { rootMargin: '80px' })
+    : null;
   
   const CONFIG = {
     containerId: 'profileContainer',
@@ -448,11 +463,21 @@ const CATEGORY_ICONS = window.IconManager ? window.IconManager.ICON_CONFIG.overl
 
     const icon = document.createElement('img');
     icon.className = 'profile-stat-icon';
-    icon.src = iconUrl;
+    // Gunakan data-src + loading=lazy — icon hanya di-fetch saat masuk viewport
+    icon.dataset.src = iconUrl;
+    icon.loading = 'lazy';
     icon.alt = categoryName;
     icon.onerror = function() {
       this.src = `${ICON_BASE}default.png`;
     };
+
+    // IntersectionObserver: swap data-src → src saat icon masuk viewport
+    if ('IntersectionObserver' in window) {
+      _profileImgObserver.observe(icon);
+    } else {
+      // Fallback browser lama
+      icon.src = iconUrl;
+    }
 
     const nameSpan = document.createElement('div');
     nameSpan.className = 'profile-stat-name';

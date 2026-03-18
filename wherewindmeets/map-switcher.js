@@ -79,7 +79,7 @@ const MapSwitcher = {
               <div class="mapsw-badge">Active</div>
               <div class="mapsw-img-wrap">
                 ${m.thumb
-                  ? `<img src="${m.thumb}" class="mapsw-thumb" alt="${m.name}">`
+                  ? `<img data-src="${m.thumb}" class="mapsw-thumb" alt="${m.name}">`
                   : `<div class="mapsw-thumb-text">${m.name}</div>`
                 }
               </div>
@@ -333,6 +333,17 @@ const MapSwitcher = {
     }
   },
 
+  // ── Lazy-load thumbnails saat panel dibuka pertama kali ──
+  _thumbsLoaded: false,
+  _loadThumbs() {
+    if (this._thumbsLoaded) return;
+    this._thumbsLoaded = true;
+    document.querySelectorAll('#mapSwTrack .mapsw-thumb[data-src]').forEach(img => {
+      img.src = img.dataset.src;
+      img.removeAttribute('data-src');
+    });
+  },
+
   // ── Open / Close ──────────────────────────────
   toggle() { this.isOpen ? this.close() : this.open(); },
 
@@ -342,6 +353,7 @@ const MapSwitcher = {
     const btn     = document.getElementById('mapSwBtn');
     if (overlay) overlay.classList.add('visible');
     if (btn)     btn.classList.add('active');
+    this._loadThumbs(); // ← load gambar hanya saat panel pertama kali dibuka
     this._startLoop();
 
     // scroll to current map instantly
