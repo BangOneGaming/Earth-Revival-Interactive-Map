@@ -119,47 +119,9 @@ const CATEGORY_NAMES = {
 };
 
 // ==========================================
-// FIXED CATEGORY ICON FILENAMES (Hardcoded)
+// CATEGORY ICON FILENAMES — use shared IconManager from ikon.js
 // ==========================================
-const CATEGORY_ICONS = {
-  "1": "batuteleport.webp",
-  "2": "petiharta.webp",
-  "3": "strange.webp",
-  "4": "soundofheaven.webp",
-  "5": "gua.webp",
-  "6": "windingpathinsearchoftranquility.webp",
-  "7": "windsacrifaceandfiretour.webp",
-  "8": "relic.webp",
-  "9": "catplay.webp",
-  "10": "injustic.webp",
-  "11": "adventure.webp",
-  "12": "meow.webp",
-  "13": "knoweverything.webp",
-  "14": "lightanddarkstory.webp",
-  "15": "moonshadowoverlap.webp",
-  "16": "scarecrow.webp",
-  "17": "treasureinpalmofyourhand.webp",
-  "18": "gourmetfood.webp",
-  "19": "specialmuscles.webp",
-  "20": "toilet.webp",
-  "21": "healing.webp",
-  "22": "makefriend.webp",
-  "23": "argument.webp",
-  "24": "book.webp",
-  "25": "guard.webp",
-  "26": "strongehold.webp",
-  "27": "boss.webp",
-  "28": "jutsu.webp",
-  // Tambahan baru
-  "29": "fishing.webp",
-  "30": "pot.webp",
-  "31": "miaodao.webp",
-  "32": "archer.webp",
-  "33": "melody.webp",
-  "34": "riddle.webp",
-  "35": "summo.webp",
-  "36": "mystic.webp"
-};
+const CATEGORY_ICONS = window.IconManager ? window.IconManager.ICON_CONFIG.overlays : {};
   // ==========================================
   // PRIVATE METHODS
   // ==========================================

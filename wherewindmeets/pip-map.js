@@ -17,7 +17,7 @@ const PipMap = (function () {
   // ── Tombol toggle ──────────────────────────────────────────────
   function _createToggleBtn() {
     if (document.getElementById('pipMapBtn')) return;
-    if (window.innerWidth <= 768) return;
+    if (window.matchMedia('(max-width: 768px)').matches) return;
 
     btnToggle = document.createElement('button');
     btnToggle.id        = 'pipMapBtn';
@@ -96,7 +96,7 @@ const PipMap = (function () {
       console.warn('⚠️ PiP API not supported');
       return;
     }
-    if (window.innerWidth > 768) _createToggleBtn();
+    if (!window.matchMedia('(max-width: 768px)').matches) _createToggleBtn();
     console.log('✅ PipMap initialized');
   }
 

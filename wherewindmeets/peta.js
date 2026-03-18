@@ -35,7 +35,7 @@ const MAP_PRESETS = {
   }
 };
 
-const FALLBACK_TILE = "https://tiles.bgonegaming.win/wherewindmeet/tiles/5_15_15.webp?v=20251121";
+const FALLBACK_TILE = "https://tiles.bgonegaming.win/wherewindmeet/tiles/7_127_126.webp";
 
 const MAP_ZOOM = {
   initial: 5,
@@ -135,7 +135,8 @@ function getTileOptions(maxNativeZoom) {
     reuseTiles: true,
     noWrap: true,
     crossOrigin: true,
-    errorTileUrl: FALLBACK_TILE,
+    // Tile transparan 1x1 — tidak mengotori cache saat network error
+    errorTileUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
     tileSize: 256,
     className: 'map-tiles'
   };
@@ -213,15 +214,20 @@ function _applyMapPreset(type, animate = true) {
     });
   };
 
-  currentTileLayer.addTo(map);
-
+  // Tentukan viewport dulu SEBELUM tile layer ditambahkan,
+  // sehingga getTileUrl() mendapat coords yang valid sejak request pertama.
   map.setView(
     preset.center,
     MAP_ZOOM.initial,
-    animate
-      ? { animate: true, duration: 0.4 }
-      : { animate: false }
+    { animate: false }
   );
+
+  currentTileLayer.addTo(map);
+
+  // Animasi view (jika diminta) setelah tile sudah terpasang
+  if (animate) {
+    map.setView(preset.center, MAP_ZOOM.initial, { animate: true, duration: 0.4 });
+  }
 
   // ============================================
   // FORCE FAST RENDER

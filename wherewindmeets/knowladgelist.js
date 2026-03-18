@@ -18,7 +18,9 @@ const KnowledgePanel = {
   },
 
 createElements() {
-  const iconUrl = 'https://tiles.bgonegaming.win/wherewindmeet/Simbol/knoweverything.webp';
+  const iconUrl = window.IconManager
+    ? window.IconManager.getIconUrl('13')
+    : 'https://tiles.bgonegaming.win/wherewindmeet/Simbol/knoweverything.webp';
 
   const toggleBtn = document.createElement('button');
   toggleBtn.id = 'knowledgeToggleBtn';

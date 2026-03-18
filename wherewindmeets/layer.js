@@ -3,6 +3,8 @@
  * Always starts at surface, no floor state persistence
  */
 const MAX_SEEABLE_FLOOR = 4;
+const CAVE_ICON = `${ICON_BASE_URL}layericon.png`;
+
 const UndergroundManager = {
   map: null,
   activeFloor: 'surface',
@@ -25,7 +27,7 @@ const UndergroundManager = {
     { 
       id: '1', 
       name: 'Cave Level 1', 
-      icon: `${ICON_BASE_URL}layericon.png`,
+      icon: CAVE_ICON,
       description: 'First level',
       filterValue: '1',
       brightness: 0.3,
@@ -34,7 +36,7 @@ const UndergroundManager = {
     { 
       id: '2', 
       name: 'Cave Level 2', 
-      icon: `${ICON_BASE_URL}layericon.png`,
+      icon: CAVE_ICON,
       description: 'Second level',
       filterValue: '2',
       brightness: 0.2,
@@ -43,7 +45,7 @@ const UndergroundManager = {
     { 
       id: '3', 
       name: 'Cave Level 3', 
-      icon: `${ICON_BASE_URL}layericon.png`,
+      icon: CAVE_ICON,
       description: 'Third level',
       filterValue: '3',
       brightness: 0.1,
@@ -52,7 +54,7 @@ const UndergroundManager = {
     { 
       id: '4', 
       name: 'Deepest Cave', 
-      icon: `${ICON_BASE_URL}layericon.png`,
+      icon: CAVE_ICON,
       description: 'Deepest level',
       filterValue: '4',
       brightness: 0.025,

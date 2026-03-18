@@ -33,99 +33,9 @@ const MarkerAddSystem = (function() {
   const ICON_BASE_URL = 'https://tiles.bgonegaming.win/wherewindmeet/Simbol/';
   const DEFAULT_ICON_URL = ICON_BASE_URL + 'default.png';
 
-  // Icon Config (from ikon.js)
-  const ICON_CONFIG = {
-    overlays: {
-      "1": "batuteleport.webp",
-      "2": "petiharta.webp",
-      "3": "strange.webp",
-      "4": "soundofheaven.webp",
-      "5": "gua.webp",
-      "6": "windingpathinsearchoftranquility.webp",
-      "7": "windsacrifaceandfiretour.webp",
-      "8": "relic.webp",
-      "9": "catplay.webp",
-      "10": "injustic.webp",
-      "11": "adventure.webp",
-      "12": "meow.webp",
-      "13": "knoweverything.webp",
-      "14": "lightanddarkstory.webp",
-      "15": "moonshadowoverlap.webp",
-      "16": "scarecrow.webp",
-      "17": "treasureinpalmofyourhand.webp",
-      "18": "gourmetfood.webp",
-      "19": "specialmuscles.webp",
-      "20": "toilet.webp",
-      "21": "healing.webp",
-      "22": "makefriend.webp",
-      "23": "argument.webp",
-      "24": "book.webp",
-      "25": "guard.webp",
-      "26": "strongehold.webp",
-      "27": "boss.webp",
-      "28": "jutsu.webp",
-      "29": "fishing.webp",
-      "30": "pot.webp",
-      "31": "miaodao.webp",
-      "32": "archer.webp",
-      "33": "melody.webp",
-      "34": "riddle.webp",
-      "35": "summo.webp",
-      "36": "tehnik.webp",
-      "37": "innerway.webp",
-      "38": "NPC.webp",
-      "39": "camp.webp",
-      "40": "dogplay.webp",
-      "41": "board.webp",
-      "42": "rideandarcher.webp"
-    }
-  };
-
-  // Category Names
-  const CATEGORY_NAMES = {
-    "1": "Teleport Landmark",
-    "2": "Treasure Chest",
-    "3": "Oddities",
-    "5": "Cave",
-    "4": "Universal Harmony",
-    "6": "Hidden Path",
-    "7": "Wild Ritual Ghost Fire",
-    "8": "Antique",
-    "9": "Cat Play",
-    "10": "Injustice",
-    "11": "Encounter Quest",
-    "12": "Meow Meow Treasure",
-    "13": "Wander Tales",
-    "14": "Tales and Echoes",
-    "15": "Overlapping Moon Shadows",
-    "16": "Scarecrow",
-    "17": "Miniature Treasure",
-    "18": "Gourmet Food",
-    "19": "Special Oddities",
-    "20": "Toilet",
-    "21": "Healing Ilnies",
-    "22": "Material Fellowship",
-    "23": "Gift of Gab",
-    "24": "Experience",
-    "25": "Guard",
-    "26": "Outpost",
-    "27": "World Boss",
-    "28": "Material Art",
-    "29": "Fishing Spot",
-    "30": "Pitch Pot",
-    "31": "Miaodao",
-    "32": "Archer Contest",
-    "33": "Graceful Melody",
-    "34": "Riddle",
-    "35": "Sumo",
-    "36": "Mystic Skill",
-    "37": "Inner Ways",
-    "38": "Old Friend",
-    "39": "Camp",
-    "40": "Dog Play",
-    "41": "Board",
-    "42": "Ride And Archer Challenge"
-  };
+  // Icon Config — use shared IconManager from ikon.js (avoids duplicate image requests)
+  const ICON_CONFIG = window.IconManager ? window.IconManager.ICON_CONFIG : { overlays: {} };
+  const CATEGORY_NAMES = window.IconManager ? window.IconManager.ICON_CONFIG.names : {};
 
   // Floor Options (from UndergroundManager)
   const FLOOR_OPTIONS = [
@@ -472,13 +382,13 @@ savedFormData.loc_type = region.id;
     const old = document.querySelector('.addmarker-hint');
     if (old) old.remove();
 
+    // Baca geometry SEBELUM DOM diubah — cegah forced reflow
+    const rect = addMarkerBtn.getBoundingClientRect();
+    const isMobile = window.matchMedia('(max-width: 600px)').matches;
+
     const hint = document.createElement('div');
     hint.className = 'addmarker-hint';
     hint.textContent = 'Tap if you found lost marker!';
-    document.body.appendChild(hint);
-
-    const rect = addMarkerBtn.getBoundingClientRect();
-    const isMobile = window.innerWidth <= 600;
 
     if (isMobile) {
       hint.style.position  = 'fixed';
@@ -492,6 +402,7 @@ savedFormData.loc_type = region.id;
       hint.style.transform = 'translateX(-50%)';
     }
 
+    document.body.appendChild(hint);
     setTimeout(() => hint.classList.add('show'), 50);
     setTimeout(() => {
       hint.classList.remove('show');

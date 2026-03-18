@@ -2,9 +2,11 @@
 //  CONFIG
 // ===============================
 const TILE_VERSION = "20251121"; // Samakan dengan peta.js
-const CACHE_NAME = "wwm-tiles-" + TILE_VERSION;
+const CACHE_NAME       = "wwm-tiles-"  + TILE_VERSION;
+const ICON_CACHE_NAME  = "wwm-icons-"  + TILE_VERSION;
 
 const TILE_URL_PREFIX = "https://tiles.bgonegaming.win/wherewindmeet/tiles/";
+const ICON_URL_PREFIX = "https://tiles.bgonegaming.win/wherewindmeet/Simbol/";
 
 // ===============================
 //  INSTALL
@@ -15,7 +17,7 @@ self.addEventListener("install", (event) => {
 });
 
 // ===============================
-//  ACTIVATE
+//  ACTIVATE — hapus cache lama
 // ===============================
 self.addEventListener("activate", (event) => {
   console.log("[SW] Activated");
@@ -23,7 +25,9 @@ self.addEventListener("activate", (event) => {
     caches.keys().then((keys) =>
       Promise.all(
         keys.map((key) => {
-          if (key.startsWith("wwm-tiles-") && key !== CACHE_NAME) {
+          const isOldTile = key.startsWith("wwm-tiles-") && key !== CACHE_NAME;
+          const isOldIcon = key.startsWith("wwm-icons-") && key !== ICON_CACHE_NAME;
+          if (isOldTile || isOldIcon) {
             console.log("[SW] Delete old cache:", key);
             return caches.delete(key);
           }
@@ -40,32 +44,41 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const url = event.request.url;
 
-  // Hanya intercept tile
-  if (!url.startsWith(TILE_URL_PREFIX)) {
-    return; // biarkan request lain
+  // ── MAP TILES ── CacheFirst
+  if (url.startsWith(TILE_URL_PREFIX)) {
+    event.respondWith(handleCacheFirst(event.request, CACHE_NAME, "TILE"));
+    return;
   }
 
-  event.respondWith(
-    caches.open(CACHE_NAME).then(async (cache) => {
-      const cachedResponse = await cache.match(event.request);
-
-      if (cachedResponse) {
-        console.log("🟡 [SW] TILE from CACHE:", url);
-        return cachedResponse;
-      }
-
-      console.log("🟢 [SW] TILE from SERVER:", url);
-
-      try {
-        const fetchResponse = await fetch(event.request);
-        if (fetchResponse.status === 200) {
-          cache.put(event.request, fetchResponse.clone());
-        }
-        return fetchResponse;
-      } catch (e) {
-        console.error("🔴 [SW] Network error:", e);
-        return cachedResponse || Response.error();
-      }
-    })
-  );
+  // ── ICON / SIMBOL ── CacheFirst (persistent, lintas tab & session)
+  if (url.startsWith(ICON_URL_PREFIX)) {
+    event.respondWith(handleCacheFirst(event.request, ICON_CACHE_NAME, "ICON"));
+    return;
+  }
 });
+
+// ===============================
+//  HELPER — CacheFirst strategy
+// ===============================
+async function handleCacheFirst(request, cacheName, label) {
+  const cache = await caches.open(cacheName);
+  const cachedResponse = await cache.match(request);
+
+  if (cachedResponse) {
+    console.log(`🟡 [SW] ${label} from CACHE:`, request.url);
+    return cachedResponse;
+  }
+
+  console.log(`🟢 [SW] ${label} from SERVER:`, request.url);
+
+  try {
+    const fetchResponse = await fetch(request);
+    if (fetchResponse.status === 200) {
+      cache.put(request, fetchResponse.clone());
+    }
+    return fetchResponse;
+  } catch (e) {
+    console.error(`🔴 [SW] Network error (${label}):`, e);
+    return Response.error();
+  }
+}

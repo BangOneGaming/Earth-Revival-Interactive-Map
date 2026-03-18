@@ -184,14 +184,14 @@
   <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"></noscript>
   
   <!-- Main CSS - PRELOAD -->
-  <link rel="preload" href="styles.css?v=6.0.13" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="styles.css?v=6.0.13"></noscript>
+  <link rel="preload" href="styles.css?v=6.0.14" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="styles.css?v=6.0.14"></noscript>
   
   <!-- Fonts - PRELOAD dengan display=swap -->
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@700&display=swap" rel="stylesheet"></noscript>
   <script>
-    const CSS_VERSION = "6.0.12";
+    const CSS_VERSION = "6.0.14";
   </script>
 
 <style id="ui-visibility-control">
@@ -797,8 +797,8 @@
     if (!adContainer) return;
 
     const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const isSmallScreen  = window.innerWidth <= 480;
-    const isShortScreen  = window.innerHeight <= 500;
+    const isSmallScreen  = window.matchMedia('(max-width: 480px)').matches;
+    const isShortScreen  = window.matchMedia('(max-height: 500px)').matches;
 
     // Tentukan tinggi target: layar pendek selalu 60px, mobile biasa 130px
     const targetHeight = isShortScreen ? '60px' : '130px';
@@ -902,6 +902,7 @@ btnClose.addEventListener("click", function(e) {
 });
 </script>
 
+</script>
 <!-- Google AdSense Auto Ads -->  
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467"  
      crossorigin="anonymous"></script>  
@@ -1046,7 +1047,8 @@ const lazy = [
 
 <script>
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register(`/sw.js?v=20251121`)
+  const v = Date.now();
+  navigator.serviceWorker.register(`/sw.js?v=${v}`)
     .then(() => console.log("✅ SW registered"))
     .catch(err => console.error("❌ SW registration failed:", err));
 }
