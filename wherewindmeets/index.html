@@ -1,28 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- ✅ META CHARSET (CRITICAL) -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- ✅ TITLE — Primary keyword di depan, natural -->
   <title>Where Winds Meet Interactive Map – Complete Exploration Guide | BangOne Gaming</title>
 
-  <!-- ✅ CANONICAL URL -->
   <link rel="canonical" href="https://bgonegaming.win/wherewindmeets/" />
 
-  <!-- ✅ META SEO — Natural, readable, keyword di awal -->
   <meta name="description" content="Where Winds Meet Interactive Map – explore Hexi, Qinghe, Kaifeng. Find Treasure Chests, Teleport Landmarks, World Bosses, Cat Play, Wander Tales, Fishing Spots, and 35+ location types. Track visited locations and get 100% completion." />
-  
   <meta name="keywords" content="Where Winds Meet Interactive Map, Where Winds Meet Map, Where Winds Meet exploration guide, Where Winds Meet treasure chest locations, Where Winds Meet world boss, Hexi Map, Qinghe Map, Kaifeng Map, Where Winds Meet 100% completion" />
-
   <meta name="author" content="BangOne Gaming" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
 
-  <!-- ✅ FAVICON -->
   <link rel="icon" href="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/faviconV2.ico?updatedAt=1762922428848" type="image/x-icon" />
 
-  <!-- ✅ OG / SOCIAL SHARE -->
   <meta property="og:title" content="Where Winds Meet Interactive Map – Complete Exploration Guide" />
   <meta property="og:description" content="Where Winds Meet Interactive Map with 35+ location types – Treasure Chests, Teleport Landmarks, World Bosses, Cat Play, Wander Tales, mini-games, and all collectibles across Jianghua." />
   <meta property="og:image" content="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/IMG-20251120-WA0002.jpg" />
@@ -30,51 +22,33 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="BangOne Gaming" />
 
-  <!-- ✅ TWITTER CARD -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Where Winds Meet Interactive Map – Complete Exploration Guide" />
   <meta name="twitter:description" content="Where Winds Meet Interactive Map with 35+ location types. Track Treasure Chests, World Bosses, Wander Tales, and all collectibles in Jianghua." />
   <meta name="twitter:image" content="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/IMG-20251120-WA0002.jpg" />
 
-  <!-- ✅ THEME COLOR -->
   <meta name="theme-color" content="#5c3e0e" />
-<!-- ✅ PRECONNECT - Hanya yang critical -->
-<!-- Tambah di <head> bersama preload lainnya -->
-<link rel="preload" 
-      href="https://unpkg.com/leaflet/dist/leaflet.js" 
-      as="script">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- Downgrade ke dns-prefetch untuk yang tidak urgent -->
-<link rel="dns-prefetch" href="https://unpkg.com">
-<link rel="dns-prefetch" href="https://ik.imagekit.io">
 
+  <!-- PRECONNECT hanya yang critical -->
+  <link rel="preload" href="https://unpkg.com/leaflet/dist/leaflet.js" as="script">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://unpkg.com">
+  <link rel="dns-prefetch" href="https://ik.imagekit.io">
+  <!-- FIX 1: HAPUS preload WWM.webp — 907KiB tidak boleh masuk critical path -->
+  <!-- <link rel="preload" href="...WWM.webp" as="image" fetchpriority="high"> DIHAPUS -->
 
-
-<!-- Preload preload overlay background -->
-<link rel="preload"
-      href="https://tiles.bgonegaming.win/wherewindmeet/overlay/WWM.webp"
-      as="image"
-      fetchpriority="high">
-
-<!-- Taruh SEBELUM <div id="preloadOverlay"> -->
-<script>
-  // ✅ TRUE = tampilkan preload overlay
-  // ✅ FALSE = langsung tampil map tanpa overlay
-  window.USE_PRELOAD = false;
-
-  // ✅ Sembunyikan overlay langsung di DOM, tidak tunggu main.js
-  if (window.USE_PRELOAD === false) {
-    document.addEventListener('DOMContentLoaded', function() {
-      const overlay = document.getElementById('preloadOverlay');
+  <script>
+    window.USE_PRELOAD = false;
+    if (window.USE_PRELOAD === false) {
+      document.addEventListener('DOMContentLoaded', function() {
+        var overlay = document.getElementById('preloadOverlay');
+        if (overlay) overlay.style.display = 'none';
+      });
+      var overlay = document.getElementById('preloadOverlay');
       if (overlay) overlay.style.display = 'none';
-    });
-
-    // Fallback kalau DOMContentLoaded sudah lewat
-    const overlay = document.getElementById('preloadOverlay');
-    if (overlay) overlay.style.display = 'none';
-  }
-</script>
+    }
+  </script>
 
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RNEQ8BY21N"></script>
@@ -85,7 +59,6 @@
     gtag('config', 'G-RNEQ8BY21N');
   </script>
 
-  <!-- ✅ STRUCTURED DATA (JSON-LD) — Diperkaya dengan WebApplication + VideoGame -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -106,18 +79,8 @@
         "breadcrumb": {
           "@type": "BreadcrumbList",
           "itemListElement": [
-            {
-              "@type": "ListItem",
-              "position": 1,
-              "name": "Home",
-              "item": "https://bgonegaming.win/"
-            },
-            {
-              "@type": "ListItem",
-              "position": 2,
-              "name": "Where Winds Meet Interactive Map",
-              "item": "https://bgonegaming.win/wherewindmeets/"
-            }
+            {"@type": "ListItem","position": 1,"name": "Home","item": "https://bgonegaming.win/"},
+            {"@type": "ListItem","position": 2,"name": "Where Winds Meet Interactive Map","item": "https://bgonegaming.win/wherewindmeets/"}
           ]
         }
       },
@@ -130,22 +93,9 @@
         "operatingSystem": "Any",
         "browserRequirements": "Requires JavaScript",
         "description": "Interactive map tool for Where Winds Meet. Explore 35+ location categories across Jianghua including Treasure Chests, World Bosses, Teleport Landmarks, Cat Play, Wander Tales, and mini-games. Supports offline progress tracking.",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD"
-        },
-        "author": {
-          "@type": "Person",
-          "name": "BangOne Gaming",
-          "url": "https://bgonegaming.win/"
-        },
-        "about": {
-          "@type": "VideoGame",
-          "name": "Where Winds Meet",
-          "genre": ["Action RPG", "Open World"],
-          "gamePlatform": ["PC", "Mobile"]
-        }
+        "offers": {"@type": "Offer","price": "0","priceCurrency": "USD"},
+        "author": {"@type": "Person","name": "BangOne Gaming","url": "https://bgonegaming.win/"},
+        "about": {"@type": "VideoGame","name": "Where Winds Meet","genre": ["Action RPG","Open World"],"gamePlatform": ["PC","Mobile"]}
       },
       {
         "@type": "FAQPage",
@@ -153,134 +103,84 @@
           {
             "@type": "Question",
             "name": "What is the Where Winds Meet Interactive Map?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The Where Winds Meet Interactive Map is a fan-made exploration tool that shows 35+ location types across Jianghua, including Treasure Chests, Teleport Landmarks, World Bosses, Cat Play spots, Wander Tales, Fishing Spots, and mini-game locations. It supports offline progress tracking for 100% completion."
-            }
+            "acceptedAnswer": {"@type": "Answer","text": "The Where Winds Meet Interactive Map is a fan-made exploration tool that shows 35+ location types across Jianghua, including Treasure Chests, Teleport Landmarks, World Bosses, Cat Play spots, Wander Tales, Fishing Spots, and mini-game locations. It supports offline progress tracking for 100% completion."}
           },
           {
             "@type": "Question",
             "name": "What regions does the Where Winds Meet map cover?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The map covers all major regions including Kaifeng, Qinghe, Bujian Mountain, Hexi (Yumen Pass, Liangzhou, Qinchuan), and Hutuo (Yunqiu, Luancheng, Fenglong Mountain), with both surface and underground layers."
-            }
+            "acceptedAnswer": {"@type": "Answer","text": "The map covers all major regions including Kaifeng, Qinghe, Bujian Mountain, Hexi (Yumen Pass, Liangzhou, Qinchuan), and Hutuo (Yunqiu, Luancheng, Fenglong Mountain), with both surface and underground layers."}
           },
           {
             "@type": "Question",
             "name": "How do I track my progress on the Where Winds Meet map?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "You can mark locations as visited directly on the map. Your progress is saved offline so you can continue tracking even without an internet connection."
-            }
+            "acceptedAnswer": {"@type": "Answer","text": "You can mark locations as visited directly on the map. Your progress is saved offline so you can continue tracking even without an internet connection."}
           }
         ]
       }
     ]
   }
   </script>
-<!-- Leaflet CSS - PRELOAD -->
+
   <link rel="preload" href="https://unpkg.com/leaflet/dist/leaflet.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"></noscript>
-  
-  <!-- Main CSS - PRELOAD -->
+
   <link rel="preload" href="styles.css?v=6.0.17" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="styles.css?v=6.0.17"></noscript>
-  
-  <!-- Fonts - PRELOAD dengan display=swap -->
+
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@700&display=swap" rel="stylesheet"></noscript>
-  <script>
-    const CSS_VERSION = "6.0.17";
-  </script>
 
-<!-- LandPage CSS — di head agar tampil sebelum JS apapun load -->
-<link rel="stylesheet" href="landpage.css">
+  <script>const CSS_VERSION = "6.0.17";</script>
 
-<style id="ui-visibility-control">
-  /* Semua UI peta tersembunyi sampai app-ready */
-  body:not(.app-ready) {
-    overflow: hidden !important;
-  }
-  body.app-ready {
-    overflow: auto !important;
-  }
-  body:not(.app-ready) .leaderboard-panel,
-  body:not(.app-ready) .leaderboard-toggle,
-  body:not(.app-ready) .filter-panel,
-  body:not(.app-ready) .filter-toggle,
-  body:not(.app-ready) #notificationIcon,
-  body:not(.app-ready) #notificationBox,
-  body:not(.app-ready) #topLoginBtn,
-  body:not(.app-ready) #loginModal,
-  body:not(.app-ready) #commentsModal,
-  body:not(.app-ready) .patch-overlay,
-,
-  body:not(.app-ready) #seo-content {
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-  }
+  <link rel="stylesheet" href="landpage.css">
 
-  /* Tampilkan map setelah app-ready (inline style di HTML sudah hide) */
-  body.app-ready #map {
-    opacity: 1 !important;
-    visibility: visible !important;
-  }
+  <style id="ui-visibility-control">
+    body:not(.app-ready) { overflow: hidden !important; }
+    body.app-ready { overflow: auto !important; }
+    body:not(.app-ready) .leaderboard-panel,
+    body:not(.app-ready) .leaderboard-toggle,
+    body:not(.app-ready) .filter-panel,
+    body:not(.app-ready) .filter-toggle,
+    body:not(.app-ready) #notificationIcon,
+    body:not(.app-ready) #notificationBox,
+    body:not(.app-ready) #topLoginBtn,
+    body:not(.app-ready) #loginModal,
+    body:not(.app-ready) #commentsModal,
+    body:not(.app-ready) .patch-overlay,
+    body:not(.app-ready) #seo-content {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+    body.app-ready #map {
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+    body.app-ready .underground-container {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+    }
+    body.app-ready .leaderboard-panel,
+    body.app-ready .leaderboard-toggle,
+    body.app-ready #notificationIcon,
+    body.app-ready #topLoginBtn {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transition: opacity 0.5s ease !important;
+      contain: layout paint !important;
+    }
+  </style>
+</head>
 
-  /* Tampilkan underground setelah app-ready */
-  body.app-ready .underground-container {
-    opacity: 1 !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
-  }
-
-  body.app-ready .leaderboard-panel,
-  body.app-ready .leaderboard-toggle,
-  body.app-ready #notificationIcon,
-  body.app-ready #topLoginBtn {
-    opacity: 1 !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
-    transition: opacity 0.5s ease !important;
-    contain: layout paint !important;
-  }
-</style>
-</head>  
 <body style="margin:0;background:#0b0f1a">
 
-<!-- ✅ SEO CONTENT — Visually hidden tapi AMAN untuk Google (bukan left:-9999px) -->
-<!--
-  CATATAN PENTING:
-  Ganti style lama "position:absolute;left:-9999px" dengan style di bawah ini.
-  Teknik visually-hidden ini aman untuk SEO dan tidak dianggap cloaking oleh Google.
--->
-<main id="seo-content" style="
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-">
-
+<main id="seo-content" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">
   <h1>Where Winds Meet Interactive Map – Complete Exploration Guide</h1>
-
-  <p>
-    The <strong>Where Winds Meet Interactive Map</strong> is the most complete exploration tool
-    for players who want to fully discover the world of Jianghua. Whether you're hunting for
-    every Treasure Chest, looking for World Bosses, or trying to complete Wander Tales,
-    this map has everything you need to reach 100% completion in <strong>Where Winds Meet</strong>.
-  </p>
-
+  <p>The <strong>Where Winds Meet Interactive Map</strong> is the most complete exploration tool for players who want to fully discover the world of Jianghua.</p>
   <section>
     <h2>Where Winds Meet Map – All Location Types</h2>
-    <p>
-      The <strong>Where Winds Meet Interactive Map</strong> includes 35+ location categories to help you explore every corner of the game:
-    </p>
     <ul>
       <li><strong>Teleport Landmarks</strong> – Fast travel points across all regions</li>
       <li><strong>Treasure Chests</strong> – Common chests and Puzzle Chests hidden across Jianghua</li>
@@ -290,105 +190,43 @@
       <li><strong>Tales and Echoes</strong> – Discover hidden narrative locations</li>
       <li><strong>Fishing Spots</strong> – All fishing locations across rivers and lakes</li>
       <li><strong>Mini-Games</strong> – Pitch Pot, Miaodao card game, Archer Contest, Sumo Wrestling, and Graceful Melody</li>
-      <li><strong>Oddities &amp; Hidden Paths</strong> – Secret passages and unusual encounters</li>
-      <li><strong>Universal Harmony &amp; Overlapping Moon Shadows</strong> – Collectible events</li>
-      <li><strong>Outposts, Guards &amp; Camps</strong> – Enemy camp and patrol locations</li>
-      <li><strong>Antiques, Books &amp; Precious Items</strong> – All collectible objects</li>
-      <li><strong>Healing Ilnies &amp; Wild Ritual Ghost Fire</strong> – Restore and ritual spots</li>
-      <li><strong>Inner Ways, Mystic Skills &amp; Material Art</strong> – Skill unlock locations</li>
-      <li><strong>Gourmet Food &amp; Material Fellowship</strong> – Crafting and cooking spots</li>
-      <li><strong>Scarecrows, Riddles &amp; Gift of Gab</strong> – Puzzle and interaction locations</li>
     </ul>
   </section>
-
   <section>
     <h2>Where Winds Meet – All Regions on the Map</h2>
-    <p>
-      The <strong>Where Winds Meet map</strong> covers all major explorable regions:
-    </p>
     <ul>
       <li><strong>Kaifeng</strong> – Kaifeng City, Song Dynasty Palace, Grand Canal, Ever-Normal Granary, Ghost Market, Jinming Pool</li>
       <li><strong>Qinghe</strong> – Verdant Wilds, Moonveil Mountain, Mercyheart Town, Thousand Buddha Village, Jadebrook Mountain</li>
       <li><strong>Bujian Mountain</strong> – Bamboo Abode, Sundara Land, mountain caves and hidden paths</li>
       <li><strong>Hexi</strong> – Yumen Pass, Liangzhou (with Time Travel feature), Qinchuan</li>
       <li><strong>Hutuo</strong> – Yunqiu, Luancheng, Hutuo South Bank, Fenglong Mountain</li>
-      <li><strong>Royal Palace</strong> – Coming soon</li>
-    </ul>
-    <p>
-      Both surface and underground layers are supported, with floor selection for cave systems and dungeons.
-    </p>
-  </section>
-
-  <section>
-    <h2>Where Winds Meet Map Features</h2>
-    <ul>
-      <li>Filter markers by category to focus on what you need</li>
-      <li>Mark locations as visited – progress saved offline</li>
-      <li>Zoom-based region labels for easy navigation</li>
-      <li>Fly-to navigation when selecting sub-regions</li>
-      <li>Time Travel mode for Liangzhou to see how locations change across time periods</li>
-      <li>Floating window to keep marker details visible while exploring</li>
-      <li>Leaderboard showing top community contributors</li>
-      <li>Mobile-friendly with desktop mode recommended for best experience</li>
     </ul>
   </section>
-
-  <section>
-    <h2>Frequently Asked Questions – Where Winds Meet Map</h2>
-
-    <h3>Is this the official Where Winds Meet Interactive Map?</h3>
-    <p>
-      This is a fan-made interactive map created by BangOne Gaming, not an official product.
-      It is the most complete community map available for <strong>Where Winds Meet</strong> exploration.
-    </p>
-
-    <h3>How do I find all Treasure Chests in Where Winds Meet?</h3>
-    <p>
-      Enable the Treasure Chest filter on the map to see all chest locations across every region.
-      Puzzle Chests use a separate icon since they don't appear on the in-game minimap.
-    </p>
-
-    <h3>Does the Where Winds Meet map work on mobile?</h3>
-    <p>
-      Yes. The map works on mobile browsers. For the best experience, enable Desktop Mode in your mobile browser settings.
-    </p>
-  </section>
-
-  <p>
-    Official interactive map:
-    <a href="https://bgonegaming.win/wherewindmeets/">
-      Where Winds Meet Interactive Map – bgonegaming.win
-    </a>
-  </p>
-
+  <p>Official interactive map: <a href="https://bgonegaming.win/wherewindmeets/">Where Winds Meet Interactive Map – bgonegaming.win</a></p>
 </main>
 
 <noscript>
-  <p>
-    Where Winds Meet Interactive Map requires JavaScript to function.
-    Visit the map here:
-    <a href="https://bgonegaming.win/wherewindmeets/">
-      https://bgonegaming.win/wherewindmeets/
-    </a>
-  </p>
+  <p>Where Winds Meet Interactive Map requires JavaScript. Visit: <a href="https://bgonegaming.win/wherewindmeets/">https://bgonegaming.win/wherewindmeets/</a></p>
 </noscript>
+
 <div id="map" style="opacity:0;visibility:hidden">
   <div id="notificationIcon"></div>
-  <div id="notificationBox" style="display: none;">
+  <div id="notificationBox" style="display:none;">
     <h3>Notifications</h3>
-    <div id="notificationContent">
-      <p>No notifications yet.</p>
-    </div>
+    <div id="notificationContent"><p>No notifications yet.</p></div>
   </div>
 </div>
-<!-- Preload Overlay -->
+
+<!-- FIX 2: preloadOverlay — hapus fetchpriority="high" dan loading="eager"
+     USE_PRELOAD=false jadi overlay tidak pernah tampil, tidak perlu prioritas tinggi -->
 <div id="preloadOverlay" style="display:none">
   <div id="preloadContainer">
-    <img id="preloadEmotionIcon" 
-     src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/impressed.webp"
-     alt="Loading emotion"
-     fetchpriority="high"
-     loading="eager">
+    <img id="preloadEmotionIcon"
+         src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/impressed.webp"
+         alt="Loading emotion"
+         width="100"
+         height="100"
+         loading="lazy">
     <div id="preloadMessage">Better Experience With Mobile Desktop mode</div>
     <div id="preloadBarContainer">
       <div id="preloadBarFill"></div>
@@ -401,14 +239,12 @@
 <div class="leaderboard-panel" id="leaderboardPanel">
   <div class="leaderboard-header">
     <div class="leaderboard-title-img">
-      <img src="assets/ui/leaderboard-title.png" alt="Leaderboard" onerror="this.style.display='none'">
+      <img src="assets/ui/leaderboard-title.png" alt="Leaderboard" width="120" height="32" loading="lazy" onerror="this.style.display='none'">
     </div>
     <h2>Top Contributors</h2>
   </div>
   <div class="leaderboard-content" id="leaderboardContent">
-    <div class="leaderboard-loading">
-      <span>⏳ Loading contributors...</span>
-    </div>
+    <div class="leaderboard-loading"><span>⏳ Loading contributors...</span></div>
   </div>
   <div class="leaderboard-stats" id="leaderboardStats">
     <div>Total Contributors: <strong id="totalContributors">0</strong></div>
@@ -416,26 +252,19 @@
   </div>
 </div>
 
-<button class="leaderboard-toggle" id="leaderboardToggle" onclick="toggleLeaderboard()">
-  🏆
-</button>
+<button class="leaderboard-toggle" id="leaderboardToggle" onclick="toggleLeaderboard()">🏆</button>
 
-<!-- Filter Panel -->  
-<div class="filter-panel" id="filterPanel" style="opacity: 0; visibility: hidden; pointer-events: none;">  
-  <div class="filter-header">  
-    <h2 class="filter-title-img"></h2>
-  </div>  
-  <div class="filter-content" id="filterContent"></div>  
-  <div class="filter-actions">  
-    <button class="filter-btn filter-btn-all" id="btnSelectAll">Select All</button>  
-    <button class="filter-btn filter-btn-none" id="btnSelectNone">Clear All</button>  
-  </div>  
-  <div class="filter-stats" id="filterStats">  
-    Showing <strong>0</strong> markers  
-  </div>  
-</div>  
+<div class="filter-panel" id="filterPanel" style="opacity:0;visibility:hidden;pointer-events:none;">
+  <div class="filter-header"><h2 class="filter-title-img"></h2></div>
+  <div class="filter-content" id="filterContent"></div>
+  <div class="filter-actions">
+    <button class="filter-btn filter-btn-all" id="btnSelectAll">Select All</button>
+    <button class="filter-btn filter-btn-none" id="btnSelectNone">Clear All</button>
+  </div>
+  <div class="filter-stats" id="filterStats">Showing <strong>0</strong> markers</div>
+</div>
 
-<button class="filter-toggle" id="filterToggle" style="opacity: 0; visibility: hidden; pointer-events: none;">◀</button>
+<button class="filter-toggle" id="filterToggle" style="opacity:0;visibility:hidden;pointer-events:none;">◀</button>
 
 <button id="topLoginBtn">Login</button>
 
@@ -447,79 +276,58 @@
      data-auto_prompt="false">
 </div>
 
-<!-- Underground Container -->
 <div class="underground-container" id="undergroundContainer" style="opacity:0;visibility:hidden;pointer-events:none">
   <button id="undergroundToggle" class="underground-toggle" title="Toggle Underground Floors">
-    <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/layericon.png" alt="Underground layer selector">
+    <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/layericon.png" alt="Underground layer selector" width="32" height="32" loading="lazy">
   </button>
   <div id="undergroundPanel" class="underground-panel">
-    <div class="underground-header">
-      <h2>🏔️ Floor Selection</h2>
-    </div>
+    <div class="underground-header"><h2>🏔️ Floor Selection</h2></div>
     <div id="undergroundContent" class="underground-content"></div>
     <div id="undergroundStats" class="underground-stats">
-      <div>
-        <span>Active Floor</span>
-        <strong id="activeFloorName">Surface</strong>
-      </div>
-      <div>
-        <span>Markers</span>
-        <strong id="visibleFloorMarkers">0</strong>
-      </div>
+      <div><span>Active Floor</span><strong id="activeFloorName">Surface</strong></div>
+      <div><span>Markers</span><strong id="visibleFloorMarkers">0</strong></div>
     </div>
   </div>
 </div>
 
-<!-- Login Modal -->
-<div id="loginModal" style="display: none;">
+<div id="loginModal" style="display:none;">
   <div id="loginContent">
     <button id="closeLogin">&times;</button>
     <div id="loginOverlay">
-      <div class="g_id_signin"
-           data-type="standard"
-           data-size="large"
-           data-theme="outline"
-           data-text="sign_in_with"
-           data-shape="rectangular"
-           data-logo_alignment="left">
-      </div>
+      <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left"></div>
     </div>
-    <p id="loginNote" style="margin-top: 20px; font-size: 14px; color: #333; text-align: center;">
-      This login is not connected to the game you play. It only provides access to some map features and stores web data. Read our <a href="policy.html" target="_blank" style="color: #02a0c5; text-decoration: underline;">Privacy and Policy</a> for more information.
+    <p id="loginNote" style="margin-top:20px;font-size:14px;color:#333;text-align:center;">
+      This login is not connected to the game you play. It only provides access to some map features and stores web data. Read our <a href="policy.html" target="_blank" style="color:#02a0c5;text-decoration:underline;">Privacy and Policy</a> for more information.
     </p>
   </div>
 </div>
 
-<!-- Comments Modal -->
-<div id="commentsModal" class="comments-modal" style="display: none;">
+<div id="commentsModal" class="comments-modal" style="display:none;">
   <div class="comments-modal-overlay" onclick="closeCommentsModal()"></div>
   <div class="comments-modal-content">
     <div class="comments-modal-header">
       <h3 class="comments-modal-title">💬 Looking for Comments</h3>
       <button class="comments-modal-close" onclick="closeCommentsModal()">&times;</button>
     </div>
-    <div class="comments-modal-body" id="commentsModalBody">
-      <div class="comments-loading">Loading comments...</div>
-    </div>
+    <div class="comments-modal-body" id="commentsModalBody"><div class="comments-loading">Loading comments...</div></div>
     <div class="comments-modal-footer" id="commentsModalFooter"></div>
   </div>
 </div>
 
-<!-- Patch Notes Popup -->
+<!-- FIX 3: Patch popup — semua img ganti ke data-src, tambah width/height untuk fix CLS -->
 <div class="patch-overlay" id="patchOverlay" data-google-adsense-nooverlay="true">
   <div class="patch-popup" data-no-ad="true">
     <button class="patch-close" onclick="closePatchPopup()">&times;</button>
     <div class="patch-header">
-
-      <img 
-        src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/BangOne.webp"
+      <!-- FIX: hapus fetchpriority="high" dan loading="eager", ganti src ke data-src -->
+      <img
+        data-src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/BangOne.webp"
         alt="Where Winds Meet Map Update"
         class="patch-image"
-        fetchpriority="high"
-        loading="eager"
-        decoding="async"
-      >
-
+        width="400"
+        height="200"
+        loading="lazy"
+        decoding="async">
       <h2 class="patch-title">Interactive Map Update</h2>
       <p class="patch-subtitle">Full Hexi Map &nbsp;·&nbsp; Time Travel &nbsp;·&nbsp; Floating Window &nbsp;·&nbsp; Unified Search</p>
     </div>
@@ -528,13 +336,10 @@
       <ul class="patch-list">
         <li>
           <strong>
-            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/outlander.webp" class="patch-icon" alt="Hexi region icon">
+            <img data-src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/outlander.webp" class="patch-icon" alt="Hexi region icon" width="20" height="20" loading="lazy">
             Full Hexi Map Marker Update
           </strong>
-          <p class="patch-description">
-            Hexi region markers are now 100% complete. All locations across
-            Jade Gate Pass, Liangzhou, and Qinchuan are fully mapped and available.
-          </p>
+          <p class="patch-description">Hexi region markers are now 100% complete. All locations across Jade Gate Pass, Liangzhou, and Qinchuan are fully mapped and available.</p>
         </li>
         <li>
           <strong>
@@ -545,21 +350,18 @@
           </strong>
           <p class="patch-description">Four filters consolidated into a single button for a tidier UI.</p>
           <ul class="patch-sublist">
-            <li><img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/lightanddarkstory.webp" class="patch-icon-inline" alt="Dark Surge icon"><strong>Dark Surge</strong></li>
-            <li><img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/knoweverything.webp" class="patch-icon-inline" alt="Wandering Tales icon"><strong>Wandering Tales</strong></li>
-            <li><img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/tehnik.webp" class="patch-icon-inline" alt="Mystic Skill icon"><strong>Mystic Skill</strong></li>
-            <li><img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/innerway.webp" class="patch-icon-inline" alt="Innerway icon"><strong>Innerway</strong></li>
+            <li><img data-src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/lightanddarkstory.webp" class="patch-icon-inline" alt="Dark Surge icon" width="20" height="20" loading="lazy"><strong>Dark Surge</strong></li>
+            <li><img data-src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/knoweverything.webp" class="patch-icon-inline" alt="Wandering Tales icon" width="20" height="20" loading="lazy"><strong>Wandering Tales</strong></li>
+            <li><img data-src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/tehnik.webp" class="patch-icon-inline" alt="Mystic Skill icon" width="20" height="20" loading="lazy"><strong>Mystic Skill</strong></li>
+            <li><img data-src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/innerway.webp" class="patch-icon-inline" alt="Innerway icon" width="20" height="20" loading="lazy"><strong>Innerway</strong></li>
           </ul>
         </li>
         <li>
           <strong>
-            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/outlander.webp" class="patch-icon" alt="Time Travel icon">
+            <img data-src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/outlander.webp" class="patch-icon" alt="Time Travel icon" width="20" height="20" loading="lazy">
             Time Travel — Liangzhou
           </strong>
-          <p class="patch-description">
-            Liangzhou now features <strong>Time Travel</strong> — switch between different 
-            time periods to reveal how marker positions change across the map.
-          </p>
+          <p class="patch-description">Liangzhou now features <strong>Time Travel</strong> — switch between different time periods to reveal how marker positions change across the map.</p>
         </li>
         <li>
           <strong>
@@ -568,10 +370,7 @@
             </svg>
             Floating Window
           </strong>
-          <p class="patch-description">
-            A draggable floating window has been added — keep marker details 
-            visible while freely exploring the map.
-          </p>
+          <p class="patch-description">A draggable floating window has been added — keep marker details visible while freely exploring the map.</p>
         </li>
       </ul>
 
@@ -579,52 +378,46 @@
       <ul class="patch-list">
         <li>
           <strong>
-            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon" alt="Region icon">
+            <img data-src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon" alt="Region icon" width="20" height="20" loading="lazy">
             New Regions Added
           </strong>
           <ul class="patch-sublist">
-            <li><img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon-inline" alt=""><strong>Hexi</strong> — Yumen Pass, Liangzhou, and Qinchuan.</li>
-            <li><img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon-inline" alt=""><strong>Hutuo</strong> — Yunqiu, Luancheng, Hutuo South Bank, and Fenglong Mountain.</li>
-            <li><img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon-inline" alt=""><strong>Royal Palace</strong> — Coming soon.</li>
+            <li><img data-src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon-inline" alt="" width="20" height="20" loading="lazy"><strong>Hexi</strong> — Yumen Pass, Liangzhou, and Qinchuan.</li>
+            <li><img data-src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon-inline" alt="" width="20" height="20" loading="lazy"><strong>Hutuo</strong> — Yunqiu, Luancheng, Hutuo South Bank, and Fenglong Mountain.</li>
+            <li><img data-src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/region.webp" class="patch-icon-inline" alt="" width="20" height="20" loading="lazy"><strong>Royal Palace</strong> — Coming soon.</li>
           </ul>
         </li>
         <li>
           <strong>Chest Icon Differentiation</strong>
           <div class="patch-feature-icons">
             <div class="patch-icon-item">
-              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/petiharta.webp" class="patch-icon" alt="Common Chest icon">
+              <img data-src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/petiharta.webp" class="patch-icon" alt="Common Chest icon" width="20" height="20" loading="lazy">
               <span>Common Chest</span>
             </div>
             <div class="patch-icon-item">
-              <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/puzzle_chest.png" class="patch-icon" alt="Puzzle Chest icon">
+              <img data-src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/puzzle_chest.png" class="patch-icon" alt="Puzzle Chest icon" width="20" height="20" loading="lazy">
               <span>Puzzle Chest</span>
             </div>
           </div>
         </li>
         <li>
           <strong>
-            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/camp.webp" class="patch-icon" alt="Camp icon">
+            <img data-src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/camp.webp" class="patch-icon" alt="Camp icon" width="20" height="20" loading="lazy">
             Camp &amp;
-            <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/NPC.webp" class="patch-icon" alt="NPC icon">
+            <img data-src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/NPC.webp" class="patch-icon" alt="NPC icon" width="20" height="20" loading="lazy">
             NPC Markers
           </strong>
           <p class="patch-description">Camp locations and NPC points have been added to the map.</p>
         </li>
         <li>
           <strong>General Improvements</strong>
-          <p class="patch-description">
-            Offline visited marker support, improved zoom clarity, better performance 
-            with large marker sets, and refined mobile interactions.
-          </p>
+          <p class="patch-description">Offline visited marker support, improved zoom clarity, better performance with large marker sets, and refined mobile interactions.</p>
         </li>
       </ul>
     </div>
 
     <div class="patch-footer">
-      <p>
-        <strong>Thank you for your support</strong><br>
-        Your contributions help improve the Where Winds Meet Interactive Map for the entire community.
-      </p>
+      <p><strong>Thank you for your support</strong><br>Your contributions help improve the Where Winds Meet Interactive Map for the entire community.</p>
       <div class="patch-contact">
         <a href="https://discord.gg/Mt65qFprs" target="_blank" class="patch-link">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -640,25 +433,16 @@
         </a>
       </div>
     </div>
-
-    <div class="patch-brand">
-      Made with care by <strong>BangOne Gaming</strong>
-    </div>
+    <div class="patch-brand">Made with care by <strong>BangOne Gaming</strong></div>
   </div>
 </div>
 
 <!-- Sticky AdSense Container -->
 <div id="sticky-ad-container">
-  
-  <!-- Close Button -->
   <div id="ad-close-wrapper">
-      <button id="btn-close-ad">Close adsens</button>
+    <button id="btn-close-ad">Close adsens</button>
   </div>
-  
-  <!-- Click Detection Layer -->
   <div id="ad-click-detector"></div>
-  
-  <!-- Google AdSense Unit -->
   <ins class="adsbygoogle"
        data-ad-client="ca-pub-8582564022805467"
        data-ad-slot="7695704952"
@@ -668,273 +452,78 @@
 </div>
 
 <script>
-
-// ======================================================
-// INJECT CSS VIA JAVASCRIPT
-// ======================================================
 (function() {
-    const style = document.createElement('style');
-    style.textContent = `
-        /* Desktop Default */
-        #sticky-ad-container {
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          z-index: 400;
-          text-align: center;
-          background: rgba(255,255,255,0.95);
-          box-shadow: 0 -2px 6px rgba(0,0,0,.15);
-          height: 90px;
-          max-height: 90px;
-          overflow: hidden;
-        }
-
-        #ad-close-wrapper {
-            position: absolute !important;
-            top: 10px !important;
-            left: 50% !important;
-            transform: translateX(-50%) !important;
-            z-index: 999999 !important;
-            pointer-events: none !important;
-        }
-
-        #btn-close-ad {
-            border: 2px solid #333 !important;
-            background: rgba(255, 255, 255, 0.3) !important;
-            font-size: 16px !important;
-            font-weight: bold !important;
-            cursor: pointer !important;
-            padding: 6px 18px !important;
-            border-radius: 6px !important;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.3) !important;
-            color: #333 !important;
-            font-family: Arial, sans-serif !important;
-            transition: all 0.2s ease !important;
-        }
-
-        #btn-close-ad:hover {
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4) !important;
-            transform: scale(1.05) !important;
-        }
-
-        #ad-click-detector {
-            position: absolute !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            z-index: 999998 !important;
-            cursor: pointer !important;
-        }
-
-        #sticky-ad-container .adsbygoogle {
-            display: block !important;
-        }
-
-        /* LAYAR PENDEK (PiP / small viewport height) */
-        @media only screen and (max-height: 500px) {
-            #sticky-ad-container {
-                height: 60px !important;
-                max-height: 60px !important;
-                min-height: 60px !important;
-            }
-            #sticky-ad-container .adsbygoogle {
-                height: 60px !important;
-                max-height: 60px !important;
-                min-height: 60px !important;
-            }
-            #ad-close-wrapper {
-                top: 4px !important;
-            }
-            #btn-close-ad {
-                font-size: 11px !important;
-                padding: 3px 10px !important;
-            }
-        }
-
-        /* MOBILE OPTIMIZATION */
-        @media only screen and (max-width: 480px) {
-            #sticky-ad-container {
-                height: 130px !important;
-                max-height: 130px !important;
-                min-height: 130px !important;
-                overflow: hidden !important;
-                padding: 0 !important;
-            }
-            #sticky-ad-container .adsbygoogle {
-                height: 130px !important;
-                max-height: 130px !important;
-                min-height: 130px !important;
-                overflow: hidden !important;
-            }
-            #ad-close-wrapper {
-                top: 6px !important;
-            }
-            #btn-close-ad {
-                font-size: 13px !important;
-                padding: 4px 12px !important;
-            }
-        }
-
-        /* MOBILE + LAYAR PENDEK — override keduanya */
-        @media only screen and (max-width: 480px) and (max-height: 500px) {
-            #sticky-ad-container {
-                height: 60px !important;
-                max-height: 60px !important;
-                min-height: 60px !important;
-            }
-            #sticky-ad-container .adsbygoogle {
-                height: 60px !important;
-                max-height: 60px !important;
-                min-height: 60px !important;
-            }
-        }
-    `;
-    document.head.appendChild(style);
+  var style = document.createElement('style');
+  style.textContent = '#sticky-ad-container{position:fixed;bottom:0;left:0;width:100%;z-index:400;text-align:center;background:rgba(255,255,255,0.95);box-shadow:0 -2px 6px rgba(0,0,0,.15);height:90px;max-height:90px;overflow:hidden}#ad-close-wrapper{position:absolute!important;top:10px!important;left:50%!important;transform:translateX(-50%)!important;z-index:999999!important;pointer-events:none!important}#btn-close-ad{border:2px solid #333!important;background:rgba(255,255,255,0.3)!important;font-size:16px!important;font-weight:bold!important;cursor:pointer!important;padding:6px 18px!important;border-radius:6px!important;box-shadow:0 3px 8px rgba(0,0,0,0.3)!important;color:#333!important;font-family:Arial,sans-serif!important;transition:all 0.2s ease!important}#ad-click-detector{position:absolute!important;top:0!important;left:0!important;width:100%!important;height:100%!important;z-index:999998!important;cursor:pointer!important}#sticky-ad-container .adsbygoogle{display:block!important}@media only screen and (max-height:500px){#sticky-ad-container{height:60px!important;max-height:60px!important;min-height:60px!important}#sticky-ad-container .adsbygoogle{height:60px!important;max-height:60px!important;min-height:60px!important}#ad-close-wrapper{top:4px!important}#btn-close-ad{font-size:11px!important;padding:3px 10px!important}}@media only screen and (max-width:480px){#sticky-ad-container{height:130px!important;max-height:130px!important;min-height:130px!important;overflow:hidden!important;padding:0!important}#sticky-ad-container .adsbygoogle{height:130px!important;max-height:130px!important;min-height:130px!important;overflow:hidden!important}#ad-close-wrapper{top:6px!important}#btn-close-ad{font-size:13px!important;padding:4px 12px!important}}@media only screen and (max-width:480px) and (max-height:500px){#sticky-ad-container{height:60px!important;max-height:60px!important;min-height:60px!important}#sticky-ad-container .adsbygoogle{height:60px!important;max-height:60px!important;min-height:60px!important}}';
+  document.head.appendChild(style);
 })();
 
-// ======================================================
-// MOBILE DETECTION & INLINE STYLE ENFORCEMENT
-// ======================================================
 (function() {
-    const adContainer = document.getElementById("sticky-ad-container");
-    const adIns = adContainer ? adContainer.querySelector('.adsbygoogle') : null;
-
-    if (!adContainer) return;
-
-    const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const isSmallScreen  = window.matchMedia('(max-width: 480px)').matches;
-    const isShortScreen  = window.matchMedia('(max-height: 500px)').matches;
-
-    // Tentukan tinggi target: layar pendek selalu 60px, mobile biasa 130px
-    const targetHeight = isShortScreen ? '60px' : '130px';
-
-    if (isMobileDevice || isSmallScreen || isShortScreen) {
-        adContainer.style.cssText = `
-            position: fixed !important;
-            bottom: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: ${targetHeight} !important;
-            max-height: ${targetHeight} !important;
-            min-height: ${targetHeight} !important;
-            overflow: hidden !important;
-            padding: 0 !important;
-            z-index: 400 !important;
-            background: rgba(255, 255, 255, 0.95) !important;
-        `;
-
-        if (adIns) {
-            adIns.style.cssText = `
-                display: block !important;
-                height: ${targetHeight} !important;
-                max-height: ${targetHeight} !important;
-                min-height: ${targetHeight} !important;
-                overflow: hidden !important;
-            `;
-        }
-
-        console.log(`%c📱 Ad height set to ${targetHeight} (shortScreen: ${isShortScreen})`, "color: blue; font-weight:bold");
-
-        // Monitor perubahan tinggi (jika AdSense coba ubah)
-        const observer = new MutationObserver(function() {
-            if (adContainer.style.height !== targetHeight) {
-                adContainer.style.height = targetHeight;
-                adContainer.style.maxHeight = targetHeight;
-                console.log(`%c🔧 Height reset to ${targetHeight}`, "color: orange;");
-            }
-            if (adIns && adIns.style.height !== targetHeight) {
-                adIns.style.height = targetHeight;
-                adIns.style.maxHeight = targetHeight;
-            }
-        });
-
-        observer.observe(adContainer, {
-            attributes: true,
-            attributeFilter: ['style'],
-            subtree: true
-        });
-    }
+  var adContainer = document.getElementById("sticky-ad-container");
+  var adIns = adContainer ? adContainer.querySelector('.adsbygoogle') : null;
+  if (!adContainer) return;
+  var isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  var isSmallScreen  = window.matchMedia('(max-width: 480px)').matches;
+  var isShortScreen  = window.matchMedia('(max-height: 500px)').matches;
+  var targetHeight   = isShortScreen ? '60px' : '130px';
+  if (isMobileDevice || isSmallScreen || isShortScreen) {
+    adContainer.style.cssText = 'position:fixed!important;bottom:0!important;left:0!important;width:100%!important;height:'+targetHeight+'!important;max-height:'+targetHeight+'!important;min-height:'+targetHeight+'!important;overflow:hidden!important;padding:0!important;z-index:400!important;background:rgba(255,255,255,0.95)!important;';
+    if (adIns) adIns.style.cssText = 'display:block!important;height:'+targetHeight+'!important;max-height:'+targetHeight+'!important;min-height:'+targetHeight+'!important;overflow:hidden!important;';
+    var observer = new MutationObserver(function() {
+      if (adContainer.style.height !== targetHeight) adContainer.style.height = adContainer.style.maxHeight = targetHeight;
+      if (adIns && adIns.style.height !== targetHeight) adIns.style.height = adIns.style.maxHeight = targetHeight;
+    });
+    observer.observe(adContainer, { attributes: true, attributeFilter: ['style'], subtree: true });
+  }
 })();
 </script>
 
 <script>
-// ======================================================
-// AD INTERACTION CONTROLS
-// ======================================================
 (adsbygoogle = window.adsbygoogle || []).push({});
 
-const btnClose = document.getElementById("btn-close-ad");
-const closeWrapper = document.getElementById("ad-close-wrapper");
-const adContainer = document.getElementById("sticky-ad-container");
-const clickDetector = document.getElementById("ad-click-detector");
+var btnClose     = document.getElementById("btn-close-ad");
+var closeWrapper = document.getElementById("ad-close-wrapper");
+var adContainer  = document.getElementById("sticky-ad-container");
+var clickDetector= document.getElementById("ad-click-detector");
+var closeActive  = false;
 
-let closeActive = false;
+function hideAd() { adContainer.style.display = "none"; }
 
-// Close ad function
-function hideAd() {
-    adContainer.style.display = "none";
-    console.log("%c❌ Ad closed", "color: red; font-weight: bold;");
-}
-
-// Activate close button
 function enableClose() {
-    if (!closeActive) {
-        closeActive = true;
-        closeWrapper.style.pointerEvents = "auto";
-        clickDetector.style.pointerEvents = "none";
-        
-        console.log("%c✅ Close button enabled", "color: green; font-weight: bold;");
-        console.log("%c⏱️ Auto-close in 3s...", "color: blue;");
-        
-        setTimeout(hideAd, 3000);
-    }
+  if (!closeActive) {
+    closeActive = true;
+    closeWrapper.style.pointerEvents = "auto";
+    clickDetector.style.pointerEvents = "none";
+    setTimeout(hideAd, 3000);
+  }
 }
 
-// Click layer listener
-clickDetector.addEventListener("click", function(e) {
-    console.log("%c🎯 Click detected", "color: orange; font-weight: bold;");
-    enableClose();
-});
-
-// Close button listener
+clickDetector.addEventListener("click", enableClose);
 btnClose.addEventListener("click", function(e) {
-    e.stopPropagation();
-    if (closeActive) {
-        hideAd();
-    } else {
-        console.log("%c⚠️ Button not active", "color: orange;");
-    }
+  e.stopPropagation();
+  if (closeActive) hideAd();
 });
 </script>
 
-<!-- Google AdSense Auto Ads -->  
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467"  
-     crossorigin="anonymous"></script>  
-  
-<script>  
-  (adsbygoogle = window.adsbygoogle || []).push({  
-    google_ad_client: "ca-pub-8582564022805467",  
-    enable_page_level_ads: true  
-  });  
+<!-- Google AdSense Auto Ads -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467" crossorigin="anonymous"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-8582564022805467",
+    enable_page_level_ads: true
+  });
 </script>
 
-<!-- Leaflet JS - DEFER untuk non-blocking -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 
 
-<!-- Google Sign-In (biarkan async) -->
-<script src="https://accounts.google.com/gsi/client" async defer></script>  
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="username.js" defer></script>
 
 <script>
 const v = Date.now();
 
-// ============================================
-// SCRIPT LOADER
-// ============================================
 function loadScripts(list) {
   return Promise.all(list.map(src => new Promise(res => {
     const s = document.createElement("script");
@@ -946,62 +535,24 @@ function loadScripts(list) {
   })));
 }
 
-// ============================================
-// 🧠 PHASE 1 — CRITICAL (WAJIB MAP)
-// ============================================
 const critical = [
-  "peta.js",
-  "penanda.js",
-  "memuat-data.js",
-  "feedbackmatker.js",
-  "map-switcher.js",
-  "MapTransition.js"
+  "peta.js","penanda.js","memuat-data.js",
+  "feedbackmatker.js","map-switcher.js","MapTransition.js"
 ];
 
-// ============================================
-// ⚙️ PHASE 1.5 — IKON (WAJIB SEBELUM LAYER)
-// Dipisah karena layer.js bergantung ICON_BASE_URL dari ikon.js
-// Promise.all tidak menjamin urutan eksekusi
-// ============================================
-const preSecondary = [
-  "ikon.js"
-];
+const preSecondary = ["ikon.js"];
 
-// ============================================
-// ⚙️ PHASE 2 — CORE FEATURES
-// ============================================
 const secondary = [
-  "descmanager.js",
-  "knowladge-series.js",
-  "zoom_optimizer.js",
-  "marker-link.js",
-  "layer.js",
-  "region.js",
-  "region-management.js",
-  "editing-image-upload.js",  // ← pindah ke sini, sebelum marker-image-handler
-  "marker-image-handler.js",
-  "search-info.js",
-  "pip-map.js"
+  "descmanager.js","knowladge-series.js","zoom_optimizer.js",
+  "marker-link.js","layer.js","region.js","region-management.js",
+  "editing-image-upload.js","marker-image-handler.js","search-info.js","pip-map.js"
 ];
 
 const lazy = [
-  "leaderboard.js",
-  "comment.js",
-  "patchnote.js",
-  "donate.js",
-  "profile.js",
-  "setting.js",
-  "tip-guide.js",
-  "cookie-consent.js",
-  // "editing-image-upload.js" ← hapus dari sini
-  "time.js",
-  "booklist.js",
-  "knowladgelist.js",
-  "mystic-skill-panel.js",
-  "innerway.js",
-  "form.js",
-  "riddle-search.js",
-  "tales-echoes.js"
+  "leaderboard.js","comment.js","patchnote.js","donate.js","profile.js",
+  "setting.js","tip-guide.js","cookie-consent.js","time.js","booklist.js",
+  "knowladgelist.js","mystic-skill-panel.js","innerway.js","form.js",
+  "riddle-search.js","tales-echoes.js"
 ];
 
 // ============================================
@@ -1009,20 +560,15 @@ const lazy = [
 // ============================================
 (async function initApp() {
 
-  // ─────────────────────────────────────────
-  // 0. LOAD LANDPAGE + EXPOSE __triggerAppReady
-  // ─────────────────────────────────────────
   let __appReadyTriggered = false;
 
   window.__triggerAppReady = async function () {
     if (__appReadyTriggered) return;
     __appReadyTriggered = true;
 
-    // 🔥 CRITICAL
     await loadScripts(critical);
     console.log("✅ Critical loaded");
 
-    // ✅ app-ready — peta visible di belakang landpage
     document.body.classList.add("app-ready");
     const mapEl = document.getElementById('map');
     if (mapEl) {
@@ -1030,15 +576,12 @@ const lazy = [
       mapEl.style.visibility = '';
     }
 
-    // 🔥 IKON (wajib sebelum secondary)
     await loadScripts(preSecondary);
     console.log("✅ ikon.js loaded");
 
-    // 🔥 SECONDARY
     await loadScripts(secondary);
     console.log("⚙️ Secondary loaded");
 
-    // 🔥 MAIN.JS — window.map dibuat di dalam main.js
     await new Promise(resolve => {
       const main = document.createElement("script");
       main.src    = `main.js?v=${v}`;
@@ -1048,13 +591,11 @@ const lazy = [
     });
     console.log("✅ main.js loaded (safe)");
 
-    // ✅ invalidateSize SETELAH main.js — window.map baru tersedia di sini
     if (window.map && typeof window.map.invalidateSize === 'function') {
       setTimeout(() => window.map.invalidateSize(true), 50);
     }
   };
 
-  // Load landpage.js (RegionPicker)
   await new Promise(res => {
     const s = document.createElement('script');
     s.src    = `landpage.js?v=${v}`;
@@ -1063,21 +604,12 @@ const lazy = [
     document.body.appendChild(s);
   });
 
-  // ─────────────────────────────────────────
-  // 1. TAMPILKAN PICKER — tunggu user pilih
-  // ─────────────────────────────────────────
   if (window.RegionPicker) {
     window.__regionPick = await RegionPicker.show();
   }
 
-  // ─────────────────────────────────────────
-  // 2. TRIGGER APP-READY (idempotent)
-  // ─────────────────────────────────────────
   await window.__triggerAppReady();
 
-  // ─────────────────────────────────────────
-  // 3. LAZY LOAD
-  // ─────────────────────────────────────────
   const loadLazy = () => {
     loadScripts(lazy);
     console.log("🛌 Lazy loaded");
@@ -1100,30 +632,48 @@ if ("serviceWorker" in navigator) {
     .catch(err => console.error("❌ SW registration failed:", err));
 }
 </script>
-<!-- Lazy Load Preload Background -->
+
+<!-- FIX 4: Lazy loader untuk gambar patch popup (data-src → src) -->
 <script>
 (function() {
-  if (typeof window !== 'undefined') {
-    window.addEventListener('load', function() {
-      const overlay = document.getElementById('preloadOverlay');
-      if (!overlay) return;
-      
-      // Preload image
-      const img = new Image();
-      img.onload = function() {
-        overlay.classList.add('bg-loaded');
-        console.log('✅ Background image loaded');
-      };
-      img.onerror = function() {
-        console.warn('⚠️ Background image failed to load');
-      };
-      
-      // Start loading
-      img.src = 'https://tiles.bgonegaming.win/wherewindmeet/overlay/WWM.webp';
+  var _patchImgLoaded = false;
+
+  function loadPatchImages() {
+    if (_patchImgLoaded) return;
+    _patchImgLoaded = true;
+    document.querySelectorAll('.patch-popup [data-src]').forEach(function(img) {
+      img.src = img.dataset.src;
     });
+  }
+
+  // Hook ke showPatchPopup kalau sudah ada
+  var _checkInterval = setInterval(function() {
+    if (typeof window.showPatchPopup === 'function') {
+      clearInterval(_checkInterval);
+      var _orig = window.showPatchPopup;
+      window.showPatchPopup = function() {
+        loadPatchImages();
+        return _orig.apply(this, arguments);
+      };
+    }
+  }, 100);
+
+  // Fallback: MutationObserver kalau overlay muncul langsung
+  var overlay = document.getElementById('patchOverlay');
+  if (overlay) {
+    new MutationObserver(function(mutations) {
+      mutations.forEach(function(m) {
+        var el = m.target;
+        if (el.classList.contains('active') || el.style.display === 'block') {
+          loadPatchImages();
+        }
+      });
+    }).observe(overlay, { attributes: true, attributeFilter: ['class', 'style'] });
   }
 })();
 </script>
+
+<!-- Lazy Load Background WWM.webp — tidak dibutuhkan lagi, sudah via CSS -->
 
 </body>
 </html>
