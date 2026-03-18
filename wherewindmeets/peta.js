@@ -35,7 +35,7 @@ const MAP_PRESETS = {
   }
 };
 
-const FALLBACK_TILE = "https://tiles.bgonegaming.win/wherewindmeet/tiles/7_127_126.webp";
+const FALLBACK_TILE = "https://tiles.bgonegaming.win/wherewindmeet/tiles/5_15_15.webp?v=20251121";
 
 const MAP_ZOOM = {
   initial: 5,
