@@ -276,7 +276,7 @@ function showAllUIElements() {
   });
 }
 
-  // ============================================
+// ============================================
   // MAIN INIT
   // ============================================
   async function initApp() {
@@ -285,7 +285,7 @@ function showAllUIElements() {
     if (isPip) document.body.classList.add('pip-mode');
 
     try {
-     // ============================================
+      // ============================================
       // STEP 0: INIT MAP (LCP PRIORITY)
       // ============================================
       const mapReady = await waitForFunction('initializeMap');
@@ -298,11 +298,8 @@ function showAllUIElements() {
       if (!isPip && window.USE_PRELOAD !== false) {
         await showPreload();
       } else {
-        // Langsung sembunyikan overlay kalau tidak pakai preload
         const overlay = document.getElementById('preloadOverlay');
-        if (overlay) {
-          overlay.style.display = 'none';
-        }
+        if (overlay) overlay.style.display = 'none';
       }
 
       // ============================================
@@ -354,7 +351,6 @@ function showAllUIElements() {
         throw new Error('MarkerManager not found');
       }
 
-      // ✅ RegionLabelManager tidak kritis — jalankan idle
       if (window.RegionLabelManager?.init) {
         const initRegionLabel = () => {
           try {
@@ -377,7 +373,81 @@ function showAllUIElements() {
           console.warn('⚠️ MarkerImageHandler init failed:', error);
         }
       }
+
       updateLoadingProgress(80);
+
+      // ============================================
+      // Terapkan pilihan RegionPicker / Go to Location
+      // Diletakkan SETELAH MarkerManager.init agar
+      // activeMarkers dan filter sudah tersedia.
+      // ============================================
+      const pick = window.__regionPick;
+      if (pick) {
+
+        // 1. Switch preset map jika perlu (misal Hutuo)
+        if (pick.preset && pick.preset !== 'main') {
+          if (typeof _applyMapPreset === 'function') {
+            _applyMapPreset(pick.preset, false);
+          }
+        }
+
+        // 2. Set posisi awal peta
+        if (pick.lat != null && pick.lng != null) {
+          window.map.setView([pick.lat, pick.lng], pick.zoom ?? 5, { animate: false });
+          setTimeout(() => window.map.invalidateSize(true), 100);
+        }
+
+        // 3. Aktifkan filter kategori (dari Go to Location tab Mystic dll)
+        if (pick.filterCategory && window.MarkerManager) {
+          const catId = String(pick.filterCategory);
+          MarkerManager.activeFilters.add(catId);
+
+          // Sinkronkan checkbox di filter panel jika sudah render
+          const cb = document.querySelector(
+            `[data-category-id="${catId}"] .filter-checkbox, ` +
+            `[data-category-id="${catId}"] input[type="checkbox"]`
+          );
+          if (cb) cb.checked = true;
+
+          // Tandai filter item aktif
+          const fi = document.querySelector(`[data-category-id="${catId}"]`);
+          if (fi) fi.classList.add('active');
+
+          // Persist ke localStorage
+          try {
+            localStorage.setItem(
+              'activeFilters',
+              JSON.stringify([...MarkerManager.activeFilters])
+            );
+          } catch (e) {}
+
+          MarkerManager.updateMarkersInView();
+        }
+
+        // 4. Fly + buka popup marker (khusus Go to Location dari tab konten)
+        if (pick.goToLocation && pick.markerKey && window.MarkerManager) {
+          const tryClick = (attempt) => {
+            if (attempt >= 25) {
+              console.warn('[pick] Marker tidak ditemukan:', pick.markerKey);
+              return;
+            }
+            const marker = MarkerManager.activeMarkers?.[pick.markerKey];
+            if (marker && marker._icon) {
+              // Fly smooth, buka popup setelah animasi selesai
+              window.map.flyTo([pick.lat, pick.lng], 6, { animate: true, duration: 1.2 });
+              window.map.once('moveend', () => {
+                marker._icon.dispatchEvent(
+                  new MouseEvent('click', { bubbles: true, cancelable: true })
+                );
+              });
+            } else {
+              setTimeout(() => tryClick(attempt + 1), 200);
+            }
+          };
+          // Beri jeda 400ms agar updateMarkersInView selesai render
+          setTimeout(() => tryClick(0), 400);
+        }
+      }
 
       // ============================================
       // STEP 6: Underground System
@@ -387,7 +457,6 @@ function showAllUIElements() {
       if (await waitForUndergroundManager()) {
         try {
           const UG = window.UndergroundManager;
-
           if (UG && typeof UG.init === 'function') {
             await UG.init(window.map);
             console.log('✅ UndergroundManager initialized');
@@ -396,11 +465,9 @@ function showAllUIElements() {
               window.TimeUndergroundMarker.init(window.map);
               console.log('✅ TimeUndergroundMarker initialized');
             }
-
           } else {
             console.warn('⚠️ UndergroundManager found but invalid');
           }
-
         } catch (error) {
           console.warn('⚠️ UndergroundManager init failed:', error);
         }
@@ -423,7 +490,6 @@ function showAllUIElements() {
             MapSwitcher.init(window.map);
             console.log('✅ MapSwitcher initialized');
           }
-
         } catch (error) {
           console.warn('⚠️ RegionManager init failed:', error);
         }
@@ -443,9 +509,26 @@ function showAllUIElements() {
       updateLoadingProgress(98);
 
       // ============================================
-      // STEP 9: Selesai — tampilkan marker & tutup overlay
+      // STEP 9: Selesai — tampilkan map & tutup overlay
       // ============================================
       document.body.classList.add('app-ready');
+
+      // FIX 1 — Hapus inline style opacity:0 visibility:hidden pada #map.
+      // CSS body.app-ready #map { opacity: 1 !important } tidak cukup karena
+      // inline style selalu lebih spesifik dari class selector, !important sekalipun.
+      const mapEl = document.getElementById('map');
+      if (mapEl) {
+        mapEl.style.opacity = '';
+        mapEl.style.visibility = '';
+      }
+
+      // FIX 3 — Paksa Leaflet hitung ulang ukuran container.
+      // Saat initializeMap() dipanggil tadi, #map masih visibility:hidden
+      // sehingga Leaflet bisa mengukur dimensi 0x0 dan tile tidak dirender.
+      // invalidateSize(true) memaksanya ukur ulang sekarang div sudah visible.
+      if (window.map) {
+        setTimeout(() => window.map.invalidateSize(true), 50);
+      }
 
       if (window.IconManager?.showAllIcons) {
         window.IconManager.showAllIcons();
@@ -453,22 +536,20 @@ function showAllUIElements() {
       }
 
       updateLoadingText('Ready to explore!');
-      forceCompleteLoadingBar(); // → langsung 100%
+      forceCompleteLoadingBar();
 
     } catch (err) {
       console.error(err);
       updateLoadingText('Error loading map');
       alert(`Failed to initialize map:\n${err.message}\n\nPlease refresh the page.`);
 
-} finally {
+    } finally {
 
       // ============================================
       // UI FINALIZATION
       // ============================================
 
-      // ✅ HAPUS duplikat app-ready — sudah di-set di STEP 9
-      // document.body.classList.add('app-ready'); ← HAPUS
-
+      
       // ✅ Pastikan icons visible meski error sebelum STEP 9
       if (window.IconManager?.showAllIcons) {
         window.IconManager.showAllIcons();

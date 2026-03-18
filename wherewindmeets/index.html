@@ -184,26 +184,26 @@
   <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"></noscript>
   
   <!-- Main CSS - PRELOAD -->
-  <link rel="preload" href="styles.css?v=6.0.13" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="styles.css?v=6.0.13"></noscript>
+  <link rel="preload" href="styles.css?v=6.0.17" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="styles.css?v=6.0.17"></noscript>
   
   <!-- Fonts - PRELOAD dengan display=swap -->
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@700&display=swap" rel="stylesheet"></noscript>
   <script>
-    const CSS_VERSION = "6.0.12";
+    const CSS_VERSION = "6.0.17";
   </script>
 
+<!-- LandPage CSS — di head agar tampil sebelum JS apapun load -->
+<link rel="stylesheet" href="landpage.css">
+
 <style id="ui-visibility-control">
+  /* Semua UI peta tersembunyi sampai app-ready */
   body:not(.app-ready) {
     overflow: hidden !important;
-    position: fixed !important;
-    width: 100% !important;
-    height: 100% !important;
   }
   body.app-ready {
     overflow: auto !important;
-    position: relative !important;
   }
   body:not(.app-ready) .leaderboard-panel,
   body:not(.app-ready) .leaderboard-toggle,
@@ -215,17 +215,26 @@
   body:not(.app-ready) #loginModal,
   body:not(.app-ready) #commentsModal,
   body:not(.app-ready) .patch-overlay,
-  body:not(.app-ready) #sticky-ad-container,
+,
   body:not(.app-ready) #seo-content {
     opacity: 0 !important;
     visibility: hidden !important;
     pointer-events: none !important;
   }
-  #map,
-  #preloadOverlay {
+
+  /* Tampilkan map setelah app-ready (inline style di HTML sudah hide) */
+  body.app-ready #map {
     opacity: 1 !important;
     visibility: visible !important;
   }
+
+  /* Tampilkan underground setelah app-ready */
+  body.app-ready .underground-container {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
   body.app-ready .leaderboard-panel,
   body.app-ready .leaderboard-toggle,
   body.app-ready #notificationIcon,
@@ -233,14 +242,12 @@
     opacity: 1 !important;
     visibility: visible !important;
     pointer-events: auto !important;
-    transition: opacity 0.5s ease, visibility 0.5s ease !important;
+    transition: opacity 0.5s ease !important;
+    contain: layout paint !important;
   }
-
-  /* ✅ HAPUS filter-panel & filter-toggle dari rule app-ready di atas */
-  /* Biarkan JS yang kontrol via setTimeout di setupFilterUI() */
 </style>
 </head>  
-<body> 
+<body style="margin:0;background:#0b0f1a">
 
 <!-- ✅ SEO CONTENT — Visually hidden tapi AMAN untuk Google (bukan left:-9999px) -->
 <!--
@@ -365,7 +372,7 @@
     </a>
   </p>
 </noscript>
-<div id="map">
+<div id="map" style="opacity:0;visibility:hidden">
   <div id="notificationIcon"></div>
   <div id="notificationBox" style="display: none;">
     <h3>Notifications</h3>
@@ -375,7 +382,7 @@
   </div>
 </div>
 <!-- Preload Overlay -->
-<div id="preloadOverlay">
+<div id="preloadOverlay" style="display:none">
   <div id="preloadContainer">
     <img id="preloadEmotionIcon" 
      src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/impressed.webp"
@@ -441,7 +448,7 @@
 </div>
 
 <!-- Underground Container -->
-<div class="underground-container" id="undergroundContainer">
+<div class="underground-container" id="undergroundContainer" style="opacity:0;visibility:hidden;pointer-events:none">
   <button id="undergroundToggle" class="underground-toggle" title="Toggle Underground Floors">
     <img src="https://tiles.bgonegaming.win/wherewindmeet/Simbol/layericon.png" alt="Underground layer selector">
   </button>
@@ -526,7 +533,7 @@
           </strong>
           <p class="patch-description">
             Hexi region markers are now 100% complete. All locations across
-            Yumen Pass, Liangzhou, and Qinchuan are fully mapped and available.
+            Jade Gate Pass, Liangzhou, and Qinchuan are fully mapped and available.
           </p>
         </li>
         <li>
@@ -902,7 +909,6 @@ btnClose.addEventListener("click", function(e) {
 });
 </script>
 
-</script>
 <!-- Google AdSense Auto Ads -->  
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467"  
      crossorigin="anonymous"></script>  
@@ -916,6 +922,8 @@ btnClose.addEventListener("click", function(e) {
 
 <!-- Leaflet JS - DEFER untuk non-blocking -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+
 
 <!-- Google Sign-In (biarkan async) -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>  
@@ -1001,36 +1009,75 @@ const lazy = [
 // ============================================
 (async function initApp() {
 
-  // 🔥 1. LOAD CRITICAL
-  await loadScripts(critical);
-  console.log("✅ Critical loaded");
+  // ─────────────────────────────────────────
+  // 0. LOAD LANDPAGE + EXPOSE __triggerAppReady
+  // ─────────────────────────────────────────
+  let __appReadyTriggered = false;
 
-  // ✅ tampilkan UI awal (map sudah bisa muncul)
-  document.body.classList.add("app-ready");
+  window.__triggerAppReady = async function () {
+    if (__appReadyTriggered) return;
+    __appReadyTriggered = true;
 
-  // 🔥 1.5 LOAD IKON DULU (WAJIB SEBELUM LAYER)
-  await loadScripts(preSecondary);
-  console.log("✅ ikon.js loaded");
+    // 🔥 CRITICAL
+    await loadScripts(critical);
+    console.log("✅ Critical loaded");
 
-  // 🔥 2. LOAD SECONDARY (ikon.js sudah pasti tersedia)
-  await loadScripts(secondary);
-  console.log("⚙️ Secondary loaded");
+    // ✅ app-ready — peta visible di belakang landpage
+    document.body.classList.add("app-ready");
+    const mapEl = document.getElementById('map');
+    if (mapEl) {
+      mapEl.style.opacity    = '';
+      mapEl.style.visibility = '';
+    }
 
-  // ============================================
-  // 🔥 LOAD main.js DENGAN AWAIT
-  // ============================================
-  await new Promise((resolve) => {
-    const main = document.createElement("script");
-    main.src = `main.js?v=${v}`;
-    main.onload = resolve;
-    main.onerror = resolve;
-    document.body.appendChild(main);
+    // 🔥 IKON (wajib sebelum secondary)
+    await loadScripts(preSecondary);
+    console.log("✅ ikon.js loaded");
+
+    // 🔥 SECONDARY
+    await loadScripts(secondary);
+    console.log("⚙️ Secondary loaded");
+
+    // 🔥 MAIN.JS — window.map dibuat di dalam main.js
+    await new Promise(resolve => {
+      const main = document.createElement("script");
+      main.src    = `main.js?v=${v}`;
+      main.onload = resolve;
+      main.onerror = resolve;
+      document.body.appendChild(main);
+    });
+    console.log("✅ main.js loaded (safe)");
+
+    // ✅ invalidateSize SETELAH main.js — window.map baru tersedia di sini
+    if (window.map && typeof window.map.invalidateSize === 'function') {
+      setTimeout(() => window.map.invalidateSize(true), 50);
+    }
+  };
+
+  // Load landpage.js (RegionPicker)
+  await new Promise(res => {
+    const s = document.createElement('script');
+    s.src    = `landpage.js?v=${v}`;
+    s.onload = res;
+    s.onerror = res;
+    document.body.appendChild(s);
   });
-  console.log("✅ main.js loaded (safe)");
 
-  // ============================================
-  // 🛌 LOAD LAZY (tidak blocking)
-  // ============================================
+  // ─────────────────────────────────────────
+  // 1. TAMPILKAN PICKER — tunggu user pilih
+  // ─────────────────────────────────────────
+  if (window.RegionPicker) {
+    window.__regionPick = await RegionPicker.show();
+  }
+
+  // ─────────────────────────────────────────
+  // 2. TRIGGER APP-READY (idempotent)
+  // ─────────────────────────────────────────
+  await window.__triggerAppReady();
+
+  // ─────────────────────────────────────────
+  // 3. LAZY LOAD
+  // ─────────────────────────────────────────
   const loadLazy = () => {
     loadScripts(lazy);
     console.log("🛌 Lazy loaded");
