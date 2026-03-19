@@ -70,6 +70,209 @@ const filterGroupConfig = {
 };
 
 // ========================================
+// MARKER LINK UTILITY
+// ========================================
+const MarkerShare = {
+  initialized: false,
+
+  init() {
+    if (this.initialized) return;
+    this.initialized = true;
+
+    // Check URL parameters on page load
+    this.checkURLParameters();
+  },
+
+  /**
+   * Generate shareable link for a marker
+   */
+  generateLink(markerData) {
+    const baseURL = window.location.origin + window.location.pathname;
+    const params = new URLSearchParams({
+      lat: markerData.lat,
+      lng: markerData.lng,
+      zoom: '6',
+      category: markerData.category_id,
+      marker: markerData._key
+    });
+    
+    return `${baseURL}?${params.toString()}`;
+  },
+
+  /**
+   * Copy link to clipboard
+   */
+  async copyLink(markerKey) {
+    // Try multiple sources to find marker data
+    let markerData = null;
+    
+    // 1. Try MarkerManager.getAllMarkers() first (this is the correct method)
+    if (window.MarkerManager && typeof window.MarkerManager.getAllMarkers === 'function') {
+      const allMarkers = window.MarkerManager.getAllMarkers();
+      markerData = allMarkers.find(m => m._key === markerKey);
+    }
+    
+    // 2. Fallback: Try window.allMarkers if it exists
+    if (!markerData && window.allMarkers && Array.isArray(window.allMarkers)) {
+      markerData = window.allMarkers.find(m => m._key === markerKey);
+    }
+    
+    // 3. Last resort: Get from active marker's stored data
+    if (!markerData && window.MarkerManager?.activeMarkers?.[markerKey]) {
+      const activeMarker = window.MarkerManager.activeMarkers[markerKey];
+      
+      // Construct marker data from active marker properties
+      markerData = {
+        _key: markerKey,
+        lat: activeMarker.getLatLng().lat,
+        lng: activeMarker.getLatLng().lng,
+        category_id: activeMarker.categoryId || '1'
+      };
+    }
+    
+    if (!markerData) {
+      console.error('Marker data not found:', markerKey);
+      this.showNotification('Failed to generate link', 'error');
+      return false;
+    }
+
+    const link = this.generateLink(markerData);
+
+    try {
+      await navigator.clipboard.writeText(link);
+      this.showNotification('Link copied to clipboard!');
+      return true;
+    } catch (err) {
+      console.error('Failed to copy link:', err);
+      // Fallback for older browsers
+      this.fallbackCopyLink(link);
+      return true;
+    }
+  },
+
+  /**
+   * Fallback copy method for older browsers
+   */
+  fallbackCopyLink(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.select();
+    
+    try {
+      document.execCommand('copy');
+      this.showNotification('Link copied to clipboard!');
+    } catch (err) {
+      console.error('Fallback copy failed:', err);
+      this.showNotification('Failed to copy link');
+    }
+    
+    document.body.removeChild(textArea);
+  },
+
+  /**
+   * Show notification
+   */
+  showNotification(message, type = 'success') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = 'marker-link-notification';
+    notification.textContent = message;
+    
+    // Set background color based on type
+    const bgColor = type === 'error' 
+      ? 'rgba(211, 47, 47, 0.95)' 
+      : 'rgba(92, 62, 14, 0.95)';
+    
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: ${bgColor};
+      color: #ffd88a;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 10000;
+      font-family: 'Crimson Pro', serif;
+      font-size: 14px;
+      animation: slideIn 0.3s ease;
+    `;
+
+    document.body.appendChild(notification);
+
+    // Remove after 3 seconds
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => {
+        document.body.removeChild(notification);
+      }, 300);
+    }, 3000);
+  },
+
+  /**
+   * Check URL parameters and navigate to marker if present
+   */
+  checkURLParameters() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    const lat = urlParams.get('lat');
+    const lng = urlParams.get('lng');
+    const zoom = urlParams.get('zoom');
+    const category = urlParams.get('category');
+    const markerKey = urlParams.get('marker');
+
+    if (lat && lng && category && markerKey) {
+
+      
+      // Store in window for use in main.js
+      window.__markerLinkParams = {
+        lat: parseFloat(lat),
+        lng: parseFloat(lng),
+        zoom: parseInt(zoom) || 6,
+        filterCategory: category,
+        markerKey: markerKey,
+        goToLocation: true,
+        skipLandingPage: true
+      };
+
+      // Clean URL (remove parameters)
+      const cleanURL = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, cleanURL);
+    }
+  }
+};
+
+// Add CSS for notification animation
+const styleSheet = document.createElement('style');
+styleSheet.textContent = `
+  @keyframes slideIn {
+    from {
+      transform: translateX(400px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideOut {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(400px);
+      opacity: 0;
+    }
+  }
+`;
+document.head.appendChild(styleSheet);
+
+// ========================================
 // MARKER MANAGER
 // ========================================
 const MarkerManager = {
@@ -84,7 +287,7 @@ const MarkerManager = {
    */
   init(map) {
     this.map = map;
-    if (typeof MarkerLinker !== 'undefined') MarkerLinker.init(); // ← tambah ini
+    if (typeof MarkerShare !== 'undefined') MarkerLinker.init(); // ← tambah ini
     this.initializeFilters();
     this.setupFilterUI();
     this.setupEventListeners();
@@ -491,9 +694,7 @@ createPopupContent(markerData, editState = {}) {
   const rawDesc = description !== 'No description available'
   ? description.replace(/\n/g, '<br>')
   : description;
-const formattedDesc = typeof MarkerLinker !== 'undefined'
-  ? MarkerLinker.parseDescription(rawDesc)
-  : rawDesc;
+  const formattedDesc = rawDesc;
 
   // Check visited status from localStorage
   if (!_visitedCache) {
@@ -525,9 +726,17 @@ const formattedDesc = typeof MarkerLinker !== 'undefined'
     description: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>`,
     save: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>`,
     cancel: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`,
-    copy: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`,
+    copy: `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+  
+  <!-- Kotak lebih besar & naik -->
+  <rect x="5" y="8.5" width="12" height="12" rx="2.2"></rect>
+
+  <!-- Panah di atas -->
+  <path d="M9 14V9c0-3 2-5 5-5h3V3l4 4-4 4V8h-3c-1.5 0-2.5 1-2.5 2.5V14z"></path>
+
+</svg>`,
     check: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
-    link: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`,
+    link: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`,
     comment: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>`,
     play: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 <circle cx="12" cy="12" r="10"></circle>
@@ -784,7 +993,18 @@ if (editState.editingName) {
   headerHTML = `
     <div class="marker-popup-header">
       <h3>${markerData.name || 'Unnamed Location'}</h3>
-      <button class="marker-popup-section-edit-btn" onclick="event.stopPropagation(); startEdit('${markerKey}', 'name')" title="Edit Name">
+      
+      <!-- Copy Link Button (Icon Only) -->
+      <button class="marker-popup-header-copy-link-btn" 
+              onclick="event.stopPropagation(); MarkerShare.copyLink('${markerKey}')" 
+              title="Copy Link">
+        ${SVG_ICONS.copy}
+      </button>
+      
+      <!-- Edit Button (Hidden by CSS) -->
+      <button class="marker-popup-section-edit-btn" 
+              onclick="event.stopPropagation(); startEdit('${markerKey}', 'name')" 
+              title="Edit Name">
         <img src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/edit.png?updatedAt=1762987960006" alt="Edit">
       </button>
     </div>
@@ -834,7 +1054,7 @@ return `
     <!-- 🎯 PART NAVIGATION -->
     ${partNavigationHTML}
 
-    <!-- Footer Section (Visited + YSID ONLY) -->
+    <!-- Footer Section (Visited + YSID) -->
     <div class="marker-popup-footer">
 
       <!-- Left: Visited -->
@@ -1065,7 +1285,7 @@ createAndAddMarker(markerData, lat, lng, markerKey) {
   
   const popupContent = this.createPopupContent(markerData);
   const leafletMarker = L.marker([lat, lng], { icon: finalIcon })
-    .bindPopup(popupContent, { maxWidth: 300, minWidth: 280 });
+    .bindPopup(popupContent, { maxWidth: 420, minWidth: 340 });
   leafletMarker.on('popupopen', () => {
   console.log("📍 Active Marker:", markerKey);
 });
@@ -1784,7 +2004,9 @@ function showNotification(message, type = 'success') {
 // GLOBAL EXPORTS
 // ========================================
 window.MarkerManager = MarkerManager;
+window.MarkerShare = MarkerShare;
 window.loadVisitedMarkersFromServer = loadVisitedMarkersFromServer;
 
 console.log('✅ MarkerManager exported to window');
+console.log('✅ MarkerShare exported to window');
 console.log('✅ loadVisitedMarkersFromServer exported to window');

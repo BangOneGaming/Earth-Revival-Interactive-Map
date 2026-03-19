@@ -203,7 +203,7 @@ body.app-ready.filter-ready .filter-panel {
 .marker-popup {
   position: relative;
   min-width: 280px;
-  max-width: 350px;
+  max-width: 550px;
   font-family: 'Crimson Pro', serif;
   background: var(--ink-deep);
   color: var(--text-bright);
@@ -388,6 +388,7 @@ body.app-ready.filter-ready .filter-panel {
   color: var(--gold-bright);
   line-height: 1.4;
   letter-spacing: 1px;
+  padding-right: 9px;
   text-shadow: 0 0 24px rgba(240, 192, 96, 0.3);
 }
 
@@ -401,6 +402,190 @@ body.app-ready.filter-ready .filter-panel {
 
 .marker-popup-header > .marker-popup-section-edit-btn {
   display: none !important;
+}
+
+/**
+ * Marker Link Feature Styles
+ * Styling untuk tombol Copy Link di header (icon only)
+ */
+
+/* ========================================
+   COPY LINK BUTTON IN HEADER
+   ======================================== */
+
+.marker-popup-header-copy-link-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent; /* hilangkan background */
+  border: none; /* hilangkan border */
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+  z-index: 10;
+}
+
+.marker-popup-header-copy-link-btn:hover {
+  background: transparent;
+  border: none;
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: none; /* opsional, biar clean */
+}
+
+.marker-popup-header-copy-link-btn:active {
+  transform: translateY(-50%) scale(0.95);
+  box-shadow: none;
+}
+
+.marker-popup-header-copy-link-btn svg {
+  width: 14px;
+  height: 14px;
+  stroke: #ffd88a;
+}
+
+/* ========================================
+   LINK NOTIFICATION
+   ======================================== */
+
+.marker-link-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(92, 62, 14, 0.95);
+  color: #ffd88a;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  font-family: 'Crimson Pro', serif;
+  font-size: 14px;
+  font-weight: 600;
+  animation: slideIn 0.3s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 216, 138, 0.3);
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  .marker-link-notification {
+    right: 10px;
+    left: 10px;
+    top: 10px;
+    text-align: center;
+  }
+
+  .marker-popup-header-copy-link-btn {
+    width: 28px;
+    height: 28px;
+    right: 10px;
+  }
+
+  .marker-popup-header-copy-link-btn svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .marker-popup-header-copy-link-btn {
+    width: 26px;
+    height: 26px;
+    right: 8px;
+  }
+
+  .marker-popup-header-copy-link-btn svg {
+    width: 11px;
+    height: 11px;
+  }
+}
+
+/* ========================================
+   DARK MODE SUPPORT
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  .marker-popup-header-copy-link-btn {
+    background: linear-gradient(135deg, rgba(92, 62, 14, 0.4), rgba(92, 62, 14, 0.3));
+  }
+
+  .marker-popup-header-copy-link-btn:hover {
+    background: linear-gradient(135deg, rgba(92, 62, 14, 0.6), rgba(92, 62, 14, 0.5));
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+   ======================================== */
+
+.marker-popup-header-copy-link-btn:focus {
+  outline: 2px solid rgba(255, 216, 138, 0.5);
+  outline-offset: 2px;
+}
+
+.marker-popup-header-copy-link-btn:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .marker-popup-header-copy-link-btn {
+    border-width: 2px;
+    border-color: #ffd88a;
+  }
+
+  .marker-link-notification {
+    border-width: 2px;
+    border-color: #ffd88a;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .marker-popup-header-copy-link-btn,
+  .marker-link-notification {
+    transition: none;
+    animation: none;
+  }
+
+  .marker-popup-header-copy-link-btn:hover {
+    transform: translateY(-50%);
+  }
 }
 
 /* =========================================

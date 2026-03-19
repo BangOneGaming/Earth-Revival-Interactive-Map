@@ -25,23 +25,24 @@ const LABEL_CONFIG = {
 
 // Zoom level 5: Sub-regions (SEDANG)
 zoom_5: [
-  { "name": "Verdant Wilds",     "lat": 130.92766841618575, "lng": 198.2494502067566,  "size": 26, "map_type": "Qinghe" },
-  { "name": "Moonveil Mountain", "lat": 131.34873125328068, "lng": 182.43181371688843, "size": 26, "map_type": "Qinghe" },
-  { "name": "Sundara Land",      "lat": 120.95253073067192, "lng": 187.95543956756592, "size": 26, "map_type": "Qinghe" },
+  { "name": "Verdant Wilds",     "cn_name": "百草野", "lat": 130.92766841618575, "lng": 198.2494502067566,  "size": 26, "map_type": "Qinghe" },
+  { "name": "Moonveil Mountain", "cn_name": "隐月山", "lat": 131.34873125328068, "lng": 182.43181371688843, "size": 26, "map_type": "Qinghe" },
+  { "name": "Sundara Land",      "cn_name": "善妙洲", "lat": 120.95253073067192, "lng": 187.95543956756592, "size": 26, "map_type": "Qinghe" },
 
-  { "name": "Kaifeng City",      "lat": 148.45886927147313, "lng": 167.75539636611938, "size": 26, "map_type": "Kaifeng" },
-  { "name": "Granary of Plenty", "lat": 165.93423477511217, "lng": 175.93012166023254, "size": 26, "map_type": "Kaifeng" },
-  { "name": "Jadewood Court",    "lat": 161.8376638217751,  "lng": 161.29809069633484, "size": 26, "map_type": "Kaifeng" },
-  { "name": "Roaring Sands",     "lat": 141.4049587992937,  "lng": 155.73852682113647, "size": 26, "map_type": "Kaifeng" },
+  { "name": "Kaifeng City",      "cn_name": "开封城", "lat": 148.45886927147313, "lng": 167.75539636611938, "size": 26, "map_type": "Kaifeng" },
+  { "name": "Granary of Plenty", "cn_name": "太仓粟", "lat": 165.93423477511217, "lng": 175.93012166023254, "size": 26, "map_type": "Kaifeng" },
+  { "name": "Jadewood Court",    "cn_name": "琼林苑", "lat": 161.8376638217751,  "lng": 161.29809069633484, "size": 26, "map_type": "Kaifeng" },
+  { "name": "Roaring Sands",     "cn_name": "博浪沙", "lat": 141.4049587992937,  "lng": 155.73852682113647, "size": 26, "map_type": "Kaifeng" },
 
-  { "name": "Jade Gate Pass", "lat": 34.19193026737213,  "lng": 27.556250003245143, "size": 26, "map_type": "Hexi" },
-  { "name": "Liangzhou",  "lat": 46.23956782958546,  "lng": 51.31959538855816,  "size": 26, "map_type": "Hexi" },
-  { "name": "Qinchuan",   "lat": 76.38501880776012,  "lng": 77.3876244232804,   "size": 26, "map_type": "Hexi" },
+  { "name": "Jade Gate Pass", "cn_name": "玉门关", "lat": 34.19193026737213,  "lng": 27.556250003245143, "size": 26, "map_type": "Hexi" },
+  { "name": "Liangzhou",      "cn_name": "凉州",   "lat": 46.23956782958546,  "lng": 51.31959538855816,  "size": 26, "map_type": "Hexi" },
+  { "name": "Qinchuan",       "cn_name": "秦川",   "lat": 76.38501880776012,  "lng": 77.3876244232804,   "size": 26, "map_type": "Hexi" },
 
-  { "name": "Suixiang", "lat": 102.03556094524335, "lng": 196.38766062491666, "size": 26, "map_type": "Bujian Mountain" },
-  { "name": "Tianxing", "lat": 91.8496558876488,   "lng": 197.92790860819716, "size": 26, "map_type": "Bujian Mountain" },
-  { "name": "Fukasawa", "lat": 110.99789399003295,  "lng": 197.58816012975927, "size": 26, "map_type": "Bujian Mountain" },
-  { "name": "Hutuo", "lat": 34.207554,  "lng": 18.271504, "size": 24, "map_type": "Bujian Mountain", "preset_map": "hutuo" }
+  { "name": "Suixiang", "cn_name": "绥乡", "lat": 102.03556094524335, "lng": 196.38766062491666, "size": 26, "map_type": "Bujian Mountain" },
+  { "name": "Tianxing", "cn_name": "天陉", "lat": 91.8496558876488,   "lng": 197.92790860819716, "size": 26, "map_type": "Bujian Mountain" },
+  { "name": "Fukasawa", "cn_name": "深泽", "lat": 110.99789399003295,  "lng": 197.58816012975927, "size": 26, "map_type": "Bujian Mountain" },
+
+  { "name": "Hutuo", "lat": 34.207554, "lng": 18.271504, "size": 24, "map_type": "Bujian Mountain", "preset_map": "hutuo" }
 ],
 
 // Zoom level 6: Subareas

@@ -527,6 +527,13 @@ const RegionPicker = (function () {
   // ─────────────────────────────────────────
 
   function show() {
+    // 🆕 CHECK: Skip landing page if marker link params exist
+    if (window.__markerLinkParams && window.__markerLinkParams.skipLandingPage) {
+      console.log('[RegionPicker] Skipping landing page - marker link detected');
+      // Return immediately without showing the landing page
+      return Promise.resolve(window.__markerLinkParams);
+    }
+
     return new Promise(resolve => {
       _resolve = resolve;
 

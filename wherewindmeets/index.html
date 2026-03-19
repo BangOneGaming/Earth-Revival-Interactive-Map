@@ -29,14 +29,11 @@
 
   <meta name="theme-color" content="#5c3e0e" />
 
-  <!-- PRECONNECT hanya yang critical -->
   <link rel="preload" href="https://unpkg.com/leaflet/dist/leaflet.js" as="script">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="dns-prefetch" href="https://unpkg.com">
   <link rel="dns-prefetch" href="https://ik.imagekit.io">
-  <!-- FIX 1: HAPUS preload WWM.webp — 907KiB tidak boleh masuk critical path -->
-  <!-- <link rel="preload" href="...WWM.webp" as="image" fetchpriority="high"> DIHAPUS -->
 
   <script>
     window.USE_PRELOAD = false;
@@ -121,6 +118,7 @@
   }
   </script>
 
+  <!-- CRITICAL CSS -->
   <link rel="preload" href="https://unpkg.com/leaflet/dist/leaflet.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"></noscript>
 
@@ -132,7 +130,698 @@
 
   <script>const CSS_VERSION = "6.0.17";</script>
 
-  <link rel="stylesheet" href="landpage.css">
+  <!-- ═══════════════════════════════════════════════════════
+       LANDPAGE CSS — inlined (no extra HTTP request)
+       ═══════════════════════════════════════════════════════ -->
+  <style>
+  /**
+   * RegionPicker — landpage.css  (inlined into index.html)
+   * Wuxia aesthetic. 5 tabs. Lazy content panels.
+   */
+
+  #regionPickerPage {
+    --ink:      #0b0f1a;
+    --ink2:     #121827;
+    --ink3:     #1c2638;
+    --gold:     #f0c060;
+    --gold2:    #c8962a;
+    --gold3:    #7a5a18;
+    --goldbg:   rgba(240,192,96,0.10);
+    --jade:     #5cb8a0;
+    --txt:      #f5ead0;
+    --txt2:     #c8b89a;
+    --txt3:     #7a6a54;
+    --border:   rgba(200,150,42,0.35);
+    --border2:  rgba(200,150,42,0.12);
+  }
+
+  #regionPickerPage {
+    position: fixed;
+    inset: 0;
+    z-index: 9992;
+    background-color: var(--ink);
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    overflow: hidden;
+  }
+
+  /* Background image only loads once .active is applied (after JS runs) */
+  #regionPickerPage.active {
+    background-image: url('https://tiles.bgonegaming.win/wherewindmeet/overlay/WWM.webp');
+  }
+
+  #regionPickerPage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom,
+      rgba(6,9,18,0.93) 0%,
+      rgba(6,9,18,0.78) 40%,
+      rgba(6,9,18,0.90) 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #regionPickerPage > * { position: relative; z-index: 1; }
+  #regionPickerPage.active  { opacity: 1; }
+  #regionPickerPage.leaving {
+    opacity: 0;
+    pointer-events: none !important;
+    transition: opacity 0.3s ease !important;
+  }
+
+  @keyframes rpFadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes rpLineExpand {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+  @keyframes rpSpin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ── Hero ─────────────────────────────────── */
+  .rp-hero {
+    padding: 44px 40px 20px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  #regionPickerPage.active .rp-eyebrow  { animation: rpFadeUp 0.5s ease both 0.08s; }
+  #regionPickerPage.active .rp-title    { animation: rpFadeUp 0.5s ease both 0.18s; }
+  #regionPickerPage.active .rp-subtitle { animation: rpFadeUp 0.5s ease both 0.26s; }
+  #regionPickerPage.active .rp-divider  { animation: rpLineExpand 0.55s cubic-bezier(0.22,1,0.36,1) both 0.34s; }
+  #regionPickerPage.active .rp-tabs     { animation: rpFadeUp 0.5s ease both 0.42s; }
+
+  .rp-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--gold2);
+    margin: 0 0 14px;
+    opacity: 0.65;
+  }
+
+  .rp-title {
+    font-family: 'Cinzel', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 1.5px;
+    margin: 0 0 8px;
+  }
+
+  .rp-subtitle {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--txt2);
+    margin: 0 0 20px;
+  }
+
+  .rp-divider {
+    width: 220px;
+    height: 1px;
+    margin: 0 auto 22px;
+    transform-origin: center;
+    background: linear-gradient(90deg,
+      transparent, var(--gold3) 25%, var(--gold2) 50%, var(--gold3) 75%, transparent);
+  }
+
+  /* ── Tab bar ──────────────────────────────── */
+  .rp-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding: 0 20px;
+  }
+
+  .rp-tab {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--txt3);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 8px 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .rp-tab:hover {
+    border-color: var(--gold2);
+    color: var(--txt2);
+    background: var(--goldbg);
+  }
+
+  .rp-tab.active {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(240,192,96,0.08);
+  }
+
+  .rp-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 18%;
+    right: 18%;
+    height: 2px;
+    background: var(--gold);
+  }
+
+  /* ── Body ─────────────────────────────────── */
+  .rp-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 40px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold3) transparent;
+  }
+
+  .rp-body::-webkit-scrollbar       { width: 3px; }
+  .rp-body::-webkit-scrollbar-track { background: transparent; }
+  .rp-body::-webkit-scrollbar-thumb { background: var(--gold3); border-radius: 2px; }
+
+  /* ── Panels ───────────────────────────────── */
+  .rp-panel        { display: none; }
+  .rp-panel.active { display: block; }
+
+  /* ── Empty state ──────────────────────────── */
+  .rp-empty {
+    text-align: center;
+    padding: 60px 20px;
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--txt3);
+  }
+
+  /* ── Region panel: major accordion ───────── */
+  .rp-major {
+    border-top: 1px solid var(--border);
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  #regionPickerPage.active .rp-major {
+    animation: rpFadeUp 0.45s ease forwards;
+    animation-delay: calc(0.48s + var(--mi, 0) * 0.08s);
+  }
+
+  .rp-major-btn {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 16px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: padding-left 0.2s ease, background 0.2s ease;
+  }
+
+  .rp-major-btn:hover        { padding-left: 8px; background: rgba(240,192,96,0.03); }
+  .rp-major.open .rp-major-btn {
+    padding-left: 5px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rp-major-label {
+    flex: 1;
+    text-align: left;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .rp-major-cn {
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: var(--gold2);
+    opacity: 0.5;
+    text-transform: none;
+  }
+
+  .rp-major-count {
+    font-family: 'Crimson Pro', serif;
+    font-size: 12px;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--txt3);
+    opacity: 0.6;
+  }
+
+  .rp-arrow {
+    width: 14px; height: 14px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.35;
+    transition: transform 0.22s ease, opacity 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .rp-major.open .rp-arrow { transform: rotate(90deg); opacity: 0.7; }
+  .rp-arrow svg { width: 10px; height: 10px; stroke: var(--gold2); fill: none; }
+
+  /* Sub grid */
+  .rp-sub-grid {
+    display: none;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1px;
+    background: rgba(200,150,42,0.07);
+    margin-bottom: 2px;
+  }
+
+  .rp-major.open .rp-sub-grid { display: grid; }
+
+  .rp-sub-btn {
+    background: rgba(8,12,22,0.72);
+    border: none;
+    color: var(--txt2);
+    font-family: 'Crimson Pro', serif;
+    font-size: 14px;
+    padding: 16px 18px;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    transition: background 0.15s ease, color 0.15s ease, padding-left 0.15s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rp-sub-btn::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--gold2);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.18s ease;
+  }
+
+  .rp-sub-btn:hover { background: rgba(240,192,96,0.07); color: var(--txt); padding-left: 24px; }
+  .rp-sub-btn:hover::before { transform: scaleY(1); }
+  .rp-sub-btn:active { background: rgba(240,192,96,0.12); }
+
+  .rp-sub-name { font-size: 14px; line-height: 1.3; }
+  .rp-sub-cn   { font-size: 11px; color: var(--txt3); font-style: italic; letter-spacing: 1px; }
+  .rp-sub-hint { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 1px; color: var(--jade); opacity: 0.6; text-transform: uppercase; margin-top: 2px; }
+
+  .rp-end { border-top: 1px solid var(--border); }
+
+  /* ── Mystic skill grid ────────────────────── */
+  .rp-skill-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 1px;
+    background: rgba(200,150,42,0.07);
+    margin: 20px 0;
+  }
+
+  .rp-skill-card {
+    background: rgba(8,12,22,0.72);
+    border: none;
+    color: var(--txt2);
+    font-family: 'Crimson Pro', serif;
+    padding: 20px 12px 16px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.18s ease, color 0.18s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rp-skill-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gold2);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.2s ease;
+  }
+
+  .rp-skill-card:hover { background: rgba(240,192,96,0.07); color: var(--txt); }
+  .rp-skill-card:hover::before { transform: scaleX(1); }
+
+  .rp-skill-icon {
+    width: 72px; height: 72px;
+    object-fit: contain;
+    filter: drop-shadow(0 3px 8px rgba(0,0,0,0.6));
+    transition: transform 0.25s ease;
+  }
+
+  .rp-skill-card:hover .rp-skill-icon { transform: scale(1.08) translateY(-2px); }
+
+  .rp-skill-name {
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.35;
+    transition: color 0.18s ease;
+  }
+
+  .rp-skill-card:hover .rp-skill-name { color: var(--gold); }
+
+  .rp-skill-parts {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--jade);
+    opacity: 0.7;
+  }
+
+  /* ── Mystic detail view ───────────────────── */
+  .rp-detail-view { padding: 20px 0 32px; }
+
+  .rp-detail-back {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--txt3);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .rp-detail-back:hover {
+    border-color: var(--gold2);
+    color: var(--txt2);
+    background: var(--goldbg);
+    transform: translateX(-2px);
+  }
+
+  .rp-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .rp-detail-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--gold3), var(--gold2) 30%, transparent 70%);
+  }
+
+  .rp-detail-hero-icon {
+    width: 72px; height: 72px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 14px rgba(240,192,96,0.25));
+    flex-shrink: 0;
+  }
+
+  .rp-detail-title {
+    font-family: 'Cinzel', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 1px;
+  }
+
+  .rp-detail-body { display: flex; flex-direction: column; gap: 20px; }
+
+  .rp-detail-part {
+    border: 1px solid var(--border2);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+  }
+
+  .rp-detail-part::before {
+    content: '';
+    position: absolute;
+    top: 6px; left: 6px;
+    width: 14px; height: 14px;
+    border-top: 1px solid var(--gold3);
+    border-left: 1px solid var(--gold3);
+  }
+
+  .rp-detail-part-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold2);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .rp-detail-loc-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--txt2);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    cursor: pointer;
+    align-self: flex-start;
+    transition: all 0.2s ease;
+  }
+
+  .rp-detail-loc-btn:hover {
+    background: var(--goldbg);
+    border-color: var(--gold2);
+    color: var(--gold);
+    transform: translateY(-1px);
+  }
+
+  .rp-detail-desc {
+    font-family: 'Crimson Pro', serif;
+    font-size: 14.5px;
+    line-height: 1.8;
+    color: var(--txt2);
+    white-space: pre-wrap;
+  }
+
+  .rp-detail-empty {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--txt3);
+  }
+
+  .rp-detail-section {
+    border: 1px solid var(--border2);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .rp-detail-section-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold2);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .rp-detail-row { display: flex; align-items: baseline; gap: 12px; }
+
+  .rp-detail-key {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold2);
+    min-width: 72px;
+    flex-shrink: 0;
+  }
+
+  .rp-detail-val {
+    font-family: 'Crimson Pro', serif;
+    font-size: 14px;
+    color: var(--txt2);
+    line-height: 1.5;
+  }
+
+  .rp-detail-badge {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--gold);
+    background: rgba(240,192,96,0.12);
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    min-width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .rp-detail-effect {
+    font-family: 'Crimson Pro', serif;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--txt2);
+    border-left: 2px solid var(--gold3);
+    padding-left: 12px;
+    margin-top: 4px;
+  }
+
+  /* ── Footer ───────────────────────────────── */
+  .rp-footer {
+    padding: 12px 40px 28px;
+    text-align: center;
+    flex-shrink: 0;
+    border-top: 1px solid var(--border2);
+  }
+
+  .rp-skip {
+    background: transparent;
+    border: none;
+    color: var(--txt3);
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 6px 16px;
+    transition: color 0.2s ease;
+  }
+
+  .rp-skip:hover { color: var(--txt2); }
+
+  /* ── Loading stage (tab 2-5) ──────────────── */
+  .rp-lazy-wrap { padding: 0; }
+
+  .rp-lazy-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px 50px;
+    gap: 16px;
+    min-height: 260px;
+  }
+
+  .rp-lp-spinner {
+    width: 36px;
+    height: 36px;
+    border: 2px solid rgba(200,150,42,0.15);
+    border-top-color: var(--gold2);
+    border-right-color: var(--gold3);
+    border-radius: 50%;
+    animation: rpSpin 0.9s linear infinite;
+    flex-shrink: 0;
+  }
+
+  .rp-lp-label {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold2);
+  }
+
+  .rp-lp-bar-wrap {
+    width: 200px;
+    height: 3px;
+    background: var(--border2);
+    border-radius: 2px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .rp-lp-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--gold3), var(--gold));
+    border-radius: 2px;
+    transition: width 0.4s ease-out;
+  }
+
+  .rp-lp-sub {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--txt3);
+    min-height: 18px;
+  }
+
+  /* ── Responsive ───────────────────────────── */
+  @media (max-width: 640px) {
+    .rp-hero    { padding: 32px 16px 16px; }
+    .rp-title   { font-size: 19px; }
+    .rp-body    { padding: 0 16px; }
+    .rp-footer  { padding: 10px 16px 20px; }
+
+    .rp-tab { font-size: 9px; letter-spacing: 1.5px; padding: 7px 12px; }
+
+    .rp-major-btn { font-size: 10px; letter-spacing: 2px; padding: 14px 0; }
+    .rp-sub-grid  { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+    .rp-sub-btn   { padding: 14px 14px; font-size: 13px; }
+
+    .rp-skill-grid { grid-template-columns: repeat(3, 1fr); }
+    .rp-skill-icon { width: 56px; height: 56px; }
+    .rp-skill-name { font-size: 12px; }
+
+    .rp-detail-title     { font-size: 16px; }
+    .rp-detail-hero-icon { width: 56px; height: 56px; }
+    .rp-detail-part      { padding: 14px; }
+    .rp-detail-desc      { font-size: 13.5px; }
+  }
+
+  @media (max-width: 380px) {
+    .rp-tabs { gap: 4px; }
+    .rp-tab  { font-size: 8.5px; padding: 6px 10px; }
+    .rp-skill-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  </style>
 
   <style id="ui-visibility-control">
     body:not(.app-ready) { overflow: hidden !important; }
@@ -217,8 +906,6 @@
   </div>
 </div>
 
-<!-- FIX 2: preloadOverlay — hapus fetchpriority="high" dan loading="eager"
-     USE_PRELOAD=false jadi overlay tidak pernah tampil, tidak perlu prioritas tinggi -->
 <div id="preloadOverlay" style="display:none">
   <div id="preloadContainer">
     <img id="preloadEmotionIcon"
@@ -314,12 +1001,10 @@
   </div>
 </div>
 
-<!-- FIX 3: Patch popup — semua img ganti ke data-src, tambah width/height untuk fix CLS -->
 <div class="patch-overlay" id="patchOverlay" data-google-adsense-nooverlay="true">
   <div class="patch-popup" data-no-ad="true">
     <button class="patch-close" onclick="closePatchPopup()">&times;</button>
     <div class="patch-header">
-      <!-- FIX: hapus fetchpriority="high" dan loading="eager", ganti src ke data-src -->
       <img
         data-src="https://ik.imagekit.io/k3lv5clxs/wherewindmeet/BangOne.webp"
         alt="Where Winds Meet Map Update"
@@ -373,7 +1058,6 @@
           <p class="patch-description">A draggable floating window has been added — keep marker details visible while freely exploring the map.</p>
         </li>
       </ul>
-
       <h3>Previous Improvements</h3>
       <ul class="patch-list">
         <li>
@@ -415,7 +1099,6 @@
         </li>
       </ul>
     </div>
-
     <div class="patch-footer">
       <p><strong>Thank you for your support</strong><br>Your contributions help improve the Where Winds Meet Interactive Map for the entire community.</p>
       <div class="patch-contact">
@@ -521,6 +1204,554 @@ btnClose.addEventListener("click", function(e) {
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="username.js" defer></script>
 
+<!-- ═══════════════════════════════════════════════════════════
+     REGIONPICKER — inlined (no extra HTTP request for landpage.js)
+     ═══════════════════════════════════════════════════════════ -->
+<script>
+/**
+ * RegionPicker — Where Winds Meet
+ * 5 tabs: Region · Mystic Skills · Innerway · Knowledge · Tales & Echoes
+ *
+ * Tab 1 (Region): resolve langsung, tidak trigger app-ready
+ * Tab 2-5 (Lazy): trigger window.__triggerAppReady() di background,
+ *                 tunggu data siap, lalu render — landpage tetap di atas
+ */
+const RegionPicker = (function () {
+  'use strict';
+
+  let _resolve      = null;
+  let _appReadyDone = false;
+  let _appReadyCallbacks = [];
+
+  // ── Region data ─────────────────────────────
+  function _getData() {
+    const config = window.LABEL_CONFIG || (
+      window.RegionLabelManager?._getLabelConfig
+        ? {
+            zoom_3_4: window.RegionLabelManager._getLabelConfig('zoom_3_4'),
+            zoom_5:   window.RegionLabelManager._getLabelConfig('zoom_5'),
+          }
+        : null
+    );
+    if (config?.zoom_3_4 && config?.zoom_5) return _parseFromConfig(config);
+    return _fallbackData();
+  }
+
+  function _parseFromConfig(config) {
+    const majors = config.zoom_3_4.map(m => ({
+      id: m.name.toLowerCase().replace(/\s+/g, '_'),
+      name: m.name,
+      cn: m.cn_name || '',
+    }));
+    const subs = config.zoom_5.map(s => ({
+      name:     s.name,
+      cn:       s.cn_name || '',
+      major:    (s.map_type || '').toLowerCase().replace(/\s+/g, '_'),
+      lat:      s.lat,
+      lng:      s.lng,
+      preset:   s.preset_map || 'main',
+      zoom:     s.zoom ?? 5,
+      mapLabel: s.preset_map
+        ? s.preset_map.charAt(0).toUpperCase() + s.preset_map.slice(1) + ' Map'
+        : '',
+    }));
+    return { majors, subs };
+  }
+
+  function _fallbackData() {
+    const majors = [
+      { id: 'qinghe',          name: 'Qinghe',         cn: '' },
+      { id: 'kaifeng',         name: 'Kaifeng',         cn: '' },
+      { id: 'hexi',            name: 'Hexi',            cn: '' },
+      { id: 'bujian_mountain', name: 'Bujian Mountain', cn: '' },
+    ];
+    const subs = [
+      { name: 'Verdant Wilds',     cn: '', major: 'qinghe',          lat: 130.9276, lng: 198.2494, preset: 'main',  zoom: 5, mapLabel: '' },
+      { name: 'Moonveil Mountain', cn: '', major: 'qinghe',          lat: 131.3487, lng: 182.4318, preset: 'main',  zoom: 5, mapLabel: '' },
+      { name: 'Sundara Land',      cn: '', major: 'qinghe',          lat: 120.9525, lng: 187.9554, preset: 'main',  zoom: 5, mapLabel: '' },
+      { name: 'Kaifeng City',      cn: '', major: 'kaifeng',         lat: 148.4588, lng: 167.7553, preset: 'main',  zoom: 5, mapLabel: '' },
+      { name: 'Granary of Plenty', cn: '', major: 'kaifeng',         lat: 165.9342, lng: 175.9301, preset: 'main',  zoom: 5, mapLabel: '' },
+      { name: 'Jadewood Court',    cn: '', major: 'kaifeng',         lat: 161.8376, lng: 161.2980, preset: 'main',  zoom: 5, mapLabel: '' },
+      { name: 'Roaring Sands',     cn: '', major: 'kaifeng',         lat: 141.4049, lng: 155.7385, preset: 'main',  zoom: 5, mapLabel: '' },
+      { name: 'Suixiang',          cn: '', major: 'bujian_mountain', lat: 102.0355, lng: 196.3876, preset: 'main',  zoom: 5, mapLabel: '' },
+      { name: 'Tianxing',          cn: '', major: 'bujian_mountain', lat: 91.8496,  lng: 197.9279, preset: 'main',  zoom: 5, mapLabel: '' },
+      { name: 'Fukasawa',          cn: '', major: 'bujian_mountain', lat: 110.9978, lng: 197.5881, preset: 'main',  zoom: 5, mapLabel: '' },
+      { name: 'Hutuo',    cn: '滹沱', major: 'bujian_mountain', lat: 34.2075, lng: 18.2715, preset: 'hutuo', zoom: 6, mapLabel: 'Hutuo Map' },
+      { name: 'Jade Gate Pass', cn: '', major: 'hexi', lat: 34.1919, lng: 27.5562, preset: 'main', zoom: 5, mapLabel: '' },
+      { name: 'Liangzhou',      cn: '', major: 'hexi', lat: 46.2395, lng: 51.3195, preset: 'main', zoom: 5, mapLabel: '' },
+      { name: 'Qinchuan',       cn: '', major: 'hexi', lat: 76.3850, lng: 77.3876, preset: 'main', zoom: 5, mapLabel: '' },
+    ];
+    return { majors, subs };
+  }
+
+  // ── App-ready trigger ────────────────────────
+  async function _ensureAppReady() {
+    if (_appReadyDone) return;
+    if (!window.__triggerAppReady) {
+      console.warn('[RegionPicker] window.__triggerAppReady not found');
+      return;
+    }
+    _appReadyDone = true;
+    try {
+      await window.__triggerAppReady();
+      console.log('[RegionPicker] app-ready complete');
+      _appReadyCallbacks.forEach(fn => fn());
+      _appReadyCallbacks = [];
+    } catch(e) {
+      console.error('[RegionPicker] app-ready failed:', e);
+    }
+  }
+
+  function _waitForData(key, timeout = 15000) {
+    return new Promise((res, rej) => {
+      if (window[key] && Object.keys(window[key]).length > 0) { res(); return; }
+      const start = Date.now();
+      const iv = setInterval(() => {
+        if (window[key] && Object.keys(window[key]).length > 0) {
+          clearInterval(iv); res();
+        } else if (Date.now() - start > timeout) {
+          clearInterval(iv); rej(new Error(`Timeout waiting for window.${key}`));
+        }
+      }, 150);
+    });
+  }
+
+  // ── Tab definitions ──────────────────────────
+  const TABS = [
+    { id: 'region',    label: 'Interactive Map Region' },
+    { id: 'mystic',    label: 'Mystic Skills',  dataKey: 'tehnik' },
+    { id: 'innerway',  label: 'Innerway',        dataKey: 'innerway' },
+    { id: 'Knowledge', label: 'Wandering Tales', dataKey: 'knowledge' },
+    { id: 'tales',     label: 'Tales & Echoes',  dataKey: 'tales' },
+  ];
+
+  // ── Build DOM ────────────────────────────────
+  function _buildDOM(regionData) {
+    const page = document.createElement('div');
+    page.id = 'regionPickerPage';
+
+    const tabBtns = TABS.map((t, i) => `
+      <button class="rp-tab${i === 0 ? ' active' : ''}" data-tab="${t.id}">
+        ${t.label}
+      </button>
+    `).join('');
+
+    const lazyPanels = TABS.slice(1).map(t => `
+      <div class="rp-panel" id="panel-${t.id}">
+        <div class="rp-lazy-wrap" id="lazy-${t.id}">
+          <div class="rp-lazy-stage" id="stage-${t.id}">
+            <div class="rp-lp-spinner"></div>
+            <div class="rp-lp-label" id="lplabel-${t.id}">Initializing map...</div>
+            <div class="rp-lp-bar-wrap"><div class="rp-lp-bar" id="lpbar-${t.id}"></div></div>
+            <div class="rp-lp-sub" id="lpsub-${t.id}"></div>
+          </div>
+          <div class="rp-lazy-content" id="content-${t.id}" style="display:none"></div>
+        </div>
+      </div>
+    `).join('');
+
+    page.innerHTML = `
+      <div class="rp-hero">
+        <div class="rp-eyebrow">Where Winds Meet — Interactive Map</div>
+        <div class="rp-title">Where do you want to explore?</div>
+        <div class="rp-subtitle">Select a region or browse content to open the map</div>
+        <div class="rp-divider"></div>
+        <div class="rp-tabs">${tabBtns}</div>
+      </div>
+      <div class="rp-body">
+        <div class="rp-panel active" id="panel-region">
+          ${_buildRegionPanel(regionData)}
+        </div>
+        ${lazyPanels}
+      </div>
+      <div class="rp-footer">
+        <button class="rp-skip" id="rpSkip">Skip — open map at default location</button>
+      </div>
+    `;
+
+    document.body.appendChild(page);
+    return page;
+  }
+
+  function _buildRegionPanel(data) {
+    const { majors, subs } = data;
+    const byMajor = {};
+    subs.forEach(s => {
+      if (!byMajor[s.major]) byMajor[s.major] = [];
+      byMajor[s.major].push(s);
+    });
+
+    const sections = majors.map((m, mi) => {
+      const list = byMajor[m.id] || [];
+      const subBtns = list.map((s, si) => `
+        <button class="rp-sub-btn"
+                data-lat="${s.lat}"
+                data-lng="${s.lng}"
+                data-preset="${s.preset}"
+                data-zoom="${s.zoom ?? 5}"
+                style="--si:${si}">
+          <span class="rp-sub-name">${s.name}</span>
+          ${s.cn       ? `<span class="rp-sub-cn">${s.cn}</span>` : ''}
+          ${s.mapLabel ? `<span class="rp-sub-hint">${s.mapLabel}</span>` : ''}
+        </button>
+      `).join('');
+
+      return `
+        <div class="rp-major" data-major="${m.id}" style="--mi:${mi}">
+          <button class="rp-major-btn">
+            <span class="rp-major-label">
+              ${m.name}
+              ${m.cn ? `<span class="rp-major-cn">${m.cn}</span>` : ''}
+            </span>
+            <span class="rp-major-count">${list.length} regions</span>
+            <span class="rp-arrow">
+              <svg viewBox="0 0 10 10" fill="none">
+                <polyline points="3,2 7,5 3,8" stroke-width="1.5"
+                          stroke-linecap="round" stroke-linejoin="round"
+                          stroke="currentColor"/>
+              </svg>
+            </span>
+          </button>
+          <div class="rp-sub-grid">${subBtns}</div>
+        </div>
+      `;
+    }).join('');
+
+    return sections + '<div class="rp-end"></div>';
+  }
+
+  // ── Loading stage helpers ────────────────────
+  function _setStage(tabId, label, sub, pct) {
+    const lbl  = document.getElementById(`lplabel-${tabId}`);
+    const sub_ = document.getElementById(`lpsub-${tabId}`);
+    const bar  = document.getElementById(`lpbar-${tabId}`);
+    if (lbl)  lbl.textContent  = label || '';
+    if (sub_) sub_.textContent = sub   || '';
+    if (bar)  bar.style.width  = (pct || 0) + '%';
+  }
+
+  function _showContent(tabId) {
+    const stage   = document.getElementById(`stage-${tabId}`);
+    const content = document.getElementById(`content-${tabId}`);
+    if (stage)   stage.style.display   = 'none';
+    if (content) content.style.display = 'block';
+  }
+
+  // ── Tab loaded state ─────────────────────────
+  const _tabDone = {};
+
+  async function _loadTab(tabId) {
+    if (_tabDone[tabId]) return;
+    _tabDone[tabId] = true;
+
+    const tab     = TABS.find(t => t.id === tabId);
+    const content = document.getElementById(`content-${tabId}`);
+    if (!tab || !content) return;
+
+    // Tab 3-5: coming soon (no app-ready trigger)
+    if (tabId !== 'mystic') {
+      content.innerHTML = `<div class="rp-empty"><strong>${tab.label}</strong> coming soon.</div>`;
+      _showContent(tabId);
+      return;
+    }
+
+    // Mystic: trigger app-ready + wait for data
+    try {
+      _setStage(tabId, 'Initializing map...', 'Loading scripts and tiles', 10);
+      await _ensureAppReady();
+
+      _setStage(tabId, 'Loading marker data...', 'Please wait', 40);
+      _setStage(tabId, 'Preparing content...', 'Loading Mystic Skills data', 70);
+      await _waitForData(tab.dataKey);
+
+      _setStage(tabId, 'Almost ready...', '', 90);
+      await new Promise(r => setTimeout(r, 200));
+
+      _renderMystic(content);
+      _showContent(tabId);
+
+    } catch(e) {
+      console.error(`[RegionPicker] Tab ${tabId} load failed:`, e);
+      content.innerHTML = `<div class="rp-empty">Failed to load ${tab.label}. Please try again.</div>`;
+      _showContent(tabId);
+    }
+  }
+
+  // ── Mystic renderer ──────────────────────────
+  function _renderMystic(container) {
+    const data = window.tehnik;
+    if (!data || Object.keys(data).length === 0) {
+      container.innerHTML = `<div class="rp-empty">No mystic skill data available.</div>`;
+      return;
+    }
+
+    const groups = {};
+    Object.entries(data).forEach(([key, item]) => {
+      const base = item.name.replace(/\s*\(Part\s*\d+\)\s*/gi, '').trim();
+      if (!groups[base]) groups[base] = { base, icon: item.special_icon, catId: item.category_id, parts: [] };
+      groups[base].parts.push({ key, ...item });
+    });
+    Object.values(groups).forEach(g => {
+      g.parts.sort((a, b) => _partNum(a.name) - _partNum(b.name));
+    });
+
+    const grid = document.createElement('div');
+    grid.className = 'rp-skill-grid';
+
+    Object.values(groups).forEach(group => {
+      const iconUrl = _getIconUrl(group.catId, group.icon);
+      const card = document.createElement('button');
+      card.className = 'rp-skill-card';
+      card.innerHTML = `
+        <img class="rp-skill-icon" src="${iconUrl}" alt="${group.base}"
+             onerror="this.style.opacity='0.3'">
+        <span class="rp-skill-name">${group.base}</span>
+        ${group.parts.length > 1
+          ? `<span class="rp-skill-parts">${group.parts.length} parts</span>`
+          : ''}
+      `;
+      card.addEventListener('click', () => _showMysticDetail(container, group));
+      grid.appendChild(card);
+    });
+
+    container.innerHTML = '';
+    container.appendChild(grid);
+  }
+
+  function _showMysticDetail(container, group) {
+    const iconUrl = _getIconUrl(group.catId, group.icon);
+
+    const partsHtml = group.parts.map((part, i) => {
+      const num = group.parts.length > 1
+        ? `<div class="rp-detail-part-label">Part ${_partNum(part.name) || i + 1}</div>`
+        : '';
+
+      let detailsHtml = '';
+      if (part.details) {
+        try {
+          const d = JSON.parse(part.details);
+          const rows = [
+            ['Type',     d.type],
+            ['Tags',     d.tags],
+            ['Cost',     d.cost_tier4],
+            ['Cooldown', d.cooldown_tier4],
+          ].filter(r => r[1]);
+          if (rows.length || d.effect) {
+            detailsHtml = `
+              <div class="rp-detail-section">
+                <div class="rp-detail-section-label">Skill Details</div>
+                ${rows.map(r => `
+                  <div class="rp-detail-row">
+                    <span class="rp-detail-key">${r[0]}</span>
+                    <span class="rp-detail-val">${r[1]}</span>
+                  </div>`).join('')}
+                ${d.effect ? `<div class="rp-detail-effect">${d.effect}</div>` : ''}
+              </div>`;
+          }
+        } catch(e) {}
+      }
+
+      let btHtml = '';
+      if (part.breakthrough && part.breakthrough !== '[]') {
+        try {
+          const rows = JSON.parse(part.breakthrough);
+          if (rows.length) {
+            btHtml = `
+              <div class="rp-detail-section">
+                <div class="rp-detail-section-label">Breakthrough</div>
+                ${rows.map(r => `
+                  <div class="rp-detail-row">
+                    <span class="rp-detail-badge">T${r.tier}</span>
+                    <span class="rp-detail-val">${r.bonus}</span>
+                  </div>`).join('')}
+              </div>`;
+          }
+        } catch(e) {}
+      }
+
+      return `
+        <div class="rp-detail-part">
+          ${num}
+          <button class="rp-detail-loc-btn" data-key="${part.key}">
+            Go to Location
+          </button>
+          ${part.desc
+            ? `<div class="rp-detail-desc">${part.desc}</div>`
+            : '<div class="rp-detail-empty">No description yet.</div>'}
+          ${detailsHtml}
+          ${btHtml}
+        </div>`;
+    }).join('');
+
+    container.innerHTML = `
+      <div class="rp-detail-view">
+        <button class="rp-detail-back">← Back</button>
+        <div class="rp-detail-header">
+          <img class="rp-detail-hero-icon" src="${iconUrl}" alt="${group.base}">
+          <div class="rp-detail-title">${group.base}</div>
+        </div>
+        <div class="rp-detail-body">${partsHtml}</div>
+      </div>
+    `;
+
+    container.querySelector('.rp-detail-back')
+      .addEventListener('click', () => _renderMystic(container));
+
+    container.querySelectorAll('.rp-detail-loc-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key  = btn.dataset.key;
+        const item = window.tehnik?.[key];
+        if (!item) return;
+
+        _closePicker();
+
+        if (window.MysticSkillPanel?.goToLocation) {
+          window.MysticSkillPanel.goToLocation(key);
+        } else {
+          const doFly = () => {
+            if (!window.map) { setTimeout(doFly, 200); return; }
+            if (typeof _applyMapPreset === 'function' && item.preset_map && item.preset_map !== 'main') {
+              _applyMapPreset(item.preset_map, false);
+            }
+            if (window.MarkerManager) {
+              const catId = String(item.category_id);
+              MarkerManager.activeFilters.add(catId);
+              MarkerManager.updateMarkersInView();
+            }
+            window.map.flyTo([item.lat, item.lng], 6, { animate: true, duration: 2 });
+            const tryClick = (attempt) => {
+              if (attempt >= 25) return;
+              const marker = MarkerManager?.activeMarkers?.[key];
+              if (marker && marker._icon) {
+                window.map.once('moveend', () => {
+                  marker._icon.dispatchEvent(
+                    new MouseEvent('click', { bubbles: true, cancelable: true })
+                  );
+                });
+              } else {
+                setTimeout(() => tryClick(attempt + 1), 200);
+              }
+            };
+            setTimeout(() => tryClick(0), 400);
+          };
+          setTimeout(doFly, 300);
+        }
+      });
+    });
+  }
+
+  // ── Helpers ──────────────────────────────────
+  function _partNum(name) {
+    const m = name.match(/Part\s*(\d+)/i);
+    return m ? parseInt(m[1]) : 0;
+  }
+
+  function _getIconUrl(catId, specialIcon) {
+    if (window.IconManager?.getIconUrlWithSpecial) {
+      return window.IconManager.getIconUrlWithSpecial(catId, specialIcon);
+    }
+    const base = 'https://tiles.bgonegaming.win/wherewindmeet/Simbol/';
+    return specialIcon ? base + specialIcon : base + 'default.png';
+  }
+
+  function _closePicker() {
+    const page = document.getElementById('regionPickerPage');
+    if (page) {
+      page.classList.add('leaving');
+      document.body.style.overflow = '';
+      page.style.zIndex = '-1';
+      setTimeout(() => page.remove(), 320);
+    }
+    if (_resolve) { _resolve(null); _resolve = null; }
+  }
+
+  function _resolveWith(result) {
+    if (!_resolve) return;
+    const page = document.getElementById('regionPickerPage');
+    if (page) {
+      page.classList.add('leaving');
+      document.body.style.overflow = '';
+      page.style.zIndex = '-1';
+      setTimeout(() => page.remove(), 320);
+    }
+    _resolve(result);
+    _resolve = null;
+  }
+
+  // ── Public: show() ───────────────────────────
+  function show() {
+    // Skip landing page if marker link params exist
+    if (window.__markerLinkParams && window.__markerLinkParams.skipLandingPage) {
+      console.log('[RegionPicker] Skipping landing page - marker link detected');
+      return Promise.resolve(window.__markerLinkParams);
+    }
+
+    return new Promise(resolve => {
+      _resolve = resolve;
+
+      const regionData = _getData();
+      const page = _buildDOM(regionData);
+
+      requestAnimationFrame(() => requestAnimationFrame(() => page.classList.add('active')));
+
+      document.getElementById('rpSkip').addEventListener('click', () => _resolveWith(null));
+
+      const onKey = e => {
+        if (e.key === 'Escape') {
+          document.removeEventListener('keydown', onKey);
+          _resolveWith(null);
+        }
+      };
+      document.addEventListener('keydown', onKey);
+
+      // Tab switching
+      page.querySelectorAll('.rp-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const id = tab.dataset.tab;
+          page.querySelectorAll('.rp-tab').forEach(t => t.classList.remove('active'));
+          page.querySelectorAll('.rp-panel').forEach(p => p.classList.remove('active'));
+          tab.classList.add('active');
+          const panel = document.getElementById(`panel-${id}`);
+          if (panel) panel.classList.add('active');
+          if (id !== 'region') _loadTab(id);
+        });
+      });
+
+      // Region accordion
+      page.querySelectorAll('.rp-major-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          const sec = btn.closest('.rp-major');
+          const isOpen = sec.classList.contains('open');
+          page.querySelectorAll('.rp-major').forEach(s => s.classList.remove('open'));
+          if (!isOpen) sec.classList.add('open');
+        });
+      });
+
+      // Sub region pick
+      page.querySelectorAll('.rp-sub-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.removeEventListener('keydown', onKey);
+          _resolveWith({
+            lat:    parseFloat(btn.dataset.lat),
+            lng:    parseFloat(btn.dataset.lng),
+            preset: btn.dataset.preset || 'main',
+            zoom:   parseInt(btn.dataset.zoom) || 5,
+          });
+        });
+      });
+    });
+  }
+
+  return { show };
+})();
+
+window.RegionPicker = RegionPicker;
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════
+     INIT FLOW
+     ═══════════════════════════════════════════════════════════ -->
 <script>
 const v = Date.now();
 
@@ -555,10 +1786,30 @@ const lazy = [
   "riddle-search.js","tales-echoes.js"
 ];
 
-// ============================================
-// 🚀 INIT FLOW
-// ============================================
 (async function initApp() {
+
+  // Check URL parameters BEFORE anything else
+  const urlParams = new URLSearchParams(window.location.search);
+  const lat      = urlParams.get('lat');
+  const lng      = urlParams.get('lng');
+  const zoom     = urlParams.get('zoom');
+  const category = urlParams.get('category');
+  const markerKey= urlParams.get('marker');
+
+  if (lat && lng && category && markerKey) {
+    console.log('[Early Check] Marker link detected in URL');
+    window.__markerLinkParams = {
+      lat: parseFloat(lat),
+      lng: parseFloat(lng),
+      zoom: parseInt(zoom) || 6,
+      filterCategory: category,
+      markerKey: markerKey,
+      goToLocation: true,
+      skipLandingPage: true
+    };
+    const cleanURL = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, cleanURL);
+  }
 
   let __appReadyTriggered = false;
 
@@ -596,14 +1847,7 @@ const lazy = [
     }
   };
 
-  await new Promise(res => {
-    const s = document.createElement('script');
-    s.src    = `landpage.js?v=${v}`;
-    s.onload = res;
-    s.onerror = res;
-    document.body.appendChild(s);
-  });
-
+  // RegionPicker is already available (inlined above) — no loadScripts needed
   if (window.RegionPicker) {
     window.__regionPick = await RegionPicker.show();
   }
@@ -633,7 +1877,7 @@ if ("serviceWorker" in navigator) {
 }
 </script>
 
-<!-- FIX 4: Lazy loader untuk gambar patch popup (data-src → src) -->
+<!-- Lazy loader untuk gambar patch popup (data-src → src) -->
 <script>
 (function() {
   var _patchImgLoaded = false;
@@ -646,7 +1890,6 @@ if ("serviceWorker" in navigator) {
     });
   }
 
-  // Hook ke showPatchPopup kalau sudah ada
   var _checkInterval = setInterval(function() {
     if (typeof window.showPatchPopup === 'function') {
       clearInterval(_checkInterval);
@@ -658,7 +1901,6 @@ if ("serviceWorker" in navigator) {
     }
   }, 100);
 
-  // Fallback: MutationObserver kalau overlay muncul langsung
   var overlay = document.getElementById('patchOverlay');
   if (overlay) {
     new MutationObserver(function(mutations) {
@@ -672,8 +1914,6 @@ if ("serviceWorker" in navigator) {
   }
 })();
 </script>
-
-<!-- Lazy Load Background WWM.webp — tidak dibutuhkan lagi, sudah via CSS -->
 
 </body>
 </html>

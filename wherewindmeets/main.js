@@ -377,11 +377,14 @@ function showAllUIElements() {
       updateLoadingProgress(80);
 
       // ============================================
-      // Terapkan pilihan RegionPicker / Go to Location
+      // Terapkan pilihan RegionPicker / Go to Location / Marker Link
       // Diletakkan SETELAH MarkerManager.init agar
       // activeMarkers dan filter sudah tersedia.
       // ============================================
-      const pick = window.__regionPick;
+      
+      // Check for marker link parameters first (takes priority)
+      let pick = window.__markerLinkParams || window.__regionPick;
+      
       if (pick) {
 
         // 1. Switch preset map jika perlu (misal Hutuo)
@@ -397,7 +400,7 @@ function showAllUIElements() {
           setTimeout(() => window.map.invalidateSize(true), 100);
         }
 
-        // 3. Aktifkan filter kategori (dari Go to Location tab Mystic dll)
+        // 3. Aktifkan filter kategori (dari Go to Location tab Mystic dll atau dari URL marker link)
         if (pick.filterCategory && window.MarkerManager) {
           const catId = String(pick.filterCategory);
           MarkerManager.activeFilters.add(catId);
@@ -424,7 +427,7 @@ function showAllUIElements() {
           MarkerManager.updateMarkersInView();
         }
 
-        // 4. Fly + buka popup marker (khusus Go to Location dari tab konten)
+        // 4. Fly + buka popup marker (khusus Go to Location dari tab konten atau marker link)
         if (pick.goToLocation && pick.markerKey && window.MarkerManager) {
           const tryClick = (attempt) => {
             if (attempt >= 25) {
