@@ -130,6 +130,23 @@
 
   <script>const CSS_VERSION = "6.0.17";</script>
 
+
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const el = document.getElementById('regionPickerPage');
+  if (!el) return;
+
+  // Gunakan JPEG dulu (lebih aman & cepat decode)
+  const img = new Image();
+  img.src = "https://tiles.bgonegaming.win/wherewindmeet/overlay/WWM.jpg";
+
+  img.onload = () => {
+    el.classList.add('bg-loaded');
+  };
+});
+</script>
+
   <!-- ═══════════════════════════════════════════════════════
        LANDPAGE CSS — inlined (no extra HTTP request)
        ═══════════════════════════════════════════════════════ -->
@@ -155,24 +172,28 @@
     --border2:  rgba(200,150,42,0.12);
   }
 
-  #regionPickerPage {
-    position: fixed;
-    inset: 0;
-    z-index: 9992;
-    background-color: var(--ink);
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    flex-direction: column;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    overflow: hidden;
-  }
+#regionPickerPage {
+  position: fixed;
+  inset: 0;
+  background-color: var(--ink);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  overflow: hidden;
+}
 
-  /* Background image only loads once .active is applied (after JS runs) */
-  #regionPickerPage.active {
-    background-image: url('https://tiles.bgonegaming.win/wherewindmeet/overlay/WWM.webp');
-  }
+/* Load background hanya sekali */
+#regionPickerPage.bg-loaded {
+  background-image: url('https://tiles.bgonegaming.win/wherewindmeet/overlay/WWM.webp');
+}
+
+/* Hanya untuk fade in */
+#regionPickerPage.active {
+  opacity: 1;
+}
 
   #regionPickerPage::before {
     content: '';
