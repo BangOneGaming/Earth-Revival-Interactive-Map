@@ -2,9 +2,11 @@
  * RegionPicker — Where Winds Meet
  * 5 tabs: Region · Mystic Skills · Innerway · Knowledge · Tales & Echoes
  *
- * Tab 1 (Region): resolve langsung, tidak trigger app-ready
- * Tab 2-5 (Lazy): trigger window.__triggerAppReady() di background,
- *                 tunggu data siap, lalu render — landpage tetap di atas
+ * Perubahan utama:
+ * - Semua struktur DOM (hero, tabs, region panel) sudah ada di HTML statis
+ * - JS hanya menangani: event listeners, tab loading, mystic renderer, show/close
+ * - _buildDOM() dan _buildRegionPanel() dihapus — tidak diperlukan lagi
+ * - _fallbackData() dan _getData() dihapus — data sudah hardcode di HTML
  */
 
 const RegionPicker = (function () {
@@ -14,80 +16,12 @@ const RegionPicker = (function () {
   // STATE
   // ─────────────────────────────────────────
 
-  let _resolve      = null;
-  let _appReadyDone = false;
+  let _resolve           = null;
+  let _appReadyDone      = false;
   let _appReadyCallbacks = [];
 
   // ─────────────────────────────────────────
-  // REGION DATA
-  // ─────────────────────────────────────────
-
-  function _getData() {
-    const config = window.LABEL_CONFIG || (
-      window.RegionLabelManager?._getLabelConfig
-        ? {
-            zoom_3_4: window.RegionLabelManager._getLabelConfig('zoom_3_4'),
-            zoom_5:   window.RegionLabelManager._getLabelConfig('zoom_5'),
-          }
-        : null
-    );
-    if (config?.zoom_3_4 && config?.zoom_5) return _parseFromConfig(config);
-    return _fallbackData();
-  }
-
-  function _parseFromConfig(config) {
-    const majors = config.zoom_3_4.map(m => ({
-      id: m.name.toLowerCase().replace(/\s+/g, '_'),
-      name: m.name,
-      cn: m.cn_name || '',
-    }));
-    const subs = config.zoom_5.map(s => ({
-      name:     s.name,
-      cn:       s.cn_name || '',
-      major:    (s.map_type || '').toLowerCase().replace(/\s+/g, '_'),
-      lat:      s.lat,
-      lng:      s.lng,
-      preset:   s.preset_map || 'main',
-      zoom:     s.zoom ?? 5,
-      mapLabel: s.preset_map
-        ? s.preset_map.charAt(0).toUpperCase() + s.preset_map.slice(1) + ' Map'
-        : '',
-    }));
-    return { majors, subs };
-  }
-
-  function _fallbackData() {
-    const majors = [
-      { id: 'qinghe',          name: 'Qinghe',         cn: '' },
-      { id: 'kaifeng',         name: 'Kaifeng',         cn: '' },
-      { id: 'hexi',            name: 'Hexi',            cn: '' },
-      { id: 'bujian_mountain', name: 'Bujian Mountain', cn: '' },
-
-    ];
-    const subs = [
-      { name: 'Verdant Wilds',     cn: '', major: 'qinghe',          lat: 130.9276, lng: 198.2494, preset: 'main',  zoom: 5, mapLabel: '' },
-      { name: 'Moonveil Mountain', cn: '', major: 'qinghe',          lat: 131.3487, lng: 182.4318, preset: 'main',  zoom: 5, mapLabel: '' },
-      { name: 'Sundara Land',      cn: '', major: 'qinghe',          lat: 120.9525, lng: 187.9554, preset: 'main',  zoom: 5, mapLabel: '' },
-      { name: 'Kaifeng City',      cn: '', major: 'kaifeng',         lat: 148.4588, lng: 167.7553, preset: 'main',  zoom: 5, mapLabel: '' },
-      { name: 'Granary of Plenty', cn: '', major: 'kaifeng',         lat: 165.9342, lng: 175.9301, preset: 'main',  zoom: 5, mapLabel: '' },
-      { name: 'Jadewood Court',    cn: '', major: 'kaifeng',         lat: 161.8376, lng: 161.2980, preset: 'main',  zoom: 5, mapLabel: '' },
-      { name: 'Roaring Sands',     cn: '', major: 'kaifeng',         lat: 141.4049, lng: 155.7385, preset: 'main',  zoom: 5, mapLabel: '' },
-      { name: 'Suixiang',          cn: '', major: 'bujian_mountain', lat: 102.0355, lng: 196.3876, preset: 'main',  zoom: 5, mapLabel: '' },
-      { name: 'Tianxing',          cn: '', major: 'bujian_mountain', lat: 91.8496,  lng: 197.9279, preset: 'main',  zoom: 5, mapLabel: '' },
-      { name: 'Fukasawa',          cn: '', major: 'bujian_mountain', lat: 110.9978, lng: 197.5881, preset: 'main',  zoom: 5, mapLabel: '' },
-      { name: 'Hutuo',    cn: '滹沱', major: 'bujian_mountain', lat: 34.2075, lng: 18.2715, preset: 'hutuo', zoom: 6, mapLabel: 'Hutuo Map' },
-      { name: 'Jade Gate Pass', cn: '', major: 'hexi', lat: 34.1919, lng: 27.5562, preset: 'main', zoom: 5, mapLabel: '' },
-      { name: 'Liangzhou',      cn: '', major: 'hexi', lat: 46.2395, lng: 51.3195, preset: 'main', zoom: 5, mapLabel: '' },
-      { name: 'Qinchuan',       cn: '', major: 'hexi', lat: 76.3850, lng: 77.3876, preset: 'main', zoom: 5, mapLabel: '' },
-    ];
-    return { majors, subs };
-  }
-
-  // ─────────────────────────────────────────
   // APP-READY TRIGGER
-  // Dipanggil saat user klik tab 2-5.
-  // index.html harus expose: window.__triggerAppReady = async () => { ... }
-  // yang berisi loadScripts(critical) + app-ready + loadScripts(secondary) + main.js
   // ─────────────────────────────────────────
 
   async function _ensureAppReady() {
@@ -107,18 +41,15 @@ const RegionPicker = (function () {
     }
   }
 
-  // Tunggu sampai key tertentu tersedia di window
   function _waitForData(key, timeout = 15000) {
     return new Promise((res, rej) => {
       if (window[key] && Object.keys(window[key]).length > 0) { res(); return; }
       const start = Date.now();
       const iv = setInterval(() => {
         if (window[key] && Object.keys(window[key]).length > 0) {
-          clearInterval(iv);
-          res();
+          clearInterval(iv); res();
         } else if (Date.now() - start > timeout) {
-          clearInterval(iv);
-          rej(new Error(`Timeout waiting for window.${key}`));
+          clearInterval(iv); rej(new Error(`Timeout waiting for window.${key}`));
         }
       }, 150);
     });
@@ -132,116 +63,16 @@ const RegionPicker = (function () {
     { id: 'region',    label: 'Interactive Map Region' },
     { id: 'mystic',    label: 'Mystic Skills',  dataKey: 'tehnik' },
     { id: 'innerway',  label: 'Innerway',        dataKey: 'innerway' },
-    { id: 'Knowledge', label: 'Wandering Tales',       dataKey: 'knowledge' },
+    { id: 'Knowledge', label: 'Wandering Tales', dataKey: 'knowledge' },
     { id: 'tales',     label: 'Tales & Echoes',  dataKey: 'tales' },
   ];
-
-  // ─────────────────────────────────────────
-  // BUILD DOM
-  // ─────────────────────────────────────────
-
-  function _buildDOM(regionData) {
-    const page = document.createElement('div');
-    page.id = 'regionPickerPage';
-
-    const tabBtns = TABS.map((t, i) => `
-      <button class="rp-tab${i === 0 ? ' active' : ''}" data-tab="${t.id}">
-        ${t.label}
-      </button>
-    `).join('');
-
-    const lazyPanels = TABS.slice(1).map(t => `
-      <div class="rp-panel" id="panel-${t.id}">
-        <div class="rp-lazy-wrap" id="lazy-${t.id}">
-          <div class="rp-lazy-stage" id="stage-${t.id}">
-            <div class="rp-lp-spinner"></div>
-            <div class="rp-lp-label" id="lplabel-${t.id}">Initializing map...</div>
-            <div class="rp-lp-bar-wrap"><div class="rp-lp-bar" id="lpbar-${t.id}"></div></div>
-            <div class="rp-lp-sub" id="lpsub-${t.id}"></div>
-          </div>
-          <div class="rp-lazy-content" id="content-${t.id}" style="display:none"></div>
-        </div>
-      </div>
-    `).join('');
-
-    page.innerHTML = `
-      <div class="rp-hero">
-        <div class="rp-eyebrow">Where Winds Meet — Interactive Map</div>
-        <div class="rp-title">Where do you want to explore?</div>
-        <div class="rp-subtitle">Select a region or browse content to open the map</div>
-        <div class="rp-divider"></div>
-        <div class="rp-tabs">${tabBtns}</div>
-      </div>
-
-      <div class="rp-body">
-        <div class="rp-panel active" id="panel-region">
-          ${_buildRegionPanel(regionData)}
-        </div>
-        ${lazyPanels}
-      </div>
-
-      <div class="rp-footer">
-        <button class="rp-skip" id="rpSkip">Skip — open map at default location</button>
-      </div>
-    `;
-
-    document.body.appendChild(page);
-    return page;
-  }
-
-  function _buildRegionPanel(data) {
-    const { majors, subs } = data;
-    const byMajor = {};
-    subs.forEach(s => {
-      if (!byMajor[s.major]) byMajor[s.major] = [];
-      byMajor[s.major].push(s);
-    });
-
-    const sections = majors.map((m, mi) => {
-      const list = byMajor[m.id] || [];
-      const subBtns = list.map((s, si) => `
-        <button class="rp-sub-btn"
-                data-lat="${s.lat}"
-                data-lng="${s.lng}"
-                data-preset="${s.preset}"
-                data-zoom="${s.zoom ?? 5}"
-                style="--si:${si}">
-          <span class="rp-sub-name">${s.name}</span>
-          ${s.cn       ? `<span class="rp-sub-cn">${s.cn}</span>` : ''}
-          ${s.mapLabel ? `<span class="rp-sub-hint">${s.mapLabel}</span>` : ''}
-        </button>
-      `).join('');
-
-      return `
-        <div class="rp-major" data-major="${m.id}" style="--mi:${mi}">
-          <button class="rp-major-btn">
-            <span class="rp-major-label">
-              ${m.name}
-              ${m.cn ? `<span class="rp-major-cn">${m.cn}</span>` : ''}
-            </span>
-            <span class="rp-major-count">${list.length} regions</span>
-            <span class="rp-arrow">
-              <svg viewBox="0 0 10 10" fill="none">
-                <polyline points="3,2 7,5 3,8" stroke-width="1.5"
-                          stroke-linecap="round" stroke-linejoin="round"
-                          stroke="currentColor"/>
-              </svg>
-            </span>
-          </button>
-          <div class="rp-sub-grid">${subBtns}</div>
-        </div>
-      `;
-    }).join('');
-
-    return sections + '<div class="rp-end"></div>';
-  }
 
   // ─────────────────────────────────────────
   // LOADING STAGE HELPERS
   // ─────────────────────────────────────────
 
   function _setStage(tabId, label, sub, pct) {
-    const lbl = document.getElementById(`lplabel-${tabId}`);
+    const lbl  = document.getElementById(`lplabel-${tabId}`);
     const sub_ = document.getElementById(`lpsub-${tabId}`);
     const bar  = document.getElementById(`lpbar-${tabId}`);
     if (lbl)  lbl.textContent  = label || '';
@@ -266,11 +97,11 @@ const RegionPicker = (function () {
     if (_tabDone[tabId]) return;
     _tabDone[tabId] = true;
 
-    const tab = TABS.find(t => t.id === tabId);
+    const tab     = TABS.find(t => t.id === tabId);
     const content = document.getElementById(`content-${tabId}`);
     if (!tab || !content) return;
 
-    // Tab 3-5: langsung coming soon, tidak trigger app-ready
+    // Tab 3-5: coming soon
     if (tabId !== 'mystic') {
       content.innerHTML = `<div class="rp-empty"><strong>${tab.label}</strong> coming soon.</div>`;
       _showContent(tabId);
@@ -310,7 +141,6 @@ const RegionPicker = (function () {
       return;
     }
 
-    // Group by base name
     const groups = {};
     Object.entries(data).forEach(([key, item]) => {
       const base = item.name.replace(/\s*\(Part\s*\d+\)\s*/gi, '').trim();
@@ -429,31 +259,22 @@ const RegionPicker = (function () {
         const item = window.tehnik?.[key];
         if (!item) return;
 
-        // Tutup picker dulu tanpa resolve koordinat
-        // supaya main.js tidak override fly dengan setView
         _closePicker();
 
-        // Delegasikan ke MysticSkillPanel.goToLocation yang sudah terbukti bekerja.
-        // Kalau panel belum siap (lazy load belum selesai), fallback manual.
         if (window.MysticSkillPanel?.goToLocation) {
           window.MysticSkillPanel.goToLocation(key);
         } else {
-          // Fallback: tunggu map siap lalu fly manual
           const doFly = () => {
             if (!window.map) { setTimeout(doFly, 200); return; }
-
             if (typeof _applyMapPreset === 'function' && item.preset_map && item.preset_map !== 'main') {
               _applyMapPreset(item.preset_map, false);
             }
-
             if (window.MarkerManager) {
               const catId = String(item.category_id);
               MarkerManager.activeFilters.add(catId);
               MarkerManager.updateMarkersInView();
             }
-
             window.map.flyTo([item.lat, item.lng], 6, { animate: true, duration: 2 });
-
             const tryClick = (attempt) => {
               if (attempt >= 25) return;
               const marker = MarkerManager?.activeMarkers?.[key];
@@ -492,8 +313,6 @@ const RegionPicker = (function () {
     return specialIcon ? base + specialIcon : base + 'default.png';
   }
 
-  // Tutup picker tanpa resolve koordinat — dipakai saat Go to Location
-  // supaya initApp() tidak override fly dengan setView
   function _closePicker() {
     const page = document.getElementById('regionPickerPage');
     if (page) {
@@ -502,11 +321,7 @@ const RegionPicker = (function () {
       page.style.zIndex = '-1';
       setTimeout(() => page.remove(), 320);
     }
-    // Resolve null supaya initApp() tetap lanjut tanpa set koordinat apapun
-    if (_resolve) {
-      _resolve(null);
-      _resolve = null;
-    }
+    if (_resolve) { _resolve(null); _resolve = null; }
   }
 
   function _resolveWith(result) {
@@ -524,26 +339,34 @@ const RegionPicker = (function () {
 
   // ─────────────────────────────────────────
   // PUBLIC: show()
+  // Tidak lagi build DOM — cukup attach event listeners ke HTML yang sudah ada
   // ─────────────────────────────────────────
 
   function show() {
-    // 🆕 CHECK: Skip landing page if marker link params exist
+    // Skip landing page jika marker link params ada
     if (window.__markerLinkParams && window.__markerLinkParams.skipLandingPage) {
       console.log('[RegionPicker] Skipping landing page - marker link detected');
-      // Return immediately without showing the landing page
       return Promise.resolve(window.__markerLinkParams);
     }
 
     return new Promise(resolve => {
       _resolve = resolve;
 
-      const regionData = _getData();
-      const page = _buildDOM(regionData);
+      const page = document.getElementById('regionPickerPage');
+      if (!page) {
+        console.error('[RegionPicker] #regionPickerPage not found in HTML');
+        resolve(null);
+        return;
+      }
 
+      // Fade in
       requestAnimationFrame(() => requestAnimationFrame(() => page.classList.add('active')));
 
-      document.getElementById('rpSkip').addEventListener('click', () => _resolveWith(null));
+      // Skip button
+      document.getElementById('rpSkip')
+        ?.addEventListener('click', () => _resolveWith(null));
 
+      // Escape key
       const onKey = e => {
         if (e.key === 'Escape') {
           document.removeEventListener('keydown', onKey);
@@ -561,23 +384,22 @@ const RegionPicker = (function () {
           tab.classList.add('active');
           const panel = document.getElementById(`panel-${id}`);
           if (panel) panel.classList.add('active');
-          // Tab 2-5: trigger app-ready + load data
           if (id !== 'region') _loadTab(id);
         });
       });
 
-      // Region accordion
+      // Region accordion (major)
       page.querySelectorAll('.rp-major-btn').forEach(btn => {
         btn.addEventListener('click', e => {
           e.stopPropagation();
-          const sec = btn.closest('.rp-major');
+          const sec    = btn.closest('.rp-major');
           const isOpen = sec.classList.contains('open');
           page.querySelectorAll('.rp-major').forEach(s => s.classList.remove('open'));
           if (!isOpen) sec.classList.add('open');
         });
       });
 
-      // Sub region pick
+      // Sub region pick — baca koordinat dari data-* attribute di HTML
       page.querySelectorAll('.rp-sub-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           document.removeEventListener('keydown', onKey);
@@ -585,7 +407,7 @@ const RegionPicker = (function () {
             lat:    parseFloat(btn.dataset.lat),
             lng:    parseFloat(btn.dataset.lng),
             preset: btn.dataset.preset || 'main',
-            zoom:   parseInt(btn.dataset.zoom) || 5,
+            zoom:   parseInt(btn.dataset.zoom)  || 5,
           });
         });
       });
