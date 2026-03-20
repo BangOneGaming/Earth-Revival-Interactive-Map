@@ -6,7 +6,7 @@
 const API_BASE_URL = 'https://autumn-dream-8c07.square-spon.workers.dev';
 
 // 🔐 DATA VERSION (ubah ini kalau ada update data marker)
-const DATA_VERSION = '1.1.32';
+const DATA_VERSION = '1.1.33';
 
 const DATA_ENDPOINTS = {
   list: `${API_BASE_URL}/list`,
@@ -449,10 +449,7 @@ const DataLoader = {
       endpoints.forEach(({ key, path }) => {
         let data = batchData[path] || {};
 
-        if (key === 'terbaru') {
-          data = this.filterApprovedMarkers(data);
-          console.log(`🆕 terbaru approved: ${Object.keys(data).length}`);
-        }
+        data = this.filterMarkers(data, key === 'terbaru');
 
         this.loadedData[key] = data;
 
@@ -484,9 +481,7 @@ const DataLoader = {
 
       let data = await res.json();
 
-      if (key === 'terbaru') {
-        data = this.filterApprovedMarkers(data);
-      }
+      data = this.filterMarkers(data, key === 'terbaru');
 
       this.loadedData[key] = data;
 
@@ -507,12 +502,30 @@ const DataLoader = {
     }
   },
 
-  filterApprovedMarkers(data) {
-    if (!data || typeof data !== 'object') return {};
-    return Object.fromEntries(
-      Object.entries(data).filter(([_, m]) => m?.approved === true)
-    );
-  },
+  filterMarkers(data, isTerbaru = false) {
+  if (!data || typeof data !== 'object') return {};
+
+  return Object.fromEntries(
+    Object.entries(data).filter(([_, m]) => {
+      if (!m || typeof m !== 'object') return false;
+
+      const hasShow = Object.prototype.hasOwnProperty.call(m, 'show');
+      const hasApproved = Object.prototype.hasOwnProperty.call(m, 'approved');
+
+      // 🆕 DATA TERBARU (WAJIB TRUE)
+      if (isTerbaru) {
+        return m.show === true && m.approved === true;
+      }
+
+      // 📦 DATA LAMA
+      if ((hasShow && m.show === false) || (hasApproved && m.approved === false)) {
+        return false;
+      }
+
+      return true;
+    })
+  );
+},
 
   /* =====================================================
    * UTILS
