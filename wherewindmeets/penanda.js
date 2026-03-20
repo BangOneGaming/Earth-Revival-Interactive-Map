@@ -694,7 +694,11 @@ createPopupContent(markerData, editState = {}) {
   const rawDesc = description !== 'No description available'
   ? description.replace(/\n/g, '<br>')
   : description;
-  const formattedDesc = rawDesc;
+
+// ← Parse [key:...] tokens menjadi clickable link
+const formattedDesc = window.MarkerLinker
+  ? MarkerLinker.parseDescription(rawDesc)
+  : rawDesc;
 
   // Check visited status from localStorage
   if (!_visitedCache) {
