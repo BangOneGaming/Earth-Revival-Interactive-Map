@@ -244,11 +244,13 @@
     }
   }
 
-  // ============================================
-  // SHOW ALL UI ELEMENTS
-  // ============================================
+// ============================================
+// SHOW ALL UI ELEMENTS
+// ============================================
 function showAllUIElements() {
   console.log('🎨 Showing all UI elements...');
+
+  const isMarkerLink = !!window.__markerLinkParams?.skipLandingPage;
 
   requestAnimationFrame(() => {
     const styleControl = document.getElementById('ui-visibility-control');
@@ -263,12 +265,20 @@ function showAllUIElements() {
 
     elements.forEach(id => {
       const el = document.getElementById(id);
-      if (el) {
-        el.style.opacity = '1';
-        el.style.visibility = 'visible';
-        if (id !== 'undergroundContainer') {
-          el.style.pointerEvents = 'auto';
-        }
+      if (!el) return;
+
+      el.style.opacity = '1';
+      el.style.visibility = 'visible';
+      if (id !== 'undergroundContainer') {
+        el.style.pointerEvents = 'auto';
+      }
+
+      // Sembunyikan panel via .hidden — animasi CSS tetap jalan
+      if (isMarkerLink && (
+        id === 'leaderboardPanel' ||
+        id === 'filterPanel'
+      )) {
+        el.classList.add('hidden');
       }
     });
 
@@ -326,7 +336,7 @@ function showAllUIElements() {
         updateLoadingText('Loading descriptions...');
         try {
           await DescriptionLoader.init();
-          DescriptionLoader.mergeAllDescriptions();
+await DescriptionLoader.mergeAllDescriptions();
         } catch (error) {
           console.warn('⚠️ Description loading failed:', error);
         }
@@ -427,31 +437,76 @@ function showAllUIElements() {
           MarkerManager.updateMarkersInView();
         }
 
-        // 4. Fly + buka popup marker (khusus Go to Location dari tab konten atau marker link)
-        if (pick.goToLocation && pick.markerKey && window.MarkerManager) {
-          const tryClick = (attempt) => {
-            if (attempt >= 25) {
-              console.warn('[pick] Marker tidak ditemukan:', pick.markerKey);
-              return;
-            }
-            const marker = MarkerManager.activeMarkers?.[pick.markerKey];
-            if (marker && marker._icon) {
-              // Fly smooth, buka popup setelah animasi selesai
-              window.map.flyTo([pick.lat, pick.lng], 6, { animate: true, duration: 1.2 });
-              window.map.once('moveend', () => {
-                marker._icon.dispatchEvent(
-                  new MouseEvent('click', { bubbles: true, cancelable: true })
-                );
-              });
-            } else {
-              setTimeout(() => tryClick(attempt + 1), 200);
-            }
-          };
-          // Beri jeda 400ms agar updateMarkersInView selesai render
-          setTimeout(() => tryClick(0), 400);
-        }
+        // 4. Fly + buka popup marker
+if (pick.goToLocation && pick.markerKey && window.MarkerManager) {
+  const tryClick = (attempt) => {
+    if (attempt >= 25) {
+      console.warn('[pick] Marker tidak ditemukan:', pick.markerKey);
+      return;
+    }
+
+    const marker = MarkerManager.activeMarkers?.[pick.markerKey];
+    if (marker && marker._icon) {
+
+      // ── Block semua interaksi peta ──
+      window.map.dragging.disable();
+      window.map.touchZoom.disable();
+      window.map.doubleClickZoom.disable();
+      window.map.scrollWheelZoom.disable();
+      window.map.boxZoom.disable();
+      window.map.keyboard.disable();
+      if (window.map.tap) window.map.tap.disable();
+
+      // Safety: lepas block setelah 5 detik apapun yang terjadi
+      const safetyRelease = setTimeout(() => {
+        releaseMapInteraction();
+        console.warn('[pick] Safety timeout: interaction released');
+      }, 5000);
+
+      function releaseMapInteraction() {
+        clearTimeout(safetyRelease);
+        window.map.dragging.enable();
+        window.map.touchZoom.enable();
+        window.map.doubleClickZoom.enable();
+        window.map.scrollWheelZoom.enable();
+        window.map.boxZoom.enable();
+        window.map.keyboard.enable();
+        if (window.map.tap) window.map.tap.enable();
       }
 
+      // Fly ke titik tujuan
+      window.map.flyTo([pick.lat, pick.lng], 6, { animate: true, duration: 1.2 });
+
+      window.map.once('moveend', () => {
+
+        // Buka popup
+        const targetMarker = MarkerManager.activeMarkers?.[pick.markerKey];
+        if (targetMarker?._icon) {
+          targetMarker._icon.dispatchEvent(
+            new MouseEvent('click', { bubbles: true, cancelable: true })
+          );
+        }
+
+        // Lepas block setelah popup render, lalu hide panel
+        requestAnimationFrame(() => {
+          releaseMapInteraction();
+
+          const lb = document.getElementById('leaderboardPanel');
+          const fp = document.getElementById('filterPanel');
+          if (lb) lb.classList.add('hidden');
+          if (fp) fp.classList.add('hidden');
+        });
+
+      });
+
+    } else {
+      setTimeout(() => tryClick(attempt + 1), 200);
+    }
+  };
+
+  setTimeout(() => tryClick(0), 400);
+}
+}
       // ============================================
       // STEP 6: Underground System
       // ============================================
