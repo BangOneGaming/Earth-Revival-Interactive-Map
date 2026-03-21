@@ -1,9 +1,11 @@
 /**
  * Data loader module (clean version - no debug)
+ * FIX: Cache menyimpan data RAW, filterMarkers hanya dipanggil saat applyToGlobal
+ * Sehingga ubah DEV_SHOW_HIDDEN tidak perlu ganti DATA_VERSION atau fetch ulang
  */
-
+window.DEV_SHOW_HIDDEN = true; // ubah ke true kalau mau lihat marker lama
 const API_BASE_URL = 'https://autumn-dream-8c07.square-spon.workers.dev';
-const DATA_VERSION = '1.1.35';
+const DATA_VERSION = '1.1.38';
 
 const DATA_ENDPOINTS = {
   list: `${API_BASE_URL}/list`,
@@ -121,7 +123,7 @@ const DataLoader = {
 
       if (cached) {
         this.loadedData = cached;
-        this.applyToGlobal(cached);
+        this.applyToGlobal(cached); // ← filterMarkers dipanggil di sini dengan DEV_SHOW_HIDDEN saat itu
         this.isLoading = false;
         this.showLoadingSpinner(false);
         await this.loadFeedback(false);
@@ -132,7 +134,7 @@ const DataLoader = {
 
       if (stale) {
         this.loadedData = stale;
-        this.applyToGlobal(stale);
+        this.applyToGlobal(stale); // ← filterMarkers dipanggil di sini
         this.isLoading = false;
         this.showLoadingSpinner(false);
 
@@ -280,18 +282,17 @@ const DataLoader = {
       const batchData = await res.json();
 
       endpoints.forEach(({ key, path }) => {
-        let data = batchData[path] || {};
-        data = this.filterMarkers(data, key === 'terbaru');
-
+        // ✅ FIX: Simpan data RAW tanpa filter ke loadedData & cache
+        const data = batchData[path] || {};
         this.loadedData[key] = data;
 
         if (!this.isBackgroundRefresh) {
           this.endpointFingerprint[key] = this.generateFingerprint(data);
         }
-
-        const globalVar = ENDPOINT_TO_GLOBAL[key];
-        if (globalVar) window[globalVar] = data;
       });
+
+      // ✅ Apply ke global dengan filter (cek DEV_SHOW_HIDDEN saat ini)
+      this.applyToGlobal(this.loadedData);
 
     } catch {
       this.useBatchLoading = false;
@@ -308,17 +309,19 @@ const DataLoader = {
       const res = await fetch(url);
       if (!res.ok) throw new Error();
 
-      let data = await res.json();
-      data = this.filterMarkers(data, key === 'terbaru');
-
+      // ✅ FIX: Simpan data RAW tanpa filter
+      const data = await res.json();
       this.loadedData[key] = data;
 
       if (!this.isBackgroundRefresh) {
         this.endpointFingerprint[key] = this.generateFingerprint(data);
       }
 
+      // ✅ Apply ke global dengan filter
       const globalVar = ENDPOINT_TO_GLOBAL[key];
-      if (globalVar) window[globalVar] = data;
+      if (globalVar) {
+        window[globalVar] = this.filterMarkers(data, key === 'terbaru');
+      }
 
     } catch {
       this.loadedData[key] = {};
@@ -329,6 +332,11 @@ const DataLoader = {
 
   filterMarkers(data, isTerbaru = false) {
     if (!data || typeof data !== 'object') return {};
+
+    // 🚀 DEV MODE → tampilkan semua tanpa filter
+    if (window.DEV_SHOW_HIDDEN === true) {
+      return data;
+    }
 
     return Object.fromEntries(
       Object.entries(data).filter(([_, m]) => {
@@ -352,10 +360,13 @@ const DataLoader = {
     );
   },
 
+  // ✅ FIX: filterMarkers dipanggil di sini, bukan saat simpan ke cache
   applyToGlobal(data) {
     Object.keys(data).forEach(key => {
       const globalVar = ENDPOINT_TO_GLOBAL[key];
-      if (globalVar) window[globalVar] = data[key];
+      if (globalVar) {
+        window[globalVar] = this.filterMarkers(data[key], key === 'terbaru');
+      }
     });
   },
 
@@ -366,3 +377,19 @@ const DataLoader = {
 };
 
 window.DataLoader = DataLoader;
+// 🛠️ DEV TOOLS HELPER
+window.toggleDevMode = function() {
+  window.DEV_SHOW_HIDDEN = !window.DEV_SHOW_HIDDEN;
+  console.log(`%c DEV_SHOW_HIDDEN → ${window.DEV_SHOW_HIDDEN} `, 
+    `background: ${window.DEV_SHOW_HIDDEN ? '#22c55e' : '#ef4444'}; color: white; font-weight: bold; padding: 4px 8px; border-radius: 4px`
+  );
+  DataLoader.applyToGlobal(DataLoader.loadedData);
+  MarkerManager?.forceRefreshMarkers?.();
+  console.log(`%c Marker ${window.DEV_SHOW_HIDDEN ? 'SEMUA tampil (termasuk hidden)' : 'filter normal aktif'} `, 
+    `color: ${window.DEV_SHOW_HIDDEN ? '#22c55e' : '#ef4444'}; font-style: italic`
+  );
+};
+
+console.log('%c [DEV] Ketik toggleDevMode() untuk toggle marker hidden ', 
+  'background: #1e293b; color: #94a3b8; padding: 4px 8px; border-radius: 4px'
+);
