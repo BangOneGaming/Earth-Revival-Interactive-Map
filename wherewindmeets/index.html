@@ -1072,7 +1072,505 @@ window.addEventListener('DOMContentLoaded', () => {
 
 </div><!-- /regionPickerPage -->
 
-<script src="landpage.js"></script>
+<script>
+/**
+ * RegionPicker — Where Winds Meet (inlined, no HTTP request)
+ * DOM sudah ada di HTML statis — JS hanya attach event listeners.
+ */
+const RegionPicker = (function () {
+  'use strict';
+
+  let _resolve           = null;
+  let _appReadyDone      = false;
+  let _appReadyCallbacks = [];
+
+  async function _ensureAppReady() {
+    if (_appReadyDone) return;
+    if (!window.__triggerAppReady) {
+      console.warn('[RegionPicker] window.__triggerAppReady not found');
+      return;
+    }
+    _appReadyDone = true;
+    try {
+      await window.__triggerAppReady();
+      console.log('[RegionPicker] app-ready complete');
+      _appReadyCallbacks.forEach(fn => fn());
+      _appReadyCallbacks = [];
+    } catch(e) {
+      console.error('[RegionPicker] app-ready failed:', e);
+    }
+  }
+
+  function _waitForData(key, timeout = 15000) {
+    return new Promise((res, rej) => {
+      if (window[key] && Object.keys(window[key]).length > 0) { res(); return; }
+      const start = Date.now();
+      const iv = setInterval(() => {
+        if (window[key] && Object.keys(window[key]).length > 0) {
+          clearInterval(iv); res();
+        } else if (Date.now() - start > timeout) {
+          clearInterval(iv); rej(new Error(`Timeout waiting for window.${key}`));
+        }
+      }, 150);
+    });
+  }
+
+  const TABS = [
+    { id: 'region',    label: 'Interactive Map Region' },
+    { id: 'mystic',    label: 'Mystic Skills',  dataKey: 'tehnik' },
+    { id: 'innerway',  label: 'Innerway',        dataKey: 'innerway' },
+    { id: 'Knowledge', label: 'Wandering Tales', dataKey: 'knowledge' },
+    { id: 'tales',     label: 'Tales & Echoes',  dataKey: 'tales' },
+  ];
+
+  function _setStage(tabId, label, sub, pct) {
+    const lbl  = document.getElementById(`lplabel-${tabId}`);
+    const sub_ = document.getElementById(`lpsub-${tabId}`);
+    const bar  = document.getElementById(`lpbar-${tabId}`);
+    if (lbl)  lbl.textContent  = label || '';
+    if (sub_) sub_.textContent = sub   || '';
+    if (bar)  bar.style.width  = (pct || 0) + '%';
+  }
+
+  function _showContent(tabId) {
+    const stage   = document.getElementById(`stage-${tabId}`);
+    const content = document.getElementById(`content-${tabId}`);
+    if (stage)   stage.style.display   = 'none';
+    if (content) content.style.display = 'block';
+  }
+
+  const _tabDone = {};
+
+  async function _loadTab(tabId) {
+    if (_tabDone[tabId]) return;
+    _tabDone[tabId] = true;
+
+    const tab     = TABS.find(t => t.id === tabId);
+    const content = document.getElementById(`content-${tabId}`);
+    if (!tab || !content) return;
+
+    // ── Tab Innerway ──────────────────────────────────────────────────
+    if (tabId === 'innerway') {
+      try {
+        _setStage(tabId, 'Loading innerway data...', 'Please wait', 20);
+        await window.__triggerAppReady();
+        _setStage(tabId, 'Loading innerway data...', 'Fetching data', 50);
+        if (window.DataLoader?.loadInnerway) {
+          await DataLoader.loadInnerway();
+        } else if (window.DataLoader?.init) {
+          await DataLoader.init();
+        }
+        await _waitForData('innerwaylist');
+        _setStage(tabId, 'Rendering...', '', 90);
+        await new Promise(r => setTimeout(r, 150));
+        _renderInnerway(content);
+        _showContent(tabId);
+      } catch(e) {
+        console.error(`[RegionPicker] Tab innerway failed:`, e);
+        content.innerHTML = `<div class="rp-empty">Failed to load Innerway data. Please try again.</div>`;
+        _showContent(tabId);
+      }
+      return;
+    }
+
+    // ── Tab coming soon (Knowledge, Tales) ────────────────────────────
+    if (tabId !== 'mystic') {
+      content.innerHTML = `<div class="rp-empty"><strong>${tab.label}</strong> coming soon.</div>`;
+      _showContent(tabId);
+      return;
+    }
+
+    // Mystic: jalankan main.js di background (dengan map diblok),
+    // tunggu window.tehnik terisi, lalu render daftar skill.
+    // Picker tetap terbuka sampai user pilih skill.
+    try {
+      _setStage(tabId, 'Loading map data...', 'Starting background initialization', 10);
+
+      // Cukup load critical scripts + panggil DataLoader.init() saja.
+      // Tidak perlu main.js, tidak perlu map — jauh lebih ringan.
+      await window.__triggerAppReady(); // load memuat-data.js dll
+      _setStage(tabId, 'Loading skill data...', 'Please wait', 40);
+      if (window.DataLoader?.init) {
+        await DataLoader.init();
+      }
+      // Tunggu window.tehnik terisi
+      await _waitForData('tehnik');
+
+      _setStage(tabId, 'Rendering skills...', '', 90);
+      await new Promise(r => setTimeout(r, 150));
+
+      _renderMystic(content);
+      _showContent(tabId);
+
+    } catch(e) {
+      console.error(`[RegionPicker] Tab ${tabId} load failed:`, e);
+      content.innerHTML = `<div class="rp-empty">Failed to load ${tab.label}. Please try again.</div>`;
+      _showContent(tabId);
+    }
+  }
+
+  function _renderMystic(container) {
+    const data = window.tehnik;
+    if (!data || Object.keys(data).length === 0) {
+      container.innerHTML = `<div class="rp-empty">No mystic skill data available.</div>`;
+      return;
+    }
+    const groups = {};
+    Object.entries(data).forEach(([key, item]) => {
+      const base = item.name.replace(/\s*\(Part\s*\d+\)\s*/gi, '').trim();
+      if (!groups[base]) groups[base] = { base, icon: item.special_icon, catId: item.category_id, parts: [] };
+      groups[base].parts.push({ key, ...item });
+    });
+    Object.values(groups).forEach(g => g.parts.sort((a, b) => _partNum(a.name) - _partNum(b.name)));
+
+    const grid = document.createElement('div');
+    grid.className = 'rp-skill-grid';
+    Object.values(groups).forEach(group => {
+      const iconUrl = _getIconUrl(group.catId, group.icon);
+      const card = document.createElement('button');
+      card.className = 'rp-skill-card';
+      card.innerHTML = `
+        <img class="rp-skill-icon" src="${iconUrl}" alt="${group.base}" onerror="this.style.opacity='0.3'">
+        <span class="rp-skill-name">${group.base}</span>
+        ${group.parts.length > 1 ? `<span class="rp-skill-parts">${group.parts.length} parts</span>` : ''}
+      `;
+      card.addEventListener('click', () => _showMysticDetail(container, group));
+      grid.appendChild(card);
+    });
+    container.innerHTML = '';
+    container.appendChild(grid);
+  }
+
+  function _showMysticDetail(container, group) {
+    const iconUrl = _getIconUrl(group.catId, group.icon);
+    const partsHtml = group.parts.map((part, i) => {
+      const num = group.parts.length > 1
+        ? `<div class="rp-detail-part-label">Part ${_partNum(part.name) || i + 1}</div>` : '';
+      let detailsHtml = '';
+      if (part.details) {
+        try {
+          const d = JSON.parse(part.details);
+          const rows = [['Type',d.type],['Tags',d.tags],['Cost',d.cost_tier4],['Cooldown',d.cooldown_tier4]].filter(r=>r[1]);
+          if (rows.length || d.effect) {
+            detailsHtml = `<div class="rp-detail-section"><div class="rp-detail-section-label">Skill Details</div>
+              ${rows.map(r=>`<div class="rp-detail-row"><span class="rp-detail-key">${r[0]}</span><span class="rp-detail-val">${r[1]}</span></div>`).join('')}
+              ${d.effect ? `<div class="rp-detail-effect">${d.effect}</div>` : ''}</div>`;
+          }
+        } catch(e) {}
+      }
+      let btHtml = '';
+      if (part.breakthrough && part.breakthrough !== '[]') {
+        try {
+          const rows = JSON.parse(part.breakthrough);
+          if (rows.length) {
+            btHtml = `<div class="rp-detail-section"><div class="rp-detail-section-label">Breakthrough</div>
+              ${rows.map(r=>`<div class="rp-detail-row"><span class="rp-detail-badge">T${r.tier}</span><span class="rp-detail-val">${r.bonus}</span></div>`).join('')}</div>`;
+          }
+        } catch(e) {}
+      }
+      return `<div class="rp-detail-part">${num}
+        <button class="rp-detail-loc-btn" data-key="${part.key}">Go to Location</button>
+        ${part.desc ? `<div class="rp-detail-desc">${part.desc}</div>` : '<div class="rp-detail-empty">No description yet.</div>'}
+        ${detailsHtml}${btHtml}</div>`;
+    }).join('');
+
+    container.innerHTML = `
+      <div class="rp-detail-view">
+        <button class="rp-detail-back">← Back</button>
+        <div class="rp-detail-header">
+          <img class="rp-detail-hero-icon" src="${iconUrl}" alt="${group.base}">
+          <div class="rp-detail-title">${group.base}</div>
+        </div>
+        <div class="rp-detail-body">${partsHtml}</div>
+      </div>`;
+
+    container.querySelector('.rp-detail-back').addEventListener('click', () => _renderMystic(container));
+    container.querySelectorAll('.rp-detail-loc-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key  = btn.dataset.key;
+        const item = window.tehnik?.[key];
+        if (!item) return;
+        _closePicker();
+        if (window.MysticSkillPanel?.goToLocation) {
+          window.MysticSkillPanel.goToLocation(key);
+        } else {
+          const doFly = () => {
+            if (!window.map) { setTimeout(doFly, 200); return; }
+            if (typeof _applyMapPreset === 'function' && item.preset_map && item.preset_map !== 'main') _applyMapPreset(item.preset_map, false);
+            if (window.MarkerManager) { MarkerManager.activeFilters.add(String(item.category_id)); MarkerManager.updateMarkersInView(); }
+            window.map.flyTo([item.lat, item.lng], 6, { animate: true, duration: 2 });
+            const tryClick = (attempt) => {
+              if (attempt >= 25) return;
+              const marker = MarkerManager?.activeMarkers?.[key];
+              if (marker && marker._icon) {
+                window.map.once('moveend', () => marker._icon.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })));
+              } else { setTimeout(() => tryClick(attempt + 1), 200); }
+            };
+            setTimeout(() => tryClick(0), 400);
+          };
+          setTimeout(doFly, 300);
+        }
+      });
+    });
+  }
+
+  function _partNum(name) {
+    const m = name.match(/Part\s*(\d+)/i);
+    return m ? parseInt(m[1]) : 0;
+  }
+
+  // ── INNERWAY RENDERER ────────────────────────────────────────────────
+
+  function _renderInnerway(container) {
+    const data = window.innerwaylist;
+    if (!data || Object.keys(data).length === 0) {
+      container.innerHTML = `<div class="rp-empty">No Innerway data available.</div>`;
+      return;
+    }
+
+    // Group by base name (strip "Part X")
+    const groups = {};
+    Object.entries(data).forEach(([key, item]) => {
+      const base = item.name
+        .replace(/\s*\(Part\s*\d+\)\s*/gi, '')
+        .replace(/\s*-\s*Inner Ways\s*$/gi, '')
+        .trim();
+      if (!groups[base]) groups[base] = { base, icon: item.special_icon, catId: item.category_id, parts: [] };
+      groups[base].parts.push({ key, ...item });
+    });
+    Object.values(groups).forEach(g => g.parts.sort((a, b) => _partNum(a.name) - _partNum(b.name)));
+
+    const grid = document.createElement('div');
+    grid.className = 'rp-skill-grid';
+
+    Object.values(groups).forEach(group => {
+      const iconUrl = _getIconUrl(group.catId, group.icon);
+      const card = document.createElement('button');
+      card.className = 'rp-skill-card';
+      card.innerHTML = `
+        <img class="rp-skill-icon" src="${iconUrl}" alt="${group.base}" onerror="this.style.opacity='0.3'">
+        <span class="rp-skill-name">${group.base}</span>
+        ${group.parts.length > 1 ? `<span class="rp-skill-parts">${group.parts.length} parts</span>` : ''}
+      `;
+      card.addEventListener('click', () => _showInnerwayDetail(container, group, data));
+      grid.appendChild(card);
+    });
+
+    container.innerHTML = '';
+    container.appendChild(grid);
+  }
+
+  function _showInnerwayDetail(container, group, allData) {
+    const iconUrl = _getIconUrl(group.catId, group.icon);
+
+    const partsHtml = group.parts.map((part, i) => {
+      const num = group.parts.length > 1
+        ? `<div class="rp-detail-part-label">Part ${_partNum(part.name) || i + 1}</div>` : '';
+
+      // Details
+      let detailsHtml = '';
+      if (part.details) {
+        try {
+          const d = JSON.parse(part.details);
+          const rows = [
+            ['Rarity', d.rarity], ['Path', d.path], ['Tags', d.tags],
+            ['Type', d.type], ['Cost', d.cost_tier4], ['Cooldown', d.cooldown_tier4]
+          ].filter(r => r[1]);
+          if (rows.length || d.effect) {
+            detailsHtml = `<div class="rp-detail-section">
+              <div class="rp-detail-section-label">Skill Details</div>
+              ${rows.map(r => `<div class="rp-detail-row">
+                <span class="rp-detail-key">${r[0]}</span>
+                <span class="rp-detail-val">${r[1]}</span>
+              </div>`).join('')}
+              ${d.effect ? `<div class="rp-detail-effect">${d.effect}</div>` : ''}
+            </div>`;
+          }
+        } catch(e) {}
+      }
+
+      // Breakthrough
+      let btHtml = '';
+      if (part.breakthrough && part.breakthrough !== '[]') {
+        try {
+          const rows = JSON.parse(part.breakthrough);
+          if (rows.length) {
+            btHtml = `<div class="rp-detail-section">
+              <div class="rp-detail-section-label">Breakthrough</div>
+              ${rows.map(r => `<div class="rp-detail-row">
+                <span class="rp-detail-badge">T${r.tier}</span>
+                <span class="rp-detail-val">${r.bonus}</span>
+              </div>`).join('')}
+            </div>`;
+          }
+        } catch(e) {}
+      }
+
+      // Requirements
+      let reqHtml = '';
+      if (part.requirements && part.requirements !== '[]') {
+        try {
+          const reqs = JSON.parse(part.requirements);
+          if (reqs.length) {
+            const isNew = reqs[0].hasOwnProperty('requirement');
+            reqHtml = `<div class="rp-detail-section">
+              <div class="rp-detail-section-label">Requirements</div>
+              ${isNew
+                ? reqs.map(r => `<div class="rp-detail-row"><span class="rp-detail-val">✓ ${r.requirement}</span></div>`).join('')
+                : reqs.map(r => `<div class="rp-detail-row">
+                    <span class="rp-detail-badge">T${r.tier}</span>
+                    <span class="rp-detail-val">${r.rank} — ${Array.isArray(r.materials) ? r.materials.join(', ') : r.materials}</span>
+                  </div>`).join('')
+              }
+            </div>`;
+          }
+        } catch(e) {}
+      }
+
+      return `<div class="rp-detail-part">
+        ${num}
+        <button class="rp-detail-loc-btn" data-key="${part.key}">Go to Location</button>
+        ${part.desc
+          ? `<div class="rp-detail-desc">${part.desc}</div>`
+          : '<div class="rp-detail-empty">No description yet.</div>'}
+        ${detailsHtml}${btHtml}${reqHtml}
+      </div>`;
+    }).join('');
+
+    container.innerHTML = `
+      <div class="rp-detail-view">
+        <button class="rp-detail-back">← Back</button>
+        <div class="rp-detail-header">
+          <img class="rp-detail-hero-icon" src="${iconUrl}" alt="${group.base}">
+          <div class="rp-detail-title">${group.base}</div>
+        </div>
+        <div class="rp-detail-body">${partsHtml}</div>
+      </div>`;
+
+    container.querySelector('.rp-detail-back')
+      .addEventListener('click', () => _renderInnerway(container));
+
+    container.querySelectorAll('.rp-detail-loc-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key  = btn.dataset.key;
+        const item = allData[key];
+        if (!item || !item.lat || !item.lng) return;
+
+        _closePicker();
+
+        // Aktifkan filter kategori innerway
+        if (window.MarkerManager) {
+          const catId = String(item.category_id || '37');
+          MarkerManager.activeFilters.add(catId);
+          const cb = document.querySelector(`[data-category-id="${catId}"] .filter-checkbox`);
+          if (cb) cb.checked = true;
+          const fi = document.querySelector(`[data-category-id="${catId}"]`);
+          if (fi) fi.classList.add('active');
+          try { localStorage.setItem('activeFilters', JSON.stringify([...MarkerManager.activeFilters])); } catch(e) {}
+          MarkerManager.updateMarkersInView();
+        }
+
+        const doFly = () => {
+          if (!window.map) { setTimeout(doFly, 200); return; }
+          window.map.flyTo([item.lat, item.lng], 6, { animate: true, duration: 2 });
+          window.map.once('moveend', () => {
+            const tryClick = (attempt) => {
+              if (attempt >= 25) return;
+              const marker = window.MarkerManager?.activeMarkers?.[key];
+              if (marker && marker._icon) {
+                marker._icon.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+              } else { setTimeout(() => tryClick(attempt + 1), 150); }
+            };
+            setTimeout(() => tryClick(0), 300);
+          });
+        };
+        setTimeout(doFly, 300);
+      });
+    });
+  }
+
+  function _getIconUrl(catId, specialIcon) {
+    if (window.IconManager?.getIconUrlWithSpecial) return window.IconManager.getIconUrlWithSpecial(catId, specialIcon);
+    const base = 'https://tiles.bgonegaming.win/wherewindmeet/Simbol/';
+    return specialIcon ? base + specialIcon : base + 'default.png';
+  }
+
+  function _closePicker() {
+    const page = document.getElementById('regionPickerPage');
+    if (page) {
+      page.classList.add('leaving');
+      document.body.style.overflow = '';
+      page.style.zIndex = '-1';
+      setTimeout(() => page.remove(), 320);
+    }
+    if (_resolve) { _resolve(null); _resolve = null; }
+  }
+
+  function _resolveWith(result) {
+    if (!_resolve) return;
+    const page = document.getElementById('regionPickerPage');
+    if (page) {
+      page.classList.add('leaving');
+      document.body.style.overflow = '';
+      page.style.zIndex = '-1';
+      setTimeout(() => page.remove(), 320);
+    }
+    _resolve(result);
+    _resolve = null;
+  }
+
+  function show() {
+    if (window.__markerLinkParams && window.__markerLinkParams.skipLandingPage) {
+      console.log('[RegionPicker] Skipping landing page - marker link detected');
+      return Promise.resolve(window.__markerLinkParams);
+    }
+    return new Promise(resolve => {
+      _resolve = resolve;
+      const page = document.getElementById('regionPickerPage');
+      if (!page) { console.error('[RegionPicker] #regionPickerPage not found'); resolve(null); return; }
+
+      requestAnimationFrame(() => requestAnimationFrame(() => page.classList.add('active')));
+      document.getElementById('rpSkip')?.addEventListener('click', () => _resolveWith(null));
+
+      const onKey = e => { if (e.key === 'Escape') { document.removeEventListener('keydown', onKey); _resolveWith(null); } };
+      document.addEventListener('keydown', onKey);
+
+      page.querySelectorAll('.rp-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const id = tab.dataset.tab;
+          page.querySelectorAll('.rp-tab').forEach(t => t.classList.remove('active'));
+          page.querySelectorAll('.rp-panel').forEach(p => p.classList.remove('active'));
+          tab.classList.add('active');
+          const panel = document.getElementById(`panel-${id}`);
+          if (panel) panel.classList.add('active');
+          if (id !== 'region') _loadTab(id);
+        });
+      });
+
+      page.querySelectorAll('.rp-major-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          const sec = btn.closest('.rp-major');
+          const isOpen = sec.classList.contains('open');
+          page.querySelectorAll('.rp-major').forEach(s => s.classList.remove('open'));
+          if (!isOpen) sec.classList.add('open');
+        });
+      });
+
+      page.querySelectorAll('.rp-sub-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.removeEventListener('keydown', onKey);
+          _resolveWith({ lat: parseFloat(btn.dataset.lat), lng: parseFloat(btn.dataset.lng), preset: btn.dataset.preset || 'main', zoom: parseInt(btn.dataset.zoom) || 5 });
+        });
+      });
+    });
+  }
+
+  return { show };
+})();
+
+window.RegionPicker = RegionPicker;
+</script>
 
 <div id="map" style="opacity:0;visibility:hidden">
   <div id="notificationIcon"></div>
@@ -1376,6 +1874,7 @@ btnClose.addEventListener("click", function(e) {
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 
+
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="username.js" defer></script>
 
@@ -1443,7 +1942,11 @@ const lazy = [
   }
 
   let __appReadyTriggered = false;
+  let __mainJsTriggered   = false;
 
+  // FASE 1: Load critical + secondary scripts saja (aman dari dalam picker)
+  // main.js TIDAK diload di sini — main.js langsung membuka peta via initApp()-nya sendiri,
+  // harus ditunda sampai picker benar-benar tutup.
   window.__triggerAppReady = async function () {
     if (__appReadyTriggered) return;
     __appReadyTriggered = true;
@@ -1451,18 +1954,17 @@ const lazy = [
     await loadScripts(critical);
     console.log("✅ Critical loaded");
 
-    document.body.classList.add("app-ready");
-    const mapEl = document.getElementById('map');
-    if (mapEl) {
-      mapEl.style.opacity    = '';
-      mapEl.style.visibility = '';
-    }
-
     await loadScripts(preSecondary);
     console.log("✅ ikon.js loaded");
 
     await loadScripts(secondary);
     console.log("⚙️ Secondary loaded");
+  };
+
+  // FASE 2: Load main.js — selalu setelah picker tutup
+  window.__loadMainJs = async function () {
+    if (__mainJsTriggered) return;
+    __mainJsTriggered = true;
 
     await new Promise(resolve => {
       const main = document.createElement("script");
@@ -1473,17 +1975,19 @@ const lazy = [
     });
     console.log("✅ main.js loaded (safe)");
 
-    if (window.map && typeof window.map.invalidateSize === 'function') {
+    if (window.map?.invalidateSize) {
       setTimeout(() => window.map.invalidateSize(true), 50);
     }
-  };
+  }
 
   // RegionPicker is already available (inlined above) — no loadScripts needed
   if (window.RegionPicker) {
     window.__regionPick = await RegionPicker.show();
   }
 
+  // Picker sudah tutup — load main.js jika belum dijalankan dari tab Mystic
   await window.__triggerAppReady();
+  await window.__loadMainJs();
 
   const loadLazy = () => {
     loadScripts(lazy);
