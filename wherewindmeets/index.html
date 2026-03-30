@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Where Winds Meet Interactive Map – Complete Exploration Guide | BangOne Gaming</title>
-
+  <link rel="sitemap" type="application/xml" href="/wherewindmeets/sitemap.xml">
+  
   <link rel="canonical" href="https://bgonegaming.win/wherewindmeets/" />
 
   <meta name="description" content="Where Winds Meet Interactive Map – explore Hexi, Qinghe, Kaifeng. Find Treasure Chests, Teleport Landmarks, World Bosses, Cat Play, Wander Tales, Fishing Spots, and 35+ location types. Track visited locations and get 100% completion." />
@@ -143,7 +144,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Gunakan JPEG dulu (lebih aman & cepat decode)
   const img = new Image();
-  img.src = "https://tiles.bgonegaming.win/wherewindmeet/overlay/WWM.jpg";
+  img.src = "https://tiles.bgonegaming.win/wherewindmeet/overlay/WWM.webp";
 
   img.onload = () => {
     el.classList.add('bg-loaded');
@@ -846,6 +847,222 @@ window.addEventListener('DOMContentLoaded', () => {
     .rp-tab  { font-size: 8.5px; padding: 6px 10px; }
     .rp-skill-grid { grid-template-columns: repeat(2, 1fr); }
   }
+
+  /* ── Anecdote Tab ─────────────────────────────── */
+  .anec-search-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: linear-gradient(to bottom, var(--ink) 80%, transparent);
+    padding: 16px 0 10px;
+    margin-bottom: 4px;
+  }
+
+  .anec-search-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--border);
+    background: rgba(8,12,22,0.85);
+    padding: 9px 14px;
+    transition: border-color 0.2s ease;
+  }
+
+  .anec-search-box:focus-within {
+    border-color: var(--gold2);
+  }
+
+  .anec-search-icon {
+    width: 14px;
+    height: 14px;
+    opacity: 0.45;
+    flex-shrink: 0;
+  }
+
+  .anec-search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--txt);
+    font-family: 'Crimson Pro', serif;
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .anec-search-input::placeholder {
+    color: var(--txt3);
+    font-style: italic;
+  }
+
+  .anec-search-clear {
+    background: transparent;
+    border: none;
+    color: var(--txt3);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0 2px;
+    line-height: 1;
+    transition: color 0.15s ease;
+    display: none;
+  }
+
+  .anec-search-clear:hover { color: var(--gold2); }
+  .anec-search-clear.visible { display: block; }
+
+  .anec-count {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--txt3);
+    text-align: right;
+    margin-bottom: 10px;
+    opacity: 0.7;
+  }
+
+  .anec-count span { color: var(--gold2); }
+
+  /* Accordion */
+  .anec-area {
+    border-top: 1px solid var(--border);
+  }
+
+  .anec-area-btn {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    padding: 15px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: padding-left 0.2s ease, background 0.2s ease;
+  }
+
+  .anec-area-btn:hover { padding-left: 8px; background: rgba(240,192,96,0.03); }
+
+  .anec-area.open .anec-area-btn {
+    padding-left: 5px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .anec-area-name { flex: 1; text-align: left; }
+
+  .anec-area-count {
+    font-family: 'Crimson Pro', serif;
+    font-size: 12px;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--txt3);
+    opacity: 0.6;
+  }
+
+  .anec-area-arrow {
+    width: 14px; height: 14px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.35;
+    transition: transform 0.22s ease, opacity 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .anec-area.open .anec-area-arrow { transform: rotate(90deg); opacity: 0.7; }
+  .anec-area-arrow svg { width: 10px; height: 10px; stroke: var(--gold2); fill: none; }
+
+  /* Articles list */
+  .anec-list {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 2px;
+  }
+
+  .anec-area.open .anec-list { display: flex; }
+
+  .anec-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px 10px 16px;
+    border-bottom: 1px solid var(--border2);
+    transition: background 0.15s ease, padding-left 0.15s ease;
+    position: relative;
+  }
+
+  .anec-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--gold2);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.18s ease;
+  }
+
+  .anec-item:hover { background: rgba(240,192,96,0.05); padding-left: 20px; }
+  .anec-item:hover::before { transform: scaleY(1); }
+  .anec-item.hidden { display: none; }
+
+  .anec-item-link {
+    font-family: 'Crimson Pro', serif;
+    font-size: 14px;
+    color: var(--txt2);
+    text-decoration: none;
+    line-height: 1.45;
+    flex: 1;
+    transition: color 0.15s ease;
+  }
+
+  .anec-item:hover .anec-item-link { color: var(--txt); }
+
+  .anec-item-sub {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--jade);
+    opacity: 0.65;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* Search highlight */
+  .anec-highlight {
+    background: rgba(240,192,96,0.25);
+    color: var(--gold);
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+
+  /* No results */
+  .anec-no-results {
+    text-align: center;
+    padding: 48px 20px;
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--txt3);
+    display: none;
+  }
+
+  /* Hidden by search filter */
+  .anec-item.hidden { display: none; }
+  .anec-area.all-hidden .anec-list { display: none !important; }
+
+  @media (max-width: 640px) {
+    .anec-search-input { font-size: 13px; }
+    .anec-item-link { font-size: 13px; }
+    .anec-area-btn { font-size: 10px; padding: 13px 0; }
+  }
   </style>
 
   <style id="ui-visibility-control">
@@ -911,6 +1128,7 @@ window.addEventListener('DOMContentLoaded', () => {
       <button class="rp-tab" data-tab="mystic">Mystic Skills</button>
       <button class="rp-tab" data-tab="innerway">Innerway</button>
       <button class="rp-tab" data-tab="Knowledge">Wandering Tales</button>
+      <button class="rp-tab" data-tab="anecdote">Anecdote</button>
       <button class="rp-tab" data-tab="tales">Tales &amp; Echoes</button>
     </div>
   </div>
@@ -1038,16 +1256,23 @@ window.addEventListener('DOMContentLoaded', () => {
       </div>
     </div>
 
-    <!-- ── Tab 4: Wandering Tales (lazy loaded) ── -->
+    <!-- ── Tab 4: Wandering Tales (static, like anecdote) ── -->
     <div class="rp-panel" id="panel-Knowledge">
-      <div class="rp-lazy-wrap" id="lazy-Knowledge">
-        <div class="rp-lazy-stage" id="stage-Knowledge">
-          <div class="rp-lp-spinner"></div>
-          <div class="rp-lp-label" id="lplabel-Knowledge">Initializing map...</div>
-          <div class="rp-lp-bar-wrap"><div class="rp-lp-bar" id="lpbar-Knowledge"></div></div>
-          <div class="rp-lp-sub" id="lpsub-Knowledge"></div>
+      <div id="wandering-static-content">
+        <div class="anec-search-wrap">
+          <div class="anec-search-box">
+            <svg class="anec-search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="6.5" cy="6.5" r="4.5"/><line x1="10.5" y1="10.5" x2="14" y2="14"/>
+            </svg>
+            <input class="anec-search-input" id="wandSearchInput"
+              type="text" placeholder="Search wandering tales…" autocomplete="off" spellcheck="false">
+            <button class="anec-search-clear" id="wandSearchClear" title="Clear">✕</button>
+          </div>
         </div>
-        <div class="rp-lazy-content" id="content-Knowledge" style="display:none"></div>
+        <div class="anec-count" id="wandCount"><span id="wandCountNum">0</span> articles</div>
+        <div id="wandNoResults" class="anec-no-results">No articles match your search.</div>
+        <div id="wandListRoot"></div>
+        <div class="rp-end"></div>
       </div>
     </div>
 
@@ -1063,6 +1288,26 @@ window.addEventListener('DOMContentLoaded', () => {
         <div class="rp-lazy-content" id="content-tales" style="display:none"></div>
       </div>
     </div>
+
+<!-- ── Tab 6: Anecdote ── -->
+<div class="rp-panel" id="panel-anecdote">
+  <div id="anecdote-static-content">
+    <div class="anec-search-wrap">
+      <div class="anec-search-box">
+        <svg class="anec-search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="6.5" cy="6.5" r="4.5"/><line x1="10.5" y1="10.5" x2="14" y2="14"/>
+        </svg>
+        <input class="anec-search-input" id="anecSearchInput"
+          type="text" placeholder="Search anecdotes…" autocomplete="off" spellcheck="false">
+        <button class="anec-search-clear" id="anecSearchClear" title="Clear">✕</button>
+      </div>
+    </div>
+    <div class="anec-count" id="anecCount"><span id="anecCountNum">0</span> articles</div>
+    <div id="anecNoResults" class="anec-no-results">No articles match your search.</div>
+    <div id="anecListRoot"></div>
+    <div class="rp-end"></div>
+  </div>
+</div>
 
   </div><!-- /rp-body -->
 
@@ -1120,6 +1365,7 @@ const RegionPicker = (function () {
     { id: 'mystic',    label: 'Mystic Skills',  dataKey: 'tehnik' },
     { id: 'innerway',  label: 'Innerway',        dataKey: 'innerway' },
     { id: 'Knowledge', label: 'Wandering Tales', dataKey: 'knowledge' },
+    { id: 'anecdote',  label: 'Anecdote' },
     { id: 'tales',     label: 'Tales & Echoes',  dataKey: 'tales' },
   ];
 
@@ -1142,12 +1388,19 @@ const RegionPicker = (function () {
   const _tabDone = {};
 
   async function _loadTab(tabId) {
-    if (_tabDone[tabId]) return;
-    _tabDone[tabId] = true;
+  if (_tabDone[tabId]) return;
+  _tabDone[tabId] = true;
 
-    const tab     = TABS.find(t => t.id === tabId);
-    const content = document.getElementById(`content-${tabId}`);
-    if (!tab || !content) return;
+  const tab = TABS.find(t => t.id === tabId);
+
+  // ── Tab Anecdote — tidak butuh content div ──
+  if (tabId === 'anecdote') {
+    _initAnecdoteStatic();
+    return;
+  }
+
+  const content = document.getElementById(`content-${tabId}`);
+  if (!tab || !content) return;
 
     // ── Tab Innerway ──────────────────────────────────────────────────
     if (tabId === 'innerway') {
@@ -1173,7 +1426,19 @@ const RegionPicker = (function () {
       return;
     }
 
-    // ── Tab coming soon (Knowledge, Tales) ────────────────────────────
+    // ── Tab Anecdote ───────────────────────────────────────────
+if (tabId === 'anecdote') {
+  _initAnecdoteStatic();
+  return;  // jangan panggil _showContent — panel-anecdote langsung visible
+}
+
+    // ── Tab Wandering Tales ────────────────────────────────────
+    if (tabId === 'Knowledge') {
+      _initWanderingStatic();
+      return;
+    }
+
+    // ── Tab coming soon (Tales) ────────────────────────────────
     if (tabId !== 'mystic') {
       content.innerHTML = `<div class="rp-empty"><strong>${tab.label}</strong> coming soon.</div>`;
       _showContent(tabId);
@@ -1495,6 +1760,241 @@ const RegionPicker = (function () {
     return specialIcon ? base + specialIcon : base + 'default.png';
   }
 
+// ── ANECDOTE DYNAMIC INITIALIZER ─────────────────────────────────────
+  let _anecInited = false;
+
+  function _initAnecdoteStatic() {
+    if (_anecInited) return;
+    _anecInited = true;
+
+    const panel    = document.getElementById('panel-anecdote');
+    const root     = document.getElementById('anecListRoot');
+    const input    = document.getElementById('anecSearchInput');
+    const clearBtn = document.getElementById('anecSearchClear');
+    const noRes    = document.getElementById('anecNoResults');
+    const countEl  = document.getElementById('anecCountNum');
+
+    if (!panel || !root) return;
+
+    function _escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    root.innerHTML = `<div class="rp-lazy-stage">
+      <div class="rp-lp-spinner"></div>
+      <div class="rp-lp-label">Loading articles...</div>
+    </div>`;
+
+    fetch('anecdote-data.json?v=' + (window.CSS_VERSION || Date.now()))
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(data => _renderList(data))
+      .catch(err => { root.innerHTML = `<div class="rp-empty">Error: ${err.message}</div>`; });
+
+    function _renderList(data) {
+      const areas = Object.keys(data).sort();
+      const total = areas.reduce((n, a) => n + data[a].length, 0);
+      if (countEl) countEl.textContent = total;
+
+      root.innerHTML = areas.map(area => {
+        const areaSlug = area.toLowerCase().replace(/\s+/g, '_');
+        const items    = data[area];
+        return `<div class="anec-area" data-area="${areaSlug}">
+          <button class="anec-area-btn">
+            <span class="anec-area-name">${_escHtml(area)}</span>
+            <span class="anec-area-count">${items.length} article${items.length !== 1 ? 's' : ''}</span>
+            <span class="anec-area-arrow">
+              <svg viewBox="0 0 10 10" fill="none">
+                <polyline points="3,2 7,5 3,8" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>
+              </svg>
+            </span>
+          </button>
+          <div class="anec-list">
+            ${items.map(item => {
+              const path = `Sentient Being/Experience/${areaSlug}/${item.file}`;
+              return `<div class="anec-item" data-text="${_escHtml(item.title)}" data-sub="${_escHtml(area)}">
+                <a class="anec-item-link" href="${path}">${_escHtml(item.title)}</a>
+                <span class="anec-item-sub">${_escHtml(area)}</span>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>`;
+      }).join('');
+
+      root.querySelectorAll('.anec-area-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const area   = btn.closest('.anec-area');
+          const isOpen = area.classList.contains('open');
+          root.querySelectorAll('.anec-area').forEach(a => a.classList.remove('open'));
+          if (!isOpen) area.classList.add('open');
+        });
+      });
+
+      if (!input) return;
+
+      function _doSearch(q) {
+        const term = q.trim().toLowerCase();
+        clearBtn.classList.toggle('visible', q.length > 0);
+        let visible = 0;
+
+        root.querySelectorAll('.anec-area').forEach(area => {
+          let areaVisible = 0;
+          area.querySelectorAll('.anec-item').forEach(item => {
+            const match = !term
+              || item.dataset.text.toLowerCase().includes(term)
+              || item.dataset.sub.toLowerCase().includes(term);
+            item.classList.toggle('hidden', !match);
+            if (match) {
+              areaVisible++;
+              visible++;
+              const link = item.querySelector('.anec-item-link');
+              if (link) {
+                const orig = item.dataset.text;
+                if (term) {
+                  const re = new RegExp('(' + term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+                  link.innerHTML = _escHtml(orig).replace(re, '<mark class="anec-highlight">$1</mark>');
+                } else {
+                  link.textContent = orig;
+                }
+              }
+            }
+          });
+          if (term) {
+            area.classList.toggle('open', areaVisible > 0);
+            area.classList.toggle('all-hidden', areaVisible === 0);
+          } else {
+            area.classList.remove('open', 'all-hidden');
+          }
+        });
+
+        if (countEl) countEl.textContent = visible;
+        if (noRes)   noRes.style.display = visible === 0 && term ? 'block' : 'none';
+      }
+
+      input.addEventListener('input', e => _doSearch(e.target.value));
+      clearBtn.addEventListener('click', () => { input.value = ''; _doSearch(''); input.focus(); });
+    } // ── tutup _renderList
+
+  } // ── tutup _initAnecdoteStatic
+
+  // ── WANDERING TALES DYNAMIC INITIALIZER ──────────────────────────────
+  let _wandInited = false;
+
+  function _initWanderingStatic() {
+    if (_wandInited) return;
+    _wandInited = true;
+
+    const panel    = document.getElementById('panel-Knowledge');
+    const root     = document.getElementById('wandListRoot');
+    const input    = document.getElementById('wandSearchInput');
+    const clearBtn = document.getElementById('wandSearchClear');
+    const noRes    = document.getElementById('wandNoResults');
+    const countEl  = document.getElementById('wandCountNum');
+
+    if (!panel || !root) return;
+
+    function _escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    root.innerHTML = `<div class="rp-lazy-stage">
+      <div class="rp-lp-spinner"></div>
+      <div class="rp-lp-label">Loading articles...</div>
+    </div>`;
+
+    fetch('Wandering-Tales-data.json?v=' + (window.CSS_VERSION || Date.now()))
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(data => _renderList(data))
+      .catch(err => { root.innerHTML = `<div class="rp-empty">Error: ${err.message}</div>`; });
+
+    function _renderList(data) {
+      const areas = Object.keys(data).sort();
+      const total = areas.reduce((n, a) => n + data[a].length, 0);
+      if (countEl) countEl.textContent = total;
+
+      root.innerHTML = areas.map(area => {
+        const areaSlug = area.toLowerCase().replace(/\s+/g, '_');
+        const items    = data[area];
+        return `<div class="anec-area" data-area="${areaSlug}">
+          <button class="anec-area-btn">
+            <span class="anec-area-name">${_escHtml(area)}</span>
+            <span class="anec-area-count">${items.length} article${items.length !== 1 ? 's' : ''}</span>
+            <span class="anec-area-arrow">
+              <svg viewBox="0 0 10 10" fill="none">
+                <polyline points="3,2 7,5 3,8" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>
+              </svg>
+            </span>
+          </button>
+          <div class="anec-list">
+            ${items.map(item => {
+              const path = `Sentient Being/Wandering Tales/${areaSlug}/${item.file}`;
+              return `<div class="anec-item" data-text="${_escHtml(item.title)}" data-sub="${_escHtml(area)}">
+                <a class="anec-item-link" href="${path}">${_escHtml(item.title)}</a>
+                <span class="anec-item-sub">${_escHtml(area)}</span>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>`;
+      }).join('');
+
+      root.querySelectorAll('.anec-area-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const area   = btn.closest('.anec-area');
+          const isOpen = area.classList.contains('open');
+          root.querySelectorAll('.anec-area').forEach(a => a.classList.remove('open'));
+          if (!isOpen) area.classList.add('open');
+        });
+      });
+
+      if (!input) return;
+
+      function _doSearch(q) {
+        const term = q.trim().toLowerCase();
+        clearBtn.classList.toggle('visible', q.length > 0);
+        let visible = 0;
+
+        root.querySelectorAll('.anec-area').forEach(area => {
+          let areaVisible = 0;
+          area.querySelectorAll('.anec-item').forEach(item => {
+            const match = !term
+              || item.dataset.text.toLowerCase().includes(term)
+              || item.dataset.sub.toLowerCase().includes(term);
+            item.classList.toggle('hidden', !match);
+            if (match) {
+              areaVisible++;
+              visible++;
+              const link = item.querySelector('.anec-item-link');
+              if (link) {
+                const orig = item.dataset.text;
+                if (term) {
+                  const re = new RegExp('(' + term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+                  link.innerHTML = _escHtml(orig).replace(re, '<mark class="anec-highlight">$1</mark>');
+                } else {
+                  link.textContent = orig;
+                }
+              }
+            }
+          });
+          if (term) {
+            area.classList.toggle('open', areaVisible > 0);
+            area.classList.toggle('all-hidden', areaVisible === 0);
+          } else {
+            area.classList.remove('open', 'all-hidden');
+          }
+        });
+
+        if (countEl) countEl.textContent = visible;
+        if (noRes)   noRes.style.display = visible === 0 && term ? 'block' : 'none';
+      }
+
+      input.addEventListener('input', e => _doSearch(e.target.value));
+      clearBtn.addEventListener('click', () => { input.value = ''; _doSearch(''); input.focus(); });
+    } // ── tutup _renderList
+
+  } // ── tutup _initWanderingStatic
+
+  // ── CLOSE / RESOLVE ───────────────────────────────────────────────────
   function _closePicker() {
     const page = document.getElementById('regionPickerPage');
     if (page) {
@@ -1568,6 +2068,7 @@ const RegionPicker = (function () {
 
   return { show };
 })();
+
 
 window.RegionPicker = RegionPicker;
 </script>
@@ -1872,7 +2373,6 @@ btnClose.addEventListener("click", function(e) {
 </script>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
 
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>

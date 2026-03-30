@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<script>
+const base = 'http://localhost:8080/new%20git/wherewindmeets/Sentient%20Being/Encounter/';
+
+// Ambil dari folder yang sudah kita tahu ada (62 folder)
+const folders = [
+  'ayisu','blissful_retreat','bodhi_sea','hallo_peak',
+  'mercyheart_town','finesteed','flower_expanse','mercyhearth_monastery',
+  'buddha_fort','thousand_buddha_village','millennium_crossing',
+  'qu_an','juezhangling','mexico_city','clear_water_and_clouds',
+  'former_site_of_mocheng','fuyao_peak','huigu','woxingyan','liujinpo',
+  'general_shrine','battlecrest_slope','bamboo_abode','stonewash_strand',
+  'heaven_pier','kilnfire_ridge','still_shores','witherwilds',
+  'riverside_station','riverside_terrace','palace_of_annals',
+  'harvest_village','crimson_cliff','gleaming_abyss','twinbeast_ridge',
+  'peace_bell_tower','jadebrook_mountain','floral_expanse_beyond',
+  'encircling_lake','wildmare_ranch','south_gate_avenue','kaifeng_prefecture',
+  'fairgrounds','velvet_shade','prosperity_haven','imperial_artisan_court',
+  'forsaken_quarter','unbound_cavern','furnace_area',
+  'kaifeng_suburbs_east','kaifeng_suburbs_west','kaifeng_suburbs_north','kaifeng_suburbs_south',
+  'stillhearth_grove','abandoned_mercy_hall','jinming_pool','wansheng_town',
+  'starveil_grassland','eternal_mountain','fishwood_river','heavenfall',
+  'baima_crossing','plainfield','sorrowfield_village','ever_normal_granary',
+  'gracetown','masterwood_hamlet','buddha_statue_site','grand_canal',
+  'dreamfall_cliff','martial_temple','pipa_chasm','petalfall_crossing',
+  'south_imperial_garden','north_imperial_garden','desperation_ridge',
+  'jade_terrace','xiaoguan_ancient_road','fufengdian','lion_grave',
+  'drifting_in_the_wilderness','huayin_north','huayudao','wangjingchuan',
+  'chengcheng_lake','lost_crossing','golden_sand_river','straying_steed_sands',
+  'yinma_pass','yuchi','jiuquan_town','wuwei_mountain','jiedushi_mansion',
+  'mistveil_forest','hutuo','yunqiu','luancheng','fenglong_mountain','hutuo_south_bank'
+];
+
+const out = document.getElementById('out');
+const result = {};
+let done = 0;
+
+async function scanAll() {
+  for (const folder of folders) {
+    const url = `${base}${folder}/`;
+    try {
+      const r = await fetch(url);
+      const html = await r.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const files = [...doc.querySelectorAll('a[href]')]
+        .map(a => a.getAttribute('href'))
+        .filter(h => h && h.endsWith('.html') && !h.includes('..') && !h.startsWith('http'))
+        .map(h => h.split('/').pop());
+      if (files.length > 0) result[folder] = files;
+    } catch(e) {}
+    done++;
+    out.textContent = `Scanning... ${done}/${folders.length}`;
+  }
+
+  // Tampilkan hasil
+  const json = JSON.stringify(result, null, 2);
+  out.textContent = json;
+
+  // Juga buat tombol copy
+  const btn = document.createElement('button');
+  btn.textContent = 'COPY HASIL';
+  btn.style = 'position:fixed;top:10px;right:10px;padding:12px 20px;background:#f0c060;font-size:16px;font-weight:bold;border:none;cursor:pointer';
+  btn.onclick = () => { navigator.clipboard.writeText(json); btn.textContent = 'COPIED!'; };
+  document.body.appendChild(btn);
+}
+
+scanAll();
+</script>
+<!-- Eruda Mobile DevTools — HAPUS sebelum production -->
+<script>
+  (function() {
+    var script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/eruda';
+    document.body.appendChild(script);
+    script.onload = function() { eruda.init(); };
+  })();
+</script>
+
+
+
+<pre id="out" style="font-size:12px;padding:16px">Memulai scan...</pre>
+</body>
+</html>
