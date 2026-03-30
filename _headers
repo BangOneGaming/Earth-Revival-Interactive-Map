@@ -1,6 +1,5 @@
 /wherewindmeets/*.xml
   Content-Type: application/xml; charset=UTF-8
-  X-Robots-Tag: noindex
 
 /*.xml
   Content-Type: application/xml; charset=UTF-8
