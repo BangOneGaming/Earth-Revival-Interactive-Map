@@ -20,5 +20,6 @@ Allow: /
 # Sitemap location
 Sitemap: https://mapinteractive.bgonegaming.win/sitemaps.xml
 Sitemap: https://bgonegaming.win/sitemaps.xml
+Sitemap: https://bgonegaming.win/wherewindmeets/sitemap.xml
 Sitemap: https://bgonegaming.win/wherewindmeets/anecdote.xml
 Sitemap: https://bgonegaming.win/wherewindmeets/wandering-tales.xml
