@@ -1058,6 +1058,97 @@ window.addEventListener('DOMContentLoaded', () => {
   .anec-item.hidden { display: none; }
   .anec-area.all-hidden .anec-list { display: none !important; }
 
+  /* ── Riddle Tab ───────────────────────────────── */
+  .riddle-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: 12px 14px 12px 16px;
+    border-bottom: 1px solid var(--border2);
+    transition: background 0.15s ease, padding-left 0.15s ease;
+    position: relative;
+    gap: 10px;
+  }
+
+  .riddle-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--gold2);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.18s ease;
+  }
+
+  .riddle-item:hover { background: rgba(240,192,96,0.05); padding-left: 20px; }
+  .riddle-item:hover::before { transform: scaleY(1); }
+  .riddle-item.hidden { display: none; }
+
+  .riddle-item-left { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+
+  .riddle-clue {
+    font-family: 'Crimson Pro', serif;
+    font-size: 14px;
+    color: var(--txt2);
+    font-style: italic;
+    line-height: 1.4;
+  }
+
+  .riddle-clue mark {
+    background: rgba(240,192,96,0.25);
+    color: var(--gold);
+    font-style: normal;
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+
+  .riddle-answer {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+  }
+
+  .riddle-copy-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--txt3);
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .riddle-copy-btn:hover {
+    border-color: var(--gold2);
+    color: var(--gold2);
+    background: rgba(240,192,96,0.06);
+  }
+
+  .riddle-copy-btn.copied {
+    border-color: rgba(168,216,160,0.5);
+    color: #a8d8a0;
+    background: rgba(168,216,160,0.06);
+  }
+
+  .riddle-copy-btn svg { width: 10px; height: 10px; stroke: currentColor; fill: none; }
+
+  @media (max-width: 640px) {
+    .riddle-clue { font-size: 13px; }
+    .riddle-answer { font-size: 11px; }
+  }
+
   @media (max-width: 640px) {
     .anec-search-input { font-size: 13px; }
     .anec-item-link { font-size: 13px; }
@@ -1130,6 +1221,7 @@ window.addEventListener('DOMContentLoaded', () => {
       <button class="rp-tab" data-tab="Knowledge">Wandering Tales</button>
       <button class="rp-tab" data-tab="anecdote">Anecdote</button>
       <button class="rp-tab" data-tab="tales">Tales &amp; Echoes</button>
+      <button class="rp-tab" data-tab="riddle">Riddle Answers</button>
     </div>
   </div>
 
@@ -1289,6 +1381,26 @@ window.addEventListener('DOMContentLoaded', () => {
       </div>
     </div>
 
+    <!-- ── Tab 7: Riddle Answers ── -->
+    <div class="rp-panel" id="panel-riddle">
+      <div id="riddle-static-content">
+        <div class="anec-search-wrap">
+          <div class="anec-search-box">
+            <svg class="anec-search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="6.5" cy="6.5" r="4.5"/><line x1="10.5" y1="10.5" x2="14" y2="14"/>
+            </svg>
+            <input class="anec-search-input" id="riddleSearchInput"
+              type="text" placeholder="Search riddle clues…" autocomplete="off" spellcheck="false">
+            <button class="anec-search-clear" id="riddleSearchClear" title="Clear">✕</button>
+          </div>
+        </div>
+        <div class="anec-count" id="riddleCount"><span id="riddleCountNum">0</span> riddles</div>
+        <div id="riddleNoResults" class="anec-no-results">No riddles match your search.</div>
+        <div id="riddleListRoot"></div>
+        <div class="rp-end"></div>
+      </div>
+    </div>
+
 <!-- ── Tab 6: Anecdote ── -->
 <div class="rp-panel" id="panel-anecdote">
   <div id="anecdote-static-content">
@@ -1367,6 +1479,7 @@ const RegionPicker = (function () {
     { id: 'Knowledge', label: 'Wandering Tales', dataKey: 'knowledge' },
     { id: 'anecdote',  label: 'Anecdote' },
     { id: 'tales',     label: 'Tales & Echoes',  dataKey: 'tales' },
+    { id: 'riddle',    label: 'Riddle Answers' },
   ];
 
   function _setStage(tabId, label, sub, pct) {
@@ -1402,6 +1515,12 @@ const RegionPicker = (function () {
   // ── Tab Wandering Tales — tidak butuh content div ──
   if (tabId === 'Knowledge') {
     _initWanderingStatic();
+    return;
+  }
+
+  // ── Tab Riddle Answers — tidak butuh content div ──
+  if (tabId === 'riddle') {
+    _initRiddleStatic();
     return;
   }
 
@@ -1993,6 +2112,125 @@ if (tabId === 'anecdote') {
     } // ── tutup _renderList
 
   } // ── tutup _initWanderingStatic
+
+  // ── RIDDLE ANSWERS STATIC INITIALIZER ────────────────────────────────
+  let _riddleInited = false;
+
+  function _initRiddleStatic() {
+    if (_riddleInited) return;
+    _riddleInited = true;
+
+    const root     = document.getElementById('riddleListRoot');
+    const input    = document.getElementById('riddleSearchInput');
+    const clearBtn = document.getElementById('riddleSearchClear');
+    const noRes    = document.getElementById('riddleNoResults');
+    const countEl  = document.getElementById('riddleCountNum');
+
+    if (!root) return;
+
+    function _escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    root.innerHTML = `<div class="rp-lazy-stage">
+      <div class="rp-lp-spinner"></div>
+      <div class="rp-lp-label">Loading riddles...</div>
+    </div>`;
+
+    fetch('riddle-data.json?v=' + (window.CSS_VERSION || Date.now()))
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(data => _renderRiddles(data))
+      .catch(err => { root.innerHTML = `<div class="rp-empty">Error loading riddle-data.json: ${err.message}</div>`; });
+
+    function _renderRiddles(data) {
+      // data bisa berupa array [{clue,answer},...] atau object {category:[{clue,answer},...]}
+      let items = [];
+      if (Array.isArray(data)) {
+        items = data;
+      } else {
+        Object.values(data).forEach(arr => { if (Array.isArray(arr)) items = items.concat(arr); });
+      }
+
+      if (countEl) countEl.textContent = items.length;
+
+      const listEl = document.createElement('div');
+      listEl.id = 'riddleItems';
+
+      items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'riddle-item';
+        div.dataset.clue = (item.clue || '').toLowerCase();
+        div.dataset.answer = item.answer || '';
+        div.innerHTML = `
+          <div class="riddle-item-left">
+            <span class="riddle-clue" data-raw="${_escHtml(item.clue)}">${_escHtml(item.clue)}</span>
+            <span class="riddle-answer">${_escHtml(item.answer)}</span>
+          </div>
+          <button class="riddle-copy-btn" data-answer="${_escHtml(item.answer)}" title="Copy answer">
+            <svg viewBox="0 0 24 24" stroke-width="1.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy
+          </button>`;
+        listEl.appendChild(div);
+      });
+
+      root.innerHTML = '';
+      root.appendChild(listEl);
+
+      // Copy button handler
+      listEl.addEventListener('click', function(e) {
+        const btn = e.target.closest('.riddle-copy-btn');
+        if (!btn) return;
+        const ans = btn.dataset.answer;
+        const orig = btn.innerHTML;
+        const doCopy = () => {
+          btn.classList.add('copied');
+          btn.innerHTML = '<svg viewBox="0 0 24 24" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>Copied';
+          setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = orig; }, 1800);
+        };
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(ans).then(doCopy);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = ans; ta.style.cssText = 'position:fixed;opacity:0';
+          document.body.appendChild(ta); ta.select();
+          document.execCommand('copy'); document.body.removeChild(ta);
+          doCopy();
+        }
+      });
+
+      if (!input) return;
+
+      function _doSearch(q) {
+        const term = q.trim().toLowerCase();
+        clearBtn.classList.toggle('visible', q.length > 0);
+        let visible = 0;
+
+        listEl.querySelectorAll('.riddle-item').forEach(item => {
+          const match = !term || item.dataset.clue.includes(term) || item.dataset.answer.toLowerCase().includes(term);
+          item.classList.toggle('hidden', !match);
+          if (match) {
+            visible++;
+            const clueEl = item.querySelector('.riddle-clue');
+            if (clueEl) {
+              const raw = clueEl.dataset.raw;
+              if (term) {
+                const re = new RegExp('(' + term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+                clueEl.innerHTML = _escHtml(raw).replace(re, '<mark>$1</mark>');
+              } else {
+                clueEl.textContent = raw;
+              }
+            }
+          }
+        });
+
+        if (countEl) countEl.textContent = visible;
+        if (noRes) noRes.style.display = visible === 0 && term ? 'block' : 'none';
+      }
+
+      input.addEventListener('input', e => _doSearch(e.target.value));
+      clearBtn.addEventListener('click', () => { input.value = ''; _doSearch(''); input.focus(); });
+    }
+  } // ── tutup _initRiddleStatic
 
   // ── CLOSE / RESOLVE ───────────────────────────────────────────────────
   function _showAd() {
