@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Where Winds Meet Interactive Map – Complete Exploration Guide | BangOne Gaming</title>
-  <link rel="sitemap" type="application/xml" href="/wherewindmeets/sitemap.xml">
+  <link rel="sitemap" type="application/xml" href="https://bgonegaming.win/wherewindmeets/sitemap.xml">
   
   <link rel="canonical" href="https://bgonegaming.win/wherewindmeets/" />
 
@@ -1995,6 +1995,15 @@ if (tabId === 'anecdote') {
   } // ── tutup _initWanderingStatic
 
   // ── CLOSE / RESOLVE ───────────────────────────────────────────────────
+  function _showAd() {
+    var ad = document.getElementById('sticky-ad-container');
+    if (!ad || ad.dataset.adLoaded) return;
+    ad.dataset.adLoaded = '1';
+    ad.style.display = '';
+    // Push ad hanya sekarang — setelah picker selesai
+    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+  }
+
   function _closePicker() {
     const page = document.getElementById('regionPickerPage');
     if (page) {
@@ -2003,6 +2012,7 @@ if (tabId === 'anecdote') {
       page.style.zIndex = '-1';
       setTimeout(() => page.remove(), 320);
     }
+    _showAd();
     if (_resolve) { _resolve(null); _resolve = null; }
   }
 
@@ -2015,6 +2025,7 @@ if (tabId === 'anecdote') {
       page.style.zIndex = '-1';
       setTimeout(() => page.remove(), 320);
     }
+    _showAd();
     _resolve(result);
     _resolve = null;
   }
@@ -2022,6 +2033,7 @@ if (tabId === 'anecdote') {
   function show() {
     if (window.__markerLinkParams && window.__markerLinkParams.skipLandingPage) {
       console.log('[RegionPicker] Skipping landing page - marker link detected');
+      _showAd();
       return Promise.resolve(window.__markerLinkParams);
     }
     return new Promise(resolve => {
@@ -2296,7 +2308,7 @@ window.RegionPicker = RegionPicker;
 </div>
 
 <!-- Sticky AdSense Container -->
-<div id="sticky-ad-container">
+<div id="sticky-ad-container" style="display:none">
   <div id="ad-close-wrapper">
     <button id="btn-close-ad">Close adsens</button>
   </div>
@@ -2337,8 +2349,6 @@ window.RegionPicker = RegionPicker;
 </script>
 
 <script>
-(adsbygoogle = window.adsbygoogle || []).push({});
-
 var btnClose     = document.getElementById("btn-close-ad");
 var closeWrapper = document.getElementById("ad-close-wrapper");
 var adContainer  = document.getElementById("sticky-ad-container");
