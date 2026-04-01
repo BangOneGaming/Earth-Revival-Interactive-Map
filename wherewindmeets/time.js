@@ -61,24 +61,27 @@ const TimeUndergroundMarker = (() => {
         position: relative;
       }
 
-      /* Segitiga terbalik PUTIH di atas gambar */
+      /* Segitiga terbalik PUTIH di atas gambar — diperbesar, glow hitam */
       .tum-arrow {
         width: 0;
         height: 0;
-        border-left:  9px solid transparent;
-        border-right: 9px solid transparent;
+        border-left:  13px solid transparent;
+        border-right: 13px solid transparent;
         border-bottom: 0;
-        border-top: 13px solid rgba(255,255,255,0.9);
-        margin-bottom: 1px;
-        filter: drop-shadow(0 0 4px rgba(255,255,255,0.7));
+        border-top: 18px solid rgba(255,255,255,0.95);
+        margin-bottom: 0;
+        filter:
+          drop-shadow(0 0 4px rgba(255,255,255,0.9))
+          drop-shadow(0 0 10px rgba(255,255,255,0.7))
+          drop-shadow(0 0 20px rgba(255,255,255,0.5));
         animation: tumBounce 1.5s ease-in-out infinite;
       }
       @keyframes tumBounce {
-        0%,100% { transform: translateY(0);    opacity: 0.6; }
-        50%      { transform: translateY(-6px); opacity: 1;   }
+        0%,100% { transform: translateY(0);    opacity: 0.7; }
+        50%      { transform: translateY(-8px); opacity: 1;   }
       }
 
-      /* Gambar — glow putih soft berkedip */
+      /* Gambar — glow hitam soft berkedip */
       .tum-img {
         display: block;
         pointer-events: none;
@@ -89,14 +92,14 @@ const TimeUndergroundMarker = (() => {
       @keyframes tumImgGlow {
         0%,100% {
           filter:
-            drop-shadow(0 0  6px rgba(255,255,255,0.20))
-            drop-shadow(0 0 12px rgba(255,255,255,0.10));
+            drop-shadow(0 0  6px rgba(255,255,255,0.50))
+            drop-shadow(0 0 14px rgba(255,255,255,0.30));
         }
         50% {
           filter:
-            drop-shadow(0 0 10px rgba(255,255,255,0.60))
-            drop-shadow(0 0 22px rgba(255,255,255,0.30))
-            drop-shadow(0 0 36px rgba(255,255,255,0.12));
+            drop-shadow(0 0 12px rgba(255,255,255,0.90))
+            drop-shadow(0 0 28px rgba(255,255,255,0.60))
+            drop-shadow(0 0 48px rgba(255,255,255,0.35));
         }
       }
 
@@ -422,7 +425,7 @@ const TimeUndergroundMarker = (() => {
     //   exiting   → penuh dulu  (offset = 0),       lalu kosongkan ke ARC_LEN
     if (arcEl) {
       arcEl.style.strokeDasharray  = ARC_LEN;
-      arcEl.style.strokeDashoffset = entering ? 0 : ARC_LEN;
+      arcEl.style.strokeDashoffset = entering ? ARC_LEN : 0;
     }
 
     // Fade in (double rAF agar browser sempat render sebelum transisi)
@@ -434,14 +437,14 @@ const TimeUndergroundMarker = (() => {
     setTimeout(() => { if (onMidpoint) onMidpoint(); }, 420);
 
     // ── Konfigurasi animasi ──────────────────────────────────
-    const labsE = ['Reverse Time', 'Calibrating', 'Synchronizing', 'Time Unlocked'];
-    const labsX = ['Returning',      'Resetting',   'Synchronizing', 'Back to Real Time'];
+    const labsE = ['Forward Time', 'Calibrating', 'Synchronizing', 'After Event Time'];
+    const labsX = ['Returning',      'Resetting',   'Synchronizing', 'Before Event Time'];
     const labels  = entering ? labsE : labsX;
 
     // Arc penuh di 70% dari total durasi, lalu TAHAN sampai fade-out
     const fillDur   = OVERLAY_DURATION * 0.70;
     // Jarum: 1 putaran per 1.5 detik, arah terbalik saat masuk
-    const degPerMs  = (entering ? -1 : 1) * (360 / 1500);
+    const degPerMs  = (entering ? 1 : -1) * (360 / 1500);
 
     let startTs  = null;
     let prevTs   = null;
@@ -469,11 +472,11 @@ const TimeUndergroundMarker = (() => {
         // entering → offset turun dari ARC_LEN ke 0 (makin penuh)
         // exiting  → offset naik dari 0 ke ARC_LEN (makin kosong)
         const offset = entering
-          ? ARC_LEN * ease          // naik → makin kosong
-          : ARC_LEN * (1 - ease);   // turun → makin penuh
+          ? ARC_LEN * (1 - ease)   // turun → makin penuh
+          : ARC_LEN * ease;        // naik → makin kosong
         if (arcEl) arcEl.style.strokeDashoffset = offset.toFixed(2);
         if (t >= 1) {
-          if (arcEl) arcEl.style.strokeDashoffset = entering ? String(ARC_LEN) : '0';
+          if (arcEl) arcEl.style.strokeDashoffset = entering ? '0' : String(ARC_LEN);
           arcDone = true;
         }
       }
@@ -509,7 +512,7 @@ const TimeUndergroundMarker = (() => {
     const isMob = window.matchMedia('(max-width:768px)').matches;
     const size  = isMob ? SIZE_MOBILE : SIZE_DESKTOP;
     const half  = size / 2;
-    const totalH = size + 20; // segitiga(13) + gap(5) + gambar(size)
+    const totalH = size + 28; // segitiga(18) + gap(4) + margin(6) + gambar(size)
 
     return L.divIcon({
       html: `
@@ -540,7 +543,7 @@ const TimeUndergroundMarker = (() => {
     const img = markerEl.querySelector('.tum-img');
     if (!img) return;
     markerEl.addEventListener('mouseenter', () => {
-      img.style.filter    = 'drop-shadow(0 0 16px rgba(255,255,255,0.8)) drop-shadow(0 0 32px rgba(255,255,255,0.4)) brightness(1.15)';
+      img.style.filter    = 'drop-shadow(0 0 16px rgba(255,255,255,0.9)) drop-shadow(0 0 32px rgba(255,255,255,0.6)) brightness(1.1)';
       img.style.transform = 'scale(1.08)';
     });
     markerEl.addEventListener('mouseleave', () => {
@@ -614,8 +617,8 @@ const TimeUndergroundMarker = (() => {
     img.style.transition = 'transform .15s ease';
     img.style.transform  = 'scale(1.2)';
     img.style.filter     = entering
-      ? 'drop-shadow(0 0 24px rgba(255,255,255,0.9)) drop-shadow(0 0 48px rgba(255,255,255,0.5))'
-      : 'drop-shadow(0 0 10px rgba(180,180,180,0.5))';
+      ? 'drop-shadow(0 0 24px rgba(255,255,255,0.95)) drop-shadow(0 0 48px rgba(255,255,255,0.6))'
+      : 'drop-shadow(0 0 10px rgba(255,255,255,0.5))';
     setTimeout(() => {
       img.style.transform = '';
       img.style.filter    = '';
@@ -629,8 +632,8 @@ const TimeUndergroundMarker = (() => {
     const n = document.createElement('div');
     n.className = 'tum-notif';
     n.innerHTML = entering
-      ? `<span style="font-size:17px;margin-right:7px;">⏰</span><span>Entering <strong>Past Time</strong>…</span>`
-      : `<span style="font-size:17px;margin-right:7px;">🌍</span><span>Back to <strong>Real Time</strong></span>`;
+      ? `<img src="${ICON_IMG}" style="width:20px;height:20px;object-fit:contain;margin-right:7px;"><span>Switching to <strong>Future Time</strong>…</span>`
+      : `<img src="${ICON_IMG}" style="width:20px;height:20px;object-fit:contain;margin-right:7px;"><span>Back to <strong>Previous Time</strong></span>`;
     Object.assign(n.style, {
       position:     'fixed',
       bottom:       '90px',
