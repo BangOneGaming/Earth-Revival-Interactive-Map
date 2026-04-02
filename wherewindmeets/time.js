@@ -20,7 +20,7 @@
 const TimeUndergroundMarker = (() => {
 
   // ─── CONFIG ────────────────────────────────────────────────
-  const COORD      = { lat: 48.00084002013003, lng: 51.84608468841675 };
+  const COORD      = { lat: 58.51364747163952, lng: 49.34347993854442 };
   const FLOOR_ID   = '8';
   const FLOOR_NAME = 'Time';
 
@@ -71,9 +71,9 @@ const TimeUndergroundMarker = (() => {
         border-top: 18px solid rgba(255,255,255,0.95);
         margin-bottom: 0;
         filter:
-          drop-shadow(0 0 4px rgba(255,255,255,0.9))
-          drop-shadow(0 0 10px rgba(255,255,255,0.7))
-          drop-shadow(0 0 20px rgba(255,255,255,0.5));
+          drop-shadow(0 0 4px rgba(255,215,0,0.9))
+          drop-shadow(0 0 10px rgba(255,180,0,0.7))
+          drop-shadow(0 0 20px rgba(200,130,0,0.5));
         animation: tumBounce 1.5s ease-in-out infinite;
       }
       @keyframes tumBounce {
@@ -92,14 +92,14 @@ const TimeUndergroundMarker = (() => {
       @keyframes tumImgGlow {
         0%,100% {
           filter:
-            drop-shadow(0 0  6px rgba(255,255,255,0.50))
-            drop-shadow(0 0 14px rgba(255,255,255,0.30));
+            drop-shadow(0 0  6px rgba(255,215,0,0.40))
+            drop-shadow(0 0 14px rgba(255,180,0,0.20));
         }
         50% {
           filter:
-            drop-shadow(0 0 12px rgba(255,255,255,0.90))
-            drop-shadow(0 0 28px rgba(255,255,255,0.60))
-            drop-shadow(0 0 48px rgba(255,255,255,0.35));
+            drop-shadow(0 0 12px rgba(255,215,0,0.90))
+            drop-shadow(0 0 28px rgba(255,180,0,0.60))
+            drop-shadow(0 0 48px rgba(200,130,0,0.35));
         }
       }
 
@@ -437,8 +437,8 @@ const TimeUndergroundMarker = (() => {
     setTimeout(() => { if (onMidpoint) onMidpoint(); }, 420);
 
     // ── Konfigurasi animasi ──────────────────────────────────
-    const labsE = ['Forward Time', 'Calibrating', 'Synchronizing', 'After Event Time'];
-    const labsX = ['Returning',      'Resetting',   'Synchronizing', 'Before Event Time'];
+    const labsE = ['Reverse Time', 'Calibrating', 'Synchronizing', 'Switch Back'];
+    const labsX = ['Returning',      'Resetting',   'Synchronizing', 'Switch'];
     const labels  = entering ? labsE : labsX;
 
     // Arc penuh di 70% dari total durasi, lalu TAHAN sampai fade-out
@@ -543,7 +543,7 @@ const TimeUndergroundMarker = (() => {
     const img = markerEl.querySelector('.tum-img');
     if (!img) return;
     markerEl.addEventListener('mouseenter', () => {
-      img.style.filter    = 'drop-shadow(0 0 16px rgba(255,255,255,0.9)) drop-shadow(0 0 32px rgba(255,255,255,0.6)) brightness(1.1)';
+      img.style.filter    = 'drop-shadow(0 0 16px rgba(255,215,0,0.9)) drop-shadow(0 0 32px rgba(255,180,0,0.6)) brightness(1.1)';
       img.style.transform = 'scale(1.08)';
     });
     markerEl.addEventListener('mouseleave', () => {
@@ -617,8 +617,8 @@ const TimeUndergroundMarker = (() => {
     img.style.transition = 'transform .15s ease';
     img.style.transform  = 'scale(1.2)';
     img.style.filter     = entering
-      ? 'drop-shadow(0 0 24px rgba(255,255,255,0.95)) drop-shadow(0 0 48px rgba(255,255,255,0.6))'
-      : 'drop-shadow(0 0 10px rgba(255,255,255,0.5))';
+      ? 'drop-shadow(0 0 24px rgba(255,215,0,0.95)) drop-shadow(0 0 48px rgba(255,180,0,0.6))'
+      : 'drop-shadow(0 0 10px rgba(255,215,0,0.5))';
     setTimeout(() => {
       img.style.transform = '';
       img.style.filter    = '';
