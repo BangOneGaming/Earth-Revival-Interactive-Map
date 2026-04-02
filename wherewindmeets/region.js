@@ -652,7 +652,7 @@ zoom_6: [
     "sub_regions": "Granary of Plenty"
   },
   {
-    "name": "jade terrace",
+    "name": "Cleardew Terrace",
     "cn_name": "玉露台",
     "lat": 57.76500667372133,
     "lng": 42.161156303350964,
@@ -756,7 +756,7 @@ zoom_6: [
     "sub_regions": "Jade Gate Pass"
   },
   {
-    "name": "Yinma Pass",
+    "name": "Steed's Pass",
     "cn_name": "饮马隘",
     "lat": 42.42554528818342,
     "lng": 44.50366278659612,
@@ -764,7 +764,7 @@ zoom_6: [
     "sub_regions": "Liangzhou"
   },
   {
-    "name": "Yuchi",
+    "name": "Jade-Mirrored Spring",
     "cn_name": "玉池",
     "lat": 42.32891412804306,
     "lng": 53.13760431723976,
@@ -772,7 +772,7 @@ zoom_6: [
     "sub_regions": "Liangzhou"
   },
   {
-    "name": "Jiuquan Town",
+    "name": "Jiuquan",
     "cn_name": "酒泉镇",
     "lat": 47.52018229276896,
     "lng": 52.08769365784831,
@@ -780,7 +780,7 @@ zoom_6: [
     "sub_regions": "Liangzhou"
   },
   {
-    "name": "Wuwei Mountain",
+    "name": "Mount Wuwei",
     "cn_name": "武威山",
     "lat": 42.46588059118165,
     "lng": 60.874973544973535,
@@ -788,7 +788,7 @@ zoom_6: [
     "sub_regions": "Liangzhou"
   },
   {
-    "name": "Jiedushi Mansion",
+    "name": "Governor's Residence",
     "cn_name": "节度使府",
     "lat": 46.70663856084656,
     "lng": 60.05222222222222,
