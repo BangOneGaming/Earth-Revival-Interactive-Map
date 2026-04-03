@@ -1260,7 +1260,9 @@ createAndAddMarker(markerData, lat, lng, markerKey) {
   const needsBadge = typeof UndergroundManager !== 'undefined'
     ? UndergroundManager.needsFloorBadge(markerFloor)
     : false;
-  
+    if (window.DescriptionLoader?.isReady()) {
+    DescriptionLoader.mergeOne(markerKey, markerData);
+  }
   // ✅ UBAH BAGIAN INI - Tambahkan pengecekan untuk chest
   let baseIcon;
   
