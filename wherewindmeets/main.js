@@ -355,11 +355,18 @@ await DescriptionLoader.mergeAllDescriptions();
       // ============================================
       updateLoadingText('Initializing systems...');
 
-      if (window.MarkerManager?.init) {
-        MarkerManager.init(window.map);
-      } else {
-        throw new Error('MarkerManager not found');
-      }
+      // STEP 5: Initialize Core Systems
+if (window.MarkerManager?.init) {
+  MarkerManager.init(window.map);
+  
+  // ✅ Re-merge descriptions SETELAH MarkerManager init
+  // karena MarkerManager bisa load marker baru di sini
+  if (window.DescriptionLoader?.isReady()) {
+    await DescriptionLoader.mergeAllDescriptions();
+  }
+} else {
+  throw new Error('MarkerManager not found');
+}
 
       if (window.RegionLabelManager?.init) {
         const initRegionLabel = () => {
