@@ -8,7 +8,7 @@ const DescriptionLoader = {
   CACHE_KEY: 'wwm_desc_data',
   CACHE_VERSION_KEY: 'wwm_desc_version',
   CACHE_TIMESTAMP_KEY: 'wwm_desc_timestamp',
-  CURRENT_VERSION: '1.2.23',
+  CURRENT_VERSION: '1.2.25',
   CACHE_DURATION: 3 * 24 * 60 * 60 * 1000,
 
   async init() {
@@ -150,6 +150,23 @@ const DescriptionLoader = {
 
     return markerData;
   },
+
+
+// Di DescriptionLoader
+mergeOne(markerId, markerObj) {
+  if (!this.isLoaded || !this.descData) return markerObj;
+  const fallback = this.descData[markerId];
+  if (!fallback) return markerObj;
+
+  if ((!markerObj.desc || markerObj.desc.trim() === '') && fallback.desc?.trim()) {
+    markerObj.desc = fallback.desc;
+  }
+  if ((!markerObj.loc_type || markerObj.loc_type.trim() === '') && fallback.loc_type?.trim()) {
+    markerObj.loc_type = fallback.loc_type;
+  }
+  return markerObj;
+},
+
 
   async mergeAllDescriptions() {
   // ⏳ Tunggu DataLoader siap
