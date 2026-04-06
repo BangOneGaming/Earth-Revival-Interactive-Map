@@ -5,7 +5,7 @@
  */
 window.DEV_SHOW_HIDDEN = false; // ubah ke true kalau mau lihat marker lama
 const API_BASE_URL = 'https://autumn-dream-8c07.square-spon.workers.dev';
-const DATA_VERSION = '1.1.49';
+const DATA_VERSION = '1.1.55';
 
 const DATA_ENDPOINTS = {
   list: `${API_BASE_URL}/list`,
