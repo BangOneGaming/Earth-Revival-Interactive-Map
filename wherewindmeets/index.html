@@ -30,7 +30,7 @@
 
   <meta name="theme-color" content="#5c3e0e" />
   <meta property="article:published_time" content="2025-11-15T08:00:00+07:00" />
-  <meta property="article:modified_time" content="2026-04-11T08:00:00+07:00" />
+  <meta property="article:modified_time" content="2026-03-21T08:00:00+07:00" />
 
   <link rel="preload" href="https://unpkg.com/leaflet/dist/leaflet.js" as="script">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -127,13 +127,13 @@
   <link rel="preload" href="https://unpkg.com/leaflet/dist/leaflet.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"></noscript>
 
-  <link rel="preload" href="styles.css?v=6.0.30" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="styles.css?v=6.0.30"></noscript>
+  <link rel="preload" href="styles.css?v=6.0.43" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="styles.css?v=6.0.43"></noscript>
 
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@700&display=swap" rel="stylesheet"></noscript>
 
-  <script>const CSS_VERSION = "6.0.30";</script>
+  <script>const CSS_VERSION = "6.0.43";</script>
 
 
 
@@ -2342,55 +2342,58 @@ if (tabId === 'anecdote') {
     if (!ad || ad.dataset.adLoaded) return;
     ad.dataset.adLoaded = '1';
 
-    // Terapkan style sesuai device — hanya setelah picker tutup
     var adIns = ad.querySelector('.adsbygoogle');
     var isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     var isSmallScreen  = window.matchMedia('(max-width: 480px)').matches;
     var isShortScreen  = window.matchMedia('(max-height: 500px)').matches;
 
+    // LANGKAH 1: Tampilkan container + set dimensi dulu
+    // AdSense butuh container visible & punya ukuran sebelum push() dipanggil
     if (isMobileDevice || isSmallScreen || isShortScreen) {
-      var targetHeight = isShortScreen ? '60px' : '90px';
+      var targetHeight = isShortScreen ? '60px' : '100px';
       ad.style.cssText = 'position:fixed!important;bottom:0!important;left:0!important;width:100%!important;height:'+targetHeight+'!important;max-height:'+targetHeight+'!important;min-height:'+targetHeight+'!important;overflow:hidden!important;padding:0!important;z-index:400!important;background:rgba(255,255,255,0.95)!important;display:block!important;';
       if (adIns) adIns.style.cssText = 'display:block!important;height:'+targetHeight+'!important;max-height:'+targetHeight+'!important;min-height:'+targetHeight+'!important;overflow:hidden!important;';
     } else {
       ad.style.display = 'block';
     }
 
-    // AdSense JS di-inject secara dinamis SETELAH picker tutup
-    // → tidak menyentuh main thread selama landing page / picker (CWV aman)
-    function _pushAds() {
-      try {
-        // Auto Ads
-        (window.adsbygoogle = window.adsbygoogle || []).push({
-          google_ad_client: 'ca-pub-8582564022805467',
-          enable_page_level_ads: true
-        });
-        // Sticky slot
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-      } catch(e) {}
+    // LANGKAH 2: Tunggu browser render dimensi container (1 frame),
+    // baru inject AdSense JS dan push — urutan ini krusial agar AdSense
+    // bisa mengukur slot dan mengisi iklan dengan benar
+    requestAnimationFrame(function() {
+      function _pushAds() {
+        try {
+          // Auto Ads
+          (window.adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: 'ca-pub-8582564022805467',
+            enable_page_level_ads: true
+          });
+          // Sticky slot
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch(e) {}
 
-      // Fallback: kalau setelah 8 detik iklan tidak terisi (tidak ada iframe),
-      // sembunyikan container agar tidak jadi kotak kosong
-      setTimeout(function() {
-        var filled = ad.querySelector('iframe');
-        if (!filled) {
-          ad.style.display = 'none';
-          ad.dataset.adLoaded = ''; // reset supaya bisa dicoba lagi jika perlu
-        }
-      }, 8000);
-    }
+        // Fallback: kalau setelah 8 detik iklan tidak terisi (tidak ada iframe),
+        // sembunyikan container agar tidak jadi kotak kosong
+        setTimeout(function() {
+          var filled = ad.querySelector('iframe');
+          if (!filled) {
+            ad.style.display = 'none';
+            ad.dataset.adLoaded = '';
+          }
+        }, 8000);
+      }
 
-    if (document.querySelector('script[src*="adsbygoogle.js"]')) {
-      // Sudah diload sebelumnya (fallback)
-      _pushAds();
-    } else {
-      var s = document.createElement('script');
-      s.async = true;
-      s.crossOrigin = 'anonymous';
-      s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467';
-      s.onload = _pushAds;
-      document.head.appendChild(s);
-    }
+      if (document.querySelector('script[src*="adsbygoogle.js"]')) {
+        _pushAds();
+      } else {
+        var s = document.createElement('script');
+        s.async = true;
+        s.crossOrigin = 'anonymous';
+        s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467';
+        s.onload = _pushAds;
+        document.head.appendChild(s);
+      }
+    });
   }
 
   function _closePicker() {
@@ -2713,7 +2716,7 @@ window.RegionPicker = RegionPicker;
 <script>
 (function() {
   var style = document.createElement('style');
-  style.textContent = '#sticky-ad-container{position:fixed;bottom:0;left:0;width:100%;z-index:400;text-align:center;background:rgba(255,255,255,0.95);box-shadow:0 -2px 6px rgba(0,0,0,.15);height:90px;max-height:90px;overflow:hidden}#ad-close-wrapper{position:absolute!important;top:10px!important;left:50%!important;transform:translateX(-50%)!important;z-index:999999!important;pointer-events:none!important}#btn-close-ad{border:2px solid #333!important;background:rgba(255,255,255,0.3)!important;font-size:16px!important;font-weight:bold!important;cursor:pointer!important;padding:6px 18px!important;border-radius:6px!important;box-shadow:0 3px 8px rgba(0,0,0,0.3)!important;color:#333!important;font-family:Arial,sans-serif!important;transition:all 0.2s ease!important}#ad-click-detector{position:absolute!important;top:0!important;left:0!important;width:100%!important;height:100%!important;z-index:999998!important;cursor:pointer!important}#sticky-ad-container .adsbygoogle{display:block!important}@media only screen and (max-height:500px){#sticky-ad-container{height:60px!important;max-height:60px!important;min-height:60px!important}#sticky-ad-container .adsbygoogle{height:60px!important;max-height:60px!important;min-height:60px!important}#ad-close-wrapper{top:4px!important}#btn-close-ad{font-size:11px!important;padding:3px 10px!important}}@media only screen and (max-width:480px){#sticky-ad-container{height:90px!important;max-height:90px!important;min-height:90px!important;overflow:hidden!important;padding:0!important}#sticky-ad-container .adsbygoogle{height:90px!important;max-height:90px!important;min-height:90px!important;overflow:hidden!important}#ad-close-wrapper{top:6px!important}#btn-close-ad{font-size:13px!important;padding:4px 12px!important}}@media only screen and (max-width:480px) and (max-height:500px){#sticky-ad-container{height:60px!important;max-height:60px!important;min-height:60px!important}#sticky-ad-container .adsbygoogle{height:60px!important;max-height:60px!important;min-height:60px!important}}';
+  style.textContent = '#sticky-ad-container{position:fixed;bottom:0;left:0;width:100%;z-index:400;text-align:center;background:rgba(255,255,255,0.95);box-shadow:0 -2px 6px rgba(0,0,0,.15);height:90px;max-height:90px;overflow:hidden}#ad-close-wrapper{position:absolute!important;top:10px!important;left:50%!important;transform:translateX(-50%)!important;z-index:999999!important;pointer-events:none!important}#btn-close-ad{border:2px solid #333!important;background:rgba(255,255,255,0.3)!important;font-size:16px!important;font-weight:bold!important;cursor:pointer!important;padding:6px 18px!important;border-radius:6px!important;box-shadow:0 3px 8px rgba(0,0,0,0.3)!important;color:#333!important;font-family:Arial,sans-serif!important;transition:all 0.2s ease!important}#ad-click-detector{position:absolute!important;top:0!important;left:0!important;width:100%!important;height:100%!important;z-index:999998!important;cursor:pointer!important}#sticky-ad-container .adsbygoogle{display:block!important}@media only screen and (max-height:500px){#sticky-ad-container{height:60px!important;max-height:60px!important;min-height:60px!important}#sticky-ad-container .adsbygoogle{height:60px!important;max-height:60px!important;min-height:60px!important}#ad-close-wrapper{top:4px!important}#btn-close-ad{font-size:11px!important;padding:3px 10px!important}}@media only screen and (max-width:480px){#sticky-ad-container{height:100px!important;max-height:100px!important;min-height:100px!important;overflow:hidden!important;padding:0!important}#sticky-ad-container .adsbygoogle{height:100px!important;max-height:100px!important;min-height:100px!important;overflow:hidden!important}#ad-close-wrapper{top:6px!important}#btn-close-ad{font-size:13px!important;padding:4px 12px!important}}@media only screen and (max-width:480px) and (max-height:500px){#sticky-ad-container{height:60px!important;max-height:60px!important;min-height:60px!important}#sticky-ad-container .adsbygoogle{height:60px!important;max-height:60px!important;min-height:60px!important}}';
   document.head.appendChild(style);
 })();
 
