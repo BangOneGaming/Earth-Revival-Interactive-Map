@@ -72,7 +72,8 @@ const ICON_CONFIG = {
     "39": "camp.webp",
     "40": "dogplay.webp",
     "41": "board.webp",
-    "42": "rideandarcher.webp"
+    "42": "rideandarcher.webp",
+    "43": "chasingmoon.webp"
   },
 
   names: {
@@ -117,7 +118,8 @@ const ICON_CONFIG = {
     "39": "Camp",
     "40": "Dog Play",
     "41": "Board",
-    "42": "Ride And Archer Challenge"
+    "42": "Ride And Archer Challenge",
+    "43": "Chasing The Moon"
   },
   specialSizes: {
     "1": {
@@ -152,7 +154,7 @@ function isCommonChest(markerName) {
     "Chest Collection - Rocket (Burn Vines, Explosive Barrel, Sunrise-Sunset Flowers)",
     "Chest Collection - Star-Grabbing Moon (Snakes Gathered, Guarded by Humans)",
     "Treasure Collection","Treasure Chest Gathering","Treasure Chest Collection",
-    "Chest Collection","Treasure Chest"
+    "Treasure Chest collection","Treasure Chest"
   ];
   if (commonChests.includes(name)) return true;
   return name.toLowerCase().includes("common chest");
@@ -161,6 +163,25 @@ function getChestOverlayByName(markerName) {
   if (isCommonChest(markerName)) return `${ICON_BASE_URL}petiharta.webp`;
   return `${ICON_BASE_URL}puzzle_chest.png`;
 }
+
+// ============================================================
+// ★ MODIFIKASI: helper untuk resolve overlay URL category 2
+// Prioritas: special_icon → fallback nama marker → fallback default
+// ============================================================
+function getChestOverlayResolved(specialIcon, markerName) {
+  // Prioritas 1: special_icon dari data JSON
+  if (specialIcon && specialIcon.trim() !== '') {
+    // Kalau sudah ada ekstensi (misal "creature.webp") pakai langsung
+    // Kalau tidak ada ekstensi, tambah .webp
+    const filename = specialIcon.trim().includes('.')
+      ? specialIcon.trim()
+      : specialIcon.trim() + '.webp';
+    return `${ICON_BASE_URL}${filename}`;
+  }
+  // Prioritas 2: fallback ke logika nama marker (perilaku lama)
+  return getChestOverlayByName(markerName);
+}
+
 function getAllCategories() {
   return Object.keys(ICON_CONFIG.overlays).map(id => ({
     id, name: getCategoryName(id), iconUrl: getIconUrl(id), overlayUrl: getOverlayUrl(id)
@@ -171,14 +192,21 @@ function testIconUrl(url, categoryId) {
   img.onerror = () => FAILED_ICONS.add(categoryId);
   img.src = url;
 }
-function createCompositeLeafletIconWithMarkerName(categoryId, markerName) {
+
+// ============================================================
+// createCompositeLeafletIconWithMarkerName
+// ★ MODIFIKASI: tambah parameter specialIcon (opsional)
+// ============================================================
+function createCompositeLeafletIconWithMarkerName(categoryId, markerName, specialIcon) {
   const baseUrl = ICON_CONFIG.baseIcon;
   const special = ICON_CONFIG.specialSizes[categoryId];
   const size = special?.size || ICON_CONFIG.defaultSize;
   const anchor = special?.anchor || ICON_CONFIG.defaultAnchor;
   const popupAnchor = special?.popupAnchor || ICON_CONFIG.defaultPopupAnchor;
+
   if (String(categoryId) === "2") {
-    const overlayUrl = getChestOverlayByName(markerName);
+    // ★ Gunakan helper baru yang prioritaskan special_icon
+    const overlayUrl = getChestOverlayResolved(specialIcon, markerName);
     return L.divIcon({
       html: `<div style="position:relative;width:${size[0]}px;height:${size[1]}px;">
         <img src="${baseUrl}" style="position:absolute;top:-10%;left:-10%;width:120%;height:120%;z-index:1;">
@@ -189,6 +217,7 @@ function createCompositeLeafletIconWithMarkerName(categoryId, markerName) {
   }
   return getIconByCategory(categoryId);
 }
+
 function createCompositeLeafletIcon(categoryId) {
   const overlayUrl = getIconUrl(categoryId);
   const baseUrl = ICON_CONFIG.baseIcon;
@@ -230,10 +259,20 @@ function getIconByCategory(categoryId) {
   if (ICONS[id]) return ICONS[id];
   return ICONS.default || new L.Icon.Default();
 }
-function getIconByCategoryWithMarkerName(categoryId, markerName) {
-  if (String(categoryId) === "2") return createCompositeLeafletIconWithMarkerName(categoryId, markerName);
+
+// ============================================================
+// getIconByCategoryWithMarkerName
+// ★ MODIFIKASI: tambah parameter specialIcon (opsional)
+// Cara pakai di map.js:
+//   getIconByCategoryWithMarkerName(marker.category_id, marker.name, marker.special_icon)
+// ============================================================
+function getIconByCategoryWithMarkerName(categoryId, markerName, specialIcon) {
+  if (String(categoryId) === "2") {
+    return createCompositeLeafletIconWithMarkerName(categoryId, markerName, specialIcon);
+  }
   return getIconByCategory(categoryId);
 }
+
 function createIconHTML(categoryId, options = {}) {
   const width = options.width || 32, height = options.height || 32;
   const className = options.className || 'icon-image';
@@ -482,7 +521,7 @@ window.IconManager = {
   getOverlayUrl,
   getAllCategories,
   getIconByCategory,
-  getIconByCategoryWithMarkerName,
+  getIconByCategoryWithMarkerName,   // ★ signature berubah: (categoryId, markerName, specialIcon)
   createIconHTML,
   createCompositeIconHTML,
   getIconUrlWithSpecial,
@@ -493,7 +532,9 @@ window.IconManager = {
   ICON_CONFIG,
   ICONS,
   FAILED_ICONS,
-  // — ★ NEW: wall clock —
+  // — helpers baru category 2 —
+  getChestOverlayResolved,
+  // — ★ wall clock —
   buildWallClockSVG,
   createWallClockIcon,
   startWallClockAnimation,

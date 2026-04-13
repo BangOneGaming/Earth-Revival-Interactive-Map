@@ -30,7 +30,7 @@
 
   <meta name="theme-color" content="#5c3e0e" />
   <meta property="article:published_time" content="2025-11-15T08:00:00+07:00" />
-  <meta property="article:modified_time" content="2026-03-21T08:00:00+07:00" />
+  <meta property="article:modified_time" content="2026-04-11T08:00:00+07:00" />
 
   <link rel="preload" href="https://unpkg.com/leaflet/dist/leaflet.js" as="script">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -127,13 +127,13 @@
   <link rel="preload" href="https://unpkg.com/leaflet/dist/leaflet.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"></noscript>
 
-  <link rel="preload" href="styles.css?v=6.0.19" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="styles.css?v=6.0.19"></noscript>
+  <link rel="preload" href="styles.css?v=6.0.30" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="styles.css?v=6.0.30"></noscript>
 
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@700&display=swap" rel="stylesheet"></noscript>
 
-  <script>const CSS_VERSION = "6.0.19";</script>
+  <script>const CSS_VERSION = "6.0.30";</script>
 
 
 
@@ -1192,6 +1192,96 @@ window.addEventListener('DOMContentLoaded', () => {
       transition: opacity 0.5s ease !important;
       contain: layout paint !important;
     }
+    }
+/* ── Contact Section ───────────────────────── */
+.rp-contact {
+  margin-top: 30px;
+  padding: 28px 0 10px;
+  border-top: 1px solid var(--border2);
+  text-align: center;
+  animation: rpFadeUp 0.5s ease both 0.6s;
+}
+
+.rp-contact-title {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold2);
+  margin-bottom: 14px;
+  opacity: 0.75;
+}
+
+/* Buttons */
+.rp-contact-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.rp-contact-btn {
+  text-decoration: none;
+  border: 1px solid var(--border);
+  color: var(--txt2);
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 8px 18px;
+  transition: all 0.2s ease;
+  position: relative;
+  background: transparent;
+}
+
+/* Hover umum */
+.rp-contact-btn:hover {
+  border-color: var(--gold2);
+  color: var(--gold);
+  background: var(--goldbg);
+}
+
+/* Accent garis bawah */
+.rp-contact-btn::after {
+  content: '';
+  position: absolute;
+  left: 20%;
+  right: 20%;
+  bottom: -1px;
+  height: 2px;
+  background: var(--gold2);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.rp-contact-btn:hover::after {
+  opacity: 1;
+}
+
+/* Optional subtle color hint */
+.rp-contact-btn.discord:hover {
+  box-shadow: 0 0 10px rgba(88, 101, 242, 0.25);
+}
+
+.rp-contact-btn.tiktok:hover {
+  box-shadow: 0 0 10px rgba(255, 0, 80, 0.25);
+}
+.rp-contact {
+  margin-top: 30px;
+  padding: 28px 0 10px;
+  border-top: 1px solid var(--border2);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* ⬅️ ini yang bikin center */
+  text-align: center;
+}
+
+.rp-contact-title {
+  text-align: center;
+  width: 100%;
+}
   </style>
 </head>
 
@@ -1422,6 +1512,20 @@ window.addEventListener('DOMContentLoaded', () => {
 </div>
 
   </div><!-- /rp-body -->
+<!-- ── Contact ───────────────────────────── -->
+<div class="rp-contact">
+  <div class="rp-contact-title">Join the Community or Contact Me</div>
+
+  <div class="rp-contact-buttons">
+    <a href="https://www.tiktok.com/@bangonegaming97" class="rp-contact-btn discord" target="_blank">
+      <span>Tiktok</span>
+    </a>
+
+    <a href="https://discord.gg/zEhTW8GuGV" class="rp-contact-btn tiktok" target="_blank">
+      <span>Discord</span>
+    </a>
+  </div>
+</div>
 
   <div class="rp-footer">
     <button class="rp-skip" id="rpSkip">Skip — open map at default location</button>
@@ -2237,9 +2341,56 @@ if (tabId === 'anecdote') {
     var ad = document.getElementById('sticky-ad-container');
     if (!ad || ad.dataset.adLoaded) return;
     ad.dataset.adLoaded = '1';
-    ad.style.display = '';
-    // Push ad hanya sekarang — setelah picker selesai
-    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+
+    // Terapkan style sesuai device — hanya setelah picker tutup
+    var adIns = ad.querySelector('.adsbygoogle');
+    var isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    var isSmallScreen  = window.matchMedia('(max-width: 480px)').matches;
+    var isShortScreen  = window.matchMedia('(max-height: 500px)').matches;
+
+    if (isMobileDevice || isSmallScreen || isShortScreen) {
+      var targetHeight = isShortScreen ? '60px' : '90px';
+      ad.style.cssText = 'position:fixed!important;bottom:0!important;left:0!important;width:100%!important;height:'+targetHeight+'!important;max-height:'+targetHeight+'!important;min-height:'+targetHeight+'!important;overflow:hidden!important;padding:0!important;z-index:400!important;background:rgba(255,255,255,0.95)!important;display:block!important;';
+      if (adIns) adIns.style.cssText = 'display:block!important;height:'+targetHeight+'!important;max-height:'+targetHeight+'!important;min-height:'+targetHeight+'!important;overflow:hidden!important;';
+    } else {
+      ad.style.display = 'block';
+    }
+
+    // AdSense JS di-inject secara dinamis SETELAH picker tutup
+    // → tidak menyentuh main thread selama landing page / picker (CWV aman)
+    function _pushAds() {
+      try {
+        // Auto Ads
+        (window.adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: 'ca-pub-8582564022805467',
+          enable_page_level_ads: true
+        });
+        // Sticky slot
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch(e) {}
+
+      // Fallback: kalau setelah 8 detik iklan tidak terisi (tidak ada iframe),
+      // sembunyikan container agar tidak jadi kotak kosong
+      setTimeout(function() {
+        var filled = ad.querySelector('iframe');
+        if (!filled) {
+          ad.style.display = 'none';
+          ad.dataset.adLoaded = ''; // reset supaya bisa dicoba lagi jika perlu
+        }
+      }, 8000);
+    }
+
+    if (document.querySelector('script[src*="adsbygoogle.js"]')) {
+      // Sudah diload sebelumnya (fallback)
+      _pushAds();
+    } else {
+      var s = document.createElement('script');
+      s.async = true;
+      s.crossOrigin = 'anonymous';
+      s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467';
+      s.onload = _pushAds;
+      document.head.appendChild(s);
+    }
   }
 
   function _closePicker() {
@@ -2527,7 +2678,7 @@ window.RegionPicker = RegionPicker;
     <div class="patch-footer">
       <p><strong>Thank you for your support</strong><br>Your contributions help improve the Where Winds Meet Interactive Map for the entire community.</p>
       <div class="patch-contact">
-        <a href="https://discord.gg/Mt65qFprs" target="_blank" class="patch-link">
+        <a href="https://discord.gg/zEhTW8GuGV" target="_blank" class="patch-link">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
           </svg>
@@ -2562,28 +2713,11 @@ window.RegionPicker = RegionPicker;
 <script>
 (function() {
   var style = document.createElement('style');
-  style.textContent = '#sticky-ad-container{position:fixed;bottom:0;left:0;width:100%;z-index:400;text-align:center;background:rgba(255,255,255,0.95);box-shadow:0 -2px 6px rgba(0,0,0,.15);height:90px;max-height:90px;overflow:hidden}#ad-close-wrapper{position:absolute!important;top:10px!important;left:50%!important;transform:translateX(-50%)!important;z-index:999999!important;pointer-events:none!important}#btn-close-ad{border:2px solid #333!important;background:rgba(255,255,255,0.3)!important;font-size:16px!important;font-weight:bold!important;cursor:pointer!important;padding:6px 18px!important;border-radius:6px!important;box-shadow:0 3px 8px rgba(0,0,0,0.3)!important;color:#333!important;font-family:Arial,sans-serif!important;transition:all 0.2s ease!important}#ad-click-detector{position:absolute!important;top:0!important;left:0!important;width:100%!important;height:100%!important;z-index:999998!important;cursor:pointer!important}#sticky-ad-container .adsbygoogle{display:block!important}@media only screen and (max-height:500px){#sticky-ad-container{height:60px!important;max-height:60px!important;min-height:60px!important}#sticky-ad-container .adsbygoogle{height:60px!important;max-height:60px!important;min-height:60px!important}#ad-close-wrapper{top:4px!important}#btn-close-ad{font-size:11px!important;padding:3px 10px!important}}@media only screen and (max-width:480px){#sticky-ad-container{height:130px!important;max-height:130px!important;min-height:130px!important;overflow:hidden!important;padding:0!important}#sticky-ad-container .adsbygoogle{height:130px!important;max-height:130px!important;min-height:130px!important;overflow:hidden!important}#ad-close-wrapper{top:6px!important}#btn-close-ad{font-size:13px!important;padding:4px 12px!important}}@media only screen and (max-width:480px) and (max-height:500px){#sticky-ad-container{height:60px!important;max-height:60px!important;min-height:60px!important}#sticky-ad-container .adsbygoogle{height:60px!important;max-height:60px!important;min-height:60px!important}}';
+  style.textContent = '#sticky-ad-container{position:fixed;bottom:0;left:0;width:100%;z-index:400;text-align:center;background:rgba(255,255,255,0.95);box-shadow:0 -2px 6px rgba(0,0,0,.15);height:90px;max-height:90px;overflow:hidden}#ad-close-wrapper{position:absolute!important;top:10px!important;left:50%!important;transform:translateX(-50%)!important;z-index:999999!important;pointer-events:none!important}#btn-close-ad{border:2px solid #333!important;background:rgba(255,255,255,0.3)!important;font-size:16px!important;font-weight:bold!important;cursor:pointer!important;padding:6px 18px!important;border-radius:6px!important;box-shadow:0 3px 8px rgba(0,0,0,0.3)!important;color:#333!important;font-family:Arial,sans-serif!important;transition:all 0.2s ease!important}#ad-click-detector{position:absolute!important;top:0!important;left:0!important;width:100%!important;height:100%!important;z-index:999998!important;cursor:pointer!important}#sticky-ad-container .adsbygoogle{display:block!important}@media only screen and (max-height:500px){#sticky-ad-container{height:60px!important;max-height:60px!important;min-height:60px!important}#sticky-ad-container .adsbygoogle{height:60px!important;max-height:60px!important;min-height:60px!important}#ad-close-wrapper{top:4px!important}#btn-close-ad{font-size:11px!important;padding:3px 10px!important}}@media only screen and (max-width:480px){#sticky-ad-container{height:90px!important;max-height:90px!important;min-height:90px!important;overflow:hidden!important;padding:0!important}#sticky-ad-container .adsbygoogle{height:90px!important;max-height:90px!important;min-height:90px!important;overflow:hidden!important}#ad-close-wrapper{top:6px!important}#btn-close-ad{font-size:13px!important;padding:4px 12px!important}}@media only screen and (max-width:480px) and (max-height:500px){#sticky-ad-container{height:60px!important;max-height:60px!important;min-height:60px!important}#sticky-ad-container .adsbygoogle{height:60px!important;max-height:60px!important;min-height:60px!important}}';
   document.head.appendChild(style);
 })();
 
-(function() {
-  var adContainer = document.getElementById("sticky-ad-container");
-  var adIns = adContainer ? adContainer.querySelector('.adsbygoogle') : null;
-  if (!adContainer) return;
-  var isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  var isSmallScreen  = window.matchMedia('(max-width: 480px)').matches;
-  var isShortScreen  = window.matchMedia('(max-height: 500px)').matches;
-  var targetHeight   = isShortScreen ? '60px' : '130px';
-  if (isMobileDevice || isSmallScreen || isShortScreen) {
-    adContainer.style.cssText = 'position:fixed!important;bottom:0!important;left:0!important;width:100%!important;height:'+targetHeight+'!important;max-height:'+targetHeight+'!important;min-height:'+targetHeight+'!important;overflow:hidden!important;padding:0!important;z-index:400!important;background:rgba(255,255,255,0.95)!important;';
-    if (adIns) adIns.style.cssText = 'display:block!important;height:'+targetHeight+'!important;max-height:'+targetHeight+'!important;min-height:'+targetHeight+'!important;overflow:hidden!important;';
-    var observer = new MutationObserver(function() {
-      if (adContainer.style.height !== targetHeight) adContainer.style.height = adContainer.style.maxHeight = targetHeight;
-      if (adIns && adIns.style.height !== targetHeight) adIns.style.height = adIns.style.maxHeight = targetHeight;
-    });
-    observer.observe(adContainer, { attributes: true, attributeFilter: ['style'], subtree: true });
-  }
-})();
+// Mobile ad style override — sekarang dihandle di dalam _showAd() agar tidak tampil sebelum pick
 </script>
 
 <script>
@@ -2611,14 +2745,7 @@ btnClose.addEventListener("click", function(e) {
 });
 </script>
 
-<!-- Google AdSense Auto Ads -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8582564022805467" crossorigin="anonymous"></script>
-<script>
-  (adsbygoogle = window.adsbygoogle || []).push({
-    google_ad_client: "ca-pub-8582564022805467",
-    enable_page_level_ads: true
-  });
-</script>
+<!-- Google AdSense — diload secara dinamis setelah picker tutup (lihat _showAd di RegionPicker) -->
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 

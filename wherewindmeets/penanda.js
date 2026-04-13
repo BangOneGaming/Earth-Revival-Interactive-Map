@@ -49,7 +49,7 @@ const filterGroupConfig = {
     minigame: {
     title: "Mini Game's",
     icon: '',
-    categories: [29, 30, 31, 32, 33, 34, 35, 42]
+    categories: [29, 30, 31, 32, 33, 34, 35, 42, 43]
   },
   traveler: {
     title: 'Traveler',
@@ -1128,20 +1128,52 @@ ${hasValidLink ? `
 
       <div class="report-popup" data-report="${markerKey}">
 
-        <a class="report-link"
-           href="https://discord.gg/Mt65qFprs"
-           target="_blank">
+        <div class="report-popup-header">Report an Issue</div>
+
+        <!-- Reason Selection -->
+        <div class="report-reason-group">
+          <label class="report-reason-label">Reason</label>
+          <select class="report-reason-select" id="reportReason_${markerKey}"
+                  onchange="event.stopPropagation(); handleReportReasonChange('${markerKey}')"
+                  onclick="event.stopPropagation()">
+            <option value="">— Select a reason —</option>
+            <option value="Wrong position">Wrong position</option>
+            <option value="Wrong category">Wrong category</option>
+            <option value="Wrong name">Wrong name</option>
+            <option value="Wrong region">Wrong region</option>
+            <option value="Wrong picture">Wrong picture</option>
+            <option value="Other">Other reason</option>
+          </select>
+        </div>
+
+        <!-- Other Reason Textarea (hidden by default) -->
+        <div class="report-other-group" id="reportOtherGroup_${markerKey}" style="display:none;">
+          <textarea class="report-other-textarea"
+                    id="reportOtherText_${markerKey}"
+                    placeholder="Describe the issue..."
+                    onclick="event.stopPropagation()"
+                    onkeydown="event.stopPropagation()"
+                    rows="3"></textarea>
+        </div>
+
+        <!-- Discord: Send directly to channel -->
+        <button class="report-link"
+                onclick="event.stopPropagation(); sendDiscordReport('${markerKey}')"
+                style="cursor:pointer; width:100%; text-align:left; box-sizing:border-box;">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="#ffd88a">
-            <path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515..." />
+            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.033.055a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
           </svg>
-          Discord
-        </a>
+          Discord — Send to Channel
+        </button>
+        <div class="report-link-desc">Report sent automatically with marker link</div>
+
+        <div class="report-discord-status" id="reportStatus_${markerKey}"></div>
 
         <a class="report-link"
            href="https://www.tiktok.com/@bangonegaming97"
            target="_blank">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="#ffd88a">
-            <path d="M12.58 2h3.22a5.73 5.73..." />
+            <path d="M12.58 2h3.22a5.73 5.73 0 0 0 5.73 5.73v3.22a8.93 8.93 0 0 1-5.18-1.65v7.47A6.45 6.45 0 1 1 9.9 10.3v3.27a3.22 3.22 0 1 0 2.22 3.07V2z"/>
           </svg>
           TikTok
         </a>
@@ -1269,7 +1301,7 @@ createAndAddMarker(markerData, lat, lng, markerKey) {
   // KHUSUS untuk category 2 (Treasure Chest) - cek nama
   if (String(markerData.category_id) === "2") {
     baseIcon = typeof getIconByCategoryWithMarkerName !== 'undefined'
-      ? getIconByCategoryWithMarkerName(markerData.category_id, markerData.name)
+      ? getIconByCategoryWithMarkerName(markerData.category_id, markerData.name,specialIcon)
       : getIconByCategory(markerData.category_id);
   }
   // Untuk kategori lain dengan special_icon
@@ -2004,6 +2036,189 @@ function showNotification(message, type = 'success') {
     notification.classList.remove('show');
     setTimeout(() => document.body.removeChild(notification), 300);
   }, 2000);
+}
+
+/**
+ * Show/hide "Other reason" textarea based on selection
+ */
+window.handleReportReasonChange = function(markerKey) {
+  const select = document.getElementById(`reportReason_${markerKey}`);
+  const otherGroup = document.getElementById(`reportOtherGroup_${markerKey}`);
+  if (!select || !otherGroup) return;
+  otherGroup.style.display = select.value === 'Other' ? 'block' : 'none';
+};
+
+// ========================================
+// DISCORD REPORT — DIRECT WEBHOOK SEND
+// ========================================
+
+/**
+ * Discord Webhook Configuration
+ * Replace DISCORD_WEBHOOK_URL with your channel's webhook URL.
+ * How to get webhook: Discord Server → Channel Settings → Integrations → Webhooks → New Webhook → Copy URL
+ */
+const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1492212771155349727/H7ShFTAE9Y20AmQXv7BCj9QIEysbHxyrmqjYONB46gJGzINjkZjCygsSPpnV_JIfPcdc';
+
+/**
+ * Send a marker report directly to a Discord channel via webhook
+ * @param {string} markerKey - Unique marker key
+ */
+window.sendDiscordReport = async function(markerKey) {
+  const statusEl = document.getElementById(`reportStatus_${markerKey}`);
+  const reasonSelect = document.getElementById(`reportReason_${markerKey}`);
+  const otherTextarea = document.getElementById(`reportOtherText_${markerKey}`);
+
+  // Validate reason selected
+  const selectedReason = reasonSelect ? reasonSelect.value : '';
+  if (!selectedReason) {
+    if (statusEl) {
+      statusEl.className = 'report-discord-status error';
+      statusEl.textContent = '⚠ Please select a reason first';
+    }
+    return;
+  }
+
+  const reason = selectedReason === 'Other'
+    ? (otherTextarea?.value?.trim() || 'Other (no details provided)')
+    : selectedReason;
+
+  if (statusEl) {
+    statusEl.className = 'report-discord-status sending';
+    statusEl.textContent = '⏳ Sending report...';
+  }
+
+  // Get full marker info from MarkerManager
+  let markerInfo = { _key: markerKey, category_id: '', name: 'Unknown' };
+  if (window.MarkerManager && typeof window.MarkerManager.getAllMarkers === 'function') {
+    const found = window.MarkerManager.getAllMarkers().find(m => m._key === markerKey);
+    if (found) markerInfo = found;
+  }
+
+  const categoryId = markerInfo.category_id || '';
+  const categoryName = typeof getCategoryName === 'function'
+    ? getCategoryName(categoryId)
+    : `Category ${categoryId}`;
+
+  // Use same link as copy-link button
+  const mapLink = (window.MarkerShare && typeof window.MarkerShare.generateLink === 'function')
+    ? window.MarkerShare.generateLink(markerInfo)
+    : window.location.href;
+
+  const timestamp = new Date().toISOString();
+
+  const embed = {
+    title: '🚩 New Marker Report',
+    color: 0xC0443A,
+    fields: [
+      { name: '⚠️ Reason',       value: reason, inline: false },
+      { name: '📌 Marker Name',  value: markerInfo.name || 'Unknown', inline: true },
+      { name: '🔑 Marker Key',   value: `\`${markerKey}\``, inline: true },
+      { name: '🏷️ Category',    value: `${categoryName} (ID: ${categoryId})`, inline: true },
+      { name: '📍 Coordinates',  value: (markerInfo.x && markerInfo.y) ? `X: ${markerInfo.x}, Y: ${markerInfo.y}` : 'Not available', inline: true },
+      { name: '🌍 Region',       value: markerInfo.loc_type || 'Not available', inline: true },
+      { name: '🔗 Marker Link',  value: `[Open Marker](${mapLink})\n\`${mapLink}\``, inline: false },
+    ],
+    footer: { text: 'Where Winds Meet — Marker Report' },
+    timestamp
+  };
+
+  try {
+    const res = await fetch(DISCORD_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: 'WWM Map Reporter',
+        avatar_url: 'https://ik.imagekit.io/k3lv5clxs/wherewindmeet/Simbol/edit.png',
+        embeds: [embed]
+      })
+    });
+
+    if (res.ok || res.status === 204) {
+      // Tutup report popup dulu
+      const reportPopup = document.querySelector(`.report-popup[data-report="${markerKey}"]`);
+      if (reportPopup) reportPopup.style.display = 'none';
+
+      // Reset fields
+      if (reasonSelect) reasonSelect.value = '';
+      if (otherTextarea) otherTextarea.value = '';
+      const otherGroup = document.getElementById(`reportOtherGroup_${markerKey}`);
+      if (otherGroup) otherGroup.style.display = 'none';
+
+      // Tampilkan success popup overlay (seperti marker-add.js)
+      showReportSuccessPopup();
+
+    } else {
+      const errText = await res.text();
+      console.error('Discord webhook error:', res.status, errText);
+      showReportErrorPopup(`Failed (${res.status}) — please try again`);
+    }
+  } catch (err) {
+    console.error('Discord report failed:', err);
+    showReportErrorPopup('Connection failed — please try again');
+  }
+};
+
+/**
+ * Show success overlay popup after report sent
+ */
+function showReportSuccessPopup() {
+  const old = document.querySelector('.report-result-popup');
+  if (old) old.remove();
+
+  const popup = document.createElement('div');
+  popup.className = 'report-result-popup report-result-success';
+  popup.innerHTML = `
+    <div class="report-result-overlay"></div>
+    <div class="report-result-container">
+      <div class="report-result-content">
+        <div class="report-result-icon">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#5cb8a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <p class="report-result-title">Report Sent!</p>
+        <p class="report-result-message">Thank you for your report.<br>We'll review and fix it soon.</p>
+        <button class="report-result-close-btn" onclick="this.closest('.report-result-popup').remove()">OK</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(popup);
+  setTimeout(() => popup.classList.add('show'), 30);
+  setTimeout(() => {
+    popup.classList.remove('show');
+    setTimeout(() => popup.remove(), 300);
+  }, 5000);
+}
+
+/**
+ * Show error overlay popup if report failed
+ */
+function showReportErrorPopup(message) {
+  const old = document.querySelector('.report-result-popup');
+  if (old) old.remove();
+
+  const popup = document.createElement('div');
+  popup.className = 'report-result-popup report-result-error';
+  popup.innerHTML = `
+    <div class="report-result-overlay"></div>
+    <div class="report-result-container">
+      <div class="report-result-content">
+        <div class="report-result-icon">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#c0443a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <p class="report-result-title">Failed to Send</p>
+        <p class="report-result-message">${message}</p>
+        <button class="report-result-close-btn" onclick="this.closest('.report-result-popup').remove()">Try Again</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(popup);
+  setTimeout(() => popup.classList.add('show'), 30);
 }
 
 // ========================================
