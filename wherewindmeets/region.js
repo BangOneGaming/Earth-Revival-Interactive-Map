@@ -660,7 +660,7 @@ zoom_6: [
     "sub_regions": "Liangzhou"
   },
   {
-    "name": "Xiaoguan Ancient Road",
+    "name": "Xiao Pass Old Road",
     "cn_name": "萧关古道",
     "lat": 65.61156752028218,
     "lng": 63.33366030335096,
@@ -668,7 +668,7 @@ zoom_6: [
     "sub_regions": "Qinchuan"
   },
   {
-    "name": "Fufengdian",
+    "name": "Rustling Meadow",
     "cn_name": "扶风甸",
     "lat": 71.34976610934744,
     "lng": 69.2235688042328,
@@ -676,7 +676,7 @@ zoom_6: [
     "sub_regions": "Qinchuan"
   },
   {
-    "name": "lion grave",
+    "name": "Lion Barrow",
     "cn_name": "狮子坟",
     "lat": 76.35493310758376,
     "lng": 76.24801214814813,
@@ -684,7 +684,7 @@ zoom_6: [
     "sub_regions": "Qinchuan"
   },
   {
-    "name": "Drifting in the wilderness",
+    "name": "Marsh Plain",
     "cn_name": "荡莽原",
     "lat": 70.07440647619048,
     "lng": 75.52361289594354,
@@ -700,7 +700,7 @@ zoom_6: [
     "sub_regions": "Qinchuan"
   },
   {
-    "name": "Huayudao",
+    "name": "The Huayu Road",
     "cn_name": "华舆道",
     "lat": 76.99836894532628,
     "lng": 81.24693052557318,
@@ -708,7 +708,7 @@ zoom_6: [
     "sub_regions": "Qinchuan"
   },
   {
-    "name": "Wangjingchuan",
+    "name": "Rivergaze Plateau",
     "cn_name": "望泾川",
     "lat": 72.05891238095238,
     "lng": 85.66714519929452,
@@ -716,7 +716,7 @@ zoom_6: [
     "sub_regions": "Qinchuan"
   },
   {
-    "name": "Chengcheng Lake",
+    "name": "Sunken City Lake",
     "cn_name": "陷城湖",
     "lat": 84.73135721906898,
     "lng": 94.34381977280691,
