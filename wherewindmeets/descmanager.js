@@ -8,7 +8,7 @@ const DescriptionLoader = {
   CACHE_KEY: 'wwm_desc_data',
   CACHE_VERSION_KEY: 'wwm_desc_version',
   CACHE_TIMESTAMP_KEY: 'wwm_desc_timestamp',
-  CURRENT_VERSION: '1.2.26',
+  CURRENT_VERSION: '1.2.27',
   CACHE_DURATION: 3 * 24 * 60 * 60 * 1000,
 
   async init() {
