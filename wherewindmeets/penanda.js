@@ -34,7 +34,7 @@ const filterGroupConfig = {
   hot : {
     title: 'Hot',
     icon: '',
-    categories: [2, 3, 15, 13, 24]  // Teleport + Treasure Chest
+    categories: [2, 3, 15, 16, 13, 24]  // Teleport + Treasure Chest
   },
   discover: {
     title: 'Discover',
@@ -44,7 +44,7 @@ const filterGroupConfig = {
   collection: {
     title: 'Collection',
     icon: '',
-    categories: [5, 4, 6, 7, 8, 9, 40, 10, 11, 12, 14, 16, 17, 18, 19, 20, 41]
+    categories: [5, 4, 6, 7, 8, 9, 40, 10, 11, 12, 14, 17, 18, 19, 20, 41]
   },
     minigame: {
     title: "Mini Game's",
