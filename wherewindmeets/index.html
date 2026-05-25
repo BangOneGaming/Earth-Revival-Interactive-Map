@@ -316,27 +316,47 @@
      BRUSH IMAGE — fixed, di luar shell
      mix-blend-mode:screen blend ke #bg
      ══════════════════════════════════════ */
+/* ══════════════════════════════════════
+   BRUSH IMAGE — fixed, di luar shell
+   mix-blend-mode:screen blend ke #bg
+   ══════════════════════════════════════ */
+#brush-img {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: auto;
+  z-index: 120;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  transform: translateX(-35%);
+  object-fit: contain;
+  object-position: left center;
+  display: block;
+
+  /* Fade transparan dari kanan ke kiri */
+  -webkit-mask-image: linear-gradient(
+    to left,
+    transparent 0%,
+    black 50%
+  );
+  mask-image: linear-gradient(
+    to left,
+    transparent 0%,
+    black 50%
+  );
+}
+
+/*
+ * BRUSH PATH:
+ * PRODUCTION → CDN
+ * LOCAL TEST → ganti src ke: images/brush-nav.png
+ */
+@media (orientation: portrait) {
   #brush-img {
-    position: fixed;
-    top: 0; left: 0;
-    height: 100vh;
-    width: auto;
-    z-index: 120;
-    mix-blend-mode: screen;
-    pointer-events: none;
-    transform: translateX(-35%);
-    object-fit: contain;
-    object-position: left center;
-    display: block;
+    transform: translateX(-51%);
   }
-  /*
-   * BRUSH PATH:
-   * PRODUCTION → CDN
-   * LOCAL TEST → ganti src ke: images/brush-nav.png
-   */
-  @media (orientation: portrait) {
-    #brush-img { transform: translateX(-51%); }
-  }
+}
 
   /* ══════════════════════════════════════
      SHELL GRID
@@ -683,7 +703,8 @@ body.ink-ready #tab-list .ctab.on:hover .ctab-label { color: #ffffff; }
      ══════════════════════════════════════ */
   #btn-resume {
     position: fixed; bottom: 16px; right: 16px; z-index: 200;
-    display: flex; align-items: center; gap: 8px;
+    display: none;  /* ← tambah ini, hidden di awal */
+    align-items: center; gap: 8px;
     background: rgba(10,9,7,.9);
     border: 1px solid var(--gold-dim);
     border-radius: 3px; padding: 9px 18px;
@@ -693,7 +714,11 @@ body.ink-ready #tab-list .ctab.on:hover .ctab-label { color: #ffffff; }
     backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
     transition: border-color .22s, background .22s;
   }
-  #btn-resume:hover { border-color: var(--gold); background: rgba(22,17,5,.94); }
+  #btn-resume:hover {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, #c9a55a 0%, #f0d080 40%, #a07830 100%);
+  color: #1a0e00;
+}
   .gem {
     width: 11px; height: 11px; background: var(--gold);
     clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
@@ -1460,7 +1485,7 @@ body.ink-ready #tab-list .ctab.on:hover .ctab-label { color: #ffffff; }
 
 <!-- RESUME button -->
 <button id="btn-resume">
-  <div class="gem" aria-hidden="true"></div>Resume
+  <div class="gem" aria-hidden="true"></div>Go to Location
 </button>
 
 <!-- ══════════════════════════════════════════════════════
@@ -1721,6 +1746,26 @@ const rafIds   = [0,0,0,0,0];
 // Tab content state
 const tabLoaded = {};
 
+
+function showResumeBtn(locIdx) {
+  const btn = document.getElementById('btn-resume');
+  const firstChild = document.querySelector(`.lcard[data-loc="${locIdx}"] .lchild`);
+  if (firstChild) {
+    btn._resolveData = {
+      lat:    parseFloat(firstChild.dataset.lat),
+      lng:    parseFloat(firstChild.dataset.lng),
+      preset: firstChild.dataset.preset || 'main',
+      zoom:   parseInt(firstChild.dataset.zoom) || 5,
+      label:  firstChild.querySelector('.lchild-name')?.textContent || ''
+    };
+  }
+  btn.style.display = 'flex';
+}
+
+function hideResumeBtn() {
+  document.getElementById('btn-resume').style.display = 'none';
+}
+
 // ════════════════════════════════════════
 //  CANVAS VIDEO SYSTEM
 // ════════════════════════════════════════
@@ -1899,6 +1944,19 @@ qsa('.lcard-head').forEach((head) => {
   head.addEventListener('click', () => {
     switchLoc(locIdx);
     toggleChildren(head.closest('.lcard'));
+    const card = head.closest('.lcard');
+    const firstChild = card.querySelector('.lchild');
+    if (firstChild) {
+      const btn = document.getElementById('btn-resume');
+      btn._resolveData = {
+        lat:    parseFloat(firstChild.dataset.lat),
+        lng:    parseFloat(firstChild.dataset.lng),
+        preset: firstChild.dataset.preset || 'main',
+        zoom:   parseInt(firstChild.dataset.zoom) || 5,
+        label:  firstChild.querySelector('.lchild-name')?.textContent || ''
+      };
+      btn.style.display = 'flex';
+    }
   });
   head.addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); switchLoc(i); toggleChildren(head.closest('.lcard')); }
@@ -1907,6 +1965,7 @@ qsa('.lcard-head').forEach((head) => {
 qsa('.lchild').forEach(ch => {
   ch.addEventListener('click', e => {
     e.stopPropagation();
+    hideResumeBtn();
     _resolveWith({
       lat:    parseFloat(ch.dataset.lat),
       lng:    parseFloat(ch.dataset.lng),
@@ -2674,6 +2733,31 @@ window.addEventListener('resize', () => {
 //  INIT ANIMATION
 // ════════════════════════════════════════
 loreEl.style.pointerEvents = 'none';
+
+document.getElementById('main').addEventListener('pointerenter', () => {
+  const bgUrls = [
+    'https://tiles.bgonegaming.win/wherewindmeet/overlay/bg-qinghe.webp?v=1',
+    'https://tiles.bgonegaming.win/wherewindmeet/overlay/bg-kaifeng.webp?v=1',
+    'https://tiles.bgonegaming.win/wherewindmeet/overlay/bg-hexi.webp?v=1',
+    'https://tiles.bgonegaming.win/wherewindmeet/overlay/bg-bujiang.webp?v=1',
+    'https://tiles.bgonegaming.win/wherewindmeet/overlay/bg-imperial.webp?v=2',
+  ];
+  document.querySelectorAll('.lcard').forEach(card => {
+    const bg = card.querySelector('.lcard-bg');
+    if (bg && !bg.style.backgroundImage) {
+      const idx = parseInt(card.dataset.i);
+      if (bgUrls[idx]) bg.style.backgroundImage = `url('${bgUrls[idx]}')`;
+    }
+  });
+}, { once: true }); // once: hanya sekali, tidak perlu diulang
+
+document.getElementById('btn-resume').addEventListener('click', () => {
+  const btn = document.getElementById('btn-resume');
+  if (btn._resolveData) {
+    hideResumeBtn();
+    _resolveWith(btn._resolveData);
+  }
+});
 
 // Panel & shell langsung visible — tidak tunggu GSAP
 panelEl.style.visibility    = 'visible';
