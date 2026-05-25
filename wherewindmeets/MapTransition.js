@@ -18,10 +18,10 @@ const MapTransition = {
   _smoke:   null,
 
   NAMES: {
-    main:         'Jianghua',
+    main:         'Jianghu',
     dreamspace:   'Dreamspace',
     hutuo:        'Hutuo',
-    royal_palace: 'Royal Palace (Beta)',
+    royal_palace: 'Imperial Palace',
   },
 
   // ── Init smoke system (lazy, once) ──

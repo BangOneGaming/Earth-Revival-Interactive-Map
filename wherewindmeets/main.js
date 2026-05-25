@@ -39,7 +39,7 @@
   // DEFERRED CSS
   // ============================================
   function loadDeferredCSS() {
-    const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.2.1';
+    const cssVersion = typeof CSS_VERSION !== 'undefined' ? CSS_VERSION : '1.2.5';
 
     const cssFiles = [
       'marker-image-handler.css',
@@ -404,12 +404,7 @@ if (window.MarkerManager?.init) {
       
       if (pick) {
 
-        // 1. Switch preset map jika perlu (misal Hutuo)
-        if (pick.preset && pick.preset !== 'main') {
-          if (typeof _applyMapPreset === 'function') {
-            _applyMapPreset(pick.preset, false);
-          }
-        }
+
 
         // 2. Set posisi awal peta
         if (pick.lat != null && pick.lng != null) {
@@ -552,9 +547,17 @@ if (pick.goToLocation && pick.markerKey && window.MarkerManager) {
           console.log('✅ RegionManager initialized');
 
           if (window.MapSwitcher) {
-            MapSwitcher.init(window.map);
-            console.log('✅ MapSwitcher initialized');
-          }
+  MapSwitcher.init(window.map);
+  console.log('✅ MapSwitcher initialized');
+}
+
+// ✅ Apply preset SETELAH MapSwitcher siap
+if (pick && pick.preset && pick.preset !== 'main') {
+  if (typeof _applyMapPreset === 'function') {
+    _applyMapPreset(pick.preset, false);
+    console.log('✅ Preset applied:', pick.preset);
+  }
+}
         } catch (error) {
           console.warn('⚠️ RegionManager init failed:', error);
         }

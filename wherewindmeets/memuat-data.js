@@ -1,11 +1,6 @@
-/**
- * Data loader module (clean version - no debug)
- * FIX: Cache menyimpan data RAW, filterMarkers hanya dipanggil saat applyToGlobal
- * Sehingga ubah DEV_SHOW_HIDDEN tidak perlu ganti DATA_VERSION atau fetch ulang
- */
-window.DEV_SHOW_HIDDEN = false; // ubah ke true kalau mau lihat marker lama
+window.DEV_SHOW_HIDDEN = false;
 const API_BASE_URL = 'https://autumn-dream-8c07.square-spon.workers.dev';
-const DATA_VERSION = '1.1.62';
+const DATA_VERSION = '1.1.78';
 
 const DATA_ENDPOINTS = {
   list: `${API_BASE_URL}/list`,
@@ -51,6 +46,14 @@ const DATA_ENDPOINTS = {
   papan: `${API_BASE_URL}/board`,
   kudadanpanah: `${API_BASE_URL}/rideandarcher`,
   tangkapbulan: `${API_BASE_URL}/chasingmoon`,
+  drama: `${API_BASE_URL}/drama`,
+  fightcricket: `${API_BASE_URL}/fightcricket`,
+  talisman: `${API_BASE_URL}/talisman`,
+  iceplay: `${API_BASE_URL}/iceplay`,
+  slaping: `${API_BASE_URL}/slaping`,
+  knife: `${API_BASE_URL}/knife`,
+  flowerbloom: `${API_BASE_URL}/flowerbloom`,
+  icesculpture: `${API_BASE_URL}/icesculpture`,
   terbaru: `${API_BASE_URL}/terbaru`
 };
 
@@ -97,7 +100,15 @@ const ENDPOINT_TO_GLOBAL = {
   anjing: 'anjing',
   papan: 'papan',
   kudadanpanah: 'kudadanpanah',
-  papan: 'tangkapbulan',
+  tangkapbulan: 'tangkapbulan',
+  drama: 'drama',
+  fightcricket: 'adujangkrik',
+  talisman: 'jimat',
+  iceplay: 'mainsalju',
+  slaping: 'menampar',
+  knife: 'pisau',
+  flowerbloom: 'bungamekar',
+  icesculpture: 'patunges',
   terbaru: 'terbaru'
 };
 
@@ -112,8 +123,7 @@ const DataLoader = {
 
   generateFingerprint(data) {
     if (!data || typeof data !== 'object') return 'empty';
-    const keys = Object.keys(data);
-    return `${keys.length}`;
+    return `${Object.keys(data).length}`;
   },
 
   async init() {
@@ -122,10 +132,9 @@ const DataLoader = {
 
     try {
       const cached = this.getCachedData();
-
       if (cached) {
         this.loadedData = cached;
-        this.applyToGlobal(cached); // ← filterMarkers dipanggil di sini dengan DEV_SHOW_HIDDEN saat itu
+        this.applyToGlobal(cached);
         this.isLoading = false;
         this.showLoadingSpinner(false);
         await this.loadFeedback(false);
@@ -133,26 +142,22 @@ const DataLoader = {
       }
 
       const stale = this.getStaleCache();
-
       if (stale) {
         this.loadedData = stale;
-        this.applyToGlobal(stale); // ← filterMarkers dipanggil di sini
+        this.applyToGlobal(stale);
         this.isLoading = false;
         this.showLoadingSpinner(false);
-
         this.loadAllEndpoints().then(async () => {
           await this.loadFeedback(true);
           this.setCachedData(this.loadedData);
           MarkerManager?.forceRefreshMarkers?.();
         });
-
         return true;
       }
 
       await this.loadAllEndpoints();
       await this.loadFeedback(true);
       this.setCachedData(this.loadedData);
-
       this.isLoading = false;
       this.showLoadingSpinner(false);
       return true;
@@ -168,18 +173,12 @@ const DataLoader = {
     try {
       if (!force) {
         const cached = this.getCachedFeedback();
-        if (cached) {
-          this.applyFeedback(cached);
-          return;
-        }
+        if (cached) { this.applyFeedback(cached); return; }
       }
-
       const res = await fetch(`${API_BASE_URL}/userfeedback`);
       const data = await res.json();
-
       this.setCachedFeedback(data);
       this.applyFeedback(data);
-
     } catch {}
   },
 
@@ -199,17 +198,12 @@ const DataLoader = {
       const { data, timestamp } = JSON.parse(raw);
       if (Date.now() - timestamp > this.feedbackExpiry) return null;
       return data;
-    } catch {
-      return null;
-    }
+    } catch { return null; }
   },
 
   setCachedFeedback(data) {
     try {
-      localStorage.setItem('feedbackData', JSON.stringify({
-        data,
-        timestamp: Date.now()
-      }));
+      localStorage.setItem('feedbackData', JSON.stringify({ data, timestamp: Date.now() }));
     } catch {}
   },
 
@@ -217,16 +211,11 @@ const DataLoader = {
     try {
       const raw = localStorage.getItem('markerData');
       if (!raw) return null;
-
       const { data, timestamp, version } = JSON.parse(raw);
-
       if (version !== DATA_VERSION) return null;
       if (Date.now() - timestamp > this.cacheExpiry) return null;
-
       return data;
-    } catch {
-      return null;
-    }
+    } catch { return null; }
   },
 
   getStaleCache() {
@@ -234,17 +223,13 @@ const DataLoader = {
       const raw = localStorage.getItem('markerData');
       if (!raw) return null;
       return JSON.parse(raw).data;
-    } catch {
-      return null;
-    }
+    } catch { return null; }
   },
 
   setCachedData(data) {
     try {
       localStorage.setItem('markerData', JSON.stringify({
-        data,
-        timestamp: Date.now(),
-        version: DATA_VERSION
+        data, timestamp: Date.now(), version: DATA_VERSION
       }));
     } catch {}
   },
@@ -259,9 +244,7 @@ const DataLoader = {
       await this.loadBatch();
     } else {
       await Promise.all(
-        Object.entries(DATA_ENDPOINTS).map(([k, url]) =>
-          this.loadEndpoint(k, url)
-        )
+        Object.entries(DATA_ENDPOINTS).map(([k, url]) => this.loadEndpoint(k, url))
       );
     }
   },
@@ -269,8 +252,7 @@ const DataLoader = {
   async loadBatch() {
     try {
       const endpoints = Object.entries(DATA_ENDPOINTS).map(([key, url]) => ({
-        key,
-        path: new URL(url).pathname.slice(1)
+        key, path: new URL(url).pathname.slice(1)
       }));
 
       const res = await fetch(`${API_BASE_URL}/batch`, {
@@ -284,24 +266,19 @@ const DataLoader = {
       const batchData = await res.json();
 
       endpoints.forEach(({ key, path }) => {
-        // ✅ FIX: Simpan data RAW tanpa filter ke loadedData & cache
         const data = batchData[path] || {};
         this.loadedData[key] = data;
-
         if (!this.isBackgroundRefresh) {
           this.endpointFingerprint[key] = this.generateFingerprint(data);
         }
       });
 
-      // ✅ Apply ke global dengan filter (cek DEV_SHOW_HIDDEN saat ini)
       this.applyToGlobal(this.loadedData);
 
     } catch {
       this.useBatchLoading = false;
       await Promise.all(
-        Object.entries(DATA_ENDPOINTS).map(([k, url]) =>
-          this.loadEndpoint(k, url)
-        )
+        Object.entries(DATA_ENDPOINTS).map(([k, url]) => this.loadEndpoint(k, url))
       );
     }
   },
@@ -310,21 +287,13 @@ const DataLoader = {
     try {
       const res = await fetch(url);
       if (!res.ok) throw new Error();
-
-      // ✅ FIX: Simpan data RAW tanpa filter
       const data = await res.json();
       this.loadedData[key] = data;
-
       if (!this.isBackgroundRefresh) {
         this.endpointFingerprint[key] = this.generateFingerprint(data);
       }
-
-      // ✅ Apply ke global dengan filter
       const globalVar = ENDPOINT_TO_GLOBAL[key];
-      if (globalVar) {
-        window[globalVar] = this.filterMarkers(data, key === 'terbaru');
-      }
-
+      if (globalVar) window[globalVar] = this.filterMarkers(data, key === 'terbaru');
     } catch {
       this.loadedData[key] = {};
       const globalVar = ENDPOINT_TO_GLOBAL[key];
@@ -334,41 +303,28 @@ const DataLoader = {
 
   filterMarkers(data, isTerbaru = false) {
     if (!data || typeof data !== 'object') return {};
-
-    // 🚀 DEV MODE → tampilkan semua tanpa filter
-    if (window.DEV_SHOW_HIDDEN === true) {
-      return data;
-    }
+    if (window.DEV_SHOW_HIDDEN === true) return data;
 
     return Object.fromEntries(
       Object.entries(data).filter(([_, m]) => {
         if (!m || typeof m !== 'object') return false;
-
         const hasShow = 'show' in m;
         const hasApproved = 'approved' in m;
-
         if (isTerbaru) {
           if (!hasShow && !hasApproved) return false;
           if ((hasShow && m.show === false) || (hasApproved && m.approved === false)) return false;
           return true;
         }
-
-        if ((hasShow && m.show === false) || (hasApproved && m.approved === false)) {
-          return false;
-        }
-
+        if ((hasShow && m.show === false) || (hasApproved && m.approved === false)) return false;
         return true;
       })
     );
   },
 
-  // ✅ FIX: filterMarkers dipanggil di sini, bukan saat simpan ke cache
   applyToGlobal(data) {
     Object.keys(data).forEach(key => {
       const globalVar = ENDPOINT_TO_GLOBAL[key];
-      if (globalVar) {
-        window[globalVar] = this.filterMarkers(data[key], key === 'terbaru');
-      }
+      if (globalVar) window[globalVar] = this.filterMarkers(data[key], key === 'terbaru');
     });
   },
 
@@ -379,19 +335,9 @@ const DataLoader = {
 };
 
 window.DataLoader = DataLoader;
-// 🛠️ DEV TOOLS HELPER
+
 window.toggleDevMode = function() {
   window.DEV_SHOW_HIDDEN = !window.DEV_SHOW_HIDDEN;
-  console.log(`%c DEV_SHOW_HIDDEN → ${window.DEV_SHOW_HIDDEN} `, 
-    `background: ${window.DEV_SHOW_HIDDEN ? '#22c55e' : '#ef4444'}; color: white; font-weight: bold; padding: 4px 8px; border-radius: 4px`
-  );
   DataLoader.applyToGlobal(DataLoader.loadedData);
   MarkerManager?.forceRefreshMarkers?.();
-  console.log(`%c Marker ${window.DEV_SHOW_HIDDEN ? 'SEMUA tampil (termasuk hidden)' : 'filter normal aktif'} `, 
-    `color: ${window.DEV_SHOW_HIDDEN ? '#22c55e' : '#ef4444'}; font-style: italic`
-  );
 };
-
-console.log('%c [DEV] Ketik toggleDevMode() untuk toggle marker hidden ', 
-  'background: #1e293b; color: #94a3b8; padding: 4px 8px; border-radius: 4px'
-);

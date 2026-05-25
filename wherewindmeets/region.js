@@ -28,21 +28,22 @@ zoom_5: [
   { "name": "Verdant Wilds",     "cn_name": "百草野", "lat": 130.92766841618575, "lng": 198.2494502067566,  "size": 26, "map_type": "Qinghe" },
   { "name": "Moonveil Mountain", "cn_name": "隐月山", "lat": 131.34873125328068, "lng": 182.43181371688843, "size": 26, "map_type": "Qinghe" },
   { "name": "Sundara Land",      "cn_name": "善妙洲", "lat": 120.95253073067192, "lng": 187.95543956756592, "size": 26, "map_type": "Qinghe" },
+  { "name": "Dreamspace",                             "lat": 34.207554,          "lng": 18.271504,          "size": 24, "map_type": "Qinghe",         "preset_map": "dreamspace" },
 
   { "name": "Kaifeng City",      "cn_name": "开封城", "lat": 148.45886927147313, "lng": 167.75539636611938, "size": 26, "map_type": "Kaifeng" },
   { "name": "Granary of Plenty", "cn_name": "太仓粟", "lat": 165.93423477511217, "lng": 175.93012166023254, "size": 26, "map_type": "Kaifeng" },
   { "name": "Jadewood Court",    "cn_name": "琼林苑", "lat": 161.8376638217751,  "lng": 161.29809069633484, "size": 26, "map_type": "Kaifeng" },
   { "name": "Roaring Sands",     "cn_name": "博浪沙", "lat": 141.4049587992937,  "lng": 155.73852682113647, "size": 26, "map_type": "Kaifeng" },
+  { "name": "Imperial Palace",   "cn_name": "皇宫",   "lat": 32.0,               "lng": 29.0,               "size": 24, "map_type": "Kaifeng",        "preset_map": "royal_palace" },
 
-  { "name": "Jade Gate Pass", "cn_name": "玉门关", "lat": 34.19193026737213,  "lng": 27.556250003245143, "size": 26, "map_type": "Hexi" },
-  { "name": "Liangzhou",      "cn_name": "凉州",   "lat": 46.23956782958546,  "lng": 51.31959538855816,  "size": 26, "map_type": "Hexi" },
-  { "name": "Qinchuan",       "cn_name": "秦川",   "lat": 76.38501880776012,  "lng": 77.3876244232804,   "size": 26, "map_type": "Hexi" },
+  { "name": "Jade Gate Pass",    "cn_name": "玉门关", "lat": 34.19193026737213,  "lng": 27.556250003245143, "size": 26, "map_type": "Hexi" },
+  { "name": "Liangzhou",         "cn_name": "凉州",   "lat": 46.23956782958546,  "lng": 51.31959538855816,  "size": 26, "map_type": "Hexi" },
+  { "name": "Qinchuan",          "cn_name": "秦川",   "lat": 76.38501880776012,  "lng": 77.3876244232804,   "size": 26, "map_type": "Hexi" },
 
-  { "name": "Suixiang", "cn_name": "绥乡", "lat": 102.03556094524335, "lng": 196.38766062491666, "size": 26, "map_type": "Bujian Mountain" },
-  { "name": "Tianxing", "cn_name": "天陉", "lat": 91.8496558876488,   "lng": 197.92790860819716, "size": 26, "map_type": "Bujian Mountain" },
-  { "name": "Fukasawa", "cn_name": "深泽", "lat": 110.99789399003295,  "lng": 197.58816012975927, "size": 26, "map_type": "Bujian Mountain" },
-
-  { "name": "Hutuo", "lat": 34.207554, "lng": 18.271504, "size": 24, "map_type": "Bujian Mountain", "preset_map": "hutuo" }
+  { "name": "Suixiang",          "cn_name": "绥乡",   "lat": 102.03556094524335, "lng": 196.38766062491666, "size": 26, "map_type": "Bujian Mountain" },
+  { "name": "Tianxing",          "cn_name": "天陉",   "lat": 91.8496558876488,   "lng": 197.92790860819716, "size": 26, "map_type": "Bujian Mountain" },
+  { "name": "Fukasawa",          "cn_name": "深泽",   "lat": 110.99789399003295, "lng": 197.58816012975927, "size": 26, "map_type": "Bujian Mountain" },
+  { "name": "Hutuo",                                  "lat": 34.207554,          "lng": 18.271504,          "size": 24, "map_type": "Bujian Mountain", "preset_map": "hutuo" },
 ],
 
 // Zoom level 6: Subareas
@@ -830,10 +831,218 @@ zoom_6: [
     "sub_regions": "Hutuo",
     "map_type": "Hutuo",
     "size": 24
+  },
+  
+  {
+  "name": "Immortal Realm",
+  "lat": 35.50802380752311,
+  "lng": 18.088193560980223,
+  "size": 24,
+  "sub_regions": "Dreamspace",
+  "map_type": "dreamspace"
+},
+
+  {
+  "name": "Neizhusi",
+  "cn_name": "内诸司",
+  "lat": 30.956121,
+  "lng": 32.92964,
+  "sub_regions": "Imperial Palace",
+  "map_type": "royal_palace",
+  "size": 24
+},
+{
+  "name": "Rear Palace",
+  "cn_name": "后寝",
+  "lat": 28.159974,
+  "lng": 26.475294,
+  "sub_regions": "Imperial Palace",
+  "map_type": "royal_palace",
+  "size": 24
+},
+{
+  "name": "Front Court",
+  "cn_name": "前朝",
+  "lat": 38.026086,
+  "lng": 29.161797,
+  "sub_regions": "Imperial Palace",
+  "map_type": "royal_palace",
+  "size": 24
+}
+],
+
+zoom_7: [
+  {
+    "name": "introspection",
+    "cn_name": "内省",
+    "city": "introspection",
+    "lat": 29.524964,
+    "lng": 31.881333,
+    "preset_map": "royal_palace",
+    "size": 24,
+    "sub_regions": "Neizhusi"
+  },
+  {
+    "name": "martial arts arena",
+    "cn_name": "演武场",
+    "city": "martial arts arena",
+    "lat": 32.179839,
+    "lng": 30.186191,
+    "preset_map": "royal_palace",
+    "size": 24,
+    "sub_regions": "Rear Palace"
+  },
+  {
+    "name": "Takeshi",
+    "cn_name": "武德司",
+    "city": "Takeshi",
+    "lat": 32.606046,
+    "lng": 33.115885,
+    "preset_map": "royal_palace",
+    "size": 24,
+    "sub_regions": "Neizhusi"
+  },
+  {
+    "name": "Forbidden treasuries",
+    "cn_name": "禁中诸库",
+    "city": "Forbidden treasuries",
+    "lat": 25.020818,
+    "lng": 33.134815,
+    "preset_map": "royal_palace",
+    "size": 24,
+    "sub_regions": "Neizhusi"
+  },
+  {
+    "name": "Funing Hall",
+    "cn_name": "福宁殿",
+    "city": "Funing Hall",
+    "lat": 30.64178,
+    "lng": 26.465991,
+    "preset_map": "royal_palace",
+    "size": 24,
+    "sub_regions": "Rear Palace"
+  },
+  {
+    "name": "Kunning Hall",
+    "cn_name": "坤宁殿",
+    "city": "Kunning Hall",
+    "lat": 27.506522,
+    "lng": 26.475063,
+    "preset_map": "royal_palace",
+    "size": 24,
+    "sub_regions": "Rear Palace"
+  },
+  {
+    "name": "Qingshou Hall",
+    "cn_name": "庆寿殿",
+    "city": "Qingshou Hall",
+    "lat": 29.980934,
+    "lng": 28.501112,
+    "preset_map": "royal_palace",
+    "size": 24,
+    "sub_regions": "Rear Palace"
+  },
+  {
+    "name": "Shengpinglou",
+    "cn_name": "升平楼",
+    "city": "Shengpinglou",
+    "lat": 32.60989,
+    "lng": 24.607779,
+    "preset_map": "royal_palace",
+    "size": 24,
+    "sub_regions": "Rear Palace"
+  },
+  {
+    "name": "Back garden",
+    "cn_name": "后苑",
+    "city": "Back garden",
+    "lat": 24.20261,
+    "lng": 26.564473,
+    "preset_map": "royal_palace",
+    "size": 24,
+    "sub_regions": "Rear Palace"
+  },
+  {
+    "name": "Bao Ci Palace",
+    "cn_name": "宝慈宫",
+    "city": "Bao Ci Palace",
+    "lat": 29.98293,
+    "lng": 24.572767,
+    "preset_map": "royal_palace",
+    "size": 24,
+    "sub_regions": "Rear Palace"
+  },
+  {
+    "name": "Chongyuan Hall",
+    "cn_name": "崇元殿",
+    "city": "Chongyuan Hall",
+    "lat": 38.300436,
+    "lng": 29.162777,
+    "preset_map": "royal_palace",
+    "size": 24,
+    "sub_regions": "Front Court"
+  },
+  {
+    "name": "Civilization Hall",
+    "cn_name": "文明殿",
+    "city": "Civilization Hall",
+    "lat": 36.413394,
+    "lng": 26.474155,
+    "preset_map": "royal_palace",
+    "size": 24,
+    "sub_regions": "Front Court"
+  },
+  {
+    "name": "Chongde Hall",
+    "cn_name": "崇德殿",
+    "city": "Chongde Hall",
+    "lat": 32.582814,
+    "lng": 28.653668,
+    "preset_map": "royal_palace",
+    "size": 24,
+    "sub_regions": "Rear Palace"
+  },
+  {
+    "name": "Changchun Hall",
+    "cn_name": "长春殿",
+    "city": "Changchun Hall",
+    "lat": 32.584934,
+    "lng": 26.497946,
+    "preset_map": "royal_palace",
+    "size": 24,
+    "sub_regions": "Rear Palace"
+  },
+  {
+    "name": "official office",
+    "cn_name": "官署",
+    "city": "official office",
+    "lat": 36.41477,
+    "lng": 24.738002,
+    "preset_map": "royal_palace",
+    "size": 24,
+    "sub_regions": "Front Court"
+  },
+  {
+    "name": "Neiku Building 3",
+    "cn_name": "内库三馆",
+    "city": "Neiku Building 3",
+    "lat": 38.110894,
+    "lng": 32.528041,
+    "preset_map": "royal_palace",
+    "size": 24,
+    "sub_regions": "Front Court"
+  },
+  {
+    "name": "sealed pile warehouse",
+    "cn_name": "封桩库",
+    "city": "sealed pile warehouse",
+    "lat": 35.298408,
+    "lng": 32.313562,
+    "preset_map": "royal_palace",
+    "size": 24,
+    "sub_regions": "Front Court"
   }
 ]
-
-  // Zoom level 7–8: No labels
 };
 
   // ==========================================
@@ -847,7 +1056,8 @@ let isVisible = true;
 let labelLayers = {
   zoom_3_4: null,
   zoom_5: null,
-  zoom_6: null
+  zoom_6: null,
+  zoom_7: null
 };
 
 let activeLayer = null;
@@ -934,21 +1144,19 @@ function createLabelIcon(text, fontSize) {
    * @param {number} zoom - Current zoom level
    * @returns {Array}
    */
-  function getLabelsForZoom(zoom) {
-    if (zoom >= 3 && zoom <= 4) {
-      return LABEL_CONFIG.zoom_3_4;
-    } else if (zoom === 5) {
-      return LABEL_CONFIG.zoom_5;
-    } else if (zoom === 6) {
-      return LABEL_CONFIG.zoom_6;
-    } else if (zoom >= 7) {
-      // Zoom 7 dan 8: tidak ada label
-      return [];
-    }
-    return [];
+// ✅ Fix
+function getLabelsForZoom(zoom) {
+  if (zoom >= 3 && zoom <= 4) {
+    return LABEL_CONFIG.zoom_3_4;
+  } else if (zoom === 5) {
+    return LABEL_CONFIG.zoom_5;
+  } else if (zoom === 6) {
+    return LABEL_CONFIG.zoom_6;
+  } else if (zoom >= 7) {
+    return LABEL_CONFIG.zoom_7 || [];  // ← fix
   }
-
-
+  return [];
+}
 
 /**
  * Add labels to map
@@ -1010,13 +1218,9 @@ function addLabels(labels) {
    * @param {number} zoom - Current zoom level
    */
   function updateLabels(zoom) {
-
   const zoomFloor = Math.floor(zoom);
-
   if (zoomFloor === Math.floor(currentZoom)) return;
-
   currentZoom = zoomFloor;
-
   if (!isVisible || !map) return;
 
   let zoomKey = null;
@@ -1027,9 +1231,10 @@ function addLabels(labels) {
     zoomKey = 'zoom_5';
   } else if (zoomFloor === 6) {
     zoomKey = 'zoom_6';
+  } else if (zoomFloor >= 7) {   // ← tambah ini
+    zoomKey = 'zoom_7';
   }
 
-  // Remove old layer
   if (activeLayer) {
     map.removeLayer(activeLayer);
     activeLayer = null;
@@ -1037,7 +1242,6 @@ function addLabels(labels) {
 
   if (!zoomKey) return;
 
-  // Build layer once if not cached
   if (!labelLayers[zoomKey]) {
     buildLayerForZoom(zoomKey, LABEL_CONFIG[zoomKey]);
   }
@@ -1114,21 +1318,21 @@ function addLabels(labels) {
    * @param {Array} labels - Array of label configs
    */
   function addLabelConfig(zoomLevel, labels) {
-    if (zoomLevel >= 3 && zoomLevel <= 4) {
-      LABEL_CONFIG.zoom_3_4 = labels;
-    } else if (zoomLevel === 5) {
-      LABEL_CONFIG.zoom_5 = labels;
-    } else if (zoomLevel === 6) {
-      LABEL_CONFIG.zoom_6 = labels;
-    }
-
-    // Refresh if currently at this zoom level
-    if (map && isVisible) {
-      updateLabels(map.getZoom());
-    }
-
-    
+  if (zoomLevel >= 3 && zoomLevel <= 4) {
+    LABEL_CONFIG.zoom_3_4 = labels;
+  } else if (zoomLevel === 5) {
+    LABEL_CONFIG.zoom_5 = labels;
+  } else if (zoomLevel === 6) {
+    LABEL_CONFIG.zoom_6 = labels;
+  } else if (zoomLevel >= 7) {   // ← tambah ini
+    LABEL_CONFIG.zoom_7 = labels;
+    labelLayers.zoom_7 = null;   // reset cache
   }
+
+  if (map && isVisible) {
+    updateLabels(map.getZoom());
+  }
+}
 
   /**
    * Manually refresh labels
@@ -1186,8 +1390,8 @@ return {
     },
     // ✅ TAMBAHKAN INI
     _clearLayerCache: function() {
-      labelLayers = { zoom_3_4: null, zoom_5: null, zoom_6: null };
-    }
+  labelLayers = { zoom_3_4: null, zoom_5: null, zoom_6: null, zoom_7: null };
+}
   };
 
 })();

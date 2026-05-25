@@ -46,10 +46,10 @@ const PipMap = (function () {
     if (pipWindow && !pipWindow.closed) { pipWindow.focus(); return; }
 
     try {
-      pipWindow = await window.documentPictureInPicture.requestWindow({
-        width: 640, height: 420,
-        disallowReturnToOpener: false,
-      });
+pipWindow = await window.documentPictureInPicture.requestWindow({
+  width: 400, height: 640,
+  disallowReturnToOpener: false,
+});
 
       pipWindow.addEventListener('pagehide', _cleanup);
 

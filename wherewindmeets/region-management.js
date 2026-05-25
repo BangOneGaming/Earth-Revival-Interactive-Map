@@ -71,36 +71,47 @@ const RegionManager = {
    * zoom_5 = sub-regions inside each group (matched by map_type)
    * anything not matched = "Other"
    */
-  buildGroupedRegions() {
-    if (typeof RegionLabelManager === 'undefined') {
-      // Fallback: flat list
-      this.groupedRegions = this.availableRegions.filter(r => r.id !== 'all');
-      return;
-    }
+buildGroupedRegions() {
+  if (typeof RegionLabelManager === 'undefined') {
+    this.groupedRegions = this.availableRegions.filter(r => r.id !== 'all');
+    return;
+  }
 
-    const zoom34 = RegionLabelManager._getLabelConfig('zoom_3_4'); // e.g. Qinghe, Kaifeng
-    const zoom5  = RegionLabelManager._getLabelConfig('zoom_5');   // e.g. Verdant Wilds (map_type=Qinghe)
-    const zoom6  = RegionLabelManager._getLabelConfig('zoom_6');   // e.g. Bamboo Abode (sub_regions=Verdant Wilds)
+  const zoom34 = RegionLabelManager._getLabelConfig('zoom_3_4');
+  const zoom5  = RegionLabelManager._getLabelConfig('zoom_5');
+  const zoom6  = RegionLabelManager._getLabelConfig('zoom_6');
+  const zoom7  = RegionLabelManager._getLabelConfig('zoom_7');  // ← tambah ini
 
-    // Build map: parentName → list of zoom5 children
-    // zoom5 entries have map_type = name of their zoom34 parent
-    const zoom5ByParent = {};
+  const zoom5ByParent = {};
   zoom34.forEach(z34 => {
     zoom5ByParent[z34.name] = zoom5
-      .filter(z5 => (z5.map_type || '').trim().toLowerCase() === z34.name.trim().toLowerCase()) // ← tambah .toLowerCase()
+      .filter(z5 => (z5.map_type || '').trim().toLowerCase() === z34.name.trim().toLowerCase())
       .map(z5 => ({
         id: z5.name,
         name: z5.name,
         icon: `${ICON_BASE_URL}region.webp`,
         children: zoom6
-          .filter(z6 => (z6.sub_regions || '').trim().toLowerCase() === z5.name.trim().toLowerCase()) // ← tambah .toLowerCase()
+          .filter(z6 => (z6.sub_regions || '').trim().toLowerCase() === z5.name.trim().toLowerCase())
           .map(z6 => ({
             id: z6.name,
             name: z6.name,
-            icon: `${ICON_BASE_URL}region.webp`
+            icon: `${ICON_BASE_URL}region.webp`,
+            // ← tambah great-grandchildren dari zoom_7
+            children: zoom7
+              ? zoom7
+                  .filter(z7 => (z7.sub_regions || '').trim().toLowerCase() === z6.name.trim().toLowerCase())
+                  .map(z7 => ({
+                    id: z7.name,
+                    name: z7.name,
+                    icon: `${ICON_BASE_URL}region.webp`,
+                    children: []
+                  }))
+              : []
           }))
       }));
   });
+  
+
 
     // Collect all region IDs that are accounted for in zoom3_4 hierarchy
     const accountedIds = new Set();
@@ -207,84 +218,113 @@ const RegionManager = {
    * Render grouped list into content element
    */
   renderGroupedList(content) {
-    content.innerHTML = '';
+  content.innerHTML = '';
 
-    this.groupedRegions.forEach(group => {
-      const isExpanded = !!this.expandedGroups[group.id];
-      const isGroupActive = this.activeRegion === group.id;
+  this.groupedRegions.forEach(group => {
+    const isExpanded = !!this.expandedGroups[group.id];
+    const isGroupActive = this.activeRegion === group.id;
 
-      // Group header row
-      const groupEl = document.createElement('div');
-      groupEl.className = `region-item region-group-header ${isGroupActive ? 'active' : ''}`;
-      groupEl.dataset.regionId = group.id;
-      groupEl.dataset.isGroup = 'true';
-      groupEl.innerHTML = `
-        <img src="${group.icon}" alt="${group.name}" class="region-icon">
-        <div class="region-info">
-          <div class="region-name">${group.name}</div>
-        </div>
-        ${group.children && group.children.length > 0 
-          ? `<span class="region-chevron ${isExpanded ? 'expanded' : ''}">▶</span>` 
-          : ''}
-      `;
-      content.appendChild(groupEl);
+    const groupEl = document.createElement('div');
+    groupEl.className = `region-item region-group-header ${isGroupActive ? 'active' : ''}`;
+    groupEl.dataset.regionId = group.id;
+    groupEl.dataset.isGroup = 'true';
+    groupEl.innerHTML = `
+      <img src="${group.icon}" alt="${group.name}" class="region-icon">
+      <div class="region-info">
+        <div class="region-name">${group.name}</div>
+      </div>
+      ${group.children && group.children.length > 0
+        ? `<span class="region-chevron ${isExpanded ? 'expanded' : ''}">▶</span>`
+        : ''}
+    `;
+    content.appendChild(groupEl);
 
-      // Children (zoom5 sub-regions)
-      if (group.children && group.children.length > 0) {
-        const childrenContainer = document.createElement('div');
-        childrenContainer.className = `region-children ${isExpanded ? 'expanded' : ''}`;
-        childrenContainer.dataset.groupId = group.id;
+    if (group.children && group.children.length > 0) {
+      const childrenContainer = document.createElement('div');
+      childrenContainer.className = `region-children ${isExpanded ? 'expanded' : ''}`;
+      childrenContainer.dataset.groupId = group.id;
 
-        group.children.forEach(child => {
-          const isChildActive = this.activeRegion === child.id;
-          const hasGrandchildren = child.children && child.children.length > 0;
-          const isChildExpanded = !!this.expandedGroups[child.id];
+      group.children.forEach(child => {
+        const isChildActive = this.activeRegion === child.id;
+        const hasGrandchildren = child.children && child.children.length > 0;
+        const isChildExpanded = !!this.expandedGroups[child.id];
 
-          const childEl = document.createElement('div');
-          childEl.className = `region-item region-sub-item ${isChildActive ? 'active' : ''}`;
-          childEl.dataset.regionId = child.id;
-          childEl.dataset.isGroup = hasGrandchildren ? 'true' : 'false';
-          childEl.innerHTML = `
-            <img src="${child.icon}" alt="${child.name}" class="region-icon">
-            <div class="region-info">
-              <div class="region-name">${child.name}</div>
-            </div>
-            ${hasGrandchildren 
-              ? `<span class="region-chevron ${isChildExpanded ? 'expanded' : ''}">▶</span>` 
-              : ''}
-          `;
-          childrenContainer.appendChild(childEl);
+        const childEl = document.createElement('div');
+        childEl.className = `region-item region-sub-item ${isChildActive ? 'active' : ''}`;
+        childEl.dataset.regionId = child.id;
+        childEl.dataset.isGroup = hasGrandchildren ? 'true' : 'false';
+        childEl.innerHTML = `
+          <img src="${child.icon}" alt="${child.name}" class="region-icon">
+          <div class="region-info">
+            <div class="region-name">${child.name}</div>
+          </div>
+          ${hasGrandchildren
+            ? `<span class="region-chevron ${isChildExpanded ? 'expanded' : ''}">▶</span>`
+            : ''}
+        `;
+        childrenContainer.appendChild(childEl);
 
-          // Grandchildren (zoom6)
-          if (hasGrandchildren) {
-            const grandContainer = document.createElement('div');
-            grandContainer.className = `region-children region-grandchildren ${isChildExpanded ? 'expanded' : ''}`;
-            grandContainer.dataset.groupId = child.id;
+        if (hasGrandchildren) {
+          const grandContainer = document.createElement('div');
+          grandContainer.className = `region-children region-grandchildren ${isChildExpanded ? 'expanded' : ''}`;
+          grandContainer.dataset.groupId = child.id;
 
-            child.children.forEach(grand => {
-              const isGrandActive = this.activeRegion === grand.id;
-              const grandEl = document.createElement('div');
-              grandEl.className = `region-item region-grand-item ${isGrandActive ? 'active' : ''}`;
-              grandEl.dataset.regionId = grand.id;
-              grandEl.dataset.isGroup = 'false';
-              grandEl.innerHTML = `
-                <img src="${grand.icon}" alt="${grand.name}" class="region-icon">
-                <div class="region-info">
-                  <div class="region-name">${grand.name}</div>
-                </div>
-              `;
-              grandContainer.appendChild(grandEl);
-            });
+          child.children.forEach(grand => {
+            const isGrandActive = this.activeRegion === grand.id;
+            const hasGreatGrandchildren = grand.children && grand.children.length > 0;
+            const isGrandExpanded = !!this.expandedGroups[grand.id];
 
-            childrenContainer.appendChild(grandContainer);
-          }
-        });
+            const grandEl = document.createElement('div');
+            grandEl.className = `region-item region-grand-item ${isGrandActive ? 'active' : ''}`;
+            grandEl.dataset.regionId = grand.id;
+            grandEl.dataset.isGroup = hasGreatGrandchildren ? 'true' : 'false';
+            grandEl.innerHTML = `
+              <img src="${grand.icon}" alt="${grand.name}" class="region-icon">
+              <div class="region-info">
+                <div class="region-name">${grand.name}</div>
+              </div>
+              ${hasGreatGrandchildren
+                ? `<span class="region-chevron ${isGrandExpanded ? 'expanded' : ''}">▶</span>`
+                : ''}
+            `;
+            grandContainer.appendChild(grandEl);
 
-        content.appendChild(childrenContainer);
-      }
-    });
-  },
+            if (hasGreatGrandchildren) {
+              const greatGrandContainer = document.createElement('div');
+              greatGrandContainer.className = `region-children region-greatgrand-items ${isGrandExpanded ? 'expanded' : ''}`;
+              greatGrandContainer.dataset.groupId = grand.id;
 
+              grand.children.forEach(gg => {
+                const isGGActive = this.activeRegion === gg.id;
+                const ggEl = document.createElement('div');
+                ggEl.className = `region-item region-greatgrand-item ${isGGActive ? 'active' : ''}`;
+                ggEl.dataset.regionId = gg.id;
+                ggEl.dataset.isGroup = 'false';
+                ggEl.innerHTML = `
+                  <img src="${gg.icon}" alt="${gg.name}" class="region-icon">
+                  <div class="region-info">
+                    <div class="region-name">${gg.name}</div>
+                  </div>
+                `;
+                greatGrandContainer.appendChild(ggEl);
+              }); // ← tutup grand.children.forEach
+
+              grandContainer.appendChild(greatGrandContainer);
+            } // ← tutup if hasGreatGrandchildren
+
+          }); // ← tutup child.children.forEach
+
+          childrenContainer.appendChild(grandContainer);
+        } // ← tutup if hasGrandchildren
+
+      }); // ← tutup group.children.forEach
+
+      content.appendChild(childrenContainer);
+    } // ← tutup if group.children
+
+  }); // ← tutup groupedRegions.forEach
+
+}, // ← tutup method renderGroupedList
   /**
    * Check if a region ID is a group (has children)
    */
@@ -377,39 +417,54 @@ focusToRegion(regionId) {
   // SPECIAL: Region/sub-area yang butuh map sendiri
   // ============================================
   const REGION_MAP_OVERRIDE = {
-    'Hutuo': 'hutuo',
-    // Royal Palace nanti:
-    // 'Royal Palace': 'royal_palace',
-  };
+  'Hutuo': 'hutuo',
+  'Imperial Palace': 'royal_palace',
+  'Dreamspace': 'dreamspace',
+};
 
   // Cari override berdasarkan regionId sendiri,
   // ATAU dari parent group-nya di zoom_5
   const getTargetMap = (id) => {
-    // Cek langsung
-    if (REGION_MAP_OVERRIDE[id]) return REGION_MAP_OVERRIDE[id];
+  // Cek langsung di REGION_MAP_OVERRIDE
+  if (REGION_MAP_OVERRIDE[id]) return REGION_MAP_OVERRIDE[id];
 
-    // Cek apakah dia sub-area dari region yang punya override
-    // Cari di zoom_6: ambil sub_regions-nya, lalu cek apakah sub_regions itu ada di override
+  // ✅ TAMBAH: Cek zoom_7 dulu
+  const zoom7Labels = RegionLabelManager._getLabelConfig('zoom_7');
+  const z7 = zoom7Labels?.find(
+    l => l.name.trim().toLowerCase() === id.trim().toLowerCase()
+  );
+  if (z7) {
+    // Cek preset_map langsung
+    if (z7.preset_map) return z7.preset_map.toLowerCase();
+    // Cek map_type
+    if (z7.map_type) return z7.map_type.toLowerCase();
+    // Cek via parent zoom_6
     const zoom6Labels = RegionLabelManager._getLabelConfig('zoom_6');
-    const z6 = zoom6Labels?.find(
-      l => l.name.trim().toLowerCase() === id.trim().toLowerCase()
+    const z6parent = zoom6Labels?.find(
+      l => l.name.trim().toLowerCase() === (z7.sub_regions || '').trim().toLowerCase()
     );
-    if (z6 && z6.sub_regions && REGION_MAP_OVERRIDE[z6.sub_regions]) {
-      return REGION_MAP_OVERRIDE[z6.sub_regions];
-    }
+    if (z6parent?.preset_map) return z6parent.preset_map.toLowerCase();
+    if (z6parent?.map_type)   return z6parent.map_type.toLowerCase();
+  }
 
-    // Cek map_type langsung di zoom_6 (kasus Yunqiu yg pakai map_type)
-    if (z6 && z6.map_type) {
-      const mapTypeKey = Object.keys(REGION_MAP_OVERRIDE).find(
-        k => REGION_MAP_OVERRIDE[k] === z6.map_type.toLowerCase()
-      );
-      if (mapTypeKey) return REGION_MAP_OVERRIDE[mapTypeKey];
-      // Atau langsung pakai map_type sebagai preset name
-      if (z6.map_type.toLowerCase() === 'hutuo') return 'hutuo';
-    }
+  // Cek zoom_6
+  const zoom6Labels = RegionLabelManager._getLabelConfig('zoom_6');
+  const z6 = zoom6Labels?.find(
+    l => l.name.trim().toLowerCase() === id.trim().toLowerCase()
+  );
+  if (z6 && z6.sub_regions && REGION_MAP_OVERRIDE[z6.sub_regions]) {
+    return REGION_MAP_OVERRIDE[z6.sub_regions];
+  }
+  if (z6 && z6.map_type) {
+    if (z6.map_type.toLowerCase() === 'hutuo') return 'hutuo';
+    const mapTypeKey = Object.keys(REGION_MAP_OVERRIDE).find(
+      k => REGION_MAP_OVERRIDE[k] === z6.map_type.toLowerCase()
+    );
+    if (mapTypeKey) return REGION_MAP_OVERRIDE[mapTypeKey];
+  }
 
-    return 'main';
-  };
+  return 'main';
+};
 
   const currentMap = typeof getCurrentMapPreset === 'function'
     ? getCurrentMapPreset()
@@ -417,16 +472,29 @@ focusToRegion(regionId) {
 
   const targetMap = getTargetMap(regionId);
 
-  const doFly = () => {
-    if (typeof RegionLabelManager !== 'undefined') {
-      const zoom6Labels = RegionLabelManager._getLabelConfig('zoom_6');
-      const matchedZ6 = zoom6Labels?.find(
-        l => l.name.trim().toLowerCase() === regionId.trim().toLowerCase()
-      );
-      if (matchedZ6) {
-        this.map.flyTo([matchedZ6.lat, matchedZ6.lng], 6, { duration: 1.0 });
-        return;
-      }
+const doFly = () => {
+  if (typeof RegionLabelManager !== 'undefined') {
+
+    // ✅ TAMBAH: Cek zoom_7 dulu
+    const zoom7Labels = RegionLabelManager._getLabelConfig('zoom_7');
+    const matchedZ7 = zoom7Labels?.find(
+      l => l.name.trim().toLowerCase() === regionId.trim().toLowerCase()
+    );
+    if (matchedZ7) {
+      this.map.flyTo([matchedZ7.lat, matchedZ7.lng], 7, { duration: 1.0 });
+      return;
+    }
+
+    // Zoom_6 (sudah ada sebelumnya)
+    const zoom6Labels = RegionLabelManager._getLabelConfig('zoom_6');
+    const matchedZ6 = zoom6Labels?.find(
+      l => l.name.trim().toLowerCase() === regionId.trim().toLowerCase()
+    );
+    if (matchedZ6) {
+      this.map.flyTo([matchedZ6.lat, matchedZ6.lng], 6, { duration: 1.0 });
+      return;
+    }
+
 
       const zoom5Labels = RegionLabelManager._getLabelConfig('zoom_5');
       const matchedZ5 = zoom5Labels?.find(
@@ -587,11 +655,10 @@ focusToRegion(regionId) {
   shouldShowMarker(marker) {
   if (this.activeRegion === 'all') return true;
 
-  // Major regions → tampilkan semua marker, tidak ada filter
+  // Major regions (zoom_3_4) → tampilkan semua
   if (this.majorRegionIds?.has(this.activeRegion.trim().toLowerCase())) return true;
 
-  // If active region is a top-level group (zoom_3_4 name),
-  // show all markers whose loc_type belongs to that group's subtree
+  // Top-level group (zoom_3_4)
   const group = this.groupedRegions.find(g => g.id === this.activeRegion);
   if (group && group.isGroup) {
     const leafIds = this.collectLeafIds(group);
@@ -599,10 +666,18 @@ focusToRegion(regionId) {
     return leafIds.has(markerRegion) || markerRegion === this.activeRegion;
   }
 
-  // Check if activeRegion is a zoom5 group with children
+  // zoom_5 group dengan children
   const zoom5Group = this.findZoom5Group(this.activeRegion);
   if (zoom5Group && zoom5Group.children && zoom5Group.children.length > 0) {
     const leafIds = this.collectLeafIds(zoom5Group);
+    const markerRegion = marker.loc_type ? marker.loc_type.trim() : '';
+    return leafIds.has(markerRegion) || markerRegion === this.activeRegion;
+  }
+
+  // ✅ TAMBAH: zoom_6 group yang punya children (zoom_7)
+  const zoom6Group = this.findZoom6Group(this.activeRegion);
+  if (zoom6Group && zoom6Group.children && zoom6Group.children.length > 0) {
+    const leafIds = this.collectLeafIds(zoom6Group);
     const markerRegion = marker.loc_type ? marker.loc_type.trim() : '';
     return leafIds.has(markerRegion) || markerRegion === this.activeRegion;
   }
@@ -639,7 +714,17 @@ focusToRegion(regionId) {
     }
     return null;
   },
-
+findZoom6Group(id) {
+  for (const group of this.groupedRegions) {
+    if (!group.children) continue;
+    for (const child of group.children) {
+      if (!child.children) continue;
+      const found = child.children.find(c => c.id === id);
+      if (found) return found;
+    }
+  }
+  return null;
+},
   /**
    * Get active region info
    */

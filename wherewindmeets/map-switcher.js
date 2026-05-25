@@ -22,7 +22,7 @@ const MAP_SWITCHER_MAPS = [
   { id: 'main',         name: 'Jianghu',   thumb: 'https://tiles.bgonegaming.win/wherewindmeet/overlay/Jianghu.png' },
   { id: 'dreamspace',        name: 'Dreamspace',         thumb: 'https://tiles.bgonegaming.win/wherewindmeet/overlay/dreamspace.png' },
   { id: 'hutuo',        name: 'Hutuo',         thumb: 'https://tiles.bgonegaming.win/wherewindmeet/overlay/Hutuo.png' },
-  { id: 'royal_palace', name: 'Royal Palace (Beta)',  thumb: 'https://tiles.bgonegaming.win/wherewindmeet/overlay/Royal_Palace.png' },
+  { id: 'royal_palace', name: 'Imperial Palace',  thumb: 'https://tiles.bgonegaming.win/wherewindmeet/overlay/Royal_Palace.png' },
 ];
 
 const MapSwitcher = {

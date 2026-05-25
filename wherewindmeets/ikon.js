@@ -5,6 +5,11 @@
 
 // Base URL for icons
 const ICON_BASE_URL = "https://tiles.bgonegaming.win/wherewindmeet/Simbol/";
+const ICON_VERSION = "v1"; // ← ubah ini saja untuk bust cache semua icon
+
+function iv(url) {
+  return `${url}?${ICON_VERSION}`;
+}
 
 // Detect device size
 const isMobile = window.matchMedia("(max-width: 768px)").matches;
@@ -28,7 +33,7 @@ const DEFAULT_POPUP_ANCHOR = isMobile ? ICON_POPUP_ANCHOR_MOBILE : ICON_POPUP_AN
  * Maps category IDs to their icon overlay images
  */
 const ICON_CONFIG = {
-  baseIcon: `${ICON_BASE_URL}default.png`,
+  baseIcon: iv(`${ICON_BASE_URL}default.png`),
 
   overlays: {
     "1": "batuteleport.webp",
@@ -73,7 +78,15 @@ const ICON_CONFIG = {
     "40": "dogplay.webp",
     "41": "board.webp",
     "42": "rideandarcher.webp",
-    "43": "chasingmoon.webp"
+    "43": "chasingmoon.webp",
+    "44": "drama.webp",
+    "45": "fightcrickets.webp",
+    "46": "talisman.webp",
+    "47": "iceplay.webp",
+    "48": "slap.webp",
+    "49": "knife.webp",
+    "50": "flowerbloom.webp",
+    "51": "icesculpture.webp"
   },
 
   names: {
@@ -119,7 +132,15 @@ const ICON_CONFIG = {
     "40": "Dog Play",
     "41": "Board",
     "42": "Ride And Archer Challenge",
-    "43": "Chasing The Moon"
+    "43": "Chasing The Moon",
+    "44": "Drama Ink Criticism",
+    "45": "Fight Crickets",
+    "46": "Write a Peach Talisman",
+    "47": "Ice Play",
+    "48": "Universe in the Palm",
+    "49": "Yan Ji",
+    "50": "Flowers Bloom",
+    "51": "Ice Sculpture"
   },
   specialSizes: {
     "1": {
@@ -138,14 +159,14 @@ const FAILED_ICONS = new Set();
 
 function getIconUrl(categoryId) {
   const overlay = ICON_CONFIG.overlays[String(categoryId)];
-  return overlay ? ICON_BASE_URL + overlay : ICON_CONFIG.baseIcon;
+  return overlay ? iv(ICON_BASE_URL + overlay) : ICON_CONFIG.baseIcon;
 }
 function getCategoryName(categoryId) {
   return ICON_CONFIG.names[String(categoryId)] || `Category ${categoryId}`;
 }
 function getOverlayUrl(categoryId) {
   const overlay = ICON_CONFIG.overlays[String(categoryId)];
-  return overlay ? ICON_BASE_URL + overlay : ICON_CONFIG.baseIcon;
+  return overlay ? iv(ICON_BASE_URL + overlay) : ICON_CONFIG.baseIcon;
 }
 function isCommonChest(markerName) {
   if (!markerName) return false;
@@ -160,8 +181,8 @@ function isCommonChest(markerName) {
   return name.toLowerCase().includes("common chest");
 }
 function getChestOverlayByName(markerName) {
-  if (isCommonChest(markerName)) return `${ICON_BASE_URL}petiharta.webp`;
-  return `${ICON_BASE_URL}puzzle_chest.png`;
+  if (isCommonChest(markerName)) return iv(`${ICON_BASE_URL}petiharta.webp`);
+return iv(`${ICON_BASE_URL}puzzle_chest.png`);
 }
 
 // ============================================================
@@ -176,7 +197,7 @@ function getChestOverlayResolved(specialIcon, markerName) {
     const filename = specialIcon.trim().includes('.')
       ? specialIcon.trim()
       : specialIcon.trim() + '.webp';
-    return `${ICON_BASE_URL}${filename}`;
+    return iv(`${ICON_BASE_URL}${filename}`);
   }
   // Prioritas 2: fallback ke logika nama marker (perilaku lama)
   return getChestOverlayByName(markerName);
@@ -286,11 +307,11 @@ function createCompositeIconHTML(categoryId) {
 }
 function getIconUrlWithSpecial(categoryId, specialIcon) {
   if (specialIcon && specialIcon.trim() !== '') {
-    if (String(categoryId) === "37") return `${ICON_BASE_URL}innerway/${specialIcon}.webp`;
-    return `${ICON_BASE_URL}${specialIcon}.webp`;
+    if (String(categoryId) === "37") return iv(`${ICON_BASE_URL}innerway/${specialIcon}.webp`);
+    return iv(`${ICON_BASE_URL}${specialIcon}.webp`);
   }
   const overlay = ICON_CONFIG.overlays[String(categoryId)];
-  return overlay ? ICON_BASE_URL + overlay : ICON_CONFIG.baseIcon;
+  return overlay ? iv(ICON_BASE_URL + overlay) : ICON_CONFIG.baseIcon;
 }
 function createCompositeLeafletIconWithSpecial(categoryId, specialIcon) {
   const overlayUrl = getIconUrlWithSpecial(categoryId, specialIcon);

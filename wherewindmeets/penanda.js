@@ -34,7 +34,7 @@ const filterGroupConfig = {
   hot : {
     title: 'Hot',
     icon: '',
-    categories: [2, 3, 15, 16, 13, 24]  // Teleport + Treasure Chest
+    categories: [2, 3, 13, 24, 44, 45, 46, 47, 48, 49, 50, 51]  // Teleport + Treasure Chest
   },
   discover: {
     title: 'Discover',
@@ -44,7 +44,7 @@ const filterGroupConfig = {
   collection: {
     title: 'Collection',
     icon: '',
-    categories: [5, 4, 6, 7, 8, 9, 40, 10, 11, 12, 14, 17, 18, 19, 20, 41]
+    categories: [5, 4, 6, 7, 8, 9, 40, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 41]
   },
     minigame: {
     title: "Mini Game's",
@@ -86,18 +86,22 @@ const MarkerShare = {
   /**
    * Generate shareable link for a marker
    */
-  generateLink(markerData) {
-    const baseURL = window.location.origin + window.location.pathname;
-    const params = new URLSearchParams({
-      lat: markerData.lat,
-      lng: markerData.lng,
-      zoom: '6',
-      category: markerData.category_id,
-      marker: markerData._key
-    });
-    
-    return `${baseURL}?${params.toString()}`;
-  },
+generateLink(markerData) {
+  const baseURL = window.location.origin + window.location.pathname;
+  const preset = (typeof getCurrentMapPreset === 'function')
+    ? getCurrentMapPreset()
+    : 'main';
+  const params = new URLSearchParams({
+    lat: markerData.lat,
+    lng: markerData.lng,
+    zoom: '6',
+    category: markerData.category_id,
+    marker: markerData._key,
+    preset: preset
+  });
+  
+  return `${baseURL}?${params.toString()}`;
+},
 
   /**
    * Copy link to clipboard
@@ -622,6 +626,15 @@ getAllMarkers() {
     window.anjing,
     window.papan,
     window.kudadanpanah,
+    window.tangkapbulan,
+    window.drama,
+    window.adujangkrik,
+    window.jimat,
+    window.mainsalju,
+    window.menampar,
+    window.pisau,
+    window.bungamekar,
+    window.patunges,
     window.terbaru
   ];
 

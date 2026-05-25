@@ -304,6 +304,52 @@
   color: #f3d59b;
 }
 
+/* ------------------------------------------
+   LEVEL 4: Detail Location (zoom_7)
+   Paling kecil, paling muted
+------------------------------------------ */
+.region-greatgrand-items {
+  padding-left: 10px;
+}
+
+.region-greatgrand-item {
+  background: rgba(20, 14, 4, 0.78);
+  border: 1px solid rgba(150, 115, 45, 0.1);
+  border-left: 1px solid rgba(150, 115, 45, 0.2);
+  padding: 4px 8px;
+  margin-bottom: 3px;
+}
+
+.region-greatgrand-item .region-name {
+  font-size: 10px;
+  font-weight: 400;
+  color: #9e845a;
+}
+
+.region-greatgrand-item .region-icon {
+  width: 14px;
+  height: 14px;
+  opacity: 0.5;
+}
+
+.region-greatgrand-item:hover {
+  background: rgba(90, 65, 18, 0.78);
+  border-left-color: #b8954a;
+}
+
+.region-greatgrand-item:hover .region-name {
+  color: #d4b87a;
+}
+
+.region-greatgrand-item.active {
+  background: rgba(130, 95, 28, 0.3);
+  border-left: 2px solid #b8954a;
+}
+
+.region-greatgrand-item.active .region-name {
+  color: #e8cc90;
+}
+
 /* ==========================================
    DESKTOP ANIMATIONS
 ========================================== */
