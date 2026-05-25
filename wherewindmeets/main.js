@@ -543,6 +543,11 @@ if (pick.goToLocation && pick.markerKey && window.MarkerManager) {
 
       if (await waitForRegionManager()) {
         try {
+          // ✅ Merge descriptions sekali lagi sebelum RegionManager
+          // agar loc_type dari DescriptionLoader sudah terisi saat extractRegions()
+          if (window.DescriptionLoader?.isReady()) {
+            await DescriptionLoader.mergeAllDescriptions();
+          }
           await RegionManager.init(window.map);
           console.log('✅ RegionManager initialized');
 
