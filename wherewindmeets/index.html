@@ -597,17 +597,11 @@ body.ink-ready #tab-list .ctab.on:hover .ctab-label { color: #ffffff; }
    * PRODUCTION → CDN tiles.bgonegaming.win
    * LOCAL TEST → ganti ke: images/qinghe.jpg dll.
    */
-  .lcard[data-i="0"] .lcard-bg { background-image: url('https://tiles.bgonegaming.win/wherewindmeet/overlay/bg-qinghe.webp?v=1');  background-color: #121018; }
-  .lcard[data-i="1"] .lcard-bg { background-image: url('https://tiles.bgonegaming.win/wherewindmeet/overlay/bg-kaifeng.webp?v=1'); background-color: #1e1408; }
-  .lcard[data-i="2"] .lcard-bg { background-image: url('https://tiles.bgonegaming.win/wherewindmeet/overlay/bg-hexi.webp?v=1');    background-color: #12181e; }
-  .lcard[data-i="3"] .lcard-bg { background-image: url('https://tiles.bgonegaming.win/wherewindmeet/overlay/bg-bujiang.webp?v=1'); background-color: #0e1418; }
-  .lcard[data-i="4"] .lcard-bg { background-image: url('https://tiles.bgonegaming.win/wherewindmeet/overlay/bg-imperial.webp?v=2'); background-color: #1e1408; }
-  /* LOCAL TEST (uncomment):
-  .lcard[data-i="0"] .lcard-bg { background-image: url('images/qinghe.jpg');   background-color: #121018; }
-  .lcard[data-i="1"] .lcard-bg { background-image: url('images/kaifeng.jpg');  background-color: #1e1408; }
-  .lcard[data-i="2"] .lcard-bg { background-image: url('images/hexi.jpg');     background-color: #12181e; }
-  .lcard[data-i="3"] .lcard-bg { background-image: url('images/bujiang.jpg');  background-color: #0e1418; }
-  */
+  .lcard[data-i="0"] .lcard-bg { background-color: #121018; }
+.lcard[data-i="1"] .lcard-bg { background-color: #1e1408; }
+.lcard[data-i="2"] .lcard-bg { background-color: #12181e; }
+.lcard[data-i="3"] .lcard-bg { background-color: #0e1418; }
+.lcard[data-i="4"] .lcard-bg { background-color: #1e1408; }
 
   .lcard-row {
     position: relative; z-index: 2;
@@ -1147,6 +1141,82 @@ body.ink-ready #tab-list .ctab.on:hover .ctab-label { color: #ffffff; }
     .pk-skill-grid { grid-template-columns: repeat(2, 1fr); }
     .pk-region-grid { grid-template-columns: 1fr; }
   }
+/* =========================
+   DESKTOP ONLY
+   ========================= */
+@media (min-width: 1025px) {
+
+  .ctab-label {
+    font-size: clamp(22px, 2.8vw, 32px) !important;
+  }
+
+  .ctab {
+    padding: 18px 10px 18px 8px !important;
+  }
+
+  .ctab::before {
+    width: 450% !important;
+    height: 90% !important;
+  }
+
+  #panel {
+    justify-content: center !important;
+    flex: 0 0 350px !important;
+    width: 350px !important;
+    transform: translateX(-60px) !important;
+  }
+
+  #loc-list {
+    flex: 0 1 auto !important;
+    max-height: 200vh !important;
+    gap: 20px !important;
+  }
+
+  .lcard-head {
+    min-height: clamp(100px, 10vh, 128px) !important;
+  }
+
+  .lcard-row {
+    padding: 0 16px !important;
+  }
+
+  .lcard-name {
+    font-size: clamp(13px, 1.6vw, 18px) !important;
+  }
+
+  .lchild {
+    padding: 10px 10px 10px 24px !important;
+    gap: 10px !important;
+  }
+
+  .lchild-name {
+    font-size: clamp(10px, 1vw, 14px) !important;
+  }
+
+  #lore {
+    padding: 0 24px 28px 350px !important;
+  }
+
+  #lore-name {
+    font-size: clamp(24px, 3.2vw, 48px) !important;
+    margin-bottom: 8px !important;
+  }
+
+  #lore-desc {
+    font-size: clamp(12px, 1.2vw, 15px) !important;
+    -webkit-line-clamp: 4 !important;
+  }
+
+  #main {
+    padding-left: 80px !important;
+  }
+
+  #picker-body {
+    left: calc(var(--brush-w) + 450px) !important;
+    right: 40px !important;
+  }
+}
+  
   </style>
 </head>
 <body style="margin:0;background:#07090b">
@@ -1800,12 +1870,28 @@ function toggleChildren(card) {
     }
   });
   const nowOpen = !wasOpen;
+
+  // Lazy load bg image saat accordion dibuka pertama kali
+  if (nowOpen) {
+    const bg = card.querySelector('.lcard-bg');
+    if (bg && !bg.style.backgroundImage) {
+      const urls = [
+        'https://tiles.bgonegaming.win/wherewindmeet/overlay/bg-qinghe.webp?v=1',
+        'https://tiles.bgonegaming.win/wherewindmeet/overlay/bg-kaifeng.webp?v=1',
+        'https://tiles.bgonegaming.win/wherewindmeet/overlay/bg-hexi.webp?v=1',
+        'https://tiles.bgonegaming.win/wherewindmeet/overlay/bg-bujiang.webp?v=1',
+        'https://tiles.bgonegaming.win/wherewindmeet/overlay/bg-imperial.webp?v=2',
+      ];
+      const idx = parseInt(card.dataset.i);
+      if (urls[idx] !== undefined) bg.style.backgroundImage = `url('${urls[idx]}')`;
+    }
+  }
+
   card.classList.toggle('open', nowOpen);
   card.querySelector('.lcard-head').setAttribute('aria-expanded', String(nowOpen));
   card.querySelector('.lcard-children').setAttribute('aria-hidden', String(!nowOpen));
   if (nowOpen) setTimeout(() => card.scrollIntoView({ behavior:'smooth', block:'nearest' }), 320);
 }
-
 // lchild click → resolve picker dan buka peta
 qsa('.lcard-head').forEach((head) => {
   const card = head.closest('.lcard');
@@ -1818,7 +1904,6 @@ qsa('.lcard-head').forEach((head) => {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); switchLoc(i); toggleChildren(head.closest('.lcard')); }
   });
 });
-
 qsa('.lchild').forEach(ch => {
   ch.addEventListener('click', e => {
     e.stopPropagation();
@@ -2869,6 +2954,6 @@ if ('serviceWorker' in navigator) {
   }).observe(overlay, { attributes:true, attributeFilter:['class','style'] });
 })();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script><script>eruda.init();</script>
+
 </body>
 </html>
