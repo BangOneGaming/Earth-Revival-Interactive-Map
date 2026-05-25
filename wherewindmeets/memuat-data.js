@@ -1,6 +1,6 @@
 window.DEV_SHOW_HIDDEN = false;
 const API_BASE_URL = 'https://autumn-dream-8c07.square-spon.workers.dev';
-const DATA_VERSION = '1.1.78';
+const DATA_VERSION = '1.1.80';
 
 const DATA_ENDPOINTS = {
   list: `${API_BASE_URL}/list`,
