@@ -2927,38 +2927,47 @@ function _push() {
 
   try {
 
-    // 🔒 GLOBAL LOCK (WAJIB)
-    if (window.__adsPushLock) {
-      console.log('⚠️ SKIP _push (global lock active)');
-      return;
-    }
-    window.__adsPushLock = true;
-
     const adIns = document.querySelector('#sticky-ad-container .adsbygoogle');
     if (!adIns) return;
 
-    // ✅ SAFE CHECK
+    // 🔒 SLOT-LEVEL LOCK (BUKAN GLOBAL)
+    if (adIns.__pushed) {
+      console.log('⚠️ SKIP: slot already pushed');
+      return;
+    }
+
+    // 🔒 SAFE CHECK (REAL ADSENSE STATUS)
     const alreadyRendered =
-      adIns.getAttribute('data-ad-status') === 'filled' &&
+      adIns.dataset.adsbygoogleStatus === 'done' ||
       adIns.querySelector('iframe');
 
     if (alreadyRendered) {
       console.log('⚠️ SKIP: already rendered');
+      adIns.__pushed = true;
       return;
     }
 
-    // ───────── AUTO ADS (NO PUSH OBJECT) ─────────
+    // ───────── AUTO ADS ─────────
     if (!window.__autoAdsInit) {
       window.__autoAdsInit = true;
       console.log('📡 Auto Ads enabled');
     }
 
-    // ───────── STICKY ─────────
+    // ───────── STICKY PUSH ─────────
     setTimeout(() => {
 
       try {
+
+        // DOUBLE GUARD (CRITICAL)
+        if (adIns.__pushed) {
+          console.log('⚠️ SKIP: locked before push');
+          return;
+        }
+
         window.adsbygoogle = window.adsbygoogle || [];
         window.adsbygoogle.push({});
+
+        adIns.__pushed = true;
 
         console.log('✅ Sticky pushed');
 
