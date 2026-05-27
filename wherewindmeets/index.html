@@ -2927,7 +2927,24 @@ function _push() {
 
   try {
 
-    // sticky slot only
+    // ════════════════════════════════════════
+    // AUTO ADS (tanpa anchor bottom)
+    // ════════════════════════════════════════
+    if (!window.__autoAdsInit) {
+
+      window.__autoAdsInit = true;
+
+      (window.adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: 'ca-pub-8582564022805467',
+        overlays: { bottom: false }
+      });
+
+      console.log('✅ Auto Ads initialized');
+    }
+
+    // ════════════════════════════════════════
+    // STICKY SLOT
+    // ════════════════════════════════════════
     if (!adIns.dataset.adsbygoogleStatus) {
 
       (window.adsbygoogle = window.adsbygoogle || []).push({});
