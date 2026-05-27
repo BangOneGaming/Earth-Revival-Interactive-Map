@@ -2927,37 +2927,54 @@ function _push() {
 
   try {
 
-    // ════════════════════════════════════════
-    // AUTO ADS (tanpa anchor bottom)
-    // ════════════════════════════════════════
+    const adIns = document.querySelector('#sticky-ad-container .adsbygoogle');
+    if (!adIns) return;
+
+    // ─────────────────────────────
+    // 1. AUTO ADS (ONLY ONCE)
+    // ─────────────────────────────
     if (!window.__autoAdsInit) {
 
       window.__autoAdsInit = true;
 
-      (window.adsbygoogle = window.adsbygoogle || []).push({
+      window.adsbygoogle = window.adsbygoogle || [];
+
+      window.adsbygoogle.push({
         google_ad_client: 'ca-pub-8582564022805467',
-        overlays: { bottom: false }
+        overlays: {
+          bottom: false   // penting: matikan auto sticky bawaan
+        }
       });
 
       console.log('✅ Auto Ads initialized');
     }
 
-    // ════════════════════════════════════════
-    // STICKY SLOT
-    // ════════════════════════════════════════
-    if (!adIns.dataset.adsbygoogleStatus) {
+    // ─────────────────────────────
+    // 2. STICKY ADS (DELAYED SAFE PUSH)
+    // ─────────────────────────────
+    if (!adIns.dataset.pushed) {
 
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
+      adIns.dataset.pushed = '1';
 
-      console.log('✅ Sticky Ad pushed');
+      setTimeout(() => {
+
+        try {
+
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+
+          console.log('✅ Sticky Ad pushed');
+
+        } catch (e) {
+          console.error('Sticky push error:', e);
+        }
+
+      }, 600); // delay penting supaya auto ads selesai attach DOM
 
     } else {
-
       console.log('⚠️ Sticky already processed');
-
     }
 
-  } catch(e) {
+  } catch (e) {
 
     console.error('Adsense Error:', e);
 
