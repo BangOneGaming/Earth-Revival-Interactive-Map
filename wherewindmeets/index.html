@@ -2898,28 +2898,11 @@ function _showAd() {
   // ════════════════════════════════════════
   requestAnimationFrame(() => {
 
-    function _push() {
+function _push() {
 
   try {
 
-    // ════════════════════════════════════════
-    // INIT AUTO ADS (sekali saja)
-    // ════════════════════════════════════════
-    if (!window.__autoAdsInit) {
-
-      window.__autoAdsInit = true;
-
-      (window.adsbygoogle = window.adsbygoogle || []).push({
-        google_ad_client: 'ca-pub-8582564022805467',
-        enable_page_level_ads: true
-      });
-
-      console.log('✅ Auto Ads initialized');
-    }
-
-    // ════════════════════════════════════════
-    // STICKY SLOT
-    // ════════════════════════════════════════
+    // sticky slot only
     if (!adIns.dataset.adsbygoogleStatus) {
 
       (window.adsbygoogle = window.adsbygoogle || []).push({});
@@ -3485,6 +3468,16 @@ if ('serviceWorker' in navigator) {
   }).observe(overlay, { attributes:true, attributeFilter:['class','style'] });
 })();
 </script>
-
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.src = 'https://cdn.jsdelivr.net/npm/eruda';
+  script.onload = function () {
+    eruda.init();
+    console.log('Eruda Loaded');
+  };
+  document.body.appendChild(script);
+})();
+</script>
 </body>
 </html>
