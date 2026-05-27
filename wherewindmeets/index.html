@@ -2790,12 +2790,12 @@ function _showAd() {
 
   requestAnimationFrame(() => {
     function _push() {
-      try {
-        (window.adsbygoogle=window.adsbygoogle||[]).push({ google_ad_client:'ca-pub-8582564022805467', enable_page_level_ads:true });
-        (window.adsbygoogle=window.adsbygoogle||[]).push({});
-      } catch(e) {}
-      setTimeout(() => { if (!ad.querySelector('iframe')) { ad.style.display='none'; ad.dataset.adLoaded=''; } }, 8000);
-    }
+  try {
+    (window.adsbygoogle=window.adsbygoogle||[]).push({ google_ad_client:'ca-pub-8582564022805467', enable_page_level_ads:true });
+    (window.adsbygoogle=window.adsbygoogle||[]).push({});
+  } catch(e) {}
+
+}
     if (document.querySelector('script[src*="adsbygoogle.js"]')) { _push(); }
     else {
       const s = document.createElement('script');
