@@ -1633,6 +1633,34 @@ body.ink-ready #tab-list .ctab.on:hover .ctab-label { color: #ffffff; }
   </div>
 </div>
 
+<!-- Login Modal -->
+<div id="loginModal" style="display:none;">
+  <div id="loginContent">
+    <button id="closeLogin">&times;</button>
+    <div id="loginOverlay">
+      <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left"></div>
+    </div>
+    <p id="loginNote" style="margin-top:20px;font-size:14px;color:#333;text-align:center;">
+      This login is not connected to the game you play. It only provides access to some map features and stores web data. Read our <a href="policy.html" target="_blank" style="color:#02a0c5;text-decoration:underline;">Privacy and Policy</a> for more information.
+    </p>
+  </div>
+</div>
+
+<!-- Comments Modal -->
+<div id="commentsModal" class="comments-modal" style="display:none;">
+  <div class="comments-modal-overlay" onclick="closeCommentsModal()"></div>
+  <div class="comments-modal-content">
+    <div class="comments-modal-header">
+      <h3 class="comments-modal-title">💬 Looking for Comments</h3>
+      <button class="comments-modal-close" onclick="closeCommentsModal()">&times;</button>
+    </div>
+    <div class="comments-modal-body" id="commentsModalBody"><div class="comments-loading">Loading comments...</div></div>
+    <div class="comments-modal-footer" id="commentsModalFooter"></div>
+  </div>
+</div>
+
+
+
 <div id="sticky-ad-container" style="display:none">
   <div id="ad-close-wrapper">
     <button id="btn-close-ad">Close adsens</button>
