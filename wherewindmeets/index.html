@@ -2927,57 +2927,49 @@ function _push() {
 
   try {
 
+    // 🔒 GLOBAL LOCK (WAJIB)
+    if (window.__adsPushLock) {
+      console.log('⚠️ SKIP _push (global lock active)');
+      return;
+    }
+    window.__adsPushLock = true;
+
     const adIns = document.querySelector('#sticky-ad-container .adsbygoogle');
     if (!adIns) return;
 
-    // ─────────────────────────────
-    // 1. AUTO ADS (ONLY ONCE)
-    // ─────────────────────────────
+    // ✅ SAFE CHECK
+    const alreadyRendered =
+      adIns.getAttribute('data-ad-status') === 'filled' &&
+      adIns.querySelector('iframe');
+
+    if (alreadyRendered) {
+      console.log('⚠️ SKIP: already rendered');
+      return;
+    }
+
+    // ───────── AUTO ADS (NO PUSH OBJECT) ─────────
     if (!window.__autoAdsInit) {
-
       window.__autoAdsInit = true;
-
-      window.adsbygoogle = window.adsbygoogle || [];
-
-      window.adsbygoogle.push({
-        google_ad_client: 'ca-pub-8582564022805467',
-        overlays: {
-          bottom: false   // penting: matikan auto sticky bawaan
-        }
-      });
-
-      console.log('✅ Auto Ads initialized');
+      console.log('📡 Auto Ads enabled');
     }
 
-    // ─────────────────────────────
-    // 2. STICKY ADS (DELAYED SAFE PUSH)
-    // ─────────────────────────────
-    if (!adIns.dataset.pushed) {
+    // ───────── STICKY ─────────
+    setTimeout(() => {
 
-      adIns.dataset.pushed = '1';
+      try {
+        window.adsbygoogle = window.adsbygoogle || [];
+        window.adsbygoogle.push({});
 
-      setTimeout(() => {
+        console.log('✅ Sticky pushed');
 
-        try {
+      } catch (e) {
+        console.error('Sticky error:', e);
+      }
 
-          (window.adsbygoogle = window.adsbygoogle || []).push({});
-
-          console.log('✅ Sticky Ad pushed');
-
-        } catch (e) {
-          console.error('Sticky push error:', e);
-        }
-
-      }, 600); // delay penting supaya auto ads selesai attach DOM
-
-    } else {
-      console.log('⚠️ Sticky already processed');
-    }
+    }, 400);
 
   } catch (e) {
-
-    console.error('Adsense Error:', e);
-
+    console.error(e);
   }
 }
 
