@@ -1661,19 +1661,6 @@ body.ink-ready #tab-list .ctab.on:hover .ctab-label { color: #ffffff; }
 
 
 
-<div id="sticky-ad-container" style="display:none">
-  <div id="ad-close-wrapper">
-    <button id="btn-close-ad">Close adsens</button>
-  </div>
-  <div id="ad-click-detector"></div>
-  <ins class="adsbygoogle"
-       data-ad-client="ca-pub-8582564022805467"
-       data-ad-slot="7695704952"
-       data-ad-format="auto"
-       data-full-width-responsive="true">
-  </ins>
-</div>
-
 
 <!-- ══════════════════════════════════════════════════════
      PATCH NOTES OVERLAY
@@ -2963,7 +2950,7 @@ function _resolveWith(data) {
   gsap.to(title, { opacity:1, y:0, duration:.6, ease:'power3.out', delay:.1 });
   gsap.to(sub,   { opacity:1, duration:.5, ease:'power2.out', delay:.3 });
 
-  // Tutup shell
+  // Tutup shell + tampilkan iklan bersamaan
   const targets = [
     document.getElementById('shell'),
     document.getElementById('brush-img'),
@@ -2971,6 +2958,9 @@ function _resolveWith(data) {
   ];
   gsap.to(targets, {
     opacity: 0, duration: .5, ease: 'power2.inOut',
+    onStart() {
+      _showAd(); // ← muncul saat shell & brush mulai fade out
+    },
     onComplete() {
       targets.forEach(el => { if (el) el.style.display = 'none'; });
     }
