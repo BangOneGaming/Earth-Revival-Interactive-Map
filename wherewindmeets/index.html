@@ -2851,47 +2851,72 @@ function _showAd() {
   const isShort  = window.matchMedia('(max-height:500px)').matches;
   const isLandscape = window.innerWidth > window.innerHeight;
 
-  // ════════════════════════════════════════
-  // HEIGHT CONFIG
-  // ════════════════════════════════════════
-  let h;
+// ════════════════════════════════════════
+// HEIGHT CONFIG
+// ════════════════════════════════════════
+let h;
 
-  // mobile
-  if (isMobile || isSmall) {
-    h = isLandscape
-      ? '55px'   // mobile horizontal
-      : '70px';  // mobile vertical
+// mobile
+if (isMobile || isSmall) {
 
-    if (isShort) h = '50px';
+  h = isLandscape
+    ? 55   // mobile horizontal
+    : 70;  // mobile vertical
+
+  if (isShort) h = 50;
+}
+
+// pc / tablet
+else {
+
+  const vh = window.innerHeight;
+  const vw = window.innerWidth;
+
+  // adaptive desktop scaling
+  h = Math.round(vh * 0.09);
+
+  // ultrawide / big monitor
+  if (vw >= 2560) {
+    h += 8;
   }
 
-  // pc / tablet
-  else {
-    h = window.innerHeight < 700
-      ? '70px'
-      : '85px';
+  // small laptop
+  if (vh < 750) {
+    h -= 8;
   }
 
-  // ════════════════════════════════════════
-  // APPLY STYLE
-  // ════════════════════════════════════════
-  ad.style.cssText = `
-    position:fixed;
-    bottom:0;
-    left:0;
-    width:100%;
-    height:${h};
-    padding:0;
-    z-index:400;
-    display:block;
-    background:rgba(255,255,255,.95);
-  `;
+  // clamp
+  h = Math.max(82, Math.min(h, 118));
+}
 
-  adIns.style.cssText = `
-    display:block;
-    width:100%;
-    height:${h};
-  `;
+// convert ke px
+h = `${h}px`;
+
+// ════════════════════════════════════════
+// APPLY STYLE
+// ════════════════════════════════════════
+ad.style.cssText = `
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:${h};
+  min-height:${h};
+  max-height:${h};
+  overflow:hidden;
+  padding:0;
+  z-index:400;
+  display:block;
+  background:rgba(255,255,255,.95);
+`;
+
+adIns.style.cssText = `
+  display:block;
+  width:100%;
+  height:${h};
+  min-height:${h};
+  max-height:${h};
+`;
 
   // ════════════════════════════════════════
   // PUSH ADSENSE
@@ -2927,7 +2952,7 @@ function _push() {
 // ════════════════════════════════════════
 if (document.querySelector('script[src*="adsbygoogle.js"]')) {
 
-  _push();
+  setTimeout(_push, 800);
 
 }
 
@@ -2946,10 +2971,10 @@ else {
 
   s.onload = () => {
 
-    console.log('✅ Adsense script loaded');
+  console.log('✅ Adsense script loaded');
 
-    _push();
-  };
+  setTimeout(_push, 1200);
+};
 
   s.onerror = e => {
 
