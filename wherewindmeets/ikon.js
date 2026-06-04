@@ -5,7 +5,7 @@
 
 // Base URL for icons
 const ICON_BASE_URL = "https://tiles.bgonegaming.win/wherewindmeet/Simbol/";
-const ICON_VERSION = "v1"; // ← ubah ini saja untuk bust cache semua icon
+const ICON_VERSION = "v2"; // ← ubah ini saja untuk bust cache semua icon
 
 function iv(url) {
   return `${url}?${ICON_VERSION}`;
@@ -129,24 +129,24 @@ const ICON_CONFIG = {
     "37": "Inner Ways",
     "38": "Old Friend",
     "39": "Camp",
-    "40": "Dog Play",
+    "40": "Canine Capers",
     "41": "Board",
     "42": "Ride And Archer Challenge",
     "43": "Chasing The Moon",
-    "44": "Drama Ink Criticism",
-    "45": "Fight Crickets",
-    "46": "Write a Peach Talisman",
-    "47": "Ice Play",
-    "48": "Universe in the Palm",
+    "44": "Imperial Decree",
+    "45": "Crickets Fighter",
+    "46": "Inscribing Peachwood Talisman",
+    "47": "Ice Games",
+    "48": "Ultimate Slap",
     "49": "Yan Ji",
-    "50": "Flowers Bloom",
+    "50": "Bloomworks",
     "51": "Ice Sculpture"
   },
   specialSizes: {
     "1": {
-      size: isMobile ? [44, 44] : [64, 64],
-      anchor: isMobile ? [22, 44] : [32, 64],
-      popupAnchor: isMobile ? [0, -44] : [0, -64]
+      size: isMobile ? [60, 60] : [90, 90],
+anchor: isMobile ? [30, 60] : [45, 90],
+popupAnchor: isMobile ? [0, -60] : [0, -90]
     }
   },
   defaultSize: DEFAULT_SIZE,
