@@ -60,7 +60,10 @@ const MarkerAddSystem = (function() {
       const markers = MarkerManager.getAllMarkers();
       markers.forEach(marker => {
         if (marker.loc_type && marker.loc_type.trim() !== '') {
-          regionsSet.add(marker.loc_type.trim());
+          const resolved = window.resolveLocType
+            ? window.resolveLocType(marker.loc_type.trim())
+            : marker.loc_type.trim();
+          regionsSet.add(resolved);
         }
       });
     }
