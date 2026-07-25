@@ -4,6 +4,28 @@
 
 console.log("📦 Loading marker-manager.js...");
 
+// ========================================
+// LOC_TYPE RESOLVER — fake_name → name
+// ========================================
+function resolveLocType(rawLocType) {
+  if (!rawLocType || rawLocType === 'Not Selected') return rawLocType;
+
+  if (typeof window.RegionLabelManager === 'undefined') return rawLocType;
+
+  const allRegions = [
+    ...(window.RegionLabelManager._getLabelConfig('zoom_5') || []),
+    ...(window.RegionLabelManager._getLabelConfig('zoom_6') || []),
+    ...(window.RegionLabelManager._getLabelConfig('zoom_7') || [])
+  ];
+
+  const match = allRegions.find(r =>
+    r.fake_name && r.fake_name.trim() === rawLocType.trim()
+  );
+
+  return match ? match.name : rawLocType;
+}
+
+
 // Marker loading configuration
 const MARKER_CONFIG = {
   batchSize: 200,        // ✅ OPTIMIZED: 200 → 30, tiap frame lebih ringan
@@ -13,7 +35,7 @@ const MARKER_CONFIG = {
 
 
 const EDIT_PERMISSION = {
-  loc_type: false // 🔒 default TIDAK bisa diedit
+  loc_type: true // 🔒 default TIDAK bisa diedit
 };
 
 // ========================================
@@ -702,7 +724,8 @@ createPopupContent(markerData, editState = {}) {
   const categoryIcon = getIconUrl(markerData.category_id);
   const description = markerData.desc || 'No description available';
   const markerKey = markerData._key;
-  const locType = markerData.loc_type?.trim() || 'Not Selected';
+  const rawLocType = markerData.loc_type?.trim() || 'Not Selected';
+const locType = resolveLocType(rawLocType);
   // Convert newlines to <br> for HTML display
   const rawDesc = description !== 'No description available'
   ? description.replace(/\n/g, '<br>')
@@ -2237,9 +2260,13 @@ function showReportErrorPopup(message) {
 // ========================================
 // GLOBAL EXPORTS
 // ========================================
+// ========================================
+// GLOBAL EXPORTS
+// ========================================
 window.MarkerManager = MarkerManager;
 window.MarkerShare = MarkerShare;
 window.loadVisitedMarkersFromServer = loadVisitedMarkersFromServer;
+window.resolveLocType = resolveLocType;   // ← TAMBAHKAN INI
 
 console.log('✅ MarkerManager exported to window');
 console.log('✅ MarkerShare exported to window');
