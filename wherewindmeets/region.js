@@ -35,7 +35,7 @@ const LABEL_CONFIG = {
       "size": 60
     },
     {
-      "name": "Bujian Mountain",
+      "name": "Hidden Mountain",
       "lat": 102.05143525952718,
       "lng": 196.66018867492676,
       "size": 60
@@ -145,7 +145,15 @@ const LABEL_CONFIG = {
       "lat": 102.03556094524335,
       "lng": 196.38766062491666,
       "size": 26,
-      "map_type": "Bujian Mountain"
+      "map_type": "Hidden Mountain"
+    },
+    {
+      "name": "Shenze",
+      "cn_name": "深泽",
+      "lat": 110.99789399003295,
+      "lng": 197.58816012975927,
+      "size": 26,
+      "map_type": "Hidden Mountain"
     },
     {
       "name": "Tianxing",
@@ -153,22 +161,14 @@ const LABEL_CONFIG = {
       "lat": 91.8496558876488,
       "lng": 197.92790860819716,
       "size": 26,
-      "map_type": "Bujian Mountain"
-    },
-    {
-      "name": "Fukasawa",
-      "cn_name": "深泽",
-      "lat": 110.99789399003295,
-      "lng": 197.58816012975927,
-      "size": 26,
-      "map_type": "Bujian Mountain"
+      "map_type": "Hidden Mountain"
     },
     {
       "name": "Hutuo",
       "lat": 34.207554,
       "lng": 18.271504,
       "size": 24,
-      "map_type": "Bujian Mountain",
+      "map_type": "Hidden Mountain",
       "preset_map": "hutuo"
     }
   ],
@@ -243,18 +243,20 @@ const LABEL_CONFIG = {
       "lat": 111.03426752733685,
       "lng": 198.67107928042327,
       "size": 24,
-      "sub_regions": "Fukasawa"
+      "sub_regions": "Shenze"
     },
     {
-      "name": "Qu'an",
+      "name": "Meandering Bank",
+      "fake_name": "Qu'an",
       "cn_name": "曲岸",
       "lat": 108.4923941728395,
       "lng": 202.74151235273368,
       "size": 24,
-      "sub_regions": "Fukasawa"
+      "sub_regions": "Shenze"
     },
     {
-      "name": "Juezhangling",
+      "name": "Precipe Ridge",
+      "fake_name": "Juezhangling",
       "cn_name": "绝嶂岭",
       "lat": 106.39265735449735,
       "lng": 196.48740286419752,
@@ -262,7 +264,8 @@ const LABEL_CONFIG = {
       "sub_regions": "Suixiang"
     },
     {
-      "name": "Mexico City",
+      "name": "Mohist City",
+      "fake_name": "Mexico City",
       "cn_name": "墨城",
       "lat": 99.1058958871252,
       "lng": 195.71300946737213,
@@ -270,15 +273,17 @@ const LABEL_CONFIG = {
       "sub_regions": "Suixiang"
     },
     {
-      "name": "Clear water and clouds",
+      "name": "Jadestream Valley",
       "cn_name": "碧水云涛",
+      "fake_name": "Clear water and clouds",
       "lat": 102.21518821869488,
       "lng": 201.46898768253968,
       "size": 24,
       "sub_regions": "Suixiang"
     },
     {
-      "name": "Former site of Mocheng",
+      "name": "Old Mohist City",
+      "fake_name": "Former site of Mocheng",
       "cn_name": "墨城旧址",
       "lat": 102.27812224338624,
       "lng": 188.38030823280423,
@@ -1511,10 +1516,13 @@ return {
       updateLabels(map.getZoom());
     },
     // ✅ TAMBAHKAN INI
-    _clearLayerCache: function() {
+_clearLayerCache: function() {
   labelLayers = { zoom_3_4: null, zoom_5: null, zoom_6: null, zoom_7: null };
 }
   };
+
+  // ✅ Export LABEL_CONFIG dari DALAM IIFE (karena LABEL_CONFIG private di sini)
+  window.LABEL_CONFIG = LABEL_CONFIG;
 
 })();
 
@@ -1523,5 +1531,4 @@ return {
 // ==========================================
 
 window.RegionLabelManager = RegionLabelManager;
-
 console.log('✅ RegionLabelManager module loaded (v1.1.0 with show/hide)');
