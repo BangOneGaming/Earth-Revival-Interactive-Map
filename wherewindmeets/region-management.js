@@ -46,10 +46,13 @@ const RegionManager = {
       const markers = MarkerManager.getAllMarkers();
 
       markers.forEach(marker => {
-        if (marker.loc_type && marker.loc_type.trim() !== '') {
-          regionsSet.add(marker.loc_type.trim());
-        }
-      });
+  if (marker.loc_type && marker.loc_type.trim() !== '') {
+    const resolved = window.resolveLocType
+      ? window.resolveLocType(marker.loc_type.trim())
+      : marker.loc_type.trim();
+    regionsSet.add(resolved);
+  }
+});
     }
 
     const regionsList = Array.from(regionsSet).sort();
@@ -371,9 +374,13 @@ getRegionMapType(regionId) {
 
   const markers = MarkerManager.getAllMarkers();
 
-  const regionMarkers = markers.filter(m =>
-    m.loc_type && m.loc_type.trim() === regionId
-  );
+  const regionMarkers = markers.filter(m => {
+  if (!m.loc_type) return false;
+  const resolved = window.resolveLocType
+    ? window.resolveLocType(m.loc_type.trim())
+    : m.loc_type.trim();
+  return resolved === regionId;
+});
 
   if (!regionMarkers.length) return 'main';
 
@@ -652,37 +659,34 @@ const doFly = () => {
   /**
    * Check if a marker should be visible based on active region
    */
-  shouldShowMarker(marker) {
+shouldShowMarker(marker) {
   if (this.activeRegion === 'all') return true;
-
   // Major regions (zoom_3_4) → tampilkan semua
   if (this.majorRegionIds?.has(this.activeRegion.trim().toLowerCase())) return true;
+
+  const rawRegion = marker.loc_type ? marker.loc_type.trim() : '';
+  const markerRegion = rawRegion && window.resolveLocType
+    ? window.resolveLocType(rawRegion)
+    : rawRegion;
 
   // Top-level group (zoom_3_4)
   const group = this.groupedRegions.find(g => g.id === this.activeRegion);
   if (group && group.isGroup) {
     const leafIds = this.collectLeafIds(group);
-    const markerRegion = marker.loc_type ? marker.loc_type.trim() : '';
     return leafIds.has(markerRegion) || markerRegion === this.activeRegion;
   }
-
   // zoom_5 group dengan children
   const zoom5Group = this.findZoom5Group(this.activeRegion);
   if (zoom5Group && zoom5Group.children && zoom5Group.children.length > 0) {
     const leafIds = this.collectLeafIds(zoom5Group);
-    const markerRegion = marker.loc_type ? marker.loc_type.trim() : '';
     return leafIds.has(markerRegion) || markerRegion === this.activeRegion;
   }
-
   // ✅ TAMBAH: zoom_6 group yang punya children (zoom_7)
   const zoom6Group = this.findZoom6Group(this.activeRegion);
   if (zoom6Group && zoom6Group.children && zoom6Group.children.length > 0) {
     const leafIds = this.collectLeafIds(zoom6Group);
-    const markerRegion = marker.loc_type ? marker.loc_type.trim() : '';
     return leafIds.has(markerRegion) || markerRegion === this.activeRegion;
   }
-
-  const markerRegion = marker.loc_type ? marker.loc_type.trim() : '';
   return markerRegion === this.activeRegion;
 },
 
