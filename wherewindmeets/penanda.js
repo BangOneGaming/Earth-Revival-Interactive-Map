@@ -2,8 +2,22 @@
  * Marker management module with lazy loading and filtering
  */
 
-console.log("📦 Loading marker-manager.js...");
 
+const GEO_FIX = { sx: 0.947268, sy: 0.947319, dx: 0.02749, dy: -0.00285 };
+
+function _isMainPreset() {
+  return typeof getCurrentMapPreset !== 'function' || getCurrentMapPreset() === 'main';
+}
+
+function fixLatLng(lat, lng) {
+  if (!_isMainPreset()) return [lat, lng];   // preset lain: koordinat apa adanya
+  return [lat * GEO_FIX.sy + GEO_FIX.dy, lng * GEO_FIX.sx + GEO_FIX.dx];
+}
+
+function unfixLatLng(lat, lng) {
+  if (!_isMainPreset()) return [lat, lng];
+  return [(lat - GEO_FIX.dy) / GEO_FIX.sy, (lng - GEO_FIX.dx) / GEO_FIX.sx];
+}
 // ========================================
 // LOC_TYPE RESOLVER — fake_name → name
 // ========================================
@@ -1358,7 +1372,7 @@ createAndAddMarker(markerData, lat, lng, markerKey) {
   }
   
   const popupContent = this.createPopupContent(markerData);
-  const leafletMarker = L.marker([lat, lng], { icon: finalIcon })
+const leafletMarker = L.marker(fixLatLng(lat, lng), { icon: finalIcon })
     .bindPopup(popupContent, { maxWidth: 420, minWidth: 340 });
   leafletMarker.on('popupopen', () => {
   console.log("📍 Active Marker:", markerKey);
