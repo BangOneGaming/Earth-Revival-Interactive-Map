@@ -7,7 +7,7 @@
 // CONFIG
 // ============================================
 
-const TILE_VERSION = "20261011";
+const TILE_VERSION = "20261014";
 
 const MAP_PRESETS = {
   main: {
