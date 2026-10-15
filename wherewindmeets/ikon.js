@@ -86,7 +86,17 @@ const ICON_CONFIG = {
     "48": "slap.webp",
     "49": "knife.webp",
     "50": "flowerbloom.webp",
-    "51": "icesculpture.webp"
+    "51": "icesculpture.webp",
+    "52": "azure.webp",
+    "53": "changsheng.webp",
+    "54": "villager.webp",
+    "55": "exam.webp",
+    "56": "waterworks.webp",
+    "57": "jacquard.webp",
+    "58": "gameboard.webp",
+    "59": "musicboat.webp",
+    "60": "teaart.webp"
+    
   },
 
   names: {
@@ -140,7 +150,18 @@ const ICON_CONFIG = {
     "48": "Ultimate Slap",
     "49": "Yan Ji",
     "50": "Bloomworks",
-    "51": "Ice Sculpture"
+    "51": "Ice Sculpture",
+    "52": "Azure Waters",
+    "53": "Changsheng Hot Market",
+    "54": "Fellow Villagers",
+    "55": "Sufeng Example Insight",
+    "56": "Classmates Seat",
+    "57": "Jacquard Brocade",
+    "58": "Backgammon",
+    "59": "Listen Music on Boat",
+    "60": "Tea Whisking Art"
+    
+    
   },
   specialSizes: {
     "1": {
