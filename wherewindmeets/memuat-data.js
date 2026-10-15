@@ -1,6 +1,6 @@
 window.DEV_SHOW_HIDDEN = false;
 const API_BASE_URL = 'https://autumn-dream-8c07.square-spon.workers.dev';
-const DATA_VERSION = '1.1.100';
+const DATA_VERSION = '1.1.103';
 
 const DATA_ENDPOINTS = {
   list: `${API_BASE_URL}/list`,
@@ -54,6 +54,15 @@ const DATA_ENDPOINTS = {
   knife: `${API_BASE_URL}/knife`,
   flowerbloom: `${API_BASE_URL}/flowerbloom`,
   icesculpture: `${API_BASE_URL}/icesculpture`,
+  azure: `${API_BASE_URL}/azure`,
+  changse: `${API_BASE_URL}/changsheng`,
+  village: `${API_BASE_URL}/exam`,
+  exam: `${API_BASE_URL}/villager`,
+  water: `${API_BASE_URL}/waterworks`,
+  jacquard: `${API_BASE_URL}/jacquard`,
+  boardgame: `${API_BASE_URL}/gameboard`,
+  musicboat: `${API_BASE_URL}/musicboat`,
+  tea: `${API_BASE_URL}/teaart`,
   terbaru: `${API_BASE_URL}/terbaru`
 };
 
@@ -109,6 +118,15 @@ const ENDPOINT_TO_GLOBAL = {
   knife: 'pisau',
   flowerbloom: 'bungamekar',
   icesculpture: 'patunges',
+  azure: 'airbiru',
+  changse: 'tokochang',
+  village: 'warga',
+  exam: 'ujian',
+  water: 'air',
+  jacquard: 'brokat',
+  boardgame: 'gamepapan',
+  musicboat: 'perahumusik',
+  tea: 'teh',
   terbaru: 'terbaru'
 };
 
