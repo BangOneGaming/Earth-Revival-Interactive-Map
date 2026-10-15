@@ -70,7 +70,7 @@ const filterGroupConfig = {
   hot : {
     title: 'Hot',
     icon: '',
-    categories: [2, 3, 13, 24, 44, 45, 46, 47, 48, 49, 50, 51]  // Teleport + Treasure Chest
+    categories: [2, 3, 13, 24, 52, 53, 54, 55, 56, 57, 58, 59, 60]  // Teleport + Treasure Chest
   },
   discover: {
     title: 'Discover',
@@ -80,12 +80,12 @@ const filterGroupConfig = {
   collection: {
     title: 'Collection',
     icon: '',
-    categories: [5, 4, 6, 7, 8, 9, 40, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 41]
+    categories: [5, 4, 6, 7, 8, 9, 40, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 41, 46, 50, 51]
   },
     minigame: {
     title: "Mini Game's",
     icon: '',
-    categories: [29, 30, 31, 32, 33, 34, 35, 42, 43]
+    categories: [29, 30, 31, 32, 33, 34, 35, 42, 43, 44, 45, 47, 48, 49]
   },
   traveler: {
     title: 'Traveler',
@@ -671,6 +671,15 @@ getAllMarkers() {
     window.pisau,
     window.bungamekar,
     window.patunges,
+    window.airbiru,
+    window.tokochang,
+    window.warga,
+    window.ujian,
+    window.air,
+    window.brokat,
+    window.gamepapan,
+    window.perahumusik,
+    window.teh,
     window.terbaru
   ];
 
@@ -2271,9 +2280,6 @@ function showReportErrorPopup(message) {
   setTimeout(() => popup.classList.add('show'), 30);
 }
 
-// ========================================
-// GLOBAL EXPORTS
-// ========================================
 // ========================================
 // GLOBAL EXPORTS
 // ========================================
