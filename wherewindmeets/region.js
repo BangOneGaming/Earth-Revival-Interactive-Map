@@ -14,98 +14,67 @@ const RegionLabelManager = (function() {
   // CONFIGURATION
   // ==========================================
   
-const LABEL_CONFIG = {
-  "zoom_3_4": [
-    {
-      "name": "Qinghe",
-      "lat": 130.2765,
-      "lng": 187.7205,
-      "size": 60
-    },
-    {
-      "name": "Kaifeng",
-      "lat": 159.1016220096778,
-      "lng": 167.6629340648651,
-      "size": 60
-    },
-    {
-      "name": "Hexi",
-      "lat": 51.29972139261508,
-      "lng": 51.52788323668682,
-      "size": 60
-    },
-    {
-      "name": "Hidden Mountain",
-      "lat": 102.05143525952718,
-      "lng": 196.66018867492676,
-      "size": 60
-    }
-  ],
+const LABEL_CONFIG = 
+
+{
+"zoom_3_4": [
+  { "name": "Qinghe",          "lat": 123.4106, "lng": 177.8489, "size": 60 },
+  { "name": "Kaifeng",         "lat": 150.7171, "lng": 158.8492, "size": 60 },
+  { "name": "Hexi",            "lat": 48.5944,  "lng": 48.8382,  "size": 60 },
+  { "name": "Bujian Mountain", "lat": 96.6724,  "lng": 186.3174, "size": 60 },
+  { "name": "Jiangnan",        "lat": 103,      "lng": 222,      "size": 60 },
+  { "name": "Qinzhou",         "lat": 230,      "lng": 212,      "size": 60 }
+],
   "zoom_5": [
-    {
-      "name": "Verdant Wilds",
-      "cn_name": "百草野",
-      "lat": 130.92766841618575,
-      "lng": 198.2494502067566,
-      "size": 26,
-      "map_type": "Qinghe"
-    },
-    {
-      "name": "Moonveil Mountain",
-      "cn_name": "隐月山",
-      "lat": 131.34873125328068,
-      "lng": 182.43181371688843,
-      "size": 26,
-      "map_type": "Qinghe"
-    },
-    {
-      "name": "Sundara Land",
-      "cn_name": "善妙洲",
-      "lat": 120.95253073067192,
-      "lng": 187.95543956756592,
-      "size": 26,
-      "map_type": "Qinghe"
-    },
-    {
-      "name": "Dreamspace",
-      "lat": 34.207554,
-      "lng": 18.271504,
-      "size": 24,
-      "map_type": "Qinghe",
-      "preset_map": "dreamspace"
-    },
-    {
-      "name": "Kaifeng City",
-      "cn_name": "开封城",
-      "lat": 148.45886927147313,
-      "lng": 167.75539636611938,
-      "size": 26,
-      "map_type": "Kaifeng"
-    },
-    {
-      "name": "Granary of Plenty",
-      "cn_name": "太仓粟",
-      "lat": 165.93423477511217,
-      "lng": 175.93012166023254,
-      "size": 26,
-      "map_type": "Kaifeng"
-    },
-    {
-      "name": "Jadewood Court",
-      "cn_name": "琼林苑",
-      "lat": 161.8376638217751,
-      "lng": 161.29809069633484,
-      "size": 26,
-      "map_type": "Kaifeng"
-    },
-    {
-      "name": "Roaring Sands",
-      "cn_name": "博浪沙",
-      "lat": 141.4049587992937,
-      "lng": 155.73852682113647,
-      "size": 26,
-      "map_type": "Kaifeng"
-    },
+  {
+    "name": "Verdant Wilds",
+    "lat": 124.142283,
+    "lng": 187.327112,
+    "size": 26,
+    "map_type": "Qinghe"
+  },
+  {
+    "name": "Moonveil Mountain",
+    "lat": 124.44685,
+    "lng": 173.010194,
+    "size": 26,
+    "map_type": "Qinghe"
+  },
+  {
+    "name": "Sundara Land",
+    "lat": 114.311475,
+    "lng": 178.041623,
+    "size": 26,
+    "map_type": "Qinghe"
+  },
+  {
+    "name": "Kaifeng City",
+    "lat": 140.352006,
+    "lng": 158.891572,
+    "size": 26,
+    "map_type": "Kaifeng"
+  },
+  {
+    "name": "Granary of Plenty",
+    "lat": 156.971588,
+    "lng": 166.817104,
+    "size": 26,
+    "map_type": "Kaifeng"
+  },
+  {
+    "name": "Jadewood Court",
+    "lat": 153.268156,
+    "lng": 153.113641,
+    "size": 26,
+    "map_type": "Kaifeng"
+  },
+  {
+    "name": "Roaring Sands",
+    "lat": 133.753182,
+    "lng": 147.23344,
+    "size": 26,
+    "map_type": "Kaifeng"
+  },
     {
       "name": "Imperial Palace",
       "cn_name": "皇宫",
@@ -115,282 +84,292 @@ const LABEL_CONFIG = {
       "map_type": "Kaifeng",
       "preset_map": "royal_palace"
     },
-    {
-      "name": "Jade Gate Pass",
-      "cn_name": "玉门关",
-      "lat": 34.19193026737213,
-      "lng": 27.556250003245143,
-      "size": 26,
-      "map_type": "Hexi"
-    },
-    {
-      "name": "Liangzhou",
-      "cn_name": "凉州",
-      "lat": 46.23956782958546,
-      "lng": 51.31959538855816,
-      "size": 26,
-      "map_type": "Hexi"
-    },
-    {
-      "name": "Qinchuan",
-      "cn_name": "秦川",
-      "lat": 76.38501880776012,
-      "lng": 77.3876244232804,
-      "size": 26,
-      "map_type": "Hexi"
-    },
-    {
-      "name": "Suixiang",
-      "cn_name": "绥乡",
-      "lat": 102.03556094524335,
-      "lng": 196.38766062491666,
-      "size": 26,
-      "map_type": "Hidden Mountain"
-    },
-    {
-      "name": "Shenze",
-      "cn_name": "深泽",
-      "lat": 110.99789399003295,
-      "lng": 197.58816012975927,
-      "size": 26,
-      "map_type": "Hidden Mountain"
-    },
-    {
-      "name": "Tianxing",
-      "cn_name": "天陉",
-      "lat": 91.8496558876488,
-      "lng": 197.92790860819716,
-      "size": 26,
-      "map_type": "Hidden Mountain"
-    },
+  {
+    "name": "Jade Gate Pass",
+    "lat": 32.392355,
+    "lng": 26.105921,
+    "size": 26,
+    "map_type": "Hexi"
+  },
+  {
+    "name": "Liangzhou",
+    "lat": 43.805906,
+    "lng": 48.618564,
+    "size": 26,
+    "map_type": "Hexi"
+  },
+  {
+    "name": "Qinchuan",
+    "lat": 72.364755,
+    "lng": 73.314592,
+    "size": 26,
+    "map_type": "Hexi"
+  },
+  {
+    "name": "Fukasawa",
+    "lat": 104.327407,
+    "lng": 184.900665,
+    "size": 26,
+    "map_type": "Bujian Mountain"
+  },
+  {
+    "name": "Suixiang",
+    "lat": 96.216492,
+    "lng": 184.706669,
+    "size": 26,
+    "map_type": "Bujian Mountain"
+  },
+  {
+    "name": "Tianxing",
+    "lat": 86.50624,
+    "lng": 185.497412,
+    "size": 26,
+    "map_type": "Bujian Mountain"
+  },
     {
       "name": "Hutuo",
       "lat": 34.207554,
       "lng": 18.271504,
       "size": 24,
-      "map_type": "Hidden Mountain",
+      "map_type": "Bujian Mountain",
       "preset_map": "hutuo"
-    }
-  ],
+    },
+ {
+    "name": "Pengshan",
+    "lat": 102.723763,
+    "lng": 234.693798,
+    "size": 24,
+    "map_type": "Jiangnan"
+  },
+  {
+    "name": "Dongyue",
+    "lat": 105.145239,
+    "lng": 209.758883,
+    "size": 24,
+    "map_type": "Jiangnan"
+  },
+  {
+    "name": "Hangzhou",
+    "lat": 229.878999,
+    "lng": 215.565317,
+    "size": 24,
+    "map_type": "Qinzhou"
+  }
+],
   "zoom_6": [
     {
       "name": "Hallo Peak",
       "cn_name": "佛光顶",
-      "lat": 119.781249,
-      "lng": 188.906244,
+      "lat": 113.358579,
+      "lng": 178.330294,
       "size": 24,
       "sub_regions": "Sundara Land"
     },
     {
       "name": "Bodhi Sea",
       "cn_name": "菩提苦海",
-      "lat": 122.624999,
-      "lng": 196.124994,
+      "lat": 116.065815,
+      "lng": 184.922985,
       "size": 24,
       "sub_regions": "Sundara Land"
     },
     {
       "name": "Mercyheart Town",
       "cn_name": "慈心镇",
-      "lat": 119.937499,
-      "lng": 182.031244,
+      "lat": 113.503521,
+      "lng": 171.816845,
       "size": 24,
       "sub_regions": "Sundara Land"
     },
     {
       "name": "Finesteed",
       "cn_name": "伏马庄",
-      "lat": 120.468749,
-      "lng": 200.812494,
+      "lat": 114.001687,
+      "lng": 189.610089,
       "size": 24,
       "sub_regions": "Sundara Land"
     },
     {
       "name": "Flower Expanse",
       "cn_name": "花海",
-      "lat": 123.156249,
-      "lng": 183.624994,
+      "lat": 116.551519,
+      "lng": 173.600579,
       "size": 24,
       "sub_regions": "Sundara Land"
     },
     {
       "name": "Mercyhearth Monastery",
       "cn_name": "慈心山院",
-      "lat": 114.624999,
-      "lng": 183.499994,
+      "lat": 108.45938,
+      "lng": 172.953543,
       "size": 24,
       "sub_regions": "Sundara Land"
     },
     {
       "name": "Buddha Fort",
       "cn_name": "佛爷寨",
-      "lat": 121.156249,
-      "lng": 205.218744,
+      "lat": 114.664561,
+      "lng": 193.806499,
       "size": 24,
       "sub_regions": "Sundara Land"
     },
     {
       "name": "Thousand Buddha Village",
       "cn_name": "千佛村",
-      "lat": 115.843749,
-      "lng": 190.749994,
+      "lat": 109.62936,
+      "lng": 180.082516,
       "size": 24,
       "sub_regions": "Sundara Land"
     },
     {
       "name": "Millennium Crossing",
       "cn_name": "千年渡",
-      "lat": 111.03426752733685,
-      "lng": 198.67107928042327,
+      "lat": 105.190359,
+      "lng": 188.214707,
       "size": 24,
-      "sub_regions": "Shenze"
+      "sub_regions": "Fukasawa"
     },
     {
-      "name": "Meandering Bank",
-      "fake_name": "Qu'an",
+      "name": "Qu'an",
       "cn_name": "曲岸",
-      "lat": 108.4923941728395,
-      "lng": 202.74151235273368,
+      "lat": 102.782268,
+      "lng": 192.070906,
       "size": 24,
-      "sub_regions": "Shenze"
+      "sub_regions": "Fukasawa"
     },
     {
-      "name": "Precipe Ridge",
-      "fake_name": "Juezhangling",
+      "name": "Juezhangling",
       "cn_name": "绝嶂岭",
-      "lat": 106.39265735449735,
-      "lng": 196.48740286419752,
+      "lat": 100.793044,
+      "lng": 186.145961,
       "size": 24,
       "sub_regions": "Suixiang"
     },
     {
-      "name": "Mohist City",
-      "fake_name": "Mexico City",
+      "name": "Mexico City",
       "cn_name": "墨城",
-      "lat": 99.1058958871252,
-      "lng": 195.71300946737213,
+      "lat": 93.889796,
+      "lng": 185.412325,
       "size": 24,
       "sub_regions": "Suixiang"
     },
     {
-      "name": "Jadestream Valley",
+      "name": "Clear water and clouds",
       "cn_name": "碧水云涛",
-      "fake_name": "Clear water and clouds",
-      "lat": 102.21518821869488,
-      "lng": 201.46898768253968,
+      "lat": 96.835441,
+      "lng": 190.865357,
       "size": 24,
       "sub_regions": "Suixiang"
     },
     {
-      "name": "Old Mohist City",
-      "fake_name": "Former site of Mocheng",
+      "name": "Former site of Mocheng",
       "cn_name": "墨城旧址",
-      "lat": 102.27812224338624,
-      "lng": 188.38030823280423,
+      "lat": 96.895063,
+      "lng": 178.465555,
       "size": 24,
       "sub_regions": "Suixiang"
     },
     {
       "name": "Fuyao Peak",
       "cn_name": "扶摇峰",
-      "lat": 88.9706032297178,
-      "lng": 198.88379422949725,
+      "lat": 84.28794,
+      "lng": 188.416226,
       "size": 24,
       "sub_regions": "Tianxing"
     },
     {
       "name": "Huigu",
       "cn_name": "晦谷",
-      "lat": 95.1078937940917,
-      "lng": 189.995647665895,
+      "lat": 90.102215,
+      "lng": 179.995877,
       "size": 24,
       "sub_regions": "Tianxing"
     },
     {
       "name": "Woxingyan",
       "cn_name": "卧星岩",
-      "lat": 90.68985615079364,
-      "lng": 191.10805224867724,
+      "lat": 85.916706,
+      "lng": 181.049734,
       "size": 24,
       "sub_regions": "Tianxing"
     },
     {
       "name": "Liujinpo",
       "cn_name": "流金坡",
-      "lat": 90.85729441975309,
-      "lng": 204.98317625396822,
+      "lat": 86.075332,
+      "lng": 194.194588,
       "size": 24,
       "sub_regions": "Tianxing"
     },
     {
       "name": "General's Shrine",
       "cn_name": "将军祠",
-      "lat": 126.906249,
-      "lng": 199.624994,
+      "lat": 120.112306,
+      "lng": 188.485381,
       "size": 24,
       "sub_regions": "Verdant Wilds"
     },
     {
       "name": "Battlecrest Slope",
       "cn_name": "七伐坡",
-      "lat": 131.687499,
-      "lng": 197.781244,
+      "lat": 124.627692,
+      "lng": 186.756577,
       "size": 24,
       "sub_regions": "Verdant Wilds"
     },
     {
       "name": "Bamboo Abode",
       "cn_name": "竹林旧居",
-      "lat": 129.906249,
-      "lng": 204.687494,
+      "lat": 122.93627,
+      "lng": 193.017981,
       "size": 24,
       "sub_regions": "Verdant Wilds"
     },
     {
       "name": "Stonewash Strand",
       "cn_name": "浣石浦",
-      "lat": 130.687499,
-      "lng": 194.812494,
+      "lat": 123.692601,
+      "lng": 183.951944,
       "size": 24,
       "sub_regions": "Verdant Wilds"
     },
     {
       "name": "Heaven Pier's",
       "cn_name": "神仙渡",
-      "lat": 130.687499,
-      "lng": 189.374994,
+      "lat": 123.684237,
+      "lng": 178.793768,
       "size": 24,
       "sub_regions": "Moonveil Mountain"
     },
     {
       "name": "Kilnfire Ridge",
       "cn_name": "烧瓷岭",
-      "lat": 129.562499,
-      "lng": 184.187494,
+      "lat": 122.62253,
+      "lng": 173.874925,
       "size": 24,
       "sub_regions": "Moonveil Mountain"
     },
     {
       "name": "Blissful Retreat",
       "cn_name": "不羡仙",
-      "lat": 126.874999,
-      "lng": 183.312494,
+      "lat": 120.075478,
+      "lng": 173.056012,
       "size": 24,
       "sub_regions": "Moonveil Mountain"
     },
     {
       "name": "Still Shores",
       "cn_name": "弱水岸",
-      "lat": 128.437499,
-      "lng": 181.468744,
+      "lat": 121.573677,
+      "lng": 171.28699,
       "size": 24,
       "sub_regions": "Moonveil Mountain"
     },
     {
       "name": "Witherwilds",
       "cn_name": "荒蚀林",
-      "lat": 132.281249,
-      "lng": 179.062494,
+      "lat": 125.186642,
+      "lng": 169.027339,
       "size": 24,
       "sub_regions": "Moonveil Mountain"
     },
@@ -413,32 +392,32 @@ const LABEL_CONFIG = {
     {
       "name": "Pallace of Annals",
       "cn_name": "春秋别馆",
-      "lat": 139.312499,
-      "lng": 189.031244,
+      "lat": 131.857437,
+      "lng": 178.200861,
       "size": 24,
       "sub_regions": "Moonveil Mountain"
     },
     {
       "name": "Harvest Village",
       "cn_name": "丰禾村",
-      "lat": 128.031249,
-      "lng": 176.156244,
+      "lat": 121.18612,
+      "lng": 166.270639,
       "size": 24,
       "sub_regions": "Moonveil Mountain"
     },
     {
       "name": "Crimson Cliff",
       "cn_name": "丹崖",
-      "lat": 134.749999,
-      "lng": 192.812494,
+      "lat": 127.533195,
+      "lng": 182.295313,
       "size": 24,
       "sub_regions": "Moonveil Mountain"
     },
     {
       "name": "Gleaming Abbys",
       "cn_name": "荧渊",
-      "lat": 133.187499,
-      "lng": 175.374994,
+      "lat": 126.065878,
+      "lng": 165.797958,
       "size": 24,
       "sub_regions": "Moonveil Mountain"
     },
@@ -452,16 +431,16 @@ const LABEL_CONFIG = {
     {
       "name": "Peace Bell Tower",
       "cn_name": "太平钟楼",
-      "lat": 132.406249,
-      "lng": 186.687494,
+      "lat": 125.317809,
+      "lng": 175.964829,
       "size": 24,
       "sub_regions": "Moonveil Mountain"
     },
     {
       "name": "Jadebrook Mountain",
       "cn_name": "璧泉山",
-      "lat": 125.031249,
-      "lng": 190.093744,
+      "lat": 118.325479,
+      "lng": 179.458556,
       "size": 24,
       "sub_regions": "Sundara Land"
     },
@@ -489,440 +468,440 @@ const LABEL_CONFIG = {
     {
       "name": "Wildmare Ranch",
       "cn_name": "不伏马场",
-      "lat": 124.687499,
-      "lng": 201.781244,
+      "lat": 118.019159,
+      "lng": 190.262061,
       "size": 24,
       "sub_regions": "Sundara Land"
     },
     {
       "name": "South Gate Avenue",
       "cn_name": "南门大街",
-      "lat": 154.156249,
-      "lng": 168.656244,
+      "lat": 145.936683,
+      "lng": 158.895614,
       "size": 24,
       "sub_regions": "Kaifeng City"
     },
     {
       "name": "Kifeng Prefecture",
       "cn_name": "开封府",
-      "lat": 150.156249,
-      "lng": 168.406244,
+      "lat": 142.130001,
+      "lng": 158.912702,
       "size": 24,
       "sub_regions": "Kaifeng City"
     },
     {
       "name": "Fairgrounds",
       "cn_name": "勾栏瓦肆",
-      "lat": 152.874999,
-      "lng": 172.499994,
+      "lat": 144.703191,
+      "lng": 162.546332,
       "size": 24,
       "sub_regions": "Kaifeng City"
     },
     {
       "name": "Velvet Shade",
       "cn_name": "醉花阴",
-      "lat": 143.249999,
-      "lng": 172.124994,
+      "lat": 135.58786,
+      "lng": 162.454179,
       "size": 24,
       "sub_regions": "Kaifeng City"
     },
     {
       "name": "Prosperity Haven",
       "cn_name": "寿昌坊",
-      "lat": 142.906249,
-      "lng": 164.218744,
+      "lat": 135.266739,
+      "lng": 154.94893,
       "size": 24,
       "sub_regions": "Kaifeng City"
     },
     {
       "name": "Imperial Artisan Court",
       "cn_name": "百工坊",
-      "lat": 154.593749,
-      "lng": 163.968744,
+      "lat": 146.336295,
+      "lng": 154.708092,
       "size": 24,
       "sub_regions": "Kaifeng City"
     },
     {
       "name": "Forsaken Quarter",
       "cn_name": "角门里",
-      "lat": 155.718749,
-      "lng": 172.718744,
+      "lat": 147.413196,
+      "lng": 163.006064,
       "size": 24,
       "sub_regions": "Kaifeng City"
     },
     {
       "name": "Unbound Cavern",
       "cn_name": "无忧洞",
-      "lat": 155.968749,
-      "lng": 174.874994,
+      "lat": 147.630225,
+      "lng": 165.048154,
       "size": 24,
       "sub_regions": "Kaifeng City"
     },
     {
       "name": "Furnace Area",
       "cn_name": "熔炉区",
-      "lat": 148.843749,
-      "lng": 164.249994,
+      "lat": 140.880481,
+      "lng": 154.978841,
       "size": 24,
       "sub_regions": "Kaifeng City"
     },
     {
       "name": "Kaifeng Suburbs-East",
       "cn_name": "开封东郊",
-      "lat": 149.406249,
-      "lng": 176.312494,
+      "lat": 141.431593,
+      "lng": 166.140081,
       "size": 24,
       "sub_regions": "Granary of Plenty"
     },
     {
       "name": "Stillhearth Grove",
       "cn_name": "清心圃",
-      "lat": 143.437499,
-      "lng": 176.906244,
+      "lat": 135.767704,
+      "lng": 166.976227,
       "size": 24,
       "sub_regions": "Granary of Plenty"
     },
     {
       "name": "Abandoned Mercy Hall",
       "cn_name": "六疾馆遗址",
-      "lat": 146.999999,
-      "lng": 181.812494,
+      "lat": 139.143009,
+      "lng": 171.097977,
       "size": 24,
       "sub_regions": "Granary of Plenty"
     },
     {
       "name": "Jinming Pool",
       "cn_name": "金明池",
-      "lat": 156.156249,
-      "lng": 157.812494,
+      "lat": 147.825023,
+      "lng": 148.887464,
       "size": 24,
       "sub_regions": "Jadewood Court"
     },
     {
       "name": "Wansheng Town",
       "cn_name": "万胜镇",
-      "lat": 148.843749,
-      "lng": 159.906244,
+      "lat": 140.877064,
+      "lng": 150.882357,
       "size": 24,
       "sub_regions": "Roaring Sands"
     },
     {
       "name": "Kaifeng Suburbs-West",
       "cn_name": "开封西郊",
-      "lat": 143.749999,
-      "lng": 160.093744,
+      "lat": 136.058847,
+      "lng": 150.79215,
       "size": 24,
       "sub_regions": "Roaring Sands"
     },
     {
       "name": "Starveil Grassland",
       "cn_name": "星隐野",
-      "lat": 148.749999,
-      "lng": 154.343744,
+      "lat": 140.801695,
+      "lng": 145.592947,
       "size": 24,
       "sub_regions": "Roaring Sands"
     },
     {
       "name": "Enternal Mountain",
       "cn_name": "浮戏山",
-      "lat": 144.468749,
-      "lng": 153.156244,
+      "lat": 136.7405,
+      "lng": 144.472863,
       "size": 24,
       "sub_regions": "Roaring Sands"
     },
     {
       "name": "Fishwood River",
       "cn_name": "鱼柏川",
-      "lat": 137.656249,
-      "lng": 156.374994,
+      "lat": 130.306499,
+      "lng": 147.527272,
       "size": 24,
       "sub_regions": "Roaring Sands"
     },
     {
       "name": "Kaifeng Suburbs-North",
       "cn_name": "开封北郊",
-      "lat": 138.062499,
-      "lng": 164.781244,
+      "lat": 130.662956,
+      "lng": 155.216666,
       "size": 24,
       "sub_regions": "Roaring Sands"
     },
     {
       "name": "Heavenfall",
       "cn_name": "天上来",
-      "lat": 134.249999,
-      "lng": 164.656244,
+      "lat": 127.077479,
+      "lng": 155.366959,
       "size": 24,
       "sub_regions": "Roaring Sands"
     },
     {
       "name": "Baima Crossing",
       "cn_name": "白马津",
-      "lat": 137.218749,
-      "lng": 171.749994,
+      "lat": 129.870559,
+      "lng": 162.087186,
       "size": 24,
       "sub_regions": "Roaring Sands"
     },
     {
       "name": "Plainfield",
       "cn_name": "平野原",
-      "lat": 161.999999,
-      "lng": 174.562494,
+      "lat": 153.345839,
+      "lng": 164.76208,
       "size": 24,
       "sub_regions": "Granary of Plenty"
     },
     {
       "name": "Kaifeng Suburbs-South",
       "cn_name": "开封南郊",
-      "lat": 158.437499,
-      "lng": 168.906244,
+      "lat": 149.989477,
+      "lng": 159.141296,
       "size": 24,
       "sub_regions": "Granary of Plenty"
     },
     {
       "name": "Sorrowfield Village",
       "cn_name": "达安村",
-      "lat": 157.124999,
-      "lng": 177.687494,
+      "lat": 148.726519,
+      "lng": 167.70641,
       "size": 24,
       "sub_regions": "Granary of Plenty"
     },
     {
       "name": "Ever-Normal Granary",
       "cn_name": "常平仓",
-      "lat": 164.562499,
-      "lng": 177.968744,
+      "lat": 155.768985,
+      "lng": 167.972565,
       "size": 24,
       "sub_regions": "Granary of Plenty"
     },
     {
       "name": "Gracetown",
       "cn_name": "承恩镇",
-      "lat": 172.906249,
-      "lng": 174.281244,
+      "lat": 163.701517,
+      "lng": 164.483491,
       "size": 24,
       "sub_regions": "Granary of Plenty"
     },
     {
       "name": "Masterwood Hamlet",
       "cn_name": "梓匠居",
-      "lat": 160.718749,
-      "lng": 164.562494,
+      "lat": 152.146958,
+      "lng": 155.287088,
       "size": 24,
       "sub_regions": "Jadewood Court"
     },
     {
       "name": "Buddha Statue Site",
       "cn_name": "造像处",
-      "lat": 164.874999,
-      "lng": 164.749994,
+      "lat": 156.076255,
+      "lng": 155.466356,
       "size": 24,
       "sub_regions": "Jadewood Court"
     },
     {
       "name": "Grand Canal",
       "cn_name": "鸿沟古渠",
-      "lat": 163.999999,
-      "lng": 170.156244,
+      "lat": 155.239673,
+      "lng": 160.323833,
       "size": 24,
       "sub_regions": "Jadewood Court"
     },
     {
       "name": "Dreamfall Cliff",
       "cn_name": "望淮南崖",
-      "lat": 167.718749,
-      "lng": 168.437494,
+      "lat": 158.759076,
+      "lng": 158.669478,
       "size": 24,
       "sub_regions": "Jadewood Court"
     },
     {
       "name": "Martial Temple",
       "cn_name": "武成王庙",
-      "lat": 167.906249,
-      "lng": 164.531244,
+      "lat": 158.937569,
+      "lng": 154.970328,
       "size": 24,
       "sub_regions": "Jadewood Court"
     },
     {
       "name": "Pipa Chasm",
       "cn_name": "琵琶沟",
-      "lat": 167.593749,
-      "lng": 159.406244,
+      "lat": 158.642012,
+      "lng": 150.380529,
       "size": 24,
       "sub_regions": "Jadewood Court"
     },
     {
       "name": "Petalfall Crossing",
       "cn_name": "飞花渡",
-      "lat": 162.999999,
-      "lng": 156.999994,
+      "lat": 154.309892,
+      "lng": 148.124711,
       "size": 24,
       "sub_regions": "Jadewood Court"
     },
     {
       "name": "South Imperial Garden",
       "cn_name": "御苑南",
-      "lat": 163.624999,
-      "lng": 161.374994,
+      "lat": 154.905686,
+      "lng": 152.270949,
       "size": 24,
       "sub_regions": "Jadewood Court"
     },
     {
       "name": "North Imperial Garrden",
       "cn_name": "御苑北",
-      "lat": 159.812499,
-      "lng": 159.656244,
+      "lat": 151.268841,
+      "lng": 150.623591,
       "size": 24,
       "sub_regions": "Jadewood Court"
     },
     {
       "name": "Desperation Ridge",
       "cn_name": "鹰愁岭",
-      "lat": 173.937499,
-      "lng": 184.031244,
+      "lat": 164.656593,
+      "lng": 173.714287,
       "size": 24,
       "sub_regions": "Granary of Plenty"
     },
     {
       "name": "Cleardew Terrace",
       "cn_name": "玉露台",
-      "lat": 57.76500667372133,
-      "lng": 42.161156303350964,
+      "lat": 54.724743,
+      "lng": 39.942148,
       "size": 24,
       "sub_regions": "Liangzhou"
     },
     {
       "name": "Xiao Pass Old Road",
       "cn_name": "萧关古道",
-      "lat": 65.61156752028218,
-      "lng": 63.33366030335096,
+      "lat": 62.158327,
+      "lng": 60.00031,
       "size": 24,
       "sub_regions": "Qinchuan"
     },
     {
       "name": "Rustling Meadow",
       "cn_name": "扶风甸",
-      "lat": 71.34976610934744,
-      "lng": 69.2235688042328,
+      "lat": 67.594515,
+      "lng": 65.580223,
       "size": 24,
       "sub_regions": "Qinchuan"
     },
     {
       "name": "Lion Barrow",
       "cn_name": "狮子坟",
-      "lat": 76.35493310758376,
-      "lng": 76.24801214814813,
+      "lat": 72.336252,
+      "lng": 72.234959,
       "size": 24,
       "sub_regions": "Qinchuan"
     },
     {
       "name": "Marsh Plain",
       "cn_name": "荡莽原",
-      "lat": 70.07440647619048,
-      "lng": 75.52361289594354,
+      "lat": 66.38628,
+      "lng": 71.548686,
       "size": 24,
       "sub_regions": "Qinchuan"
     },
     {
       "name": "Huayin North",
       "cn_name": "华阴北",
-      "lat": 84.36208423280422,
-      "lng": 79.3443318659612,
+      "lat": 79.921975,
+      "lng": 75.168314,
       "size": 24,
       "sub_regions": "Qinchuan"
     },
     {
       "name": "The Huayu Road",
       "cn_name": "华舆道",
-      "lat": 76.99836894532628,
-      "lng": 81.24693052557318,
+      "lat": 72.945823,
+      "lng": 76.970776,
       "size": 24,
       "sub_regions": "Qinchuan"
     },
     {
       "name": "Rivergaze Plateau",
       "cn_name": "望泾川",
-      "lat": 72.05891238095238,
-      "lng": 85.66714519929452,
+      "lat": 68.266338,
+      "lng": 81.158348,
       "size": 24,
       "sub_regions": "Qinchuan"
     },
     {
       "name": "Sunken City Lake",
       "cn_name": "陷城湖",
-      "lat": 84.73135721906898,
-      "lng": 94.34381977280691,
+      "lat": 79.726473,
+      "lng": 88.206444,
       "size": 24,
       "sub_regions": "Qinchuan"
     },
     {
       "name": "Lost Crossing",
       "cn_name": "迷津渡",
-      "lat": 28.411461751689593,
-      "lng": 27.00979439153439,
+      "lat": 26.916122,
+      "lng": 25.588226,
       "size": 24,
       "sub_regions": "Jade Gate Pass"
     },
     {
       "name": "Golden Sand River",
       "cn_name": "金沙川",
-      "lat": 36.78444664691357,
-      "lng": 22.11654574109347,
+      "lat": 34.848423,
+      "lng": 20.952517,
       "size": 24,
       "sub_regions": "Jade Gate Pass"
     },
     {
       "name": "Straying Steed Sands",
       "cn_name": "马迷途",
-      "lat": 35.83257033791887,
-      "lng": 33.10039456790123,
+      "lat": 33.946646,
+      "lng": 31.358269,
       "size": 24,
       "sub_regions": "Jade Gate Pass"
     },
     {
       "name": "Ayisu",
       "cn_name": "阿依苏",
-      "lat": 47.32836784479717,
-      "lng": 24.016079935097,
+      "lat": 44.837401,
+      "lng": 22.752076,
       "size": 24,
       "sub_regions": "Jade Gate Pass"
     },
     {
       "name": "Steed's Pass",
       "cn_name": "饮马隘",
-      "lat": 42.42554528818342,
-      "lng": 44.50366278659612,
+      "lat": 40.192622,
+      "lng": 42.161365,
       "size": 24,
       "sub_regions": "Liangzhou"
     },
     {
       "name": "Jade-Mirrored Spring",
       "cn_name": "玉池",
-      "lat": 42.32891412804306,
-      "lng": 53.13760431723976,
+      "lat": 39.883866,
+      "lng": 50.234208,
       "size": 24,
       "sub_regions": "Liangzhou"
     },
     {
       "name": "Jiuquan",
       "cn_name": "酒泉镇",
-      "lat": 47.52018229276896,
-      "lng": 52.08769365784831,
+      "lat": 45.01912,
+      "lng": 49.346236,
       "size": 24,
       "sub_regions": "Liangzhou"
     },
     {
       "name": "Mount Wuwei",
       "cn_name": "武威山",
-      "lat": 42.46588059118165,
-      "lng": 60.874973544973535,
+      "lat": 40.230834,
+      "lng": 57.671028,
       "size": 24,
       "sub_regions": "Liangzhou"
     },
     {
       "name": "Governor's Residence",
       "cn_name": "节度使府",
-      "lat": 46.70663856084656,
-      "lng": 60.05222222222222,
+      "lat": 44.248394,
+      "lng": 56.891579,
       "size": 24,
       "sub_regions": "Liangzhou"
     },
@@ -971,7 +950,7 @@ const LABEL_CONFIG = {
       "map_type": "dreamspace"
     },
     {
-      "name": "Central Bureau",
+      "name": "Neizhusi",
       "cn_name": "内诸司",
       "lat": 30.956121,
       "lng": 32.92964,
@@ -980,7 +959,7 @@ const LABEL_CONFIG = {
       "size": 24
     },
     {
-      "name": "Inner Chamber",
+      "name": "Rear Palace",
       "cn_name": "后寝",
       "lat": 28.159974,
       "lng": 26.475294,
@@ -989,7 +968,7 @@ const LABEL_CONFIG = {
       "size": 24
     },
     {
-      "name": "Outer Court",
+      "name": "Front Court",
       "cn_name": "前朝",
       "lat": 38.026086,
       "lng": 29.161797,
@@ -1000,44 +979,44 @@ const LABEL_CONFIG = {
   ],
   "zoom_7": [
     {
-      "name": "Inner Quarter",
+      "name": "introspection",
       "cn_name": "内省",
       "city": "introspection",
       "lat": 29.524964,
       "lng": 31.881333,
       "preset_map": "royal_palace",
       "size": 24,
-      "sub_regions": "Central Bureau"
+      "sub_regions": "Neizhusi"
     },
     {
-      "name": "Training Grounds",
+      "name": "martial arts arena",
       "cn_name": "演武场",
       "city": "martial arts arena",
       "lat": 32.179839,
       "lng": 30.186191,
       "preset_map": "royal_palace",
       "size": 24,
-      "sub_regions": "Inner Chamber"
+      "sub_regions": "Rear Palace"
     },
     {
-      "name": "Imperial Service",
+      "name": "Takeshi",
       "cn_name": "武德司",
       "city": "Takeshi",
       "lat": 32.606046,
       "lng": 33.115885,
       "preset_map": "royal_palace",
       "size": 24,
-      "sub_regions": "Central Bureau"
+      "sub_regions": "Neizhusi"
     },
     {
-      "name": "Imperial Vaults",
+      "name": "Forbidden treasuries",
       "cn_name": "禁中诸库",
       "city": "Forbidden treasuries",
       "lat": 25.020818,
       "lng": 33.134815,
       "preset_map": "royal_palace",
       "size": 24,
-      "sub_regions": "Central Bureau"
+      "sub_regions": "Neizhusi"
     },
     {
       "name": "Funing Hall",
@@ -1047,7 +1026,7 @@ const LABEL_CONFIG = {
       "lng": 26.465991,
       "preset_map": "royal_palace",
       "size": 24,
-      "sub_regions": "Inner Chamber"
+      "sub_regions": "Rear Palace"
     },
     {
       "name": "Kunning Hall",
@@ -1057,7 +1036,7 @@ const LABEL_CONFIG = {
       "lng": 26.475063,
       "preset_map": "royal_palace",
       "size": 24,
-      "sub_regions": "Inner Chamber"
+      "sub_regions": "Rear Palace"
     },
     {
       "name": "Qingshou Hall",
@@ -1067,37 +1046,37 @@ const LABEL_CONFIG = {
       "lng": 28.501112,
       "preset_map": "royal_palace",
       "size": 24,
-      "sub_regions": "Inner Chamber"
+      "sub_regions": "Rear Palace"
     },
     {
-      "name": "Shengping Tower",
+      "name": "Shengpinglou",
       "cn_name": "升平楼",
       "city": "Shengpinglou",
       "lat": 32.60989,
       "lng": 24.607779,
       "preset_map": "royal_palace",
       "size": 24,
-      "sub_regions": "Inner Chamber"
+      "sub_regions": "Rear Palace"
     },
     {
-      "name": "Rear Garden",
+      "name": "Back garden",
       "cn_name": "后苑",
       "city": "Back garden",
       "lat": 24.20261,
       "lng": 26.564473,
       "preset_map": "royal_palace",
       "size": 24,
-      "sub_regions": "Inner Chamber"
+      "sub_regions": "Rear Palace"
     },
     {
-      "name": "Baoci Palace",
+      "name": "Bao Ci Palace",
       "cn_name": "宝慈宫",
       "city": "Bao Ci Palace",
       "lat": 29.98293,
       "lng": 24.572767,
       "preset_map": "royal_palace",
       "size": 24,
-      "sub_regions": "Inner Chamber"
+      "sub_regions": "Rear Palace"
     },
     {
       "name": "Chongyuan Hall",
@@ -1107,17 +1086,17 @@ const LABEL_CONFIG = {
       "lng": 29.162777,
       "preset_map": "royal_palace",
       "size": 24,
-      "sub_regions": "Outer Court"
+      "sub_regions": "Front Court"
     },
     {
-      "name": "Wenming Hall",
+      "name": "Civilization Hall",
       "cn_name": "文明殿",
       "city": "Civilization Hall",
       "lat": 36.413394,
       "lng": 26.474155,
       "preset_map": "royal_palace",
       "size": 24,
-      "sub_regions": "Outer Court"
+      "sub_regions": "Front Court"
     },
     {
       "name": "Chongde Hall",
@@ -1127,7 +1106,7 @@ const LABEL_CONFIG = {
       "lng": 28.653668,
       "preset_map": "royal_palace",
       "size": 24,
-      "sub_regions": "Inner Chamber"
+      "sub_regions": "Rear Palace"
     },
     {
       "name": "Changchun Hall",
@@ -1137,40 +1116,321 @@ const LABEL_CONFIG = {
       "lng": 26.497946,
       "preset_map": "royal_palace",
       "size": 24,
-      "sub_regions": "Inner Chamber"
+      "sub_regions": "Rear Palace"
     },
     {
-      "name": "Hall of State",
+      "name": "official office",
       "cn_name": "官署",
       "city": "official office",
       "lat": 36.41477,
       "lng": 24.738002,
       "preset_map": "royal_palace",
       "size": 24,
-      "sub_regions": "Outer Court"
+      "sub_regions": "Front Court"
     },
     {
-      "name": "Reserve Archives",
+      "name": "Neiku Building 3",
       "cn_name": "内库三馆",
       "city": "Neiku Building 3",
       "lat": 38.110894,
       "lng": 32.528041,
       "preset_map": "royal_palace",
       "size": 24,
-      "sub_regions": "Outer Court"
+      "sub_regions": "Front Court"
     },
     {
-      "name": "Sealed Treasury",
+      "name": "sealed pile warehouse",
       "cn_name": "封桩库",
       "city": "sealed pile warehouse",
       "lat": 35.298408,
       "lng": 32.313562,
       "preset_map": "royal_palace",
       "size": 24,
-      "sub_regions": "Outer Court"
+      "sub_regions": "Front Court"
+    },
+
+    {
+      "name": "Hidden Mist Forest",
+      "cn_name": "隐雾林",
+      "lat": 144.84344,
+      "lng": 169.924003,
+      "size": 24
+    },
+    {
+      "name": "Golden Echo Ridge",
+      "cn_name": "金声岭",
+      "lat": 101.77971,
+      "lng": 239.607521,
+      "size": 24
+    },
+    {
+      "name": "Tianyi Tower",
+      "cn_name": "天一楼",
+      "lat": 102.71003,
+      "lng": 236.583731,
+      "size": 24
+    },
+    {
+      "name": "Study and Cultivation Hall",
+      "cn_name": "藏修斋",
+      "lat": 101.351824,
+      "lng": 235.198197,
+      "size": 24
+    },
+    {
+      "name": "Resting Retreat",
+      "cn_name": "息游居",
+      "lat": 104.670733,
+      "lng": 235.666719,
+      "size": 24
+    },
+    {
+      "name": "Yangzhi Terrace",
+      "cn_name": "仰止坪",
+      "lat": 102.729963,
+      "lng": 232.833529,
+      "size": 24
+    },
+    {
+      "name": "Peach Hollow",
+      "cn_name": "桃子窝",
+      "lat": 102.451382,
+      "lng": 222.188629,
+      "size": 24
+    },
+    {
+      "name": "Mount Dai",
+      "cn_name": "岱岳",
+      "lat": 109.167965,
+      "lng": 205.040498,
+      "size": 24
+    },
+    {
+      "name": "Licheng Terrace",
+      "cn_name": "历城台",
+      "lat": 102.880978,
+      "lng": 205.003968,
+      "size": 24
+    },
+    {
+      "name": "River Estuary",
+      "cn_name": "入海口",
+      "lat": 95.762088,
+      "lng": 211.416455,
+      "size": 24
+    },
+    {
+      "name": "Lean Riverbank",
+      "cn_name": "乐安浦",
+      "lat": 99.809002,
+      "lng": 212.143314,
+      "size": 24
+    },
+    {
+      "name": "Green Scallion Lane",
+      "cn_name": "青葱里",
+      "lat": 104.153594,
+      "lng": 213.155565,
+      "size": 24
+    },
+    {
+      "name": "Zao Wu Temple",
+      "cn_name": "早悟寺",
+      "lat": 110.96578,
+      "lng": 213.819353,
+      "size": 24
+    },
+    {
+      "name": "Coastal Path",
+      "cn_name": "沿海径",
+      "lat": 106.893275,
+      "lng": 222.504778,
+      "size": 24
+    },
+    {
+      "name": "Yongquan Town",
+      "cn_name": "涌泉镇",
+      "lat": 107.291709,
+      "lng": 217.705194,
+      "size": 24
+    },
+    {
+      "name": "Gushan",
+      "cn_name": "孤山",
+      "lat": 223.121392,
+      "lng": 206.731615,
+      "size": 24
+    },
+    {
+      "name": "Cloud-Climbing Gate",
+      "cn_name": "登云阙",
+      "lat": 224.44818,
+      "lng": 214.534337,
+      "size": 24
+    },
+    {
+      "name": "Chen Residence",
+      "cn_name": "陈宅",
+      "lat": 231.219049,
+      "lng": 213.491355,
+      "size": 24
+    },
+    {
+      "name": "West Lake",
+      "cn_name": "西湖",
+      "lat": 226.58765,
+      "lng": 208.59464,
+      "size": 24
+    },
+    {
+      "name": "Baijia Market",
+      "cn_name": "百家集",
+      "lat": 225.375247,
+      "lng": 216.576098,
+      "size": 24
+    },
+    {
+      "name": "Phoenix Mountain",
+      "cn_name": "凤凰山",
+      "lat": 236.213716,
+      "lng": 213.784131,
+      "size": 24
+    },
+    {
+      "name": "Western Prefecture Office",
+      "cn_name": "西府官廨",
+      "lat": 236.21369,
+      "lng": 221.416366,
+      "size": 24
+    },
+    {
+      "name": "Spring Breeze Lane",
+      "cn_name": "春风里",
+      "lat": 227.683571,
+      "lng": 218.543113,
+      "size": 24
+    },
+    {
+      "name": "Mangtan Crossing",
+      "cn_name": "莽滩口",
+      "lat": 224.240482,
+      "lng": 223.78823,
+      "size": 24
+    },
+    {
+      "name": "Sea Traders' Alley",
+      "cn_name": "海客巷",
+      "lat": 230.168036,
+      "lng": 223.01645,
+      "size": 24
+    },
+    {
+      "name": "Zhejiang Ferry",
+      "cn_name": "浙江渡",
+      "lat": 239.866021,
+      "lng": 225.134704,
+      "size": 24
+    },
+    {
+      "name": "Qiantang Government Office",
+      "cn_name": "钱塘官衙",
+      "lat": 218.827074,
+      "lng": 216.257186,
+      "size": 24
+    },
+    {
+      "name": "Zhenyuan Escort Agency",
+      "cn_name": "镇远镖局",
+      "lat": 221.364364,
+      "lng": 216.967468,
+      "size": 24
+    },
+    {
+      "name": "Qianjiang Market District",
+      "cn_name": "钱江市井",
+      "lat": 222.605662,
+      "lng": 221.573174,
+      "size": 24
+    },
+    {
+      "name": "South Mountain",
+      "cn_name": "南山",
+      "lat": 239.585953,
+      "lng": 208.095552,
+      "size": 24
+    },
+    {
+      "name": "Flower Harbor",
+      "cn_name": "花港",
+      "lat": 237.011773,
+      "lng": 204.892286,
+      "size": 24
+    },
+    {
+      "name": "Quyuan",
+      "cn_name": "曲院",
+      "lat": 229.107643,
+      "lng": 202.104675,
+      "size": 24
+    },
+    {
+      "name": "Lingyin New Temple",
+      "cn_name": "灵隐新寺",
+      "lat": 226.612411,
+      "lng": 193.341055,
+      "size": 24
+    },
+    {
+      "name": "Yunjia Cove",
+      "cn_name": "云家岙",
+      "lat": 235.171287,
+      "lng": 194.000389,
+      "size": 24
+    },
+    {
+      "name": "Qiancui Village",
+      "cn_name": "千翠村",
+      "lat": 246.969087,
+      "lng": 208.639909,
+      "size": 24
+    },
+    {
+      "name": "Yunqi Bamboo Path",
+      "cn_name": "云栖竹径",
+      "lat": 246.491741,
+      "lng": 198.759293,
+      "size": 24
+    },
+    {
+      "name": "Yingtian Pagoda",
+      "cn_name": "应天塔",
+      "lat": 215.448053,
+      "lng": 210.291854,
+      "size": 24
+    },
+    {
+      "name": "Pinglan Academy",
+      "cn_name": "平澜书院",
+      "lat": 216.973058,
+      "lng": 206.477555,
+      "size": 24
+    },
+    {
+      "name": "Ten-Li Sea of Mulberry Trees",
+      "cn_name": "十里桑海",
+      "lat": 221.582008,
+      "lng": 228.104826,
+      "size": 24
+    },
+    {
+      "name": "Qiantang Inlet",
+      "cn_name": "钱塘浦",
+      "lat": 233.445508,
+      "lng": 227.883227,
+      "size": 24
     }
   ]
-};
+}
 
   // ==========================================
   // PRIVATE VARIABLES
@@ -1344,38 +1604,42 @@ function addLabels(labels) {
    * Update labels based on zoom level
    * @param {number} zoom - Current zoom level
    */
-  function updateLabels(zoom) {
+
+function updateLabels(zoom, force = false) {
+  if (!map) return;
+
   const zoomFloor = Math.floor(zoom);
-  if (zoomFloor === Math.floor(currentZoom)) return;
+  const zoomKey =
+    zoomFloor >= 3 && zoomFloor <= 4 ? 'zoom_3_4' :
+    zoomFloor === 5 ? 'zoom_5' :
+    zoomFloor === 6 ? 'zoom_6' :
+    zoomFloor >= 7 ? 'zoom_7' : null;
+
+  if (
+    !force &&
+    zoomFloor === currentZoom &&
+    activeLayer &&
+    map.hasLayer(activeLayer)
+  ) return;
+
   currentZoom = zoomFloor;
-  if (!isVisible || !map) return;
-
-  let zoomKey = null;
-
-  if (zoomFloor >= 3 && zoomFloor <= 4) {
-    zoomKey = 'zoom_3_4';
-  } else if (zoomFloor === 5) {
-    zoomKey = 'zoom_5';
-  } else if (zoomFloor === 6) {
-    zoomKey = 'zoom_6';
-  } else if (zoomFloor >= 7) {   // ← tambah ini
-    zoomKey = 'zoom_7';
-  }
 
   if (activeLayer) {
     map.removeLayer(activeLayer);
     activeLayer = null;
   }
 
-  if (!zoomKey) return;
+  if (!isVisible || !zoomKey) return;
 
   if (!labelLayers[zoomKey]) {
-    buildLayerForZoom(zoomKey, LABEL_CONFIG[zoomKey]);
+    buildLayerForZoom(zoomKey, LABEL_CONFIG[zoomKey] || []);
   }
 
   activeLayer = labelLayers[zoomKey];
-  map.addLayer(activeLayer);
+
+  if (activeLayer) map.addLayer(activeLayer);
 }
+
 
   /**
    * Setup map event listeners
@@ -1411,67 +1675,47 @@ function addLabels(labels) {
   setupEventListeners();
 }
 
-  /**
-   * Show labels (NEW!)
-   * Re-displays labels if hidden
-   */
-  function show() {
-  if (isVisible) return;
-
+function show() {
   isVisible = true;
-
-  if (!map) return;
-
-  updateLabels(map.getZoom());
+  if (map) updateLabels(map.getZoom(), true);
 }
 
-  /**
-   * Hide labels (NEW!)
-   * Removes labels without destroying manager
-   */
-  function hide() {
-  if (!isVisible) return;
-
+function hide() {
   isVisible = false;
 
-  if (activeLayer && map) {
+  if (map && activeLayer) {
     map.removeLayer(activeLayer);
   }
+
+  activeLayer = null;
 }
 
-  /**
-   * Add or update label configuration
-   * @param {number} zoomLevel - Zoom level (3-4, 5, or 6)
-   * @param {Array} labels - Array of label configs
-   */
-  function addLabelConfig(zoomLevel, labels) {
+function addLabelConfig(zoomLevel, labels) {
+  let zoomKey = null;
+
   if (zoomLevel >= 3 && zoomLevel <= 4) {
-    LABEL_CONFIG.zoom_3_4 = labels;
+    zoomKey = 'zoom_3_4';
   } else if (zoomLevel === 5) {
-    LABEL_CONFIG.zoom_5 = labels;
+    zoomKey = 'zoom_5';
   } else if (zoomLevel === 6) {
-    LABEL_CONFIG.zoom_6 = labels;
-  } else if (zoomLevel >= 7) {   // ← tambah ini
-    LABEL_CONFIG.zoom_7 = labels;
-    labelLayers.zoom_7 = null;   // reset cache
+    zoomKey = 'zoom_6';
+  } else if (zoomLevel >= 7) {
+    zoomKey = 'zoom_7';
   }
+
+  if (!zoomKey || !Array.isArray(labels)) return;
+
+  LABEL_CONFIG[zoomKey] = labels;
+  labelLayers[zoomKey] = null;
 
   if (map && isVisible) {
-    updateLabels(map.getZoom());
+    updateLabels(map.getZoom(), true);
   }
 }
 
-  /**
-   * Manually refresh labels
-   */
-  function refresh() {
-    if (!map) return;
-    if (!isVisible) {
-      console.log('⏭️ Skipped refresh (hidden)');
-      return;
-    }
-    updateLabels(map.getZoom());
-  }
+function refresh() {
+  if (map) updateLabels(map.getZoom(), true);
+}
 
   /**
    * Destroy manager and remove all labels
